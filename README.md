@@ -1,2 +1,2 @@
 # garbomuffin.bitbucket.org
-just another site on the internets
+literally just another site of random things
