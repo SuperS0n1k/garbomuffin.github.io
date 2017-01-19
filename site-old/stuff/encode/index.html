@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="image/x-icon" rel="icon" href="../../img/favicon.ico">
+    <script type="text/javascript" src="../../js/analytics.js"></script>
+    <script type="text/javascript" src="../../js/cookiewarn.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <title>Encode & Decode</title>
+  </head>
+  <body>
+    <noscript>Your javascript is off. Turn it on for this to work.<br></noscript>
+    <span id="cookiewarn" title="So there's this EU law or something that requires me to put this here. idk.">This site uses cookies. Click <a href="#" onclick="hideCookieWarn();">here</a> to not see this message anymore.<br></span>
+    The logic for the encoding/decoding was made by <a href="https://scratch.mit.edu/users/griffpatch/">griffpatch</a>.<br>
+    It was ported to HTML/JS by <a href="https://scratch.mit.edu/users/GarboMarvin/">GarboMarvin</a> (me).<br><br>
+    Encode: <input type="text" id="enc_val" onchange="EncodeStr();"> <button onclick="EncodeStr();">Encode</button><br><br>
+    <span id="enc_span" class="holder"><textarea type="text" id="enc_ans" class="ans" readonly onclick="this.select()"></textarea><br><br></span>
+    Decode: <input type="text" id="dec_val" onchange="DecodeStr();"> <button onclick="DecodeStr();">Decode</button><br><br>
+    <span id="dec_span" class="holder"><textarea type="text" id="dec_ans" class="ans" readonly onclick="this.select()"></textarea><br><br></span>
+  </body>
+</html>
+<!-- Hey! What are you doing here? -->

@@ -1,0 +1,10 @@
+body{
+  font-family: sans-serif;
+  word-wrap: break-word;
+}
+a{
+  text-decoration: none;
+}
+a:hover{
+  text-decoration: underline;
+}

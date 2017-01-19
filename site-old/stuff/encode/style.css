@@ -1,0 +1,10 @@
+.ans {
+  font-family: monospace;
+  background-color: #FAFAFA;
+  border: 1px solid #ccc;
+  width: 285px;
+}
+
+.holder {
+  display: none;
+}

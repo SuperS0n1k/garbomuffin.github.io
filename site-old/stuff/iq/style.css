@@ -1,0 +1,16 @@
+body {
+  text-align:center;
+  font-family:"Open Sans",sans-serif;
+}
+h1{
+  font-size: 500%;
+}
+h2{
+  font-size: 185%;
+}
+a{
+  text-decoration: none;
+}
+a:hover{
+  text-decoration: underline;
+}
