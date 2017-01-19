@@ -1,0 +1,146 @@
+v1.3 - 07/05/2016
+ - No more jQuery! (shorter load times)
+ - Fix some 404's.
+ - "IQ" test Q1 url change.
+ - "IQ" test has no more javascript.
+ - alert.js comments.
+ - Cookie warnings. (some eu law or something requires me to do this idk)
+ - Encode/Decode auto encodes/decodes on textbox change. (on un-focus)
+ - Encode/Decode internal script improvements/fixes.
+ - 
+
+v1.2 - 06/28/2016
+ - Add simple string encoder/decoder.
+ - No more minified files, workflow was a nightmare.
+ - <noscript> replaces testjs.js.
+ - Grammar.
+ - Changelog improvements.
+ - A few things behind the scenes.
+ - Meta description on home page.
+ - URL consistency.
+ - IQ test changes.
+ - Update links.
+ - Finally fix the README.md.
+ - Clean up robots.txt.
+ - Code consistency.
+ - Sitemap cleanup.
+ - Remove all the iframes as it's broken in Chrome and caused fake page views.
+ - Fix up browser-test a bit.
+ - Remove other-things since it's useless and there only one thing in it.
+ - Compression of some HTML files.
+
+v1.1.5 - 06/14/2016
+ - Remove the breakout solutions from the google index. (hopefully?)
+
+v1.1.4 - 06/10/2016
+ - Due to request of the creators of breakout, the answers are gone.
+  (they are still available in the git commit history, but if someone can
+  figure that out, they deserve the answers anyways)
+
+v1.1.3 - 06/04/2016
+ - Changelog is more consistent with periods and looks better on mobile.
+ - Get rid of some useless info.
+ - More useful alts.
+ - Minification of alert.js.
+ - Update robots.txt.
+ - Sitemap update.
+ - More partial solutions.
+ - Clarification about my methods.
+ - Periods in titles? No thanks.
+
+v1.1.2 - 05/26/2016
+ - More links.
+ - More solutions.
+ - What did you expect?
+
+v1.1.1 - 05/22/2016
+ - Remove 404 and 403 messages which don't work on Bitbucket.
+ - Remove .htaccess since apache isn't needed here.
+ - Update contributing guide.
+ - CSS updates.
+
+v1.1.0 - another one - 05/21/2016
+ - .gitignore.
+ - Compressing.
+ - More compressing.
+ - EVEN MORE COMPRESSING.
+
+v1.0.1 - yolo tag - 05/20/2016
+ - gitignore.
+ - GitLab is bad, removing left overs.
+ - Contributing guide update.
+ - Readme update.
+ - Still trying to fix robots.txt.
+ - Still trying to fix sitemap.xml.
+ - Compression.
+ - Description for Breakout Solutions.
+ - server.bat upgrade.
+ - server.bat = server.sh.
+ - Fixed a bug that was fixed 5 years ago.
+
+v1.0.0 - one point zero point zero - 05/17/2016
+ - Changelog fixed, again.
+ - Bitbucket!
+ - Readme fixed.
+ - Bug/Idea report instructions.
+ - Google.
+ - Jquery is back.
+ - Links work now.
+ - Google analytics.
+ - Rip HTTPS 2k16.
+ - Sitemap.xml works now.
+ - Math cookies now work properly.
+
+v0.2.2 - Why do I make these messages? - 05/16/2016
+ - Add gitignore.
+ - Add htaccess.
+ - Fix changelog.
+ - Update the changelog in master to match develop.
+ - Syntax.
+ - Removed HTML comments.
+ - Compression.
+ - Math works now.
+-
+v0.2.1 - EVEN MOOOOOAAAAAARRRR - 05/14/2016
+ - HTML readability.
+ - More breakout solutions.
+ - Syntax.
+ - Some missing parentheses are back.
+ - Fix bugs in math if there is no cookie.
+ - Add contact.
+
+v0.2.0 - MOAR - 05/13/2016
+ - No more CSS is loading messages!
+ - Made changelog. (no duh).
+ - Add wiki button on homepage.
+ - Breakout EDU digital solutions (partiial).
+ - Minimizing.
+ - robots.txt optimizations.
+ - Removed 404's.
+ - Quadratic Formula added to math.
+ - Distance Formula added to math.
+ - MOAR MINIMIZING.
+ - Removed useless round 'feature' from math.
+ - CSS consistency.
+
+v0.1.0 - Woot! - 05/10/2016
+ - Cleaning of 404 and 403 messages.
+ - CSS variables no more!
+ - blank.html is back.
+ - Some files from /stuff/other-things moved.
+ - Update CONTRIBUTING.md.
+ - CSS readable.
+ - index.html looks better now.
+ - robots.txt update.
+ - HTML compressing.
+ - Removed useless JS lines, fixes.
+ - IQ test URLs look better.
+ - Only viewable versions of other-files.
+ - Remove JS comments.
+
+v0.0.2 - Small Updates - 05/09/2016
+ - Update robots.txt.
+ - Update 404 and 403 messages.
+
+v0.0.1 - Initial release - 05/07/2016
+ - Nothing. Initial release.
