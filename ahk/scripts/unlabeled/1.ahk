@@ -17,22 +17,44 @@ SendMode Input
 CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 
+MouseMove, 635, 450
+
+interval = 0
+
 loop
 {
-	PixelGetColor, color, 734, 326
+	MouseGetPos, mousex, mousey
 	
-	if color=0xAE6342 ; light
+	PixelGetColor, color, %mousex%, %mousey%
+	Tooltip, %mousey%
+	
+	if color=0xFFB299
 	{
-		MouseMove, 671, 350
+		if mousey < 350
+		{
+			Tooltip, a
+			newy := mousey + 50
+		}
+		else
+		{
+			newy := mousey - 50
+		}
+		MouseMove, %mousex%, %newy%
 	}
-	else if color=0x984034 ; dark
-	{
-		MouseMove, 671, 500
-	}
+	
+	;
+	;if color=0xAE6342 ; light
+	;{
+	;	MouseMove, 671, 350
+	;}
+	;else if color=0x984034 ; dark
+	;{
+	;	MouseMove, 671, 500
+	;}
 }
 
-; Reloading it for testing new stuff.
+; Reloading
 ^!r::Reload
 
-; Exiting, for obvious reasons.
+; Exiting
 ^!e::ExitApp
