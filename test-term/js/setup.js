@@ -5,7 +5,7 @@ var commands = [];
 (function(){
   "use strict";
 
-  $("#hist").append("This is a simple example of how you can make a simple terminal using javascript.<br>");
+  $("#hist").append("A simple, unfinished javascript terminal.<br>");
   $("#hist").append("Click to focus, \"help\" for help!<br><br>");
   // $("#out").append("<b class=\"lightgreen\">$</b> ");
 

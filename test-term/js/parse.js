@@ -8,7 +8,7 @@ function parse(){
 
   var input = $("#out").text();
   if (input.trim() !== ""){
-    commandHistory.push(input);
+    commandHistory.push(input.substr(2));
     currentHistory = commandHistory.length;
   }
 
