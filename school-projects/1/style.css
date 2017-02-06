@@ -1,0 +1,21 @@
+body{
+  font-family: sans-serif;
+  text-align: center;
+}
+hr{
+  width: 600px;
+}
+.gray{
+  color: gray;
+}
+a{
+  text-decoration: none;
+  color: blue;
+  cursor: pointer;
+}
+a:hover{
+  text-decoration: underline;
+}
+a:active{
+  color: purple;
+}

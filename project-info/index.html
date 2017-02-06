@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- This is an old thing I made a while ago. -->
+<!-- It really sucks. -->
+<html>
+
+  <head>
+    
+    <title>Scratch Project Info</title>
+    
+    <style>
+      input{
+        width: 250px;
+        font-family: monospace;
+      }
+      textarea{
+        width: 350px;
+        height: 150px;
+        font-family: monospace;
+      }
+      .value{
+        font-family: monospace;
+      }
+      a{
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover{
+        text-decoration: underline;
+      }
+      a:active{
+        color: purple;
+      }
+      code{
+        background-color: #fafafa;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        padding: 1px;
+      }
+    </style>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    
+  </head>
+  
+  <body>
+    
+    Report issues and stuff <a href="https://github.com/GarboMuffin/add-project/issues" target="_blank">here</a>.<br><br>
+    
+    Id: <input type="number" min="0" id="input" onchange="getInfo();"> <button id="getinfo">Get info</button><br><br>
+    <span id="info"></span>
+
+    <script type="text/javascript" src="script.js"></script>
+    
+  </body>
+  
+</html>
