@@ -6,7 +6,7 @@
         <key>texturePackerVersion</key>
         <string>4.3.3</string>
         <key>fileName</key>
-        <string>C:/Users/Admin/code/ss-js/assets/assets.tps</string>
+        <string>C:/Users/Admin/code/platformer/assets/assets.tps</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -204,6 +204,18 @@
             <key type="filename">player/run3.png</key>
             <key type="filename">player/still.png</key>
             <key type="filename">player/stillf.png</key>
+            <key type="filename">player/suits/air/run1.png</key>
+            <key type="filename">player/suits/air/run2.png</key>
+            <key type="filename">player/suits/air/run3.png</key>
+            <key type="filename">player/suits/air/still.png</key>
+            <key type="filename">player/suits/fire/run1.png</key>
+            <key type="filename">player/suits/fire/run2.png</key>
+            <key type="filename">player/suits/fire/run3.png</key>
+            <key type="filename">player/suits/fire/still.png</key>
+            <key type="filename">player/suits/hammer/run1.png</key>
+            <key type="filename">player/suits/hammer/run2.png</key>
+            <key type="filename">player/suits/hammer/run3.png</key>
+            <key type="filename">player/suits/hammer/still.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -217,6 +229,9 @@
                 <false/>
             </struct>
             <key type="filename">player/jump.png</key>
+            <key type="filename">player/suits/air/jump.png</key>
+            <key type="filename">player/suits/fire/jump.png</key>
+            <key type="filename">player/suits/hammer/jump.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -230,6 +245,9 @@
                 <false/>
             </struct>
             <key type="filename">player/run4.png</key>
+            <key type="filename">player/suits/air/run4.png</key>
+            <key type="filename">player/suits/fire/run4.png</key>
+            <key type="filename">player/suits/hammer/run4.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -242,12 +260,28 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">suits/fire.png</key>
+            <key type="filename">suits/hammer.png</key>
+            <key type="filename">suits/wind.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>5,5,10,10</rect>
+                <key>scale9Paddings</key>
+                <rect>5,5,10,10</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">tiles/cloud.png</key>
             <key type="filename">tiles/dirt.png</key>
             <key type="filename">tiles/grass.png</key>
             <key type="filename">tiles/ice.png</key>
             <key type="filename">tiles/stone.png</key>
             <key type="filename">tiles/switch.png</key>
+            <key type="filename">tiles/switch/switch.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -352,6 +386,32 @@
                 <rect>1,7,2,14</rect>
                 <key>scale9Paddings</key>
                 <rect>1,7,2,14</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">tiles/switch/off.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>7,7,14,13</rect>
+                <key>scale9Paddings</key>
+                <rect>7,7,14,13</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">tiles/switch/on.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>7,5,14,10</rect>
+                <key>scale9Paddings</key>
+                <rect>7,5,14,10</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

@@ -35,3 +35,6 @@ jsconfig.json
 *.orig
 
 # End of https://www.gitignore.io/api/windows,code,git
+
+*.mp3
+*.ogg
