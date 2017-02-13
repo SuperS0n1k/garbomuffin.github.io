@@ -135,6 +135,7 @@ var x = keyboard(88);
 var z = keyboard(90);
 var f5 = keyboard(116); // MAKE F5 GREAT AGAIN
 var downPressed = false;
+var f = keyboard(70);
 
 window.frames = 0;
 var date = new Date();
@@ -187,7 +188,6 @@ function init(){
   background.zIndex = ZINDEX.background;
 
   stage.addChild(costume);
-  stage.addChild(player);
   stage.addChild(suit);
   stage.addChild(background);
 

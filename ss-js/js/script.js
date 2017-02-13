@@ -2,20 +2,16 @@
  * The loop that keeps things running.
  */
 function loop(){
-  try{
-    requestAnimationFrame(loop);
-    ++window.frames;
-    if (window.frames % 60 === 0){
-      var a = new Date();
-      document.getElementById("fps").innerText = "Millis to render 60 fps [should be 1000]: " + (a - date);
-      date = a;
-    }
-    state();
-    renderer.render(stage);
-  }catch(e){
-    console.error(e);
-    alert(e.toString());
+  requestAnimationFrame(loop);
+  ++window.frames;
+  if (window.frames % 60 === 0){
+    var a = new Date();
+    // document.getElementById("fps").innerText = "Millis to render 60 fps [should be 1000]: " + (a - date);
+    document.getElementById("fps").innerText = "Approx. FPS: " + (60 / (a - date) * 1000);
+    date = a;
   }
+  state();
+  renderer.render(stage);
 }
 
 /**
@@ -85,14 +81,17 @@ function physics(){
   // x/horizontal
   player.xv = player.xv * FRICTION;
   player.x += player.xv;
-  if (touchingSolidGround()){
+  var xBlock = getTouchingBlock();
+  if (xBlock){
     let increment = player.xv > 0 ? -1 : 1;
-    while (touchingSolidGround()){
+    player.x += increment;
+    while (boxesIntersect(player, xBlock)){
       player.x += increment;
     }
     player.xv = 0;
   }
 
+  // y/vertical
   player.y -= player.yv;
   if (touchingSolidGround()){
     let increment = player.yv > 0 ? -1 : 1;
@@ -113,7 +112,7 @@ function physics(){
     render();
   }
 
-  if (touchingSolidGround(player, -1  )){
+  if (touchingSolidGround(player, -1)){
     player.jumping = false;
   }else{
     player.jumping = true;
@@ -187,7 +186,9 @@ function graphics(){
   }
 
   // update animated sprites and move some stuff
-  for (let block of platforms.children){
+  var length = platforms.children.length;
+  for (let i = 0; i < length; i++){
+    let block = platforms.children[i];
     if (block.animated){
       ++block.frame;
       if (block.frame % block.framesPerAnimation === 0){
@@ -214,19 +215,19 @@ function graphics(){
 
 /**
  * Move projectiles and such.
- * @returns
  */
 function projectileLogic(){
-  var projectile;
   var date = new Date();
   var suit = player.suit;
-  if (PROJECTILE_SUITS.indexOf(suit) > -1 &&
+  if (x.isDown &&
+      PROJECTILE_SUITS.includes(suit) &&
       date - lastProjectile > PROJECTILE_DELAY &&
-      projectiles.children.length < MAX_PROJECTILES &&
-      x.isDown){
+      projectiles.children.length < MAX_PROJECTILES){
 
     lastProjectile = date;
     playSound(ALIASES.projectile);
+
+    var projectile;
   
     if (suit === SUITS.fire){
       projectile = new Sprite(textures["projectiles/fireball.png"]);
@@ -245,10 +246,13 @@ function projectileLogic(){
     projectile.yv = suit === SUITS.hammer ? HAMMER_STARTING_VELOCITY : 0;
     projectile.frames = 0;
     projectile.anchor.set(0.5, 0.5);
-  }
-  if (projectile) projectiles.addChild(projectile);
 
-  for (let projectile of projectiles.children){
+    projectiles.addChild(projectile);
+  }
+
+  var length = projectiles.children.length;
+  for (let i = 0; i < length; i++){
+    let projectile = projectiles.children[i];
     ++projectile.frames;
 
     if (projectile.type === SUITS.fire){
@@ -340,7 +344,9 @@ function clearIce(){
   var ice = false;
   var highestBlocks = [];
   var highest = HEIGHT;
-  for (let block of platforms.children){
+  var length = platforms.children.length;
+  for (let i = 0; i < length; i++){
+    let block = platforms.children[i];
     if (block.y <= highest && block.special === SPECIALS.ice){
       ice = true;
       if (block.y === highest){
@@ -357,7 +363,9 @@ function clearIce(){
     // ok great, there's still more ice
     // so let's remove the highest row
     playSound(ALIASES.ice); // play the sound only once for the row
-    for (let block of highestBlocks){
+    length = highestBlocks.length;
+    for (let i = 0; i < length; i++){
+      let block = highestBlocks[i];
       block.destroy();
     }
   }else{
@@ -397,7 +405,10 @@ function switches(){
 function blockBreak(){
   // temporairy until i can figure out something better
   playSound(ALIASES.blockBreak);
-  for (let block of platforms.children){
+  var length = platforms.children.length;
+  for (let i = 0; i < length; i++){
+    let block = platforms.children[i];
+    if (!block) continue; // since it destroys elements and ya never know
     if (block.special === SPECIALS.blockBreak){
       block.destroy();
     }
@@ -420,7 +431,40 @@ function touchingSolidGround(sprite = player, yOffset = 1, xOffset = 0){
     if (block.y > sprite.y + (sprite.height) + yOffset) continue; // no point in checking stuff below the sprite
     if (block.x + (sprite.width * 2.5) < sprite.x) continue; // no point in checking stuff to the left of the sprite
     if (block.x - (sprite.width * 0.5) > sprite.x) continue;  // no point in checking stuff to the right of the sprite
+    // if (f.isDown){
+    //   block.setTexture(textures["tiles/DarkStone.png"]);
+    //   setTimeout(function(){
+    //     block.setTexture(textures["tiles/dirt.png"]);
+    //   }, 1000);
+    // }
     if (boxesIntersect(block, sprite, yOffset, xOffset)) return true;
+  }
+  return false;
+}
+
+/**
+ * Get the block that the player is touching.
+ * @param {Sprite} [sprite=player]
+ * @param {number} [yOffset=1]
+ * @param {number} [xOffset=0]
+ * @returns {Sprite|bool} The block it's touching or false.
+ */
+function getTouchingBlock(sprite = player, yOffset = 1, xOffset = 0){
+  var length = platforms.children.length;
+  for (let i = 0; i < length; i++){
+    let block = platforms.children[i];
+    if (!block.solid) continue; // no point in checking things not solid
+    if (block.y < sprite.y - (sprite.height * 1.5) + yOffset) break; // no point in checking stuff above the sprite.
+    if (block.y > sprite.y + (sprite.height) + yOffset) continue; // no point in checking stuff below the sprite
+    if (block.x + (sprite.width * 2.5) < sprite.x) continue; // no point in checking stuff to the left of the sprite
+    if (block.x - (sprite.width * 0.5) > sprite.x) continue;  // no point in checking stuff to the right of the sprite
+    // if (f.isDown){
+    //   block.setTexture(textures["tiles/DarkStone.png"]);
+    //   setTimeout(function(){
+    //     block.setTexture(textures["tiles/dirt.png"]);
+    //   }, 1000);
+    // }
+    if (boxesIntersect(block, sprite, yOffset, xOffset)) return block;
   }
   return false;
 }
@@ -611,8 +655,8 @@ function reset(next = true){
 function boxesIntersect(a, b, yOffset = 0, xOffset = 0){
   var ab = a.getBounds();
   var bb = b.getBounds();
-  return ab.x + ab.width + xOffset > bb.x &&
-    ab.x + xOffset < bb.x + bb.width &&
-    ab.y + ab.height + yOffset > bb.height &&
-    ab.y + yOffset < bb.y + bb.height;
+  return ab.x + xOffset < bb.x + bb.width &&
+    ab.x + ab.width + xOffset > bb.x &&
+    ab.y + yOffset < bb.y + bb.height &&
+    ab.y + ab.height + yOffset > bb.y;
 }
