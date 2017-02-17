@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Super Suits</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+
+    <style>
+      canvas{
+        /*border: 1px solid black;*/
+        display: block;
+      }
+      .hidden{
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="jumbotron">
+      <div class="container">
+        <h1>ss-jsv2 alpha</h1>
+        <p>wow</p>
+      </div>
+    </div>
+    
+    <div class="container">
+      <p>The images and sounds found in this are from the original. They have been used with permission from the author. (not that Scratch's license requires that anyways)</p>
+      <p><a href="https://scratch.mit.edu/projects/79038438/">The original</a> (where the assets are from) and <a href="https://scratch.mit.edu/users/TriforceMayhem/">its author</a>.</p>
+      <p>Loading... <progress id="progress" value="0" max="1">0%</progress></p>
+
+      <div class="alert alert-danger hidden" id="outputHolder">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Uh Oh</strong> <span id="output"></span> <a href="#" onclick="loop();">Click here to try to restart it.</a>
+      </div>
+
+      <canvas id="canvas"></canvas>
+      <button onclick="level++;renderLevel();">Next Level</button>
+      <button onclick="level--;renderLevel();">Prev Level</button>
+      <button onclick="unlockedSuits=3;currentSuit=1;">Unlock All</button>
+      <button onclick="currentSuit=1;">Fire Suit</button>
+      <button onclick="currentSuit=2;">Air Suit</button>
+      <button onclick="currentSuit=3;">Hammer Suit</button>
+      <div id="fps"></div>
+      <p>Time for your favorite list of things to add/fix/do:</p>
+      <ul>
+        <li>MAKE <s>AMERICA</s> SUPER SUITS GREAT AGAIN</li>
+        <li>MAKE <s>MEXICO</s> <s>THE USER</s> JAVASCRIPT PAY</li>
+        <li>Fix 1 block gaps... again</li>
+        <li><s>Add in background music. (really easy)</s> No music for now. (although it's really easy to do)</li>
+        <li>Add in more than the first 5 or 6 levels</li>
+        <li>Slight optimizations to ice</li>
+        <li>More accurate physics. (trial and error is fun)</li>
+      </ul>
+    </div>
+
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+    <script src="js/assets.js"></script>
+    <script src="js/container.js"></script>
+    <script src="js/sprite.js"></script>
+    <script src="js/sprites.js"></script>
+    <script src="js/tiles.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/script.js" defer></script>
+  </body>
+</html>
