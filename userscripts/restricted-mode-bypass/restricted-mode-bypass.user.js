@@ -1,21 +1,19 @@
 // ==UserScript==
 // @name         Restricted Mode Bypass
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass
-// @version      1.5.1
+// @version      1.5.2
 // @description  "I like restricted mode!" -Said nobody ever.
 // @author       GarboMuffin
 // @match        https://www.youtube.com/watch*
 // @downloadURL  https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass/restricted-mode-bypass.user.js
-// @updateURL    https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass/restricted-mode-bypass.user.js
+// @updateURL    https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass/restricted-mode-bypass.meta.js
 // ==/UserScript==
-
-// I FIXED IT.
-// IT WORKS.
-// just don't use it too much and it will work
-// also there might be a few second wait before the video starts showing.
 
 /*
 CHANGLOG:
+
+v1.5.2:
+ - Fix some bugs and some small changes
 
 v1.5.1:
  - Update download location.
@@ -50,41 +48,7 @@ v1.1.4:
 
 v1.0 - v1.1.3:
  - Honestly no idea.
-
 */
-
-(function(){
-  "use strict";
-  if (document.getElementById("unavailable-message")){
-    var content = document.getElementsByClassName("content")[0];
-    var player = document.getElementById("player");
-    content.appendChild(document.createElement("br"));
-
-    var el = makeButton({
-      text: "Watch it anyway. ",
-      hd: false
-    }); 
-    content.appendChild(el);
-    content.appendChild(TextNode(" "));
-
-    el = document.createElement("a");
-    el.appendChild(TextNode("(HD)"));
-    el.href = "#";
-    el.onclick = function(){
-      Embed({
-        hd: true
-      });
-    };
-    content.appendChild(el);
-  }else{
-	try{
-	  document.getElementById("watch7-container").removeChild(document.getElementById("rmbvideo"));
-	}catch(e){
-	  
-	}
-	
-  }
-})();
 
 function Embed(meta){
   var el = document.createElement("span");
@@ -192,7 +156,7 @@ function Video(hd){
   });
 
   rmbvel.addEventListener("canplay", function(){
-    rmbstatus.innerHTML = "";
+    rmbstatus.innerHTML = "Video playing started! If the video is more than 30 minutes long you may have to refresh to play every 30 minute segment. (untested)";
   });
 }
 
@@ -223,9 +187,44 @@ function saveSettings(){
   localStorage.RMBSavedWidth = rmbvel.width;
 }
 
+function start(){
+  "use strict";
+  if (document.getElementById("unavailable-message")){
+    var content = document.getElementsByClassName("content")[0];
+    var player = document.getElementById("player");
+    content.appendChild(document.createElement("br"));
+
+    var el = makeButton({
+      text: "Watch it anyway.",
+      hd: false
+    }); 
+    content.appendChild(el);
+    content.appendChild(TextNode(" "));
+
+    el = document.createElement("a");
+    el.appendChild(TextNode("(HD)"));
+    el.href = "#";
+    el.onclick = function(){
+      Embed({
+        hd: true
+      });
+    };
+    content.appendChild(TextNode(" [please try to minimize usage of this, thanks!]"));
+    content.appendChild(el);
+  }else{
+    try{
+      document.getElementById("watch7-container").removeChild(document.getElementById("rmbvideo"));
+    }catch(e){
+      console.warn("ehh?");
+    }
+  }
+}
+
+// thanks youtube
 var oldUrl = "";
 setInterval(function(){
   if (oldUrl != location.href){
-	oldUrl = location.href;
+	  oldUrl = location.href;
+    start();
   }
 }, 1000);
