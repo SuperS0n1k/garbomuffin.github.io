@@ -4,48 +4,82 @@
     <title>Super Suits</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link href="css/style.css" type="text/css" rel="stylesheet">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
+
+    <style>
+      canvas{
+        /*border: 1px solid black;*/
+        display: block;
+      }
+      .hidden{
+        display: none;
+      }
+    </style>
   </head>
   <body>
-    
     <div class="jumbotron">
       <div class="container">
-        <h1>Super Suits - Javascript Edition</h1>
-        <p>Still in Alpha and quite laggy</p>
+        <h1>
+          ss-js
+          <small>v2 
+            <small>alpha</small>
+          </small>
+        </h1>
       </div>
     </div>
-    
+
     <div class="container">
-      <p>The images and sounds found in this are from the original. They have been used with permission from the author. (not that Scratch's license requires that anyways)</p>
+      <p>The images <s>and sounds</s> found in this are from the original. They have been used with permission from the author. (not that Scratch's license requires that anyways)</p>
       <p><a href="https://scratch.mit.edu/projects/79038438/">The original</a> (where the assets are from) and <a href="https://scratch.mit.edu/users/TriforceMayhem/">its author</a>.</p>
-      <p id="fps"></p>
-      <div id="canvas"></div>
-      <button onclick="++level;render();">Skip level</button>
-      <button onclick="player.suit=1;">Fire</button>
-      <button onclick="player.suit=2;">Wind</button>
-      <button onclick="player.suit=3;">Hammer</button>
-      <p>This is horrible and should never be used.</p>
-      <p>Things to add:</p>
+      <p>Loading... <progress id="progress" value="0" max="1">0%</progress></p>
+
+      <div class="alert alert-danger hidden" id="outputHolder">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Uh Oh</strong> <span id="output">You shouldn't be seeing this!</span> <a href="#" onclick="loop();">Click here to try to restart it.</a>
+      </div>
+
+      <canvas id="canvas"></canvas>
+      <button class="btn btn-default" onclick="renderLevel();">Reset LVL</button>
+      <button class="btn btn-default" onclick="level++;renderLevel();">Next Level</button>
+      <button class="btn btn-default" onclick="level--;renderLevel();">Prev Level</button>
+      <button class="btn btn-default" onclick="currentSuit=1;unlockedSuits=1;">Fire Suit</button>
+      <button class="btn btn-default" onclick="currentSuit=2;unlockedSuits=2;">Air Suit</button>
+      <button class="btn btn-default" onclick="currentSuit=3;unlockedSuits=3;">Hammer Suit</button>
+
+      <p><abbr title="Estimated Frames Per Second. Updates every 60 frames.">Approximate FPS:</abbr> <samp id="fps">[please wait...]</samp></p>
+
+      <p>Controls:</p>
       <ul>
-        <li>All the levels</li>
-        <li>Backgrounds</li>
-        <li>More animations</li>
-        <li>Fix animation scaling</li>
-        <li>Sounds</li>
-        <li>wtf chromebook</li>
-        <li>Fix the lag</li>
-        <li><s class="onion">Onions</s> Layers</li>
+        <li><kbd>WASD</kbd> or <kbd>Arrows</kbd> - Move</li>
+        <li><kbd>W</kbd> or <kbd>Up</kbd> or <kbd>Z</kbd> or <kbd>Space</kbd> - Jump</li>
+        <li><kbd>Down</kbd> or <kbd>S</kbd> - Switch suits</li>
+        <li><kbd>X</kbd> - Projectile</li>
+      </ul>
+      <p>Time for your favorite list of things to add/fix/do:</p>
+      <ul>
+        <li>Add in <s>background music</s> music at all.</li>
+        <li>Slight optimizations to <s>ice</s> any updating block</li>
+        <li title="Maybe they work, maybe they don't. I really don't know.">Layers</li>
+        <li title="It's literally just changing 3 variables until it feels the same as the original.">Physics are little weird, but they are mostly done.</li>
+        <li><s>I'm supposed to be making a game but this one bug keeps kicking my ass...</s> OMG I'M SO STUPID</li>
+        <li><s>Animations that change in size</s> Basically any animation</li>
+        <li>Text (probably just going to use a generic monospace font)</li>
+        <li>Any levels past the one with spikes. (going past it will crash the game)</li>
       </ul>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.2.2/pixi.min.js"></script>
-    <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
-    <script src="js/init.js" type="text/javascript"></script>
-    <script src="js/tiles.js" type="text/javascript"></script>
-    <script src="js/levels.js" type="text/javascript"></script>
-    <script src="js/music.js" type="text/javascript"></script>
-    <script src="js/script.js" type="text/javascript"></script>
+
+    <!--<script src="js/polyfill.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/assets.js"></script>
+    <script src="js/container.js"></script>
+    <script src="js/sprite.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/tiles.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>

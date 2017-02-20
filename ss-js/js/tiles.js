@@ -1,169 +1,117 @@
-const DEFAULTS = {
-  solid: true,
-  interactable: false,
-  interact: 0,
-  animated: false,
-  framesPerAnimation: 0,
-  animationFrames: 0,
-  animationFrame: 0,
-  frame: 0,
-  special: "",
-};
-
-const SPECIALS = {
-  ice: "ice",
-  switch: "switch",
-  blockBreak: "blockBreak",
-  hammerSuit: "suitHammer",
-  hammerSwitch: "hammerToggledSwitch",
-};
-
-const SWITCH = "+";
-const HAMMER_SUIT = "3";
-
-const TILES = {
-  // grass
-  a: {
-    texture: "tiles/grass.png"
-  },
-  // dirt
-  b: {
-    texture: "tiles/dirt.png"
-  },
-  // clouds
-  c: {
-    texture: "tiles/cloud.png"
-  },
-  // ice
-  i: {
+/// <reference path="game.d.ts" />
+const GRASS_TILE = { texture: "tiles/grass.png" };
+const DIRT_TILE = { texture: "tiles/dirt.png" };
+const CLOUD_TILE = { texture: "tiles/cloud.png" };
+const STONE_TILE = { texture: "tiles/stone.png" };
+const DARK_STONE_TILE = { texture: "tiles/DarkStone.png" };
+const GOLD_TILE = { texture: "tiles/gold/png" };
+const IRON_TILE = { texture: "tiles/iron.png" };
+const GOLD_CARPET_TILE = { texture: "tiles/carpet.png" };
+const ICE_TILE = {
     texture: "tiles/ice.png",
-    special: SPECIALS.ice
-  },
-  // stone
-  s: {
-    texture: "tiles/stone.png"
-  },
-  // purple stone (darkstone)
-  p: {
-    texture: "tiles/DarkStone.png",
-  },
-  // fire suit
-  "1": {
-    texture: "suits/fire.png",
-    solid: false,
-    interactable: true,
-    interact: function(player, tile){
-      player.suit = SUITS.fire;
-      player.unlocked = player.suit;
-      tile.destroy();
-    }
-  },
-  // air suit
-  "2": {
-    texture: "suits/wind.png",
-    solid: false,
-    interactable: true,
-    interact: function(player, tile){
-      player.suit = SUITS.wind;
-      player.unlocked = player.suit;
-      tile.destroy();
-    }
-  },
-  // hammer suit
-  "3": {
-    texture: "suits/hammer.png",
-    solid: false,
-    interactable: true,
-    interact: function(player, tile){
-      player.suit = SUITS.hammer;
-      player.unlocked = player.suit;
-      tile.destroy();
-    },
-    special: SPECIALS.hammerSuit,
-  },
-  // coin
-  "@": {
+    tick: iceTick,
+    type: "ice",
+};
+const COIN_TILE = {
     texture: "tiles/coin/1.png",
-    solid: false,
-    animated: true,
-    framesPerAnimation: 4,
-    animationFrames: [
-      "tiles/coin/1.png",
-      "tiles/coin/2.png",
-      "tiles/coin/3.png",
-      "tiles/coin/4.png",
-      "tiles/coin/5.png",
-      "tiles/coin/6.png",
-      "tiles/coin/7.png",
-      "tiles/coin/8.png",
-      "tiles/coin/9.png",
-      "tiles/coin/10.png",
-      "tiles/coin/11.png",
-    ],
-    interactable: true,
-    interact: function(player, tile){
-      playSound(ALIASES.coin);
-      platforms.removeChild(tile);
-      player.coins[COINS.indexOf(level + 1)] = true;
-      tile.destroy();
+    animation: {
+        length: 5,
+        frames: [
+            "tiles/coin/1.png",
+            "tiles/coin/2.png",
+            "tiles/coin/3.png",
+            "tiles/coin/4.png",
+            "tiles/coin/5.png",
+            "tiles/coin/6.png",
+            "tiles/coin/7.png",
+            "tiles/coin/8.png",
+            "tiles/coin/9.png",
+            "tiles/coin/10.png",
+            "tiles/coin/11.png",
+        ],
     },
-  },
-  // switch controller
-  "#": {
+    solid: false,
+    tick: coinTick,
+};
+const FIRE_SUIT_TILE = {
+    texture: "tiles/suits/fire.png",
+    solid: false,
+    tick: function () {
+        return suitTick.call(this, FIRE_SUIT);
+    }
+};
+const CLOUD_SUIT_TILE = {
+    texture: "tiles/suits/wind.png",
+    solid: false,
+    tick: function () {
+        return suitTick.call(this, WIND_SUIT);
+    },
+};
+const HAMMER_SUIT_TILE = {
+    texture: "tiles/suits/wind.png",
+    solid: false,
+    tick: function () {
+        return suitTick.call(this, HAMMER_SUIT);
+    },
+};
+const SWITCH_DISPLAY_TILE = {
     texture: "tiles/switch.png",
-    special: SPECIALS.switch
-  },
-  // unactivated switch -- do not use!
-  "+": {
-    texture: "tiles/switch/off.png",
-    solid: false,
-    interactable: true,
-    interact: function(player, sprite){
-      if (!sprite.used){
-        sprite.used = true;
-        sprite.setTexture(textures["tiles/switch/on.png"]);
-        sprite.controller.setTexture(textures["tiles/switch/switch.png"]);
-        playSound(ALIASES.switch);
-        ++platforms.switchesActivated;
-        setTimeout(function(){
-          sprite.destroy();
-          playSound(ALIASES.switch2);
-        }, SWITCH_TIMEOUT);
-      }
-    },
-  },
-  // switch toggleable block
-  "$": {
-    texture: "tiles/switch/block/block.png",
-    special: SPECIALS.blockBreak,
-  },
-  // hammer toggled switch
-  "*": {
+    afterCreation: createSwitch,
+};
+const HAMMER_BLOCK_TILE = {
+    texture: "tiles/hblock/block.png",
+    type: "switchToggled",
+};
+const HAMMER_SWITCH_TILE = {
     texture: "tiles/hswitch/B.png",
-    animated: true,
-    framesPerAnimation: 10,
-    animationFrames: [
-      "tiles/hswitch/B.png",
-      "tiles/hswitch/Bs.png",
-    ],
-    special: SPECIALS.hammerSwitch,
-  },
-  // down spike
-  "V": {
-    texture: "tiles/spikes/Spikesd.png",
+    tick: hammerSwitch,
+    animation: {
+        frames: [
+            "tiles/hswitch/B.png",
+            "tiles/hswitch/Bs.png",
+        ],
+        length: 10,
+        condition: function () {
+            return !this["activated"];
+        }
+    },
+};
+const ON_SWITCH_TILE = {
+    texture: "tiles/switch/off.png",
+    tick: switchTick,
+    solid: false
+};
+const UP_SPIKE_TILE = {
+    texture: "tiles/spikes/up.png",
     solid: false,
-    interactable: true,
-    interact: function(player, block){
-      reset();
-    }
-  },
-  // up spike
-  "^": {
+    tick: spike
+};
+const DOWN_SPIKE_TILE = {
+    texture: "tiles/spikes/down.png",
     solid: false,
-    texture: "tiles/spikes/Spikes.png",
-    interactable: true,
-    interact: function(player, block){
-      reset();
-    }
-  }
+    tick: spike
+};
+const GUARD = {
+    texture: "",
+};
+const TILES = {
+    "A": GRASS_TILE,
+    "B": DIRT_TILE,
+    "C": CLOUD_TILE,
+    "S": STONE_TILE,
+    "I": ICE_TILE,
+    "R": GOLD_CARPET_TILE,
+    "G": GOLD_TILE,
+    "O": IRON_TILE,
+    "P": DARK_STONE_TILE,
+    "@": COIN_TILE,
+    "1": FIRE_SUIT_TILE,
+    "2": CLOUD_SUIT_TILE,
+    "3": HAMMER_SUIT_TILE,
+    "#": SWITCH_DISPLAY_TILE,
+    "$": HAMMER_BLOCK_TILE,
+    "*": HAMMER_SWITCH_TILE,
+    "+": ON_SWITCH_TILE,
+    "^": UP_SPIKE_TILE,
+    "V": DOWN_SPIKE_TILE,
 };

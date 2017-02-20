@@ -1,9 +1,12 @@
-const LEVELS = [
+/// <reference path="game.d.ts" />
+
+const LEVELS:string[][] = [
+  // 1, coin
   [
     "                            AA",
     "              A    AAAAA    BB",
     "          A   B     BBBB    BB",
-    "   A    AAB   B             BB",
+    "        AAB   B             BB",
     "       ABBB   BA          @ BB",
     "AAAAAAABBBBAAABBAAAAAAAAAAAABB",
     "B.",
@@ -11,6 +14,7 @@ const LEVELS = [
     "B.",
     "B.",
   ],
+  // 2, fire suit
   [ 
     "               1",
     "AA            AAA",
@@ -24,6 +28,7 @@ const LEVELS = [
     "B.",
     "B.",
   ],
+  // 3, coin, ice
   [
     "",
     "                        A.",
@@ -50,6 +55,7 @@ const LEVELS = [
     "B.",
     "B.",
   ],
+  // 4
   [
     "A",
     "B",
@@ -66,7 +72,7 @@ const LEVELS = [
     "B               SS    SSS",
     "B                     SSS",
     "B              S",
-    "",
+    "B",
     "",
     "             S",
     "AAAAA    SS",
@@ -75,6 +81,7 @@ const LEVELS = [
     "SSSSB",
     "SSSSS",
   ],
+  // 5, jump suit
   [
     "                             C",
     "                             C",
@@ -98,6 +105,7 @@ const LEVELS = [
     "                            C",
     "CCCC     CCCC   C   CCC    C  ",
   ],
+  // 6, ice
   [
     "C",
     "C",
@@ -129,6 +137,7 @@ const LEVELS = [
     "",
     "CCCC",
   ],
+  // 7, coin
   [
     "          @                  A",
     "        AAAAAA               B",
@@ -146,7 +155,9 @@ const LEVELS = [
     "            BB    B.",
     "CCCCCCCCCCC BB    B.",
   ],
+  // 8, hammer suit, hammer switch, switches
   [
+    "                             $",
     "                             $",
     "                             $",
     "                             $",
@@ -170,6 +181,7 @@ const LEVELS = [
     "SSSS                         $",
     "SSSS     CCC           #S    $",
   ],
+  // 9, hammer switches
   [
     "",
     "",
@@ -189,9 +201,35 @@ const LEVELS = [
     "   P.",
     " P.",
     "P.",
+  ],
+  // 10, spikes, new music
+  [
+    "       SS  SS",
+    "       SS  SSS",
+    "       SS  SSSSS",
+    "       SS  SSSSSSS",
+    "       SS  SSSSSSSSS",
+    "       SS  SSSSSSSSSSSS",
+    "       SS  SSSSSSSSSSSSSSS",
+    "       SS  SS   S.",
+    "       VV  SS   SSSSS",
+    "           SS ^",
+    "       SS  SS SSSSSSS S S S S",
+    "       SS  SS      SS^S S S S",
+    "       SS  SSSSSSS SSSS^S S S",
+    "       SS  SSSSSSS SSSSSS^S S",
+    "       SS  SSSSSSS SSSSSSSS^S",
+    "       SS  SSS   S SSSSSSSSSS^",
+    "       SS    V     S.",
+    "       SS      ^   S.",
+    "PPPPPPPSS^^SSSSSSP.",
+    "PPPPPPPSSSSSSSSSPPSP.",
+    "PPPPPPPSSSSSSP.",
+    "PPPPPPPPPPPPPPSP.",
+    "PPPPPPPPPPPPPPPPPSP.",
   ]
 ];
 
-for (let i = 0; i < LEVELS.length; i++){
-  LEVELS[i].reverse();
+for (let level of LEVELS){
+  level.reverse();
 }
