@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restricted Mode Bypass
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass
-// @version      1.5.2
+// @version      1.5.3
 // @description  "I like restricted mode!" -Said nobody ever.
 // @author       GarboMuffin
 // @match        https://www.youtube.com/watch*
@@ -11,6 +11,9 @@
 
 /*
 CHANGLOG:
+
+v1.5.3:
+ - I'm a stupid. (fixed some text)
 
 v1.5.2:
  - Fix some bugs and some small changes
@@ -209,8 +212,8 @@ function start(){
         hd: true
       });
     };
-    content.appendChild(TextNode(" [please try to minimize usage of this, thanks!]"));
     content.appendChild(el);
+    content.appendChild(TextNode(" [please try to minimize usage of this, thanks!]"));
   }else{
     try{
       document.getElementById("watch7-container").removeChild(document.getElementById("rmbvideo"));
