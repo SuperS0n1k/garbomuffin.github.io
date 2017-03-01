@@ -1,233 +1,235 @@
 // ==UserScript==
 // @name         Restricted Mode Bypass
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass
-// @version      1.5.3
+// @version      2.0
 // @description  "I like restricted mode!" -Said nobody ever.
 // @author       GarboMuffin
-// @match        https://www.youtube.com/watch*
+// @match        https://www.youtube.com/*
 // @downloadURL  https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass/restricted-mode-bypass.user.js
 // @updateURL    https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass/restricted-mode-bypass.meta.js
 // ==/UserScript==
 
-/*
-CHANGLOG:
+var quality = localStorage.RMBQuality || "highest";
+var width = localStorage.RMBWidth || 480;
+const SERVER = "https://stark-dawn-58632.herokuapp.com";
 
-v1.5.3:
- - I'm a stupid. (fixed some text)
+var qualities = [
+  "highest (recommended)", "720p", "360p (better audio)", "360p",
+];
+var qualityCodes = {
+  "highest (recommended)": "highest",
+  "720p": "22",
+  "360p (better audio)": "43",
+  "360p": "18",
+};
 
-v1.5.2:
- - Fix some bugs and some small changes
-
-v1.5.1:
- - Update download location.
-
-v1.5
- - Made it work again.
-
-v1.4.2:
- - Fix some random bugs.
- - Make it actually work again.
-
-v1.4.1:
- - I should actually test this on my school account.
-
-v1.4:
- - Rewrote a lot of stuff.
- - It will fix the gray controls on it's own now!
- - URL timecodes work.
- - Some other stuff I forgot.
-
-v1.3:
- - Fix some change introduced by YouTube.
-
-v1.2.1:
- - 10/10 description.
-
-v1.2:
- - No longer do you need to refresh to fix the gray controls!
-
-v1.1.4:
- - Hopefully made it work better.
-
-v1.0 - v1.1.3:
- - Honestly no idea.
-*/
-
-function Embed(meta){
-  var el = document.createElement("span");
-  el.id = "rmbvideo";
-  document.getElementById("watch7-container").appendChild(el);
-  
-  var video = document.getElementById("rmbvideo");
-
-  el = document.createElement("span");
-  el.id = "rmbstatus";
-  video.appendChild(el);
-  video.appendChild(document.createElement("br"));
-
-  el = document.createElement("span");
-  el.id = "rmbholder";
-  video.appendChild(el);
-  video.appendChild(document.createElement("br"));
-
-  document.getElementById("player").style.display = "none";
-  var tmp = document.getElementsByClassName("player-api");
-  for (i = 0; i < tmp.length; i++){
-    tmp[i].style.display = "none";
+function start(){
+  if (document.getElementById("unavailable-message")){
+    if (document.getElementById("rmb")) document.getElementById("rmb").style.display = "block";
+    document.getElementsByClassName("content")[0].appendChild(document.createElement("br"));
+    document.getElementsByClassName("content")[0].appendChild(button("Watch it anyway.", bypass));
   }
-  
-  Video(meta.hd);
-  video.appendChild(document.createElement("br"));
-
-  el = document.createElement("div");
-  el.id = "rmboptions";
-  video.appendChild(el);
-  rmboptions.appendChild(document.createElement("br"));
-
-  rmboptions.appendChild(TextNode("Not playing? Click "));
-  addOption("here", function(){
-    rmbholder.removeChild(rmbvel);
-    Video(meta.hd);
-  });
-  rmboptions.appendChild(TextNode("."));
-
-  rmboptions.appendChild(document.createElement("br"));
-
-  rmboptions.appendChild(TextNode("Change player size: "));
-  addOption("Grow", function(){
-    rmbvel.width = rmbvel.width + 50;
-    saveSettings();
-  });
-
-  rmboptions.appendChild(document.createTextNode(" - "));
-  addOption("Shrink", function(){
-    rmbvel.width = rmbvel.width - 50;
-    saveSettings();
-  });
-
-  rmboptions.appendChild(document.createTextNode(" - "));
-  addOption("Reset", function(){
-    rmbvel.width = 640;
-    localStorage.removeItem("RMBSavedWidth");
-  });
 }
 
-function Video(hd){
-  var el = document.createElement("video");
-  el.id = "rmbvel";
-
-  var videoId = "";
-  var time = "";
-  if (location.href.indexOf("#") == -1){
-    if (location.href.indexOf("t=") > -1){
-      time = "#t=" + location.href.split("t=")[1];
-      videoId = location.href.split("/")[3].split("?v=")[1].split("&t=")[0];
-    }else{
-      videoId = location.href.split("/")[3].split("?v=")[1];
-    }
-  }else{
-    if (location.href.indexOf("t=") > -1){
-      time = "#t=" + location.href.split("t=")[1].split("#")[0];
-      videoId = location.href.split("/")[3].split("?v=")[1].split("&t=")[0].split("#")[0];
-    }else{
-      videoId = location.href.split("/")[3].split("?v=")[1].split("#")[0];
-    }
-  }
-
-  if (hd){
-    el.src = "https://tranquil-scrubland-46327.herokuapp.com/http://www.youtubeinmp4.com/redirect.php?video=" + videoId + "&hd=1" + time;
-  }else{
-    el.src = "https://tranquil-scrubland-46327.herokuapp.com/http://www.youtubeinmp4.com/redirect.php?video=" + videoId + time;
-  }
-
-  el.setAttribute("autoplay", "autoplay");
-  el.setAttribute("controls", "controls");
-  var RMBSavedWidth = localStorage.RMBSavedWidth;
-  if (!isFinite(RMBSavedWidth)){
-    el.width = 640;
-  }else{
-    el.width = RMBSavedWidth;
-  }
-
-  rmbstatus.innerHTML = "Loading video... (can take some time)";
-  rmbholder.appendChild(el);
-
-  rmbvel.addEventListener("error", function(){
-    console.warn("err");
-    rmbholder.removeChild(rmbvel);
-    Video(hd);
-  });
-
-  rmbvel.addEventListener("canplay", function(){
-    rmbstatus.innerHTML = "Video playing started! If the video is more than 30 minutes long you may have to refresh to play every 30 minute segment. (untested)";
-  });
+function bypass(){
+  document.getElementById("page").style.display = "none";
+  document.getElementById("page-container").appendChild(container());
 }
 
-function makeButton(meta){
-  var el = document.createElement("a");
-  el.appendChild(document.createTextNode(meta.text));
-  el.href = "#";
-  el.onclick = function(){
-    Embed({
-      hd: meta.hd
-    });
-  };
+function container(){
+  var el = div("rmb");
+  el.style.marginLeft = "48px";
+  el.style.marginRight = "48px";
+  el.style.marginTop = "48px";
+  el.appendChild(element("h1", "", "Restricted Mode Bypass"));
+  el.innerHTML += "It's a little buggy, is technically against the YouTube TOS, but hey it works.<br>";
+  el.appendChild(div("rmbstatus", "Loading... (this can actually take a while)"));
+  el.appendChild(video());
+  el.appendChild(div("rmbmeta"));
+  el.appendChild(options());
   return el;
 }
 
-function TextNode(text){
+function div(id = "", text = ""){
+  return element("div", id, text);
+}
+
+function span(id = "", text = ""){
+  return element("span", id, text);
+}
+
+function input(onchange, id = "", value = ""){
+  var el = element("input", id);
+  el.onchange = onchange;
+  el.value = value;
+  return el;
+}
+
+function element(type, id = "", text = ""){
+  var el = document.createElement(type);
+  if (id) el.id = id;
+  if (text) el.innerHTML = text;
+  return el;
+}
+
+function br(){
+  return document.createElement("br");
+}
+
+function link(text, href, target = "_blank"){
+  var el = element("a", "", text);
+  el.href = href;
+  el.target = target;
+  return el;
+}
+
+function button(text, onclick){
+  var el = element("a", "", text);
+  el.onclick = onclick;
+  return el;
+}
+
+function text(text){
   return document.createTextNode(text);
 }
 
-function addOption(t, f){
-  var el = document.createElement("a");
-  el.appendChild(TextNode(t));
-  el.onclick = f;
-  rmboptions.appendChild(el);
-}
-
-function saveSettings(){
-  localStorage.RMBSavedWidth = rmbvel.width;
-}
-
-function start(){
-  "use strict";
-  if (document.getElementById("unavailable-message")){
-    var content = document.getElementsByClassName("content")[0];
-    var player = document.getElementById("player");
-    content.appendChild(document.createElement("br"));
-
-    var el = makeButton({
-      text: "Watch it anyway.",
-      hd: false
-    }); 
-    content.appendChild(el);
-    content.appendChild(TextNode(" "));
-
-    el = document.createElement("a");
-    el.appendChild(TextNode("(HD)"));
-    el.href = "#";
-    el.onclick = function(){
-      Embed({
-        hd: true
-      });
-    };
-    content.appendChild(el);
-    content.appendChild(TextNode(" [please try to minimize usage of this, thanks!]"));
-  }else{
-    try{
-      document.getElementById("watch7-container").removeChild(document.getElementById("rmbvideo"));
-    }catch(e){
-      console.warn("ehh?");
+function video(){
+  var el = document.createElement("video");
+  el.width = width;
+  // el.height = 360;
+  el.src = videoUrl();
+  el.autoplay = true;
+  el.controls = true;
+  el.id = "video";
+  el.addEventListener("error", function(err){
+    console.error(err);
+    if (video.currentTime === 0){
+      document.getElementById("video").src = videoUrl();
+    }else{
+      var a = document.createElement("a");
+      a.onclick = function(){
+        document.getElementById("video").src = videoUrl();
+      };
+      a.innerHTML = "Try to restart it.";
+      document.getElementById("rmbstatus").innerHTML = `An error occured while playing the video. `;
+      document.getElementById("rmbstatus").appendChild(a);
     }
+  });
+  el.addEventListener("canplay", function(){
+    document.getElementById("rmbstatus").innerHTML = "Everything seems to be working, video should start playing.";
+    videoMeta(videoId());
+  });
+  return el;
+}
+
+function videoId(){
+  return location.search.match(/(v=([^#\&\?]*))/)[2];
+}
+
+function videoMeta(id){
+  var el = document.getElementById("rmbmeta");
+  fetch(`${SERVER}/info?v=${id}`).then(function(res){
+    return res.json();
+  }).then(function(json){
+    // sometimes the json can be empty, i really don't know why
+    var a = link(json.author.name, json.author.url);
+
+    el.appendChild(element("h1", "", json.title));
+    el.appendChild(text(`Uploaded on ${new Date(json.date).toLocaleString()} by `));
+    el.appendChild(a);
+
+    if (json.views){
+      a = span("", json.views);
+      a.style.paddingLeft = "100px";
+      el.appendChild(a);
+    }
+    el.appendChild(br());
+
+    a = button("Show description.", function(){
+      textarea.style.display = "block";
+      this.style.display = "none";
+    });
+    var textarea = element("textarea", "rmbdesc");
+    textarea.value = json.description;
+    textarea.style.display = "none";
+    textarea.setAttribute("readonly", "readonly");
+    // FIXME: Size issues
+
+    el.appendChild(a);
+    el.appendChild(textarea);
+
+  }).catch(function(err){
+    el.innerHTML = "Failed to load video metadata. ";
+    el.appendChild(button("Try again", function(){
+      videoMeta(videoId());
+    }));
+    console.error(err);
+  });
+}
+
+function check(){
+  if (location.href.indexOf("v=") > -1){
+    if (url != location.href){
+      url = location.href;
+      start();
+    }
+  }else{
+    document.getElementById("page").style.display = "block";
+    if (document.getElementById("rmb")) document.getElementById("rmb").style.display = "none";
   }
 }
 
-// thanks youtube
-var oldUrl = "";
-setInterval(function(){
-  if (oldUrl != location.href){
-	  oldUrl = location.href;
-    start();
+function options(){
+  var el = div();
+  el.appendChild(br());
+  var select = document.createElement("select");
+
+  // quality
+  select.id = "a";
+  select.onchange = function(){
+    var value = this.value;
+    quality = qualityCodes[value];
+    localStorage.RMBQuality = quality;
+    document.getElementById("video").src = videoUrl();
+  };
+  for (let value of qualities){
+    var option = document.createElement("option");
+    option.innerHTML = value;
+    option.value = value;
+    if (qualityCodes[value] === quality) option.setAttribute("selected", "selected");
+    select.appendChild(option);
   }
-}, 1000);
+  el.innerHTML += "Quality: ";
+  el.appendChild(select);
+  el.appendChild(text(" (changes will restart the video and can take a while)"));
+  el.appendChild(br());
+
+  // width
+  el.appendChild(text("Player size: "));
+  el.appendChild(button("Grow", function(){
+    width += 10;
+    document.getElementById("video").width = width;
+    localStorage.RMBWidth = width;
+  }));
+  el.appendChild(text(" "));
+  el.appendChild(button("Shrink", function(){
+    if (width > 100) width -= 10;
+    document.getElementById("video").width = width;
+    localStorage.RMBWidth = width;
+  }));
+  el.appendChild(text(" "));
+  el.appendChild(button("Reset", function(){
+    width = 480;
+    document.getElementById("video").width = width;
+    localStorage.RMBWidth = width;
+  }));
+  return el;
+}
+
+function videoUrl(){
+  return `${SERVER}/download?v=${videoId()}&quality=${quality}`;
+}
+
+var url = "";
+check();
+setInterval(check, 1000);
