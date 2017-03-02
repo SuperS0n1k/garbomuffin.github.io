@@ -69,6 +69,14 @@ const ASSET_LIST = [
     "tiles/gold.png",
     "tiles/iron.png",
     "tiles/carpet.png",
+    "guard/still.png",
+    "guard/stilldie.png",
+    "guard/run1.png",
+    "guard/run2.png",
+    "guard/run3.png",
+    "guard/run4.png",
+    "tiles/ironWhite.png",
+    "tiles/carpetWhite.png",
 ];
 var totalAssets = ASSET_LIST.length;
 var loadedAssets = 0;

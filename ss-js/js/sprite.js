@@ -13,8 +13,6 @@ class Sprite {
      */
     constructor(options) {
         this.options = options;
-        this.destroy = this.delete;
-        this.offView = this.offScreen;
         this.texture = loadImage(options.texture);
         this.x = options.x;
         this.y = options.y;
@@ -76,16 +74,20 @@ class Sprite {
         if (options.afterCreation) {
             options.afterCreation.call(this);
         }
+        if (options.init) {
+            options.init.call(this);
+        }
+        if (options.destroy) {
+            this.afterDestroy = options.destroy;
+        }
         // TODO: Better way to do this.
-        if (options.type)
-            this.type = options.type;
-        if (options.type === "ice") {
-            ice.add(this);
-        }
-        else if (options.type === "switchToggled") {
-            this.creationLevel = level;
-            switchToggled.add(this);
-        }
+        // if (options.type) this.type = options.type;
+        // if (options.type === "ice"){
+        //   ice.add(this);
+        // }else if (options.type === "switchToggled"){
+        //   this.creationLevel = level;
+        //   switchToggled.add(this);
+        // }
         sprites.append(this);
     }
     animate() {
@@ -129,7 +131,7 @@ class Sprite {
      *
      * @memberOf Sprite
      */
-    delete() {
+    destroy() {
         sprites.splice(sprites.indexOf(this), 1);
         if (this.animated) {
             animated.splice(animated.indexOf(this), 1);
@@ -143,6 +145,8 @@ class Sprite {
             if (index > -1)
                 container.splice(index, 1);
         }
+        if (this.afterDestroy)
+            this.afterDestroy.call(this);
     }
     get texture() {
         return this._texture;
@@ -246,6 +250,22 @@ class Player extends NonSolidSprite {
         this.activatedSwitches = 0;
         this.allSwitchesActivated = false;
         this.frame = 0;
+        this.killedGuards = 0;
+        var totalSwitches = LEVELS[level].join("").match(/#/g);
+        if (totalSwitches)
+            this.totalSwitches = totalSwitches.length;
+        var totalGuards = LEVELS[level].join("").match(/!/g);
+        if (totalGuards)
+            this.totalGuards = totalGuards.length;
+    }
+    reset() {
+        this.y = HEIGHT - 1;
+        this.x = 0;
+        this.xv = 0;
+        this.yv = 0;
+        while (this.touchingGround()) {
+            this.y--;
+        }
     }
 }
 class PlayerGraphic extends NonSolidSprite {

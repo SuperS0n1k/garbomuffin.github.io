@@ -4,13 +4,15 @@ const DIRT_TILE = { texture: "tiles/dirt.png" };
 const CLOUD_TILE = { texture: "tiles/cloud.png" };
 const STONE_TILE = { texture: "tiles/stone.png" };
 const DARK_STONE_TILE = { texture: "tiles/DarkStone.png" };
-const GOLD_TILE = { texture: "tiles/gold/png" };
+const GOLD_TILE = { texture: "tiles/gold.png" };
 const IRON_TILE = { texture: "tiles/iron.png" };
 const GOLD_CARPET_TILE = { texture: "tiles/carpet.png" };
+const WHITE_IRON = { texture: "tiles/ironWhite.png" };
+const WHITE_CARPET = { texture: "tiles/carpetWhite.png" };
 const ICE_TILE = {
     texture: "tiles/ice.png",
     tick: iceTick,
-    type: "ice",
+    init: iceInit,
 };
 const COIN_TILE = {
     texture: "tiles/coin/1.png",
@@ -60,7 +62,7 @@ const SWITCH_DISPLAY_TILE = {
 };
 const HAMMER_BLOCK_TILE = {
     texture: "tiles/hblock/block.png",
-    type: "switchToggled",
+    init: switchToggledInit,
 };
 const HAMMER_SWITCH_TILE = {
     texture: "tiles/hswitch/B.png",
@@ -72,7 +74,7 @@ const HAMMER_SWITCH_TILE = {
         ],
         length: 10,
         condition: function () {
-            return !this["activated"];
+            return !this.activated;
         }
     },
 };
@@ -92,7 +94,13 @@ const DOWN_SPIKE_TILE = {
     tick: spike
 };
 const GUARD = {
-    texture: "",
+    texture: "guard/still.png",
+    tick: guard,
+    destroy: guardDestroy,
+};
+const SLIDING_IRON_DOOR = {
+    texture: "tiles/iron.png",
+    tick: slidingDoor,
 };
 const TILES = {
     "A": GRASS_TILE,
@@ -104,6 +112,8 @@ const TILES = {
     "G": GOLD_TILE,
     "O": IRON_TILE,
     "P": DARK_STONE_TILE,
+    "Z": WHITE_IRON,
+    "Y": WHITE_CARPET,
     "@": COIN_TILE,
     "1": FIRE_SUIT_TILE,
     "2": CLOUD_SUIT_TILE,
@@ -114,4 +124,6 @@ const TILES = {
     "+": ON_SWITCH_TILE,
     "^": UP_SPIKE_TILE,
     "V": DOWN_SPIKE_TILE,
+    "!": GUARD,
+    "|": SLIDING_IRON_DOOR,
 };

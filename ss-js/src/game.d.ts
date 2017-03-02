@@ -1,7 +1,9 @@
 interface Tile{
   texture: HTMLImageElement|string,
   tick?(diff?: number): boolean|void,
-  type?: string,
+  // type?: string,
+  init?(): void,
+  destroy?(): void,
   animation?: AnimationOptions,
   solid?: boolean,
   afterCreation?(): void,

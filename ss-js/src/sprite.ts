@@ -5,7 +5,7 @@
  * 
  * @class Sprite
  */
-class Sprite {
+class Sprite{
   /**
    * Creates an instance of Sprite.
    * @param {SpriteOptions} options 
@@ -76,14 +76,22 @@ class Sprite {
       options.afterCreation.call(this);
     }
 
-    // TODO: Better way to do this.
-    if (options.type) this.type = options.type;
-    if (options.type === "ice"){
-      ice.add(this);
-    }else if (options.type === "switchToggled"){
-      this.creationLevel = level;
-      switchToggled.add(this);
+    if (options.init){
+      options.init.call(this);
     }
+
+    if (options.destroy){
+      this.afterDestroy = options.destroy;
+    }
+
+    // TODO: Better way to do this.
+    // if (options.type) this.type = options.type;
+    // if (options.type === "ice"){
+    //   ice.add(this);
+    // }else if (options.type === "switchToggled"){
+    //   this.creationLevel = level;
+    //   switchToggled.add(this);
+    // }
 
     sprites.append(this);
   }
@@ -95,6 +103,14 @@ class Sprite {
   public rotation: number
   public visible: boolean
   public solid: boolean
+  public animation: AnimationOptions
+  public frame?: number
+  public animationFrame?: number
+  public readonly creationLevel?: number
+
+  protected tickable: boolean
+  protected animated: boolean
+  protected _texture: HTMLImageElement;
 
   protected animate(): void {
     // if the condition exists and returns false, return
@@ -141,7 +157,7 @@ class Sprite {
    * 
    * @memberOf Sprite
    */
-  public delete(): void {
+  public destroy(): void {
     sprites.splice(sprites.indexOf(this), 1);
     if (this.animated){
       animated.splice(animated.indexOf(this), 1);
@@ -155,8 +171,10 @@ class Sprite {
       let index = container.indexOf(this);
       if (index > -1) container.splice(index, 1);
     }
+
+    if (this.afterDestroy) this.afterDestroy.call(this);
   }
-  public destroy = this.delete;
+  public afterDestroy?(): void
   public tick?(diff?: number): boolean|void
 
   public get texture(): HTMLImageElement {
@@ -182,7 +200,6 @@ class Sprite {
       this.y + this.height < 0 ||
       this.y > HEIGHT;
   }
-  public offView = this.offScreen;
 
   public touchingGroup(group: Container, xOffset: 0, yOffset: 0): boolean{
     for (let sprite of group){
@@ -211,17 +228,6 @@ class Sprite {
       this.y < sprite.y + sprite.height + yOffset &&
       this.y + this.height + yOffset > sprite.y;
   }
-
-  protected tickable: boolean
-  protected animated: boolean
-  protected _texture: HTMLImageElement;
-
-  public animation: AnimationOptions
-  public frame?: number
-  public animationFrame?: number
-
-  protected creationLevel?: number
-  protected type: string;
 }
 
 /**
@@ -268,6 +274,20 @@ class Switch extends Block{
 class Player extends NonSolidSprite{
   public constructor(options: SpriteOptions){
     super(options);
+    var totalSwitches = LEVELS[level].join("").match(/#/g);
+    if (totalSwitches) this.totalSwitches = totalSwitches.length;
+    var totalGuards = LEVELS[level].join("").match(/!/g);
+    if (totalGuards) this.totalGuards = totalGuards.length;
+  }
+
+  public reset(){
+    this.y = HEIGHT - 1;
+    this.x = 0;
+    this.xv = 0;
+    this.yv = 0;
+    while (this.touchingGround()){
+      this.y--;
+    }
   }
 
   public visible: boolean = false
@@ -285,6 +305,8 @@ class Player extends NonSolidSprite{
   public activatedSwitches: number = 0
   public allSwitchesActivated: boolean = false
   public frame:number = 0
+  public totalGuards:number
+  public killedGuards:number = 0
 }
 
 class PlayerGraphic extends NonSolidSprite{

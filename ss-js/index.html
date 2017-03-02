@@ -37,11 +37,16 @@
 
       <div class="alert alert-danger hidden" id="outputHolder">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <strong>Uh Oh</strong> <span id="output">You shouldn't be seeing this!</span> <a href="#" onclick="loop();">Click here to try to restart it.</a>
+        <strong>Uh Oh</strong> <span id="output"></span> <a href="#" onclick="loop();">Click here to try to restart it.</a>
+      </div>
+
+      <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Can't see the player?</strong> Try presing the <code>Reset</code> button a few times.
       </div>
 
       <canvas id="canvas"></canvas>
-      <button class="btn btn-default" onclick="renderLevel();">Reset LVL</button>
+      <button class="btn btn-default" onclick="renderLevel();">Reset</button>
       <button class="btn btn-default" onclick="level++;renderLevel();">Next Level</button>
       <button class="btn btn-default" onclick="level--;renderLevel();">Prev Level</button>
       <button class="btn btn-default" onclick="currentSuit=1;unlockedSuits=1;">Fire Suit</button>
@@ -63,10 +68,10 @@
         <li>Slight optimizations to <s>ice</s> any updating block</li>
         <li title="Maybe they work, maybe they don't. I really don't know.">Layers</li>
         <li title="It's literally just changing 3 variables until it feels the same as the original.">Physics are little weird, but they are mostly done.</li>
-        <li><s>I'm supposed to be making a game but this one bug keeps kicking my ass...</s> OMG I'M SO STUPID</li>
         <li><s>Animations that change in size</s> Basically any animation</li>
-        <li>Text (probably just going to use a generic monospace font)</li>
-        <li>Any levels past the one with spikes. (going past it will crash the game)</li>
+        <li>Text (probably just going to use a generic monospace font)</li> 
+        <li>Any flashes or stuff like that</li>
+        <li>The ending</li>
       </ul>
     </div>
 

@@ -5,14 +5,16 @@ const DIRT_TILE:Tile = {texture: "tiles/dirt.png"};
 const CLOUD_TILE:Tile = {texture: "tiles/cloud.png"};
 const STONE_TILE:Tile = {texture: "tiles/stone.png"};
 const DARK_STONE_TILE:Tile = {texture: "tiles/DarkStone.png"};
-const GOLD_TILE:Tile = {texture: "tiles/gold/png"};
+const GOLD_TILE:Tile = {texture: "tiles/gold.png"};
 const IRON_TILE:Tile = {texture: "tiles/iron.png"};
 const GOLD_CARPET_TILE:Tile = {texture: "tiles/carpet.png"};
+const WHITE_IRON:Tile = {texture: "tiles/ironWhite.png"};
+const WHITE_CARPET:Tile = {texture: "tiles/carpetWhite.png"};
 
 const ICE_TILE:Tile = {
   texture: "tiles/ice.png",
   tick: iceTick,
-  type: "ice",
+  init: iceInit,
 };
 const COIN_TILE:Tile = {
   texture: "tiles/coin/1.png",
@@ -62,7 +64,7 @@ const SWITCH_DISPLAY_TILE:Tile = {
 };
 const HAMMER_BLOCK_TILE:Tile = {
   texture: "tiles/hblock/block.png",
-  type: "switchToggled",
+  init: switchToggledInit,
 };
 const HAMMER_SWITCH_TILE:Tile = {
   texture: "tiles/hswitch/B.png",
@@ -74,7 +76,7 @@ const HAMMER_SWITCH_TILE:Tile = {
     ],
     length: 10,
     condition: function(){
-      return !this["activated"];
+      return !this.activated;
     }
   },
 };
@@ -94,8 +96,14 @@ const DOWN_SPIKE_TILE:Tile = {
   tick: spike
 };
 const GUARD:Tile = {
-  texture: "",
-}
+  texture: "guard/still.png",
+  tick: guard,
+  destroy: guardDestroy,
+};
+const SLIDING_IRON_DOOR:Tile = {
+  texture: "tiles/iron.png",
+  tick: slidingDoor,
+};
 
 const TILES = {
   "A": GRASS_TILE,
@@ -107,6 +115,8 @@ const TILES = {
   "G": GOLD_TILE,
   "O": IRON_TILE,
   "P": DARK_STONE_TILE,
+  "Z": WHITE_IRON,
+  "Y": WHITE_CARPET,
   "@": COIN_TILE,
   "1": FIRE_SUIT_TILE,
   "2": CLOUD_SUIT_TILE,
@@ -117,4 +127,6 @@ const TILES = {
   "+": ON_SWITCH_TILE,
   "^": UP_SPIKE_TILE,
   "V": DOWN_SPIKE_TILE,
+  "!": GUARD,
+  "|": SLIDING_IRON_DOOR,
 };

@@ -1,4 +1,5 @@
 /// <reference path="game.d.ts" />
+/// GAME FUNCTIONS
 /**
  * A few things I want to say:
  * The comment below this and above the start() function is only there so that this comment does not become the "documentation" associated with it
@@ -71,7 +72,7 @@ function render() {
 function reset() {
     // delete all containers and their containing sprites
     for (let container of containers) {
-        container.delete();
+        container.destroy();
     }
     // containers, sprites occur later
     sprites = new Container();
@@ -82,6 +83,7 @@ function reset() {
     ice = new Container();
     blocks = new Container();
     switchToggled = new Container();
+    // clear the interval
     clearInterval(iceInterval);
     iceInterval = null;
 }
@@ -97,6 +99,7 @@ function createSprites() {
         y: HEIGHT - 1,
         tick: playerUpdate
     });
+    player.reset();
     graphic = new PlayerGraphic({
         texture: "player/still.png",
         x: player.x,
@@ -153,13 +156,6 @@ function renderLevel() {
         }
     }
     createSprites();
-    var totalSwitches = LEVELS[level].join("").match(/#/g);
-    if (totalSwitches)
-        player.totalSwitches = totalSwitches.length;
-    resetPlayer.call(player); // probably should be moved
-    // TODO: Platforms get their own canvas
-    // for (let block of blocks){
-    // }
 }
 function spawnBlock(x, y, meta, constructor = Sprite) {
     // really stupid workarounds that somehow work
@@ -168,6 +164,7 @@ function spawnBlock(x, y, meta, constructor = Sprite) {
     var sprite = new Block(meta);
     return sprite;
 }
+/// SPRITE TICKS + THEIR FUNCTIONS
 function playerUpdate(diff) {
     this.frame++;
     this.updated = false;
@@ -288,7 +285,7 @@ function playerUpdate(diff) {
         this.x = 0;
     }
     if (this.y > HEIGHT) {
-        resetPlayer.call(this);
+        this.reset();
     }
     if (this.x > WIDTH) {
         level++;
@@ -308,16 +305,6 @@ function playerUpdate(diff) {
         else {
             console.warn(`Switch behavior for this level is undefined! (current level=${level})`);
         }
-    }
-}
-/**
- * Reset the player
- */
-function resetPlayer() {
-    this.y = HEIGHT - 1;
-    this.x = 0;
-    while (this.touchingGround()) {
-        this.y--;
     }
 }
 function showPlayer() {
@@ -361,13 +348,13 @@ function showSuit() {
 }
 function coinTick() {
     if (this.touchingPlayer()) {
-        this.delete();
+        this.destroy();
         playSound("click");
     }
 }
 function suitTick(suit) {
     if (this.touchingPlayer()) {
-        this.delete();
+        this.destroy();
         currentSuit = suit;
         unlockedSuits = currentSuit;
     }
@@ -378,7 +365,7 @@ function fireball() {
     this.x += this.dir * FIREBALL_SPEED;
     if (this.onEdge()) {
         player.projectiles--;
-        this.delete();
+        this.destroy();
         return false;
     }
     if (this.touchingGround()) {
@@ -393,7 +380,7 @@ function hammer() {
     this.x += this.dir * HAMMER_SPEED;
     if (this.offScreen()) {
         player.projectiles--;
-        this.delete();
+        this.destroy();
         return false;
     }
 }
@@ -430,14 +417,14 @@ function switchTick() {
 }
 /**
  * Usage: deleteSprite.bind(this)
- *
+ * (only because creating functions in loops is a bad idea or something)
  */
 function deleteSprite() {
     if (typeof this.creationLevel !== "undefined" && this.creationLevel !== level) {
         // level changed since it was set to delete, so abandon
         return;
     }
-    this.delete();
+    this.destroy();
 }
 function clearIce() {
     var top = HEIGHT;
@@ -454,7 +441,7 @@ function clearIce() {
     if (highest.length > 0) {
         playSound("ice");
         for (let block of highest) {
-            block.delete();
+            block.destroy();
         }
     }
     else {
@@ -479,15 +466,46 @@ function hammerSwitch() {
         this.activated = true; // disable animation
         // there's only ever 1 hammer switch in a level so activate the thing now
         if (level === 7 || level === 8) {
-            switchToggled.delete();
+            switchToggled.destroy();
         }
         else {
-            console.warn(`No hammer switch behavior is defined for this level! (current level=${level})`);
+            console.warn(`No hswitch behavior is defined for this level! (current level=${level})`);
         }
     }
 }
 function spike() {
     if (this.touchingPlayer(0, -1)) {
-        resetPlayer.call(player);
+        player.reset();
     }
+}
+function slidingDoor() {
+    if (player.killedGuards === player.totalGuards) {
+        // if all guards are dead, move up
+        this.y -= DOOR_MOVE_SPEED;
+        // and if hidden behind blocks, delete
+        if (!this.touchingGround(0, BLOCK_HEIGHT)) {
+            this.destroy();
+        }
+    }
+}
+function guard() {
+    if (this.touchingPlayer())
+        player.reset();
+    if (level === 10 && this.touchingGroup(fireballs)) {
+        this.destroy();
+    }
+}
+/// INIT FUNCTIONS
+function iceInit() {
+    ice.add(this);
+}
+function switchInit() {
+    this.creationLevel = level;
+}
+function switchToggledInit() {
+    switchToggled.add(this);
+}
+/// DESTROY FUNCTIONS
+function guardDestroy() {
+    player.killedGuards++;
 }

@@ -45,13 +45,10 @@ class Container {
     return this.children.indexOf.apply(this.children, arguments)
   };
 
-  public delete(deleteChildren = true): void {
+  public destroy(deleteChildren = true): void {
     if (deleteChildren){
-      // for (let sprite of this.children){
-      //   sprite.delete();
-      // }
       while (this.children[0]){
-        this.children[0].delete();
+        this.children[0].destroy();
       }
     }
     containers.splice(containers.indexOf(this), 1);
