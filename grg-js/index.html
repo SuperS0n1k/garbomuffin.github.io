@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css">
+    <style>
+      canvas{
+        display: block;
+      }
+      .hidden{
+        display: none;
+      }
+      a{
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>grg-js <small>alpha</small></h1>
+      </div>
+
+      <div class="alert alert-danger hidden" id="crash-msg">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Uh Oh...</strong> The game crashed with the following error message:
+        <code id="error-msg" class=""></code>
+        <a onclick="attemptResume();">Click here to try to resume.</a>
+        <span class="hidden" id="restart-fail">Failed to resume. Please tell me what you did to break it and refresh this tab.</span>
+      </div>
+
+      <div class="alert alert-success hidden" id="restart-success">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Success! (probably)</strong> The game seems to have resumed with an error, so it is probably working now!
+      </div>
+
+      <p>
+        <a href="https://scratch.mit.edu/projects/120104406/">The original</a> by
+        <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a>.
+        That is where the assets and ideas are from.
+      </p>
+      <p>FPS meter provided by <a href="https://github.com/mrdoob/stats.js/">stats.js</a></p>
+
+      <canvas id="canvas"></canvas>
+      <button class="btn btn-default" onclick="nextLevel();">Next Level</button>
+      <button class="btn btn-default" onclick="level--;level--;nextLevel();">Prev Level</button> <!-- hey i mean it's stupid but it works-->
+      <button class="btn btn-default" onclick="reset();">Reset Level</button>
+
+      <p>Notice how this is in <b>ALPHA</b>. That means things are not done. For example:</p>
+
+      <ul>
+        <li>I am aware you can jump while touching the ceilling. Very aware.</li>
+        <li>"Enemies" suck.</li>
+        <li>No animations.</li>
+        <li>Particles are less than stellar. (they use workaround after workaround)</li>
+        <li>No audio.</li>
+        <li>Only the first 3 levels are implemented.</li>
+      </ul>
+    </div>
+
+    <!--<script src="dist/grg.js"></script>-->
+    <script src="js/stats.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/container.js"></script>
+    <script src="js/sprite.js"></script>
+    <script src="js/crash.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/assets.js"></script>
+    <script src="js/tiles.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/bs.js" defer></script>
+  </body>
+</html>
