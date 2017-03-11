@@ -17,6 +17,7 @@ SendMode Input
 CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 
+; ctrl+m === start
 ^m::
 MouseMove, 652, 406
 MouseGetPos, ireallydontcareaboutthexcoordinate, topy
@@ -47,8 +48,8 @@ loop
 	}
 }
 
-; Reloading
+; ctrl+shift+r === reload
 ^!r::Reload
 
-; Exiting
+; ctrl+shift+e === stop
 ^!e::ExitApp
