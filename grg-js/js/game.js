@@ -9,6 +9,7 @@ function loop() {
     requestAnimationFrame(loop);
 }
 function render() {
+    // sprites.sort()
     ctx.drawImage(gradientCanvas, 0, 0);
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
     for (let sprite of sprites) {
@@ -16,14 +17,26 @@ function render() {
     }
 }
 function reset() {
-    sprites = new Container();
-    updatable = new Container();
-    blocks = new Container();
-    projectiles = new Container();
+    // use a really weird thing to delete sprites for reasons.
+    var length = sprites.length;
+    var index = 0;
+    for (let i = 0; i < length; i++) {
+        var sprite = sprites.get(index);
+        if (!sprite.persistent)
+            sprite.destroy();
+        else
+            index++;
+    }
     renderLevel();
-    player = new PlayerHitbox();
-    new PlayerGraphic();
-    createHealthBar();
+    sprites.sort();
+    player.reset();
+}
+/**
+ * Sorts sprites by putting those with a higher zIndex towards the end.
+ * (they will render on top)
+ */
+function spriteSort(a, b) {
+    return a.zIndex - b.zIndex;
 }
 function createHealthBar() {
     var id = 0;
@@ -37,6 +50,9 @@ function createHealthBar() {
         });
         y -= 2;
     }
+}
+function playerDamage() {
+    new HitStun();
 }
 function nextLevel() {
     level++;
@@ -91,6 +107,10 @@ function spawnParticle(particle, center, x, y) {
 function start() {
     reset();
     state = play;
+    // create sprites
+    createHealthBar();
+    new PlayerGraphic();
+    // time to start
     loop();
 }
 function play() {

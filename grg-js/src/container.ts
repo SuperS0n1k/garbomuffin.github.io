@@ -14,6 +14,15 @@ class Container{
   public indexOf(...args){
     return this.children.indexOf.apply(this.children, args);
   }
+  public sort(compareFunction = spriteSort){
+    return this.children.sort(compareFunction);
+  }
+  public get length(){
+    return this.children.length;
+  }
+  public get(id){
+    return this.children[id];
+  }
 
   public *[Symbol.iterator](){
     for (let sprite of this.children){

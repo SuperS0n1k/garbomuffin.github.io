@@ -1,6 +1,4 @@
-// Crash handling.
-
-// TODO: crash handling
+// Crash handling
 window.onerror = function(e: any){
   document.getElementById("error-msg").innerText = e.toString();
   document.getElementById("crash-msg").style.cssText += "display: block !important;";

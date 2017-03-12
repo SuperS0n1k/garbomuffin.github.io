@@ -1,12 +1,15 @@
 const ASSET_LIST: string[] = [
   "tiles/grass.png",
   "tiles/dirt.png",
+  "tiles/unknown.png",
   "tiles/box/1.png",
   "tiles/box/2.png",
   "tiles/box/3.png",
   "tiles/arrow.png",
+  "tiles/upgrade.png",
   "health/bar.png",
   "health/empty.png",
+  "player/stun.png",
   "player/still.png",
   "bullet/bullet.png",
   "particle/break.png",
@@ -15,6 +18,8 @@ const ASSET_LIST: string[] = [
   "particle/grahm.png",
   "particle/airhorn.png",
   "enemy/face.png",
+  "enemy/face2.png",
+  "enemy/faceproj.png",
 ];
 const ASSETS = {};
 var loadedAssets = 0;

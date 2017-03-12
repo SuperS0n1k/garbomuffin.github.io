@@ -98,3 +98,6 @@ $RECYCLE.BIN/
 *.ogg
 *.mp3
 *.wav
+
+# personal things
+timelog

@@ -12,6 +12,15 @@ class Container {
     indexOf(...args) {
         return this.children.indexOf.apply(this.children, args);
     }
+    sort(compareFunction = spriteSort) {
+        return this.children.sort(compareFunction);
+    }
+    get length() {
+        return this.children.length;
+    }
+    get(id) {
+        return this.children[id];
+    }
     *[Symbol.iterator]() {
         for (let sprite of this.children) {
             yield sprite;

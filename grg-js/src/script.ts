@@ -16,19 +16,22 @@ gradient.addColorStop(1, "#d8d8d8");
 ctx.fillStyle = gradient;
 
 var level = 0;
+var maxSpeed = MAX_SPEED; // upgrades can change this
 
 var state: () => void = start;
 
 var keys:boolean[] = [];
 var containers:Container[] = [];
-var sprites: Container
-var blocks: Container
-var updatable: Container
-var projectiles: Container
-var player: PlayerHitbox
+var sprites = new Container();
+var blocks = new Container();
+var updatable = new Container();
+var projectiles = new Container();
+var enemies = new Container();
+var player = new PlayerHitbox();
 
+// fps meter
 var stats = new Stats();
-stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+stats.showPanel(0);
 document.body.appendChild(stats.dom);
 
 var loadInterval = setInterval(function(){

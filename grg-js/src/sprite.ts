@@ -9,6 +9,8 @@ interface SpriteOptions {
   solid?: boolean
   frameUpdate?: () => void
   rotation?: number
+  persistent?: boolean
+  zIndex?: number
 }
 
 interface SpriteScale {
@@ -20,10 +22,6 @@ interface ProjectileOptions extends SpriteOptions {
   direction: number
 }
 
-interface EnemyOptions extends SpriteOptions {
-  damage: number
-}
-
 interface HealthTickOptions extends SpriteOptions {
   id: number
 }
@@ -33,26 +31,25 @@ interface HealthTickOptions extends SpriteOptions {
 class Sprite {
   public constructor(options?: SpriteOptions){
     if (typeof options.visible === "boolean") this.visible = options.visible;
+    if (typeof options.persistent === "boolean") this.persistent = options.persistent;
     if (typeof options.solid === "boolean") this.solid = options.solid;
-    if (this.visible){
-      this.texture = options.texture;
-    }
+
+    if (options.texture instanceof HTMLImageElement) this.texture = options.texture;
 
     if (isNumber(options.width) && options.width > 0) this.width = options.width;
     else if (this.texture) this.width = this.texture.width;
+    
     if (isNumber(options.height) && options.height > 0) this.height = options.height;
     else if (this.texture) this.height = this.texture.height;
+    if (isNumber(options.zIndex)) this.zIndex = options.zIndex;
+    if (isNumber(options.rotation)) this.rotation = options.rotation
 
     if (options.center instanceof Sprite){
-      var center = options.center;
-      this.x = center.x + (center.width / 2) - (this.width / 2);
-      this.y = center.y + (center.height / 2) - (this.height / 2);
+      this.center(options.center);
     }else{
       if (isNumber(options.x)) this.x = options.x;
       if (isNumber(options.y)) this.y = options.y;
     }
-    
-    if (isNumber(options.rotation)) this.rotation = options.rotation
 
     if (typeof options.frameUpdate === "function"){
       this.frameUpdate = options.frameUpdate.bind(this);
@@ -72,6 +69,8 @@ class Sprite {
   protected _visible: boolean = true
   protected _solid: boolean = true
   protected _rotation: number = 0
+  protected _zIndex: number = 0
+  public readonly persistent: boolean = false
   protected _scale: SpriteScale = {
     x: 1,
     y: 1,
@@ -79,9 +78,13 @@ class Sprite {
 
   public frameUpdate?(): void
 
+  public center(sprite: Sprite){
+    this.x = sprite.x + (sprite.width / 2) - (this.width / 2);
+    this.y = sprite.y + (sprite.height / 2) - (this.height / 2);
+  }
   public render(){
     if (!this.visible) return;
-    var scale = this.scale.x || this.scale.y;
+    var scale = this.scale.x !== 1 || this.scale.y !== 1;
     var rotation = this.rotation;
     if (scale || rotation){
       ctx.save();
@@ -104,11 +107,26 @@ class Sprite {
       this.y < sprite.y + sprite.height + yOffset &&
       this.y + this.height + yOffset > sprite.y;
   }
-  public touchesContainer(returnBoolean = true, container: Container, requiredType = Sprite, xOffset = 0, yOffset = 0): boolean|Sprite{
+  public touchingContainer(returnBoolean = true, container: Container, requiredType = Sprite, xOffset = 0, yOffset = 0): boolean|Sprite{
     for (let sprite of container){
       if (this.intersects(sprite, xOffset, yOffset) && sprite instanceof requiredType) return returnBoolean ? true : sprite;
     }
     return false;
+  }
+  public touchingSolidBlock(returnBoolean = true, xOffset = 0, yOffset = 0): boolean|Sprite {
+    for (let sprite of blocks){
+      if (sprite.solid && this.intersects(sprite, xOffset, yOffset)) return returnBoolean ? true : sprite;
+    }
+    return false;
+  }
+  public touchingBlock(returnBoolean = true, xOffset = 0, yOffset = 0): boolean|Sprite {
+    for (let sprite of blocks){
+      if (this.intersects(sprite, xOffset, yOffset)) return returnBoolean ? true : sprite;
+    }
+    return false;
+  }
+  public touchingPlayer(){
+    return this.intersects(player);
   }
   protected offScreen(): boolean{
     return this.x + this.width < 0 || this.x > WIDTH || this.y > HEIGHT || this.y + this.height < 0
@@ -137,14 +155,8 @@ class Sprite {
   public get centerX(){
     return this.x + (this.width / 2);
   }
-  public set centerX(centerX){
-    if (isNumber(centerX)) this._x = centerX + (this.width / 2)
-  }
   public get centerY(){
     return this.y + (this.height / 2);
-  }
-  public set centerY(centerY){
-    if (isNumber(centerY)) this._y = centerY + (this.height / 2)
   }
   public get width(){
     return this._width;
@@ -164,6 +176,16 @@ class Sprite {
   public set rotation(rotation: number){
     if (isNumber(rotation)) this._rotation = rotation;
   }
+  public get zIndex(){
+    return this._zIndex;
+  }
+  public set zIndex(zIndex){
+    if (isNumber(zIndex)){
+      this._zIndex = zIndex;
+      sprites.sort(); // some zindex changed so sort the list again to update rendering order
+    }
+  }
+
   public get scale(){
     return this._scale;
   }
@@ -200,30 +222,37 @@ class Block extends Sprite {
 }
 
 abstract class Enemy extends Sprite {
-  public constructor(options: EnemyOptions){
+  public constructor(options: SpriteOptions){
     super(options);
-    if (isNumber(options.damage) && options.damage > 0) this.damage = options.damage; 
+    enemies.push(this);
   }
 
   public frameUpdate(){
-    if (this.touchesPlayer()){
-      player.health -= this.damage;
+    if (this.touchingPlayer()){
+      player.damage(this.playerDamage);
+    }
+    if (this.health <= 0){
+      this.destroy();
+    }
+    this.update();
+  }
+  protected update(){}
+
+  public damage(amount){
+    if (isNumber(amount)){
+      this.health -= amount;
+      if (this.health > 0){
+        // todo
+      }
     }
   }
 
-  public touchesPlayer(){
-    return this.intersects(player);
-  }
-
-  protected abstract readonly damage:number = 0;
+  protected abstract health:number = 0;
+  protected abstract readonly playerDamage:number = 0;
   protected readonly _solid = false;
 }
 
 abstract class Particle extends Sprite {
-  public constructor(options: SpriteOptions){
-    super(options);
-  }
-
   public frameUpdate(){
     this.frame++;
     if (this.offScreen() || this.frame > this.lifeSpan) this.destroy();
@@ -240,16 +269,11 @@ abstract class Particle extends Sprite {
 
 class Projectile extends Sprite {
   public constructor(options: ProjectileOptions){
-    super({
-      ...options,
-    });
+    super(options);
     this.direction = options.direction;
     projectiles.push(this);
   }
 
-  protected touchingPlayer(): boolean{
-    return this.intersects(player);
-  }
   public frameUpdate(){
     this.x += this.direction * PROJECTILE_SPEED;
     this.check();
@@ -264,14 +288,10 @@ class Projectile extends Sprite {
 /// SPECIAL BLOCKS
 
 class BoxTile extends Block {
-  public constructor(options: SpriteOptions){
-    super(options);
-  }
-
   public frameUpdate(){
-    var touching = <PlayerProjectile> this.touchesContainer(false, projectiles, PlayerProjectile);
-    if (touching && !touching.boxDestroy){
-      touching.boxDestroy = true;
+    var touching = <PlayerProjectile> this.touchingContainer(false, projectiles, PlayerProjectile);
+    if (touching){
+      touching.destroy();
       this.state++;
       if (this.state > 3){
         spawnParticle(BreakParticle, this, this.centerX, this.centerY);
@@ -283,6 +303,36 @@ class BoxTile extends Block {
   }
 
   private state = 1;
+}
+
+class ArrowTile extends Block {
+  public constructor(options: SpriteOptions){
+    // oh my god
+    // how does this work
+    super({
+      ...options,
+      width: 8,
+      height: 8,
+      solid: false,
+      center: new Sprite({
+        x: options.x,
+        y: options.y,
+        width: BLOCK_WIDTH,
+        height: BLOCK_HEIGHT,
+        visible: false,
+        solid: false,
+      })
+    });
+  }
+}
+
+class UpgradeTile extends Block {
+  public frameUpdate(){
+    if (this.touchingPlayer()){
+      maxSpeed *= 1.5;
+      this.destroy();
+    }
+  }
 }
 
 /// PARTICLES
@@ -306,7 +356,65 @@ BreakParticle["type"] = "break";
 /// ENEMIES
 
 class LargeSmiley extends Enemy {
-  protected damage: number = 3;
+  public constructor(options: SpriteOptions){
+    super(options);
+    // dirty workaround
+    this.y -= BLOCK_HEIGHT;
+    this.lastProjectile = Date.now();
+    
+  }
+
+  public update(){
+    var curDate = Date.now();
+    if (curDate - this.lastProjectile > SMILEY_SHOOT_DELAY){
+      this.lastProjectile = curDate;
+      new SmileyProjectile({
+        x: this.x,
+        y: this.y,
+      })
+    }
+  }
+
+  protected lastProjectile: number;
+  protected readonly _width = 32;
+  protected readonly _height = 32;
+  protected readonly playerDamage = 3;
+  protected health = 10;
+}
+
+class SmileyProjectile extends Enemy {
+  public constructor(options: SpriteOptions){
+    super(options);
+    this.texture = loadImage("enemy/faceproj.png");
+  }
+
+  protected health = 2;
+  protected playerDamage = 3;
+  protected yv = 0;
+  protected _width = 16;
+  protected _height = 16;
+
+  protected update(){
+    this.x -= SMILEY_PROJECTILE_SPEED;
+    this.y -= this.yv;
+
+    this.yv -= GRAVITY;
+    if (this.touchingSolidBlock()){
+      this.yv = SMILEY_JUMP_HEIGHT;
+    }
+  }
+}
+
+class Pokerface extends Enemy {
+  public update(){
+    this.x += POKERFACE_SPEED * this.scale.x;
+    if (this.touchingSolidBlock() || !this.touchingSolidBlock(true, BLOCK_WIDTH / 2 * this.scale.x, BLOCK_HEIGHT)){
+      this.scale.x = -this.scale.x;
+    }
+  }
+
+  protected health = 3;
+  protected playerDamage = 2;
 }
 
 /// PROJECTILES
@@ -321,9 +429,18 @@ class PlayerProjectile extends Projectile {
     });
   }
 
-  protected check(){}
+  protected static damage = 3;
+  private destroyAfter = false;
 
-  public boxDestroy: boolean
+  protected check(){
+    var touching = <Enemy> this.touchingContainer(false, enemies)
+    if (touching && !this.destroyAfter){
+      touching.damage(1);
+      this.destroyAfter = true;
+    }else if (this.destroyAfter){
+      this.destroy();
+    }
+  }
 }
 
 /// SPRITES
@@ -343,10 +460,13 @@ class PlayerHitbox extends Sprite {
   protected readonly _width = PLAYER_WIDTH;
   protected readonly _visible = false;
   protected readonly _solid = false;
+  public readonly persistent = true;
+  public frame = 0;
+  public _vulnerable = true
 
   public frameUpdate(){
     // up
-    if (keys[38] || keys[32] || keys[87]){
+    if (keys[38] || keys[32]){
       if (this.touchingSolidBlock(true, 0, 1)){
         this.yv = JUMP_HEIGHT;
       }
@@ -356,23 +476,39 @@ class PlayerHitbox extends Sprite {
       }
     }
 
-    // right
-    if (keys[39] || keys[68]){
-      if (this.xv < WALK_SPEED){
-        this.xv += WALK_SPEED;
-      }
+    var right = keys[39];
+    var left = keys[37];
+
+    if (right && left){
       this.direction = DIR_RIGHT;
-    }
-    // left
-    if (keys[37] || keys[65]){
-      if (this.xv > -WALK_SPEED){
+    }else{
+      // left
+      if (left){
         this.xv -= WALK_SPEED;
+        if (this.xv < -maxSpeed){
+          this.xv = -maxSpeed;
+        }
+        this.direction = DIR_LEFT;
+        this.frame++;
+      }else if (right){
+        this.xv += WALK_SPEED;
+        if (this.xv > maxSpeed){
+          this.xv = maxSpeed;
+        }
+        this.direction = DIR_RIGHT;
+        this.frame++;
+      }else{
+        this.frame = 1;
+        if (this.xv > 0){
+          this.xv -= FRICTION;
+          if (this.xv < 0) this.xv = 0;
+        }else if (this.xv < 0){
+          this.xv += FRICTION;
+          if (this.xv > 0) this.xv = 0;
+        }
       }
-      this.direction = DIR_LEFT;
     }
 
-    // x physics
-    this.xv *= FRICTION;
     this.x += this.xv;
     this.x = Math.round(this.x);
     var block = <Sprite> this.touchingSolidBlock(false, 0, -1);
@@ -423,22 +559,18 @@ class PlayerHitbox extends Sprite {
     this.y = HEIGHT - 1;
     this.yv = 0;
     this.xv = 0;
+    this.vulnerable = true;
     while (this.touchingBlock()){
       this.y--;
     }
   }
 
-  public touchingSolidBlock(returnBoolean = true, xOffset = 0, yOffset = 0): boolean|Sprite {
-    for (let sprite of blocks){
-      if (sprite.solid && this.intersects(sprite, xOffset, yOffset)) return returnBoolean ? true : sprite;
+  public damage(amount){
+    if (isNumber(amount) && amount > 0 && this.vulnerable){
+      this.health -= amount;
+      this.vulnerable = false;
+      playerDamage();
     }
-    return false;
-  }
-  public touchingBlock(returnBoolean = true, xOffset = 0, yOffset = 0): boolean|Sprite {
-    for (let sprite of blocks){
-      if (this.intersects(sprite, xOffset, yOffset)) return returnBoolean ? true : sprite;
-    }
-    return false;
   }
 
   protected get yv(){
@@ -474,6 +606,12 @@ class PlayerHitbox extends Sprite {
   public set health(health){
     if (isNumber(health)) this._health = health;
   }
+  public get vulnerable(){
+    return this._vulnerable;
+  }
+  public set vulnerable(vulnerable){
+    if (typeof vulnerable === "boolean") this._vulnerable = vulnerable;
+  }
 }
 
 class PlayerGraphic extends Sprite {
@@ -492,11 +630,33 @@ class PlayerGraphic extends Sprite {
     this.rotation = player.rotation;
 
     this.scale = player.scale;
+
+    if (!(keys[39] || keys[37])){
+      this.texture = loadImage("player/still.png");
+      this.height = 16;
+      this.walkFrame = false;
+    }else{
+      if (player.frame % WALK_ANIMATION_SPEED === 0){
+        player.frame = 1;
+        this.walkFrame = !this.walkFrame;
+      }
+      if (this.walkFrame){
+        this.texture = loadImage("player/move.png");
+        this.height = 15;
+        this.y++;
+      }else{
+        this.texture = loadImage("player/still.png");
+        this.height = 16;
+      }
+    }
   }
 
   protected readonly _height = PLAYER_HEIGHT;
   protected readonly _width = PLAYER_WIDTH;
   protected readonly _solid = false;
+  protected readonly _zIndex = 10;
+  public readonly persistent = true;
+  private walkFrame = false; // there's only 2 frames in the walking animation so this is easiest
 }
 
 class HealthTick extends Sprite {
@@ -513,8 +673,43 @@ class HealthTick extends Sprite {
     }
   }
 
+  private readonly id: number;
   protected readonly _x = 28;
   protected readonly _width = 8;
   protected readonly _height = 2;
-  private readonly id: number
+  protected readonly _zIndex = 10;
+  public readonly persistent = true;
+}
+
+class HitStun extends Sprite {
+  public constructor(){
+    super({
+      center: player,
+      texture: loadImage("player/stun.png")
+    });
+  }
+
+  public frameUpdate(){
+    this.render();
+    this.frame++;
+    this.center(player);
+    if (this.frame == 3){
+      this.visible = false;
+    }else if (this.frame == 6){
+      this.frame = 0;
+      this.repititions++;
+      this.visible = true;
+    }
+    if (this.repititions > 10){
+      player.vulnerable = true;
+      this.destroy();
+    }
+  }
+
+  protected _zIndex = 20;
+  protected _visible = true;
+  private repititions = 0;
+  private frame = 0;
+  protected _width = 12;
+  protected _height = 12;
 }
