@@ -27,6 +27,7 @@ function reset() {
         else
             index++;
     }
+    remainingEnemies = 0;
     renderLevel();
     sprites.sort();
     player.reset();
@@ -88,16 +89,14 @@ function spawnTile(meta, texture, x, y) {
     return sprite;
 }
 /**
- * @param {*} particle The particle object itself, not an instance of it!
+ * @param {Particle} particle The particle object itself, not an instance of it!
  */
-function spawnParticle(particle, center, x, y) {
+function spawnParticle(particle, center) {
     var texture = loadImage(`particle/${particle.type}.png`);
     var count = particle.count;
     var angle = FULL_ROT / count;
     for (let i = 1; i <= count; i++) {
         new particle({
-            x: x,
-            y: y,
             center: center,
             texture: texture,
             rotation: angle * i,
@@ -110,6 +109,8 @@ function start() {
     // create sprites
     createHealthBar();
     new PlayerGraphic();
+    // define some variables that can't be defined earlier because reasons
+    Enemy.particle = BreakParticle;
     // time to start
     loop();
 }

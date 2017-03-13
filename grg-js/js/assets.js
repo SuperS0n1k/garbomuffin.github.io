@@ -7,10 +7,12 @@ const ASSET_LIST = [
     "tiles/box/3.png",
     "tiles/arrow.png",
     "tiles/upgrade.png",
+    "tiles/hidden_brick.png",
     "health/bar.png",
     "health/empty.png",
     "player/stun.png",
     "player/still.png",
+    "player/move.png",
     "bullet/bullet.png",
     "particle/break.png",
     "particle/boss.png",
@@ -19,7 +21,9 @@ const ASSET_LIST = [
     "particle/airhorn.png",
     "enemy/face.png",
     "enemy/face2.png",
+    "enemy/face3.png",
     "enemy/faceproj.png",
+    "enemy/face3proj.png",
 ];
 const ASSETS = {};
 var loadedAssets = 0;

@@ -19,7 +19,7 @@ interface SpriteScale {
 }
 
 interface ProjectileOptions extends SpriteOptions {
-  direction: number
+  direction?: number
 }
 
 interface HealthTickOptions extends SpriteOptions {
@@ -231,25 +231,27 @@ abstract class Enemy extends Sprite {
     if (this.touchingPlayer()){
       player.damage(this.playerDamage);
     }
-    if (this.health <= 0){
-      this.destroy();
-    }
     this.update();
   }
-  protected update(){}
+  protected update?()
 
   public damage(amount){
     if (isNumber(amount)){
       this.health -= amount;
-      if (this.health > 0){
-        // todo
+      if (this.health < 0){
+        this.kill();
       }
     }
+  }
+  public kill(){
+    spawnParticle(BreakParticle, this);
+    this.destroy();
   }
 
   protected abstract health:number = 0;
   protected abstract readonly playerDamage:number = 0;
-  protected readonly _solid = false;
+  protected readonly _solid:boolean = false;
+  public static particle;
 }
 
 abstract class Particle extends Sprite {
@@ -259,7 +261,6 @@ abstract class Particle extends Sprite {
 
     this.x += this.speed * Math.cos(this.rotation);
     this.y += this.speed * -Math.sin(this.rotation);
-
   }
 
   protected frame: number = 0;
@@ -272,10 +273,12 @@ class Projectile extends Sprite {
     super(options);
     this.direction = options.direction;
     projectiles.push(this);
+    this.y = Math.round(this.y);
   }
 
   public frameUpdate(){
     this.x += this.direction * PROJECTILE_SPEED;
+    this.x = Math.round(this.x);
     this.check();
     if (this.offScreen()) this.destroy();
   }
@@ -294,7 +297,7 @@ class BoxTile extends Block {
       touching.destroy();
       this.state++;
       if (this.state > 3){
-        spawnParticle(BreakParticle, this, this.centerX, this.centerY);
+        spawnParticle(BreakParticle, this);
         this.destroy();
       }else{
         this.texture = loadImage(`tiles/box/${this.state}.png`);
@@ -335,6 +338,15 @@ class UpgradeTile extends Block {
   }
 }
 
+class HiddenBrickTile extends Block {
+  public frameUpdate(){
+    if (remainingEnemies === 0){
+      this.solid = true;
+      this.visible = true;
+    }
+  }
+}
+
 /// PARTICLES
 
 class BreakParticle extends Particle {
@@ -348,10 +360,10 @@ class BreakParticle extends Particle {
 
   protected readonly speed = 3;
   protected readonly lifeSpan = 5;
+
+  public static count = 8;
+  public static type = "break";
 }
-// I hope there's a better way to do this...
-BreakParticle["count"] = 8;
-BreakParticle["type"] = "break";
 
 /// ENEMIES
 
@@ -361,24 +373,48 @@ class LargeSmiley extends Enemy {
     // dirty workaround
     this.y -= BLOCK_HEIGHT;
     this.lastProjectile = Date.now();
-    
+    remainingEnemies++;
   }
 
   public update(){
-    var curDate = Date.now();
-    if (curDate - this.lastProjectile > SMILEY_SHOOT_DELAY){
-      this.lastProjectile = curDate;
-      new SmileyProjectile({
-        x: this.x,
-        y: this.y,
-      })
+    if (this.dead){
+      if (this.deadState === 0){
+        this.y -= 3;
+        this.deadStateProgress++;
+        if (this.deadStateProgress > 3){
+          this.deadState = 1;
+        }
+      }else if (this.deadState === 1){
+        this.y += 3;
+      }
+      if (this.offScreen()){
+        this.destroy();
+      }
+    }else{
+      var curDate = Date.now();
+      if (curDate - this.lastProjectile > SMILEY_SHOOT_DELAY){
+        this.lastProjectile = curDate;
+        new SmileyProjectile({
+          x: this.x,
+          y: this.y,
+        });
+      }
     }
   }
 
+  public kill(){
+    if (this.dead) return;
+    this.dead = true;
+    remainingEnemies--;
+  }
+
+  private deadState = 0;
+  private deadStateProgress = 0;
+  private dead = false;
   protected lastProjectile: number;
   protected readonly _width = 32;
   protected readonly _height = 32;
-  protected readonly playerDamage = 3;
+  protected readonly playerDamage = 6;
   protected health = 10;
 }
 
@@ -417,6 +453,39 @@ class Pokerface extends Enemy {
   protected playerDamage = 2;
 }
 
+class ShootingFace extends Enemy {
+  public update(){
+    var date = Date.now();
+    var diff = date - this.lastState;
+    if (this.state === 0){
+      if (diff > SHOOTING_FACE_DELAY_A){
+        this.state = 1;
+      }
+    }else if (this.state === 1){
+      if (diff > SHOOTING_FACE_DELAY_B){
+        new ShootingFaceProjectile({
+          center: this,
+          texture: loadImage("enemy/face3proj.png"),
+        });
+        this.projectiles++;
+        this.lastState = date;
+      }
+      if (this.projectiles === SHOOTING_FACE_SHOTS){
+        this.state = 0;
+        this.projectiles = 0;
+      }
+    }
+  }
+
+  // 0 = waiting
+  // 1 = shooting
+  private state = 1;
+  private projectiles = 0;
+  private lastState = 0;
+  protected health = 3;
+  protected playerDamage = 3;
+}
+
 /// PROJECTILES
 
 class PlayerProjectile extends Projectile {
@@ -443,6 +512,24 @@ class PlayerProjectile extends Projectile {
   }
 }
 
+class ShootingFaceProjectile extends Projectile {
+  public constructor(options: SpriteOptions){
+    super({
+      ...options,
+      width: 8,
+      height: 8,
+    });
+  }
+
+  protected check(){
+    if (this.touchingPlayer()){
+      player.damage(3);
+    }
+  }
+
+  protected readonly direction = DIR_LEFT;
+}
+
 /// SPRITES
 
 class PlayerHitbox extends Sprite {
@@ -456,6 +543,7 @@ class PlayerHitbox extends Sprite {
   private _lastShot = 0;
   private _direction = DIR_RIGHT;
   private _health = MAX_HEALTH;
+  private _lastZ = false;
   protected readonly _height = PLAYER_HEIGHT;
   protected readonly _width = PLAYER_WIDTH;
   protected readonly _visible = false;
@@ -467,7 +555,7 @@ class PlayerHitbox extends Sprite {
   public frameUpdate(){
     // up
     if (keys[38] || keys[32]){
-      if (this.touchingSolidBlock(true, 0, 1)){
+      if (this.touchingSolidBlock(true)){
         this.yv = JUMP_HEIGHT;
       }
     }else{
@@ -479,10 +567,10 @@ class PlayerHitbox extends Sprite {
     var right = keys[39];
     var left = keys[37];
 
+    // right/left
     if (right && left){
       this.direction = DIR_RIGHT;
     }else{
-      // left
       if (left){
         this.xv -= WALK_SPEED;
         if (this.xv < -maxSpeed){
@@ -509,6 +597,7 @@ class PlayerHitbox extends Sprite {
       }
     }
 
+    // x physics
     this.x += this.xv;
     this.x = Math.round(this.x);
     var block = <Sprite> this.touchingSolidBlock(false, 0, -1);
@@ -529,11 +618,28 @@ class PlayerHitbox extends Sprite {
       while (this.intersects(block, 0, -1)){
         this.y += increment;
       }
+      // dirty workarounds are the best workarounds
+      if (this.yv > 0){
+        this.y++;
+      }
       this.yv = 0;
     }
 
     // z/shoot
-    if (keys[90] && Date.now() - this.lastShot > SHOT_DELAY){
+    if (keys[90] && !this.lastZ){
+      new PlayerProjectile({
+        direction: this.direction,
+        x: Math.round(this.x),
+        y: Math.round(this.y),
+      });
+    }
+    if (keys[90]){
+      this.lastZ = true;
+    }else{
+      this.lastZ = false;
+    }
+    // a/rapid shoot
+    if (keys[65] && Date.now() - this.lastShot > RAPID_SHOT_DELAY){
       new PlayerProjectile({
         direction: this.direction,
         x: Math.round(this.x),
@@ -612,6 +718,12 @@ class PlayerHitbox extends Sprite {
   public set vulnerable(vulnerable){
     if (typeof vulnerable === "boolean") this._vulnerable = vulnerable;
   }
+  private get lastZ(){
+    return this._lastZ;
+  }
+  private set lastZ(lastZ){
+    if (typeof lastZ === "boolean") this._lastZ = lastZ;
+  }
 }
 
 class PlayerGraphic extends Sprite {
@@ -631,7 +743,10 @@ class PlayerGraphic extends Sprite {
 
     this.scale = player.scale;
 
-    if (!(keys[39] || keys[37])){
+    if (!player.touchingSolidBlock()){
+      this.texture = loadImage("player/still.png");
+      player.frame = 1;
+    }else if (!(keys[39] || keys[37])){
       this.texture = loadImage("player/still.png");
       this.height = 16;
       this.walkFrame = false;

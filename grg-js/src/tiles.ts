@@ -18,10 +18,12 @@ const ARROW_TILE:Tile = {texture: "tiles/arrow.png", type: ArrowTile}
 // things that are interactable or whatever
 const BOX_TILE:Tile = {texture: "tiles/box/1.png", type: BoxTile}
 const UPGRADE_TILE:Tile = {texture: "tiles/upgrade.png", solid: false, type: UpgradeTile}
+const HIDDEN_BRICK_TILE:Tile = {texture: "tiles/hidden_brick.png", solid: false, visible: false, type: HiddenBrickTile}
 
 // enemies
 const LARGE_SMILEY:Tile = {texture: "enemy/face.png", type: LargeSmiley}
 const POKERFACE:Tile = {texture: "enemy/face2.png", type: Pokerface}
+const SHOOTING_FACE:Tile = {texture: "enemy/face3.png", type: ShootingFace}
 
 const TILES = {
   a: GRASS_TILE,
@@ -31,7 +33,7 @@ const TILES = {
   e: LARGE_SMILEY,
   g: UPGRADE_TILE,
   f: POKERFACE,
-  i: UNKNOWN_TILE, // TODO
-  j: UNKNOWN_TILE, // TODO
+  i: HIDDEN_BRICK_TILE,
+  j: SHOOTING_FACE,
   h: ARROW_TILE,
 }
