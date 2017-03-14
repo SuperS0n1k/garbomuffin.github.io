@@ -24,6 +24,7 @@ const ASSET_LIST = [
     "enemy/face3.png",
     "enemy/faceproj.png",
     "enemy/face3proj.png",
+    "boss/troll.png",
 ];
 const ASSETS = {};
 var loadedAssets = 0;

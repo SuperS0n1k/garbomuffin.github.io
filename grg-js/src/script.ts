@@ -1,4 +1,5 @@
 declare var Stats: any
+declare var isFontAvailable: (font: string) => boolean
 
 var canvas = <HTMLCanvasElement> document.getElementById("canvas");
 canvas.width = WIDTH;
@@ -13,7 +14,6 @@ var gradientCtx = gradientCanvas.getContext("2d");
 var gradient = gradientCtx.createLinearGradient(WIDTH / 2, 0, WIDTH / 2, HEIGHT);
 gradient.addColorStop(0, "#61ede3");
 gradient.addColorStop(1, "#d8d8d8");
-ctx.fillStyle = gradient;
 
 var level = 0;
 var maxSpeed = MAX_SPEED; // upgrades can change this so it can't be const

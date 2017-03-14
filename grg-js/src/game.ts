@@ -10,7 +10,8 @@ function loop(){
 }
 
 function render(){
-  // sprites.sort()
+  sprites.sort()
+  ctx.fillStyle = gradient;
   ctx.drawImage(gradientCanvas, 0, 0);
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
   for (let sprite of sprites){
@@ -73,13 +74,19 @@ function renderLevel(){
   for (let char of levelData){
     if (char !== "."){
       var meta = TILES[char];
-      if (!meta) console.warn(`UNRECOGNIZED CHAR: ${char}`)
+      if (!meta) console.warn(`UNRECOGNIZED CHARACTER: ${char}`)
       spawnTile(meta, meta.texture, x, y);
     }
     x += BLOCK_WIDTH;
     if (x >= WIDTH){
       x = 0;
       y -= BLOCK_HEIGHT;
+    }
+  }
+  var texts = TEXTS[level];
+  if (texts !== undefined){
+    for (let text of texts){
+      new TextSprite(text);
     }
   }
 }
@@ -142,4 +149,12 @@ function play(){
 
 function isNumber(number){
   return typeof number === "number" && isFinite(number);
+}
+
+function playerProjectiles(){
+  var p = 0;
+  for (let sprite of projectiles){
+    if (sprite instanceof PlayerProjectile) p++;
+  }
+  return p;
 }

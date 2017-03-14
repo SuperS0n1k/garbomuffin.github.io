@@ -36,6 +36,10 @@ class Sprite {
             this.rotation = options.rotation;
         if (options.center instanceof Sprite) {
             this.center(options.center);
+            if (isNumber(options.x))
+                this.x += options.x;
+            if (isNumber(options.y))
+                this.y += options.y;
         }
         else {
             if (isNumber(options.x))
@@ -206,8 +210,6 @@ class Block extends Sprite {
 class Enemy extends Sprite {
     constructor(options) {
         super(options);
-        this.health = 0;
-        this.playerDamage = 0;
         this._solid = false;
         enemies.push(this);
     }
@@ -248,11 +250,10 @@ class Projectile extends Sprite {
         super(options);
         this.direction = options.direction;
         projectiles.push(this);
-        this.y = Math.round(this.y);
+        this.y = Math.floor(this.y);
     }
     frameUpdate() {
         this.x += this.direction * PROJECTILE_SPEED;
-        this.x = Math.round(this.x);
         this.check();
         if (this.offScreen())
             this.destroy();
@@ -313,13 +314,22 @@ class HiddenBrickTile extends Block {
 /// PARTICLES
 class BreakParticle extends Particle {
     constructor(options) {
-        super(Object.assign({}, options, { height: 6, width: 6 }));
+        super(Object.assign({}, options, { height: 5, width: 5 }));
         this.speed = 3;
         this.lifeSpan = 5;
     }
 }
 BreakParticle.count = 8;
 BreakParticle.type = "break";
+class BossParticle extends Particle {
+    constructor(options) {
+        super(Object.assign({}, options, { height: 12, width: 12 }));
+        this.speed = 3;
+        this.lifeSpan = Infinity;
+    }
+}
+BossParticle.count = 16;
+BossParticle.type = "boss";
 /// ENEMIES
 class LargeSmiley extends Enemy {
     constructor(options) {
@@ -436,6 +446,17 @@ class ShootingFace extends Enemy {
             }
         }
     }
+}
+/// BOSSES
+class Boss extends Enemy {
+    constructor() {
+        super(...arguments);
+        this.health = 20; // or something
+        this.playerDamage = 5; // or something
+    }
+}
+Boss.particle = BossParticle;
+class TrollBoss extends Boss {
 }
 /// PROJECTILES
 class PlayerProjectile extends Projectile {
@@ -561,26 +582,13 @@ class PlayerHitbox extends Sprite {
             this.yv = 0;
         }
         // z/shoot
-        if (keys[90] && !this.lastZ) {
-            new PlayerProjectile({
-                direction: this.direction,
-                x: Math.round(this.x),
-                y: Math.round(this.y),
-            });
+        if (keys[90] && !this.lastZ && playerProjectiles() < MAX_PROJECTILES) {
+            this.shoot();
         }
-        if (keys[90]) {
-            this.lastZ = true;
-        }
-        else {
-            this.lastZ = false;
-        }
+        this.lastZ = keys[90];
         // a/rapid shoot
-        if (keys[65] && Date.now() - this.lastShot > RAPID_SHOT_DELAY) {
-            new PlayerProjectile({
-                direction: this.direction,
-                x: Math.round(this.x),
-                y: Math.round(this.y),
-            });
+        if (keys[65] && Date.now() - this.lastShot > RAPID_SHOT_DELAY && playerProjectiles() < MAX_PROJECTILES) {
+            this.shoot();
             this.lastShot = Date.now();
         }
         if (this.x + this.width >= WIDTH) {
@@ -602,6 +610,13 @@ class PlayerHitbox extends Sprite {
         while (this.touchingBlock()) {
             this.y--;
         }
+    }
+    shoot() {
+        new PlayerProjectile({
+            direction: this.direction,
+            center: this,
+            y: -3,
+        });
     }
     damage(amount) {
         if (isNumber(amount) && amount > 0 && this.vulnerable) {

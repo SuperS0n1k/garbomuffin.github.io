@@ -13,6 +13,9 @@ const HIDDEN_BRICK_TILE = { texture: "tiles/hidden_brick.png", solid: false, vis
 const LARGE_SMILEY = { texture: "enemy/face.png", type: LargeSmiley };
 const POKERFACE = { texture: "enemy/face2.png", type: Pokerface };
 const SHOOTING_FACE = { texture: "enemy/face3.png", type: ShootingFace };
+// bosses
+// god no why
+const TROLL_FACE_BOSS = { texture: "boss/troll.png", type: TrollBoss };
 const TILES = {
     a: GRASS_TILE,
     b: DIRT_TILE,
@@ -23,5 +26,6 @@ const TILES = {
     f: POKERFACE,
     i: HIDDEN_BRICK_TILE,
     j: SHOOTING_FACE,
+    k: TROLL_FACE_BOSS,
     h: ARROW_TILE,
 };

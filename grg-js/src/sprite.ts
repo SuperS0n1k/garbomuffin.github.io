@@ -46,6 +46,8 @@ class Sprite {
 
     if (options.center instanceof Sprite){
       this.center(options.center);
+      if (isNumber(options.x)) this.x += options.x;
+      if (isNumber(options.y)) this.y += options.y;
     }else{
       if (isNumber(options.x)) this.x = options.x;
       if (isNumber(options.y)) this.y = options.y;
@@ -248,8 +250,8 @@ abstract class Enemy extends Sprite {
     this.destroy();
   }
 
-  protected abstract health:number = 0;
-  protected abstract readonly playerDamage:number = 0;
+  protected abstract health:number;
+  protected abstract readonly playerDamage:number;
   protected readonly _solid:boolean = false;
   public static particle;
 }
@@ -273,12 +275,11 @@ class Projectile extends Sprite {
     super(options);
     this.direction = options.direction;
     projectiles.push(this);
-    this.y = Math.round(this.y);
+    this.y = Math.floor(this.y);
   }
 
   public frameUpdate(){
     this.x += this.direction * PROJECTILE_SPEED;
-    this.x = Math.round(this.x);
     this.check();
     if (this.offScreen()) this.destroy();
   }
@@ -353,8 +354,8 @@ class BreakParticle extends Particle {
   public constructor(options: SpriteOptions){
     super({
       ...options,
-      height: 6,
-      width: 6,
+      height: 5,
+      width: 5,
     });
   }
 
@@ -363,6 +364,21 @@ class BreakParticle extends Particle {
 
   public static count = 8;
   public static type = "break";
+}
+
+class BossParticle extends Particle {
+  public constructor(options: SpriteOptions){
+    super({
+      ...options,
+      height: 12,
+      width: 12,
+    });
+  }
+
+  protected readonly speed = 3;
+  protected readonly lifeSpan = Infinity;
+  public static count = 16;
+  public static type = "boss";
 }
 
 /// ENEMIES
@@ -485,6 +501,16 @@ class ShootingFace extends Enemy {
   protected health = 3;
   protected playerDamage = 3;
 }
+
+/// BOSSES
+
+abstract class Boss extends Enemy {
+  protected health = 20; // or something
+  protected playerDamage = 5; // or something
+  public static particle = BossParticle;
+}
+
+class TrollBoss extends Boss {}
 
 /// PROJECTILES
 
@@ -626,25 +652,14 @@ class PlayerHitbox extends Sprite {
     }
 
     // z/shoot
-    if (keys[90] && !this.lastZ){
-      new PlayerProjectile({
-        direction: this.direction,
-        x: Math.round(this.x),
-        y: Math.round(this.y),
-      });
+    if (keys[90] && !this.lastZ && playerProjectiles() < MAX_PROJECTILES){
+      this.shoot();
     }
-    if (keys[90]){
-      this.lastZ = true;
-    }else{
-      this.lastZ = false;
-    }
+    this.lastZ = keys[90];
+
     // a/rapid shoot
-    if (keys[65] && Date.now() - this.lastShot > RAPID_SHOT_DELAY){
-      new PlayerProjectile({
-        direction: this.direction,
-        x: Math.round(this.x),
-        y: Math.round(this.y),
-      });
+    if (keys[65] && Date.now() - this.lastShot > RAPID_SHOT_DELAY && playerProjectiles() < MAX_PROJECTILES){
+      this.shoot();
       this.lastShot = Date.now();
     }
 
@@ -670,7 +685,13 @@ class PlayerHitbox extends Sprite {
       this.y--;
     }
   }
-
+  private shoot(){
+    new PlayerProjectile({
+      direction: this.direction,
+      center: this,
+      y: -3,
+    });
+  }
   public damage(amount){
     if (isNumber(amount) && amount > 0 && this.vulnerable){
       this.health -= amount;

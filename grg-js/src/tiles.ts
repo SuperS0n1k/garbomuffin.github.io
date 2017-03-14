@@ -25,6 +25,10 @@ const LARGE_SMILEY:Tile = {texture: "enemy/face.png", type: LargeSmiley}
 const POKERFACE:Tile = {texture: "enemy/face2.png", type: Pokerface}
 const SHOOTING_FACE:Tile = {texture: "enemy/face3.png", type: ShootingFace}
 
+// bosses
+// god no why
+const TROLL_FACE_BOSS:Tile = {texture: "boss/troll.png", type: TrollBoss};
+
 const TILES = {
   a: GRASS_TILE,
   b: DIRT_TILE,
@@ -35,5 +39,6 @@ const TILES = {
   f: POKERFACE,
   i: HIDDEN_BRICK_TILE,
   j: SHOOTING_FACE,
+  k: TROLL_FACE_BOSS,
   h: ARROW_TILE,
 }
