@@ -1,16 +1,12 @@
 interface SpriteOptions {
   x?: number
   y?: number
-  center?: Sprite // needed for centerx and centery
+  center?: Sprite|SpriteOptions
   texture?: HTMLImageElement
   width?: number
   height?: number
-  visible?: boolean
   solid?: boolean
-  frameUpdate?: () => void
   rotation?: number
-  persistent?: boolean
-  zIndex?: number
 }
 
 interface SpriteScale {
@@ -18,11 +14,19 @@ interface SpriteScale {
   y: number
 }
 
-interface ProjectileOptions extends SpriteOptions {
+interface RenderedSpriteOptions extends SpriteOptions {
+  frameUpdate?: () => void
+  persistent?: boolean
+  visible?: boolean
+  zIndex?: number
+}
+
+
+interface ProjectileOptions extends RenderedSpriteOptions {
   direction?: number
 }
 
-interface HealthTickOptions extends SpriteOptions {
+interface HealthTickOptions extends RenderedSpriteOptions {
   id: number
 }
 
@@ -30,8 +34,6 @@ interface HealthTickOptions extends SpriteOptions {
 
 class Sprite {
   public constructor(options?: SpriteOptions){
-    if (typeof options.visible === "boolean") this.visible = options.visible;
-    if (typeof options.persistent === "boolean") this.persistent = options.persistent;
     if (typeof options.solid === "boolean") this.solid = options.solid;
 
     if (options.texture instanceof HTMLImageElement) this.texture = options.texture;
@@ -41,26 +43,14 @@ class Sprite {
     
     if (isNumber(options.height) && options.height > 0) this.height = options.height;
     else if (this.texture) this.height = this.texture.height;
-    if (isNumber(options.zIndex)) this.zIndex = options.zIndex;
     if (isNumber(options.rotation)) this.rotation = options.rotation
 
-    if (options.center instanceof Sprite){
+    if (options.center){
       this.center(options.center);
-      if (isNumber(options.x)) this.x += options.x;
-      if (isNumber(options.y)) this.y += options.y;
     }else{
       if (isNumber(options.x)) this.x = options.x;
       if (isNumber(options.y)) this.y = options.y;
     }
-
-    if (typeof options.frameUpdate === "function"){
-      this.frameUpdate = options.frameUpdate.bind(this);
-    }
-    if (this.frameUpdate){
-      updatable.push(this);
-    }
-
-    sprites.push(this);
   }
 
   protected _x: number = 0
@@ -68,40 +58,17 @@ class Sprite {
   protected _texture: HTMLImageElement
   protected _width: number = 0
   protected _height: number = 0
-  protected _visible: boolean = true
   protected _solid: boolean = true
   protected _rotation: number = 0
-  protected _zIndex: number = 0
-  public readonly persistent: boolean = false
+
   protected _scale: SpriteScale = {
     x: 1,
     y: 1,
   }
 
-  public frameUpdate?(): void
-
-  public center(sprite: Sprite){
-    this.x = sprite.x + (sprite.width / 2) - (this.width / 2);
-    this.y = sprite.y + (sprite.height / 2) - (this.height / 2);
-  }
-  public render(){
-    if (!this.visible) return;
-    var scale = this.scale.x !== 1 || this.scale.y !== 1;
-    var rotation = this.rotation;
-    if (scale || rotation){
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      ctx.translate(this.width / 2, this.height / 2);
-      if (rotation){
-        ctx.rotate(this.rotation);
-      }else if (scale){
-        ctx.scale(this.scale.x, this.scale.y);
-      }
-      ctx.drawImage(this.texture, -this.width / 2, -this.height / 2, this.width, this.height);
-      ctx.restore();
-    }else{
-      ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
-    }
+  public center(sprite: Sprite|SpriteOptions){
+    this.x += sprite.x + (sprite.width / 2) - (this.width / 2);
+    this.y += sprite.y + (sprite.height / 2) - (this.height / 2);
   }
   public intersects(sprite: Sprite, xOffset = 0, yOffset = 0): boolean {
     return this.x + xOffset < sprite.x + sprite.width &&
@@ -132,14 +99,6 @@ class Sprite {
   }
   protected offScreen(): boolean{
     return this.x + this.width < 0 || this.x > WIDTH || this.y > HEIGHT || this.y + this.height < 0
-  }
-  public destroy(){
-    for (let container of containers){
-      var index = container.indexOf(this);
-      if (index > -1){
-        container.splice(index, 1);
-      }
-    }
   }
 
   public get x(){
@@ -178,16 +137,6 @@ class Sprite {
   public set rotation(rotation: number){
     if (isNumber(rotation)) this._rotation = rotation;
   }
-  public get zIndex(){
-    return this._zIndex;
-  }
-  public set zIndex(zIndex){
-    if (isNumber(zIndex)){
-      this._zIndex = zIndex;
-      sprites.sort(); // some zindex changed so sort the list again to update rendering order
-    }
-  }
-
   public get scale(){
     return this._scale;
   }
@@ -202,12 +151,6 @@ class Sprite {
     if (texture instanceof HTMLImageElement) this._texture = texture;
   }
 
-  public get visible(){
-    return this._visible;
-  }
-  public set visible(visible: boolean){
-    if (typeof visible === "boolean") this._visible = visible;
-  }
   public get solid(){
     return this._solid;
   }
@@ -216,14 +159,82 @@ class Sprite {
   }
 }
 
-class Block extends Sprite {
+class RenderedSprite extends Sprite {
+  public constructor(options: RenderedSpriteOptions){
+    super(options);
+    if (typeof options.persistent === "boolean") this.persistent = options.persistent;
+    if (typeof options.visible === "boolean") this.visible = options.visible;
+
+    if (isNumber(options.zIndex)) this.zIndex = options.zIndex;    
+
+    if (typeof options.frameUpdate === "function"){
+      this.frameUpdate = options.frameUpdate.bind(this);
+    }
+    if (this.frameUpdate){
+      updatable.push(this);
+    }
+
+    sprites.push(this);
+  }
+
+  protected _visible: boolean = true
+  protected _zIndex: number = 0
+  public readonly persistent: boolean = false
+
+  public render(){
+    if (!this.visible) return;
+    var scale = this.scale.x !== 1 || this.scale.y !== 1;
+    var rotation = this.rotation;
+    if (scale || rotation){
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.translate(this.width / 2, this.height / 2);
+      if (rotation){
+        ctx.rotate(this.rotation);
+      }else if (scale){
+        ctx.scale(this.scale.x, this.scale.y);
+      }
+      ctx.drawImage(this.texture, -this.width / 2, -this.height / 2, this.width, this.height);
+      ctx.restore();
+    }else{
+      ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
+    }
+  }
+  public destroy(){
+    for (let container of containers){
+      var index = container.indexOf(this);
+      if (index > -1){
+        container.splice(index, 1);
+      }
+    }
+  }
+  public frameUpdate?(): void
+
+  public get visible(){
+    return this._visible;
+  }
+  public set visible(visible: boolean){
+    if (typeof visible === "boolean") this._visible = visible;
+  }
+  public get zIndex(){
+    return this._zIndex;
+  }
+  public set zIndex(zIndex){
+    if (isNumber(zIndex)){
+      this._zIndex = zIndex;
+      sprites.sort(); // some zindex changed so sort the list again to update rendering order
+    }
+  }
+}
+
+class Block extends RenderedSprite {
   public constructor(options: SpriteOptions){
     super(options);
     blocks.push(this);
   }
 }
 
-abstract class Enemy extends Sprite {
+abstract class Enemy extends RenderedSprite {
   public constructor(options: SpriteOptions){
     super(options);
     enemies.push(this);
@@ -256,7 +267,7 @@ abstract class Enemy extends Sprite {
   public static particle;
 }
 
-abstract class Particle extends Sprite {
+abstract class Particle extends RenderedSprite {
   public frameUpdate(){
     this.frame++;
     if (this.offScreen() || this.frame > this.lifeSpan) this.destroy();
@@ -270,7 +281,7 @@ abstract class Particle extends Sprite {
   protected abstract readonly lifeSpan: number;
 }
 
-class Projectile extends Sprite {
+class Projectile extends RenderedSprite {
   public constructor(options: ProjectileOptions){
     super(options);
     this.direction = options.direction;
@@ -318,15 +329,16 @@ class ArrowTile extends Block {
       width: 8,
       height: 8,
       solid: false,
-      center: new Sprite({
+      center: {
         x: options.x,
         y: options.y,
         width: BLOCK_WIDTH,
         height: BLOCK_HEIGHT,
-        visible: false,
-        solid: false,
-      })
+      }
     });
+    console.log(options.x + (BLOCK_WIDTH / 2) - (this.width / 2));
+    console.log(options.y + (BLOCK_HEIGHT / 2) - (this.height / 2));
+    console.log(this);
   }
 }
 
@@ -394,18 +406,8 @@ class LargeSmiley extends Enemy {
 
   public update(){
     if (this.dead){
-      if (this.deadState === 0){
-        this.y -= 3;
-        this.deadStateProgress++;
-        if (this.deadStateProgress > 3){
-          this.deadState = 1;
-        }
-      }else if (this.deadState === 1){
-        this.y += 3;
-      }
-      if (this.offScreen()){
-        this.destroy();
-      }
+      this.yv -= GRAVITY;
+      this.y -= this.yv;
     }else{
       var curDate = Date.now();
       if (curDate - this.lastProjectile > SMILEY_SHOOT_DELAY){
@@ -421,12 +423,12 @@ class LargeSmiley extends Enemy {
   public kill(){
     if (this.dead) return;
     this.dead = true;
+    this.yv = 2;
     remainingEnemies--;
   }
 
-  private deadState = 0;
-  private deadStateProgress = 0;
   private dead = false;
+  private yv = 0;
   protected lastProjectile: number;
   protected readonly _width = 32;
   protected readonly _height = 32;
@@ -505,12 +507,37 @@ class ShootingFace extends Enemy {
 /// BOSSES
 
 abstract class Boss extends Enemy {
-  protected health = 20; // or something
+  public update(){
+    if (this.state === 0){
+      if (this.health < 20){
+        this.health++;
+      }else{
+        this.state = 1;
+      }
+    }else{
+      this.bossUpdate();
+    }
+  }
+  public abstract bossUpdate()
+
+  protected health = 10; // or something
   protected playerDamage = 5; // or something
+  protected state = 0;
   public static particle = BossParticle;
 }
 
-class TrollBoss extends Boss {}
+class TrollBoss extends Boss {
+  public bossUpdate(){
+    // if (this.state === 2){
+
+    // }
+  }
+
+  // public static readonly x1 = 0
+  // public static readonly x2 = 314
+  // protected _x = TrollBoss.x2;
+  // protected _y = 172;
+}
 
 /// PROJECTILES
 
@@ -558,7 +585,7 @@ class ShootingFaceProjectile extends Projectile {
 
 /// SPRITES
 
-class PlayerHitbox extends Sprite {
+class PlayerHitbox extends RenderedSprite {
   public constructor(){
     super({});
     this.reset();
@@ -689,7 +716,6 @@ class PlayerHitbox extends Sprite {
     new PlayerProjectile({
       direction: this.direction,
       center: this,
-      y: -3,
     });
   }
   public damage(amount){
@@ -747,7 +773,7 @@ class PlayerHitbox extends Sprite {
   }
 }
 
-class PlayerGraphic extends Sprite {
+class PlayerGraphic extends RenderedSprite {
   public constructor(){
     super({
       width: PLAYER_HEIGHT,
@@ -795,7 +821,7 @@ class PlayerGraphic extends Sprite {
   private walkFrame = false; // there's only 2 frames in the walking animation so this is easiest
 }
 
-class HealthTick extends Sprite {
+class HealthTick extends RenderedSprite {
   public constructor(options: HealthTickOptions){
     super(options);
     this.id = options.id;
@@ -817,7 +843,7 @@ class HealthTick extends Sprite {
   public readonly persistent = true;
 }
 
-class HitStun extends Sprite {
+class HitStun extends RenderedSprite {
   public constructor(){
     super({
       center: player,

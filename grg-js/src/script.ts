@@ -16,6 +16,7 @@ gradient.addColorStop(0, "#61ede3");
 gradient.addColorStop(1, "#d8d8d8");
 
 var level = 0;
+// var level = 8;
 var maxSpeed = MAX_SPEED; // upgrades can change this so it can't be const
 var remainingEnemies = 0;
 
