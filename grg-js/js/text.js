@@ -1,4 +1,4 @@
-// Text is already defined in javascript
+// Text is a javascript native
 // so the next "best" name was used
 class TextSprite {
     constructor(options) {

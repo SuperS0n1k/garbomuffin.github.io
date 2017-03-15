@@ -26,7 +26,6 @@ const TILES = {
     f: POKERFACE,
     i: HIDDEN_BRICK_TILE,
     j: SHOOTING_FACE,
-    k: UNKNOWN_TILE,
-    // k: TROLL_FACE_BOSS,
+    k: TROLL_FACE_BOSS,
     h: ARROW_TILE,
 };

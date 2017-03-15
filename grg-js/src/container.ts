@@ -3,7 +3,7 @@ class Container{
     containers.push(this);
   }
 
-  protected children: RenderedSprite[] = []
+  protected children: Sprite[] = []
 
   public push(...args){
     return this.children.push.apply(this.children, args);
