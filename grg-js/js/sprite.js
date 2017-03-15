@@ -5,19 +5,12 @@ class Sprite {
         this._y = 0;
         this._width = 0;
         this._height = 0;
-        this._visible = true;
         this._solid = true;
         this._rotation = 0;
-        this._zIndex = 0;
-        this.persistent = false;
         this._scale = {
             x: 1,
             y: 1,
         };
-        if (typeof options.visible === "boolean")
-            this.visible = options.visible;
-        if (typeof options.persistent === "boolean")
-            this.persistent = options.persistent;
         if (typeof options.solid === "boolean")
             this.solid = options.solid;
         if (options.texture instanceof HTMLImageElement)
@@ -30,16 +23,14 @@ class Sprite {
             this.height = options.height;
         else if (this.texture)
             this.height = this.texture.height;
-        if (isNumber(options.zIndex))
-            this.zIndex = options.zIndex;
         if (isNumber(options.rotation))
             this.rotation = options.rotation;
-        if (options.center instanceof Sprite) {
+        if (options.center) {
+            // if (isNumber(options.x)) this.x += options.x;
+            // if (isNumber(options.y)) this.y += options.y;
+            console.log(this.x);
+            console.log(this.y);
             this.center(options.center);
-            if (isNumber(options.x))
-                this.x += options.x;
-            if (isNumber(options.y))
-                this.y += options.y;
         }
         else {
             if (isNumber(options.x))
@@ -47,39 +38,12 @@ class Sprite {
             if (isNumber(options.y))
                 this.y = options.y;
         }
-        if (typeof options.frameUpdate === "function") {
-            this.frameUpdate = options.frameUpdate.bind(this);
-        }
-        if (this.frameUpdate) {
-            updatable.push(this);
-        }
-        sprites.push(this);
     }
     center(sprite) {
-        this.x = sprite.x + (sprite.width / 2) - (this.width / 2);
-        this.y = sprite.y + (sprite.height / 2) - (this.height / 2);
-    }
-    render() {
-        if (!this.visible)
-            return;
-        var scale = this.scale.x !== 1 || this.scale.y !== 1;
-        var rotation = this.rotation;
-        if (scale || rotation) {
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.translate(this.width / 2, this.height / 2);
-            if (rotation) {
-                ctx.rotate(this.rotation);
-            }
-            else if (scale) {
-                ctx.scale(this.scale.x, this.scale.y);
-            }
-            ctx.drawImage(this.texture, -this.width / 2, -this.height / 2, this.width, this.height);
-            ctx.restore();
-        }
-        else {
-            ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
-        }
+        this.x += sprite.x + (sprite.width || 0 / 2) - (this.width / 2);
+        this.y += sprite.y + (sprite.height || 0 / 2) - (this.height / 2);
+        console.log(this.x);
+        console.log(this.y);
     }
     intersects(sprite, xOffset = 0, yOffset = 0) {
         return this.x + xOffset < sprite.x + sprite.width &&
@@ -113,14 +77,6 @@ class Sprite {
     }
     offScreen() {
         return this.x + this.width < 0 || this.x > WIDTH || this.y > HEIGHT || this.y + this.height < 0;
-    }
-    destroy() {
-        for (let container of containers) {
-            var index = container.indexOf(this);
-            if (index > -1) {
-                container.splice(index, 1);
-            }
-        }
     }
     get x() {
         return this._x;
@@ -163,15 +119,6 @@ class Sprite {
         if (isNumber(rotation))
             this._rotation = rotation;
     }
-    get zIndex() {
-        return this._zIndex;
-    }
-    set zIndex(zIndex) {
-        if (isNumber(zIndex)) {
-            this._zIndex = zIndex;
-            sprites.sort(); // some zindex changed so sort the list again to update rendering order
-        }
-    }
     get scale() {
         return this._scale;
     }
@@ -186,13 +133,6 @@ class Sprite {
         if (texture instanceof HTMLImageElement)
             this._texture = texture;
     }
-    get visible() {
-        return this._visible;
-    }
-    set visible(visible) {
-        if (typeof visible === "boolean")
-            this._visible = visible;
-    }
     get solid() {
         return this._solid;
     }
@@ -201,13 +141,80 @@ class Sprite {
             this._solid = solid;
     }
 }
-class Block extends Sprite {
+class RenderedSprite extends Sprite {
+    constructor(options) {
+        super(options);
+        this._visible = true;
+        this._zIndex = 0;
+        this.persistent = false;
+        if (typeof options.persistent === "boolean")
+            this.persistent = options.persistent;
+        if (typeof options.visible === "boolean")
+            this.visible = options.visible;
+        if (isNumber(options.zIndex))
+            this.zIndex = options.zIndex;
+        if (typeof options.frameUpdate === "function") {
+            this.frameUpdate = options.frameUpdate.bind(this);
+        }
+        if (this.frameUpdate) {
+            updatable.push(this);
+        }
+        sprites.push(this);
+    }
+    render() {
+        if (!this.visible)
+            return;
+        var scale = this.scale.x !== 1 || this.scale.y !== 1;
+        var rotation = this.rotation;
+        if (scale || rotation) {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.translate(this.width / 2, this.height / 2);
+            if (rotation) {
+                ctx.rotate(this.rotation);
+            }
+            else if (scale) {
+                ctx.scale(this.scale.x, this.scale.y);
+            }
+            ctx.drawImage(this.texture, -this.width / 2, -this.height / 2, this.width, this.height);
+            ctx.restore();
+        }
+        else {
+            ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
+        }
+    }
+    destroy() {
+        for (let container of containers) {
+            var index = container.indexOf(this);
+            if (index > -1) {
+                container.splice(index, 1);
+            }
+        }
+    }
+    get visible() {
+        return this._visible;
+    }
+    set visible(visible) {
+        if (typeof visible === "boolean")
+            this._visible = visible;
+    }
+    get zIndex() {
+        return this._zIndex;
+    }
+    set zIndex(zIndex) {
+        if (isNumber(zIndex)) {
+            this._zIndex = zIndex;
+            sprites.sort(); // some zindex changed so sort the list again to update rendering order
+        }
+    }
+}
+class Block extends RenderedSprite {
     constructor(options) {
         super(options);
         blocks.push(this);
     }
 }
-class Enemy extends Sprite {
+class Enemy extends RenderedSprite {
     constructor(options) {
         super(options);
         this._solid = false;
@@ -232,7 +239,7 @@ class Enemy extends Sprite {
         this.destroy();
     }
 }
-class Particle extends Sprite {
+class Particle extends RenderedSprite {
     constructor() {
         super(...arguments);
         this.frame = 0;
@@ -245,7 +252,7 @@ class Particle extends Sprite {
         this.y += this.speed * -Math.sin(this.rotation);
     }
 }
-class Projectile extends Sprite {
+class Projectile extends RenderedSprite {
     constructor(options) {
         super(options);
         this.direction = options.direction;
@@ -285,14 +292,15 @@ class ArrowTile extends Block {
     constructor(options) {
         // oh my god
         // how does this work
-        super(Object.assign({}, options, { width: 8, height: 8, solid: false, center: new Sprite({
+        super(Object.assign({}, options, { width: 8, height: 8, solid: false, center: {
                 x: options.x,
                 y: options.y,
                 width: BLOCK_WIDTH,
                 height: BLOCK_HEIGHT,
-                visible: false,
-                solid: false,
-            }) }));
+            } }));
+        console.log(options.x + (BLOCK_WIDTH / 2) - (this.width / 2));
+        console.log(options.y + (BLOCK_HEIGHT / 2) - (this.height / 2));
+        console.log(this);
     }
 }
 class UpgradeTile extends Block {
@@ -334,9 +342,8 @@ BossParticle.type = "boss";
 class LargeSmiley extends Enemy {
     constructor(options) {
         super(options);
-        this.deadState = 0;
-        this.deadStateProgress = 0;
         this.dead = false;
+        this.yv = 0;
         this._width = 32;
         this._height = 32;
         this.playerDamage = 6;
@@ -348,19 +355,8 @@ class LargeSmiley extends Enemy {
     }
     update() {
         if (this.dead) {
-            if (this.deadState === 0) {
-                this.y -= 3;
-                this.deadStateProgress++;
-                if (this.deadStateProgress > 3) {
-                    this.deadState = 1;
-                }
-            }
-            else if (this.deadState === 1) {
-                this.y += 3;
-            }
-            if (this.offScreen()) {
-                this.destroy();
-            }
+            this.yv -= GRAVITY;
+            this.y -= this.yv;
         }
         else {
             var curDate = Date.now();
@@ -377,6 +373,7 @@ class LargeSmiley extends Enemy {
         if (this.dead)
             return;
         this.dead = true;
+        this.yv = 2;
         remainingEnemies--;
     }
 }
@@ -451,12 +448,30 @@ class ShootingFace extends Enemy {
 class Boss extends Enemy {
     constructor() {
         super(...arguments);
-        this.health = 20; // or something
+        this.health = 10; // or something
         this.playerDamage = 5; // or something
+        this.state = 0;
+    }
+    update() {
+        if (this.state === 0) {
+            if (this.health < 20) {
+                this.health++;
+            }
+            else {
+                this.state = 1;
+            }
+        }
+        else {
+            this.bossUpdate();
+        }
     }
 }
 Boss.particle = BossParticle;
 class TrollBoss extends Boss {
+    bossUpdate() {
+        // if (this.state === 2){
+        // }
+    }
 }
 /// PROJECTILES
 class PlayerProjectile extends Projectile {
@@ -488,7 +503,7 @@ class ShootingFaceProjectile extends Projectile {
     }
 }
 /// SPRITES
-class PlayerHitbox extends Sprite {
+class PlayerHitbox extends RenderedSprite {
     constructor() {
         super({});
         this._yv = 0;
@@ -615,7 +630,6 @@ class PlayerHitbox extends Sprite {
         new PlayerProjectile({
             direction: this.direction,
             center: this,
-            y: -3,
         });
     }
     damage(amount) {
@@ -677,7 +691,7 @@ class PlayerHitbox extends Sprite {
             this._lastZ = lastZ;
     }
 }
-class PlayerGraphic extends Sprite {
+class PlayerGraphic extends RenderedSprite {
     constructor() {
         super({
             width: PLAYER_HEIGHT,
@@ -722,7 +736,7 @@ class PlayerGraphic extends Sprite {
         }
     }
 }
-class HealthTick extends Sprite {
+class HealthTick extends RenderedSprite {
     constructor(options) {
         super(options);
         this._x = 28;
@@ -741,7 +755,7 @@ class HealthTick extends Sprite {
         }
     }
 }
-class HitStun extends Sprite {
+class HitStun extends RenderedSprite {
     constructor() {
         super({
             center: player,

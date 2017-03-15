@@ -10,7 +10,7 @@ function loop(){
 }
 
 function render(){
-  sprites.sort()
+  // sprites.sort()
   ctx.fillStyle = gradient;
   ctx.drawImage(gradientCanvas, 0, 0);
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -30,17 +30,32 @@ function reset(){
   }
 
   remainingEnemies = 0;
+  bosses();
   renderLevel();
   sprites.sort();
 
   player.reset();
 }
 
+function bosses(){
+  if (level === 8 || true){
+    new TrollBoss({
+      texture: loadImage("boss/troll.png"),
+      width: 32,
+      height: 32,
+      center: {
+        x: 416,
+        y: 172,
+      }
+    });
+  }
+}
+
 /**
  * Sorts sprites by putting those with a higher zIndex towards the end.
  * (they will render on top)
  */
-function spriteSort(a: Sprite, b: Sprite){
+function spriteSort(a: RenderedSprite, b: RenderedSprite){
   return a.zIndex - b.zIndex;
 }
 

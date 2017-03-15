@@ -8,7 +8,7 @@ interface TextOptions {
   center?: boolean
 }
 
-// Text is a javascript native
+// Text is already defined in javascript
 // so the next "best" name was used
 
 class TextSprite{
