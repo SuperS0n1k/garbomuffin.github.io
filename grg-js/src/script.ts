@@ -39,7 +39,8 @@ document.body.appendChild(stats.dom);
 
 var loadInterval = setInterval(function(){
   if (typeof totalAssets !== "undefined" &&
-      loadedAssets === totalAssets){
+      loadedAssets === totalAssets &&
+      isFontAvailable("smb3")){
     clearInterval(loadInterval);
     state();
   }

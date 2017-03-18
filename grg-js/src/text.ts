@@ -13,9 +13,9 @@ interface TextOptions {
 
 class TextSprite{
   public constructor(options: TextOptions){
-    this.text = options.text;
+    this.text = options.text.toLowerCase();
 
-    var font = options.font || "monospace";
+    var font = "smb3";
     var fontSize = options.size || 8;
     this.styling = `${fontSize}px "${font}"`;
     this.color = options.color || "black";
@@ -30,7 +30,6 @@ class TextSprite{
     }
 
     sprites.push(this);
-    console.log(this);
   }
 
   public render(){

@@ -2,8 +2,8 @@
 // so the next "best" name was used
 class TextSprite {
     constructor(options) {
-        this.text = options.text;
-        var font = options.font || "monospace";
+        this.text = options.text.toLowerCase();
+        var font = "smb3";
         var fontSize = options.size || 8;
         this.styling = `${fontSize}px "${font}"`;
         this.color = options.color || "black";
@@ -17,7 +17,6 @@ class TextSprite {
             this.x = (WIDTH / 2) - (length / 2);
         }
         sprites.push(this);
-        console.log(this);
     }
     render() {
         ctx.font = this.styling;

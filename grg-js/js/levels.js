@@ -14,13 +14,25 @@ const LEVELS = [
     "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooppppppoooooooooooooooooooooooo......oooooooooooo.........q.................ooo...........................ooo.lll.lll.lll.l..l.lll.lll.looo.lll.lll.lll.l..l.lll.lll.looo.lll.lll.lll.l..l.lll.lll.looo.lll.lll.lll.l..l.lll.lll.looo.lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll.............................................................mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
 ];
 const TEXTS = Array(LEVELS.length);
-// TEXTS[0] = [{
-//   text: "GROUNDROLL GRAHM",
-//   y: 88,
-//   size: 32,
-//   center: true,
-// }, {
-//   text: "And the stale memes.",
-//   y: 104,
-//   center: true,
-// }];
+TEXTS[0] = [{
+        text: "GROUNDROLL GRAHM",
+        y: 88,
+        size: 24,
+        center: true,
+    }, {
+        text: "And the stale memes.",
+        y: 104,
+        center: true,
+    }, {
+        text: "Get used to the controls,",
+        y: 120,
+        center: true,
+    }, {
+        text: "then head right.",
+        y: 128,
+        center: true,
+    }, {
+        text: "Arrows to move, up to jump, Z to fire.",
+        y: 144,
+        center: true,
+    }];
