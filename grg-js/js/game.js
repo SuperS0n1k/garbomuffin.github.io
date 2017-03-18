@@ -35,7 +35,7 @@ function reset() {
     player.reset();
 }
 function bosses() {
-    if (level === 8) {
+    if (level === 9) {
         new TrollBoss({
             texture: loadImage("boss/troll.png"),
             width: 32,
@@ -115,7 +115,7 @@ function spawnTile(meta, texture, x, y) {
 function spawnParticle(particle, center) {
     var texture = loadImage(`particle/${particle.type}.png`);
     var count = particle.count;
-    var angle = FULL_ROT / count;
+    var angle = particle.angleIncrement;
     for (let i = 1; i <= count; i++) {
         new particle({
             center: center,
@@ -129,7 +129,6 @@ function start() {
     state = play;
     // create sprites
     createHealthBar();
-    new PlayerGraphic();
     // define some variables that can't be defined earlier because reasons
     Enemy.particle = BreakParticle;
     // time to start
@@ -150,4 +149,7 @@ function playerProjectiles() {
             p++;
     }
     return p;
+}
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

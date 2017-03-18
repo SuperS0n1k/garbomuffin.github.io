@@ -30,6 +30,12 @@ interface HealthTickOptions extends RenderedSpriteOptions {
   id: number
 }
 
+interface BossRoutineOptions {
+  init?: (sprite: Sprite) => void
+  update: () => void
+  onend?: () => void
+}
+
 /// BASE CLASSES
 
 class Sprite {
@@ -67,8 +73,8 @@ class Sprite {
   }
 
   public center(sprite: Sprite|SpriteOptions){
-    this.x += sprite.x + (sprite.width / 2) - (this.width / 2);
-    this.y += sprite.y + (sprite.height / 2) - (this.height / 2);
+    this.x = sprite.x + (isNumber(sprite.width) ? sprite.width / 2 : 0) - (this.width / 2);
+    this.y = sprite.y + (isNumber(sprite.height) ? sprite.height / 2 : 0) - (this.height / 2);
   }
   public intersects(sprite: Sprite, xOffset = 0, yOffset = 0): boolean {
     return this.x + xOffset < sprite.x + sprite.width &&
@@ -267,7 +273,7 @@ abstract class Enemy extends RenderedSprite {
   public static particle;
 }
 
-abstract class Particle extends RenderedSprite {
+class Particle extends RenderedSprite {
   public frameUpdate(){
     this.frame++;
     if (this.offScreen() || this.frame > this.lifeSpan) this.destroy();
@@ -277,8 +283,13 @@ abstract class Particle extends RenderedSprite {
   }
 
   protected frame: number = 0;
-  protected abstract readonly speed: number;
-  protected abstract readonly lifeSpan: number;
+  // protected readonly speed: number = 3;
+  // protected readonly lifeSpan: number = 30;
+
+  protected static count: number = 8
+  protected static angleIncrement: number = 360/Particle.count;
+  protected lifeSpan?: number = 30
+  protected speed?: number = 30
 }
 
 class Projectile extends RenderedSprite {
@@ -336,9 +347,6 @@ class ArrowTile extends Block {
         height: BLOCK_HEIGHT,
       }
     });
-    console.log(options.x + (BLOCK_WIDTH / 2) - (this.width / 2));
-    console.log(options.y + (BLOCK_HEIGHT / 2) - (this.height / 2));
-    console.log(this);
   }
 }
 
@@ -373,24 +381,35 @@ class BreakParticle extends Particle {
 
   protected readonly speed = 3;
   protected readonly lifeSpan = 5;
-
   public static count = 8;
   public static type = "break";
 }
 
-class BossParticle extends Particle {
-  public constructor(options: SpriteOptions){
-    super({
-      ...options,
-      height: 12,
-      width: 12,
-    });
+// class BossParticle extends Particle {
+//   public constructor(options: SpriteOptions){
+//     super({
+//       ...options,
+//       height: 12,
+//       width: 12,
+//     });
+//   }
+
+//   public static count = 16;
+//   public static type = "boss";
+// }
+
+class PlayerDeathParticle extends Particle {
+  public frameUpdate(){
+    this.y -= this.yv;
+    this.yv -= GRAVITY;
+    this.x += 1;
   }
 
-  protected readonly speed = 3;
-  protected readonly lifeSpan = Infinity;
-  public static count = 16;
-  public static type = "boss";
+
+  private yv = 5 / 2;
+  public static count = 9;
+  public static angleIncrement = 22.5;
+  public static type = "grahm";
 }
 
 /// ENEMIES
@@ -506,32 +525,115 @@ class ShootingFace extends Enemy {
 
 /// BOSSES
 
+class BossRoutine {
+  public constructor(options: BossRoutineOptions){
+    this.update = options.update;
+    if (typeof options.init === "function") this.init = options.init;
+    if (typeof options.onend === "function") this.onend = options.onend;
+  }
+
+  public update: () => void
+  public init?: (sprite: Sprite) => void
+  public onend?: () => void
+}
+
 abstract class Boss extends Enemy {
   public update(){
     if (this.state === 0){
       if (this.health < 20){
         this.health++;
       }else{
+        console.log("[boss] health increase finished...")
         this.state = 1;
       }
     }else{
-      this.bossUpdate();
+      if (this.bossUpdate) this.bossUpdate();
+
+      // routines
+      if (!this.currentRoutine && getRandomInt(1, BOSS_ROUTINE_CHANCE) === 1){
+        var random = getRandomInt(0, this.routines.length - 1);
+        var routine = this.routines[random];
+        this.startRoutine(routine);
+      }
     }
   }
-  public abstract bossUpdate()
+
+  public _yvelocity(): boolean{
+    this.y -= this.yv;
+    this.yv -= GRAVITY;
+    if (this.touchingSolidBlock()){
+      var increment = this.yv > 0 ? -1 : 1;
+      while (this.touchingSolidBlock()){
+        this.y -= increment;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  // just resets variables
+  public resetRoutine(){
+    this.yv = 0;
+  }
+  public startRoutine(routine: BossRoutine){
+    this.bossUpdate = routine.update;
+    this.resetRoutine();
+    if (routine.init) routine.init(this);
+    this.currentRoutine = routine;
+  }
+  public endRoutine(){
+    if (typeof this.currentRoutine.onend === "function"){
+      this.currentRoutine.onend.call(this);
+    }
+    this.currentRoutine = null;
+    this.bossUpdate = null;
+  }
+
+  public abstract routines: BossRoutine[] = []
+  public currentRoutine: BossRoutine = null
+  public bossUpdate?()
 
   protected health = 10; // or something
   protected playerDamage = 5; // or something
   protected state = 0;
-  public static particle = BossParticle;
+  public yv?: number = 0;
+  // public static particle = BossParticle;
 }
 
 class TrollBoss extends Boss {
-  public bossUpdate(){
-    // if (this.state === 2){
-
-    // }
+  public routines = [
+    new BossRoutine({
+      init: function(sprite: TrollBoss){
+        sprite.yv = 13.35 / 2;
+      },
+      update: this._jump,
+      onend: this._end,
+    }),
+    new BossRoutine({
+      update: this._dash,
+      onend: this._end,
+    }),
+  ]
+  private _jump(){
+    if (this._yvelocity()){
+      return this.endRoutine();
+    }
+    if (this.direction) this.x -= 4;
+    else this.x += 4;
   }
+  private _dash(){
+    if ((this.direction && this.x <= 44) || (!this.direction && this.x >= 400)){
+      return this.endRoutine();
+    }
+    if (this.direction) this.x -= 4;
+    else this.x += 4;
+  }
+  private _end(){
+    this.direction = !this.direction;
+  }
+
+  private velocity:boolean = false;
+  private direction:boolean = true;
 
   // public static readonly x1 = 0
   // public static readonly x2 = 314
@@ -708,6 +810,7 @@ class PlayerHitbox extends RenderedSprite {
     this.yv = 0;
     this.xv = 0;
     this.vulnerable = true;
+    playerGraphic.visible = true;
     while (this.touchingBlock()){
       this.y--;
     }
@@ -724,6 +827,13 @@ class PlayerHitbox extends RenderedSprite {
       this.vulnerable = false;
       playerDamage();
     }
+  }
+  public kill(){
+    this.visible = false;
+    new PlayerDeathParticle({
+      x: this.x,
+      y: this.y,
+    });
   }
 
   protected get yv(){
@@ -847,12 +957,13 @@ class HitStun extends RenderedSprite {
   public constructor(){
     super({
       center: player,
+      width: 16,
+      height: 16,
       texture: loadImage("player/stun.png")
     });
   }
 
   public frameUpdate(){
-    this.render();
     this.frame++;
     this.center(player);
     if (this.frame == 3){

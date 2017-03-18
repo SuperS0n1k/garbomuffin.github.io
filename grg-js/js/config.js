@@ -34,3 +34,4 @@ const SHOOTING_FACE_DELAY_A = 2000; // waiting
 const SHOOTING_FACE_DELAY_B = 250; // between each shot
 const SHOOTING_FACE_SHOTS = 3;
 const MAX_PROJECTILES = 4;
+const BOSS_ROUTINE_CHANCE = 28; // higher = less likely

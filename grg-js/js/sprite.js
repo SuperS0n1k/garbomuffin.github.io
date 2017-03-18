@@ -36,8 +36,8 @@ class Sprite {
         }
     }
     center(sprite) {
-        this.x += sprite.x + (sprite.width / 2) - (this.width / 2);
-        this.y += sprite.y + (sprite.height / 2) - (this.height / 2);
+        this.x = sprite.x + (isNumber(sprite.width) ? sprite.width / 2 : 0) - (this.width / 2);
+        this.y = sprite.y + (isNumber(sprite.height) ? sprite.height / 2 : 0) - (this.height / 2);
     }
     intersects(sprite, xOffset = 0, yOffset = 0) {
         return this.x + xOffset < sprite.x + sprite.width &&
@@ -237,6 +237,8 @@ class Particle extends RenderedSprite {
     constructor() {
         super(...arguments);
         this.frame = 0;
+        this.lifeSpan = 30;
+        this.speed = 30;
     }
     frameUpdate() {
         this.frame++;
@@ -246,6 +248,10 @@ class Particle extends RenderedSprite {
         this.y += this.speed * -Math.sin(this.rotation);
     }
 }
+// protected readonly speed: number = 3;
+// protected readonly lifeSpan: number = 30;
+Particle.count = 8;
+Particle.angleIncrement = 360 / Particle.count;
 class Projectile extends RenderedSprite {
     constructor(options) {
         super(options);
@@ -292,9 +298,6 @@ class ArrowTile extends Block {
                 width: BLOCK_WIDTH,
                 height: BLOCK_HEIGHT,
             } }));
-        console.log(options.x + (BLOCK_WIDTH / 2) - (this.width / 2));
-        console.log(options.y + (BLOCK_HEIGHT / 2) - (this.height / 2));
-        console.log(this);
     }
 }
 class UpgradeTile extends Block {
@@ -323,15 +326,31 @@ class BreakParticle extends Particle {
 }
 BreakParticle.count = 8;
 BreakParticle.type = "break";
-class BossParticle extends Particle {
-    constructor(options) {
-        super(Object.assign({}, options, { height: 12, width: 12 }));
-        this.speed = 3;
-        this.lifeSpan = Infinity;
+// class BossParticle extends Particle {
+//   public constructor(options: SpriteOptions){
+//     super({
+//       ...options,
+//       height: 12,
+//       width: 12,
+//     });
+//   }
+//   public static count = 16;
+//   public static type = "boss";
+// }
+class PlayerDeathParticle extends Particle {
+    constructor() {
+        super(...arguments);
+        this.yv = 5 / 2;
+    }
+    frameUpdate() {
+        this.y -= this.yv;
+        this.yv -= GRAVITY;
+        this.x += 1;
     }
 }
-BossParticle.count = 16;
-BossParticle.type = "boss";
+PlayerDeathParticle.count = 9;
+PlayerDeathParticle.angleIncrement = 22.5;
+PlayerDeathParticle.type = "grahm";
 /// ENEMIES
 class LargeSmiley extends Enemy {
     constructor(options) {
@@ -439,12 +458,25 @@ class ShootingFace extends Enemy {
     }
 }
 /// BOSSES
+class BossRoutine {
+    constructor(options) {
+        this.update = options.update;
+        if (typeof options.init === "function")
+            this.init = options.init;
+        if (typeof options.onend === "function")
+            this.onend = options.onend;
+    }
+}
 class Boss extends Enemy {
     constructor() {
         super(...arguments);
+        this.routines = [];
+        this.currentRoutine = null;
         this.health = 10; // or something
         this.playerDamage = 5; // or something
         this.state = 0;
+        this.yv = 0;
+        // public static particle = BossParticle;
     }
     update() {
         if (this.state === 0) {
@@ -452,19 +484,95 @@ class Boss extends Enemy {
                 this.health++;
             }
             else {
+                console.log("[boss] health increase finished...");
                 this.state = 1;
             }
         }
         else {
-            this.bossUpdate();
+            if (this.bossUpdate)
+                this.bossUpdate();
+            // routines
+            if (!this.currentRoutine && getRandomInt(1, BOSS_ROUTINE_CHANCE) === 1) {
+                var random = getRandomInt(0, this.routines.length - 1);
+                var routine = this.routines[random];
+                this.startRoutine(routine);
+            }
         }
     }
+    _yvelocity() {
+        this.y -= this.yv;
+        this.yv -= GRAVITY;
+        if (this.touchingSolidBlock()) {
+            var increment = this.yv > 0 ? -1 : 1;
+            while (this.touchingSolidBlock()) {
+                this.y -= increment;
+            }
+            return true;
+        }
+        return false;
+    }
+    // just resets variables
+    resetRoutine() {
+        this.yv = 0;
+    }
+    startRoutine(routine) {
+        this.bossUpdate = routine.update;
+        this.resetRoutine();
+        if (routine.init)
+            routine.init(this);
+        this.currentRoutine = routine;
+    }
+    endRoutine() {
+        if (typeof this.currentRoutine.onend === "function") {
+            this.currentRoutine.onend.call(this);
+        }
+        this.currentRoutine = null;
+        this.bossUpdate = null;
+    }
 }
-Boss.particle = BossParticle;
 class TrollBoss extends Boss {
-    bossUpdate() {
-        // if (this.state === 2){
-        // }
+    constructor() {
+        super(...arguments);
+        this.routines = [
+            new BossRoutine({
+                init: function (sprite) {
+                    sprite.yv = 13.35 / 2;
+                },
+                update: this._jump,
+                onend: this._end,
+            }),
+            new BossRoutine({
+                update: this._dash,
+                onend: this._end,
+            }),
+        ];
+        this.velocity = false;
+        this.direction = true;
+        // public static readonly x1 = 0
+        // public static readonly x2 = 314
+        // protected _x = TrollBoss.x2;
+        // protected _y = 172;
+    }
+    _jump() {
+        if (this._yvelocity()) {
+            return this.endRoutine();
+        }
+        if (this.direction)
+            this.x -= 4;
+        else
+            this.x += 4;
+    }
+    _dash() {
+        if ((this.direction && this.x <= 44) || (!this.direction && this.x >= 400)) {
+            return this.endRoutine();
+        }
+        if (this.direction)
+            this.x -= 4;
+        else
+            this.x += 4;
+    }
+    _end() {
+        this.direction = !this.direction;
     }
 }
 /// PROJECTILES
@@ -616,6 +724,7 @@ class PlayerHitbox extends RenderedSprite {
         this.yv = 0;
         this.xv = 0;
         this.vulnerable = true;
+        playerGraphic.visible = true;
         while (this.touchingBlock()) {
             this.y--;
         }
@@ -632,6 +741,13 @@ class PlayerHitbox extends RenderedSprite {
             this.vulnerable = false;
             playerDamage();
         }
+    }
+    kill() {
+        this.visible = false;
+        new PlayerDeathParticle({
+            x: this.x,
+            y: this.y,
+        });
     }
     get yv() {
         return this._yv;
@@ -753,6 +869,8 @@ class HitStun extends RenderedSprite {
     constructor() {
         super({
             center: player,
+            width: 16,
+            height: 16,
             texture: loadImage("player/stun.png")
         });
         this._zIndex = 20;
@@ -763,7 +881,6 @@ class HitStun extends RenderedSprite {
         this._height = 12;
     }
     frameUpdate() {
-        this.render();
         this.frame++;
         this.center(player);
         if (this.frame == 3) {

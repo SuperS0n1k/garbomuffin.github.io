@@ -21,6 +21,7 @@ var blocks = new Container();
 var updatable = new Container();
 var projectiles = new Container();
 var enemies = new Container();
+var playerGraphic = new PlayerGraphic();
 var player = new PlayerHitbox();
 // fps meter
 var stats = new Stats();
