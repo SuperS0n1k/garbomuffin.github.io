@@ -194,47 +194,48 @@ var theIntervalThingyYaKnow = setInterval(doStuff, 1000);
 function doStuff(){
   var projects;
   try{
-	projects = Array.from(document.getElementsByClassName("project"));
+    projects = Array.from(document.getElementsByClassName("project"));
   }catch(e){
-	console.log("Seems not to contain projects that can be blocked.");
-	clearInterval(theIntervalThingyYaKnow);
-	return;
+    console.log("Seems not to contain projects that can be blocked.");
+    clearInterval(theIntervalThingyYaKnow);
+    return;
   }
 
   for (var i of projects){
-	var el = i.getElementsByClassName("thumbnail-creator")[0];
-	if (!el) continue; // for some reason bad stuff can happen and yeah
-	var origTitle = el.parentNode.getElementsByTagName("a")[0].innerText;
-	var title = origTitle.toLowerCase();
+      var el = i.getElementsByClassName("thumbnail-creator")[0];
+      if (!el) continue; // for some reason bad stuff can happen and yeah
+      var origTitle = el.parentNode.getElementsByTagName("a")[0].innerText;
+      var title = origTitle.toLowerCase();
 
-	var isPerson = people.includes(el.innerText);
-	var isText = false;
+      var isPerson = people.includes(el.innerText);
+      var isText = false;
 
-	if (!isPerson){ // don't waste time checking for things we already know
-	  for (var n of titles){
-		if (title.indexOf(n) > -1){
-		  isText = true;
-		  break;
-		}
-	  }
-	}
+      if (!isPerson){ // don't waste time checking for things we already know
+        for (var n of titles){
+          if (title.indexOf(n) > -1){
+            isText = true;
+            break;
+          }
+      }
+    }
 
-	if (!isText && !isPerson){ // maybe it contains some of the other string we know of that are case sensitive
-	  for (var b of moreTitles){
-		if (origTitle.includes(b)){
-		  isText = true;
-		  break;
-		}
-	  }
-	}
+    if (!isText && !isPerson){ // maybe it contains some of the other string we know of that are case sensitive
+      for (var b of moreTitles){
+        if (origTitle.includes(b)){
+          isText = true;
+          break;
+        }
+      }
+    }
 
-	if (isPerson || isText){
-	  console.log((isPerson ? "User Block: " : "Title Block: ") + el.innerText + " - " + title +
-				  (debug ? " (https://scratch.mit.edu/users/" +el.innerText + "/ https://scratch.mit.edu/projects/" +
-				   el.parentNode.parentNode.parentNode.getElementsByTagName("a")[0].href : ""));
-	  i.parentNode.removeChild(i);
-	  count++;
-	}
+    if (isPerson || isText){
+      console.log((isPerson ? "User Block: " : "Title Block: ") + el.innerText + " - " + title +
+            (debug ? " (https://scratch.mit.edu/users/" + el.innerText + "/ https://scratch.mit.edu/projects/" +
+            el.parentNode.parentNode.parentNode.getElementsByTagName("a")[0].href : ""));
+
+      i.parentNode.removeChild(i);
+      count++;
+    }
   }
 
   thisel.innerHTML = count + " (likely) furries eradicated.";

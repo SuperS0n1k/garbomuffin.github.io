@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restricted Mode Bypass
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass
-// @version      2.0
+// @version      2.0.1
 // @description  "I like restricted mode!" -Said nobody ever.
 // @author       GarboMuffin
 // @match        https://www.youtube.com/*
@@ -41,7 +41,7 @@ function container(){
   el.style.marginLeft = "48px";
   el.style.marginRight = "48px";
   el.style.marginTop = "48px";
-  el.appendChild(element("h1", "", "Restricted Mode Bypass"));
+  // el.appendChild(element("h1", "", "Restricted Mode Bypass"));
   el.innerHTML += "It's a little buggy, is technically against the YouTube TOS, but hey it works.<br>";
   el.appendChild(div("rmbstatus", "Loading... (this can actually take a while)"));
   el.appendChild(video());
