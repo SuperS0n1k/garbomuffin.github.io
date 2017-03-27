@@ -9,6 +9,7 @@ const ARROW_TILE = { texture: "tiles/arrow.png", type: ArrowTile };
 const BOX_TILE = { texture: "tiles/box/1.png", type: BoxTile };
 const UPGRADE_TILE = { texture: "tiles/upgrade.png", solid: false, type: UpgradeTile };
 const HIDDEN_BRICK_TILE = { texture: "tiles/hidden_brick.png", solid: false, visible: false, type: HiddenBrickTile };
+const CHEST_TILE = { texture: "", type: ChestTile };
 // enemies
 const LARGE_SMILEY = { texture: "enemy/face.png", type: LargeSmiley };
 const POKERFACE = { texture: "enemy/face2.png", type: Pokerface };
@@ -27,6 +28,5 @@ const TILES = {
     i: HIDDEN_BRICK_TILE,
     j: SHOOTING_FACE,
     k: UNKNOWN_TILE,
-    // k: TROLL_FACE_BOSS,
     h: ARROW_TILE,
 };

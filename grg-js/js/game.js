@@ -1,8 +1,8 @@
 function loop() {
-    if (state === null) {
-        return;
-    }
+    // frame++;
     stats.begin();
+    if (state === null)
+        return; // crash handling
     state();
     render();
     stats.end();
@@ -19,6 +19,7 @@ function render() {
 }
 function reset() {
     // use a really weird thing to delete sprites for reasons.
+    frame = 0;
     var length = sprites.length;
     var index = 0;
     for (let i = 0; i < length; i++) {

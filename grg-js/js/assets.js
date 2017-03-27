@@ -46,12 +46,12 @@ function loadImage(file) {
     if (file in ASSETS) {
         return ASSETS[file];
     }
-    console.log("Downloading: " + file);
+    // console.log("Downloading: " + file);
     var asset;
     asset = new Image();
     asset.onload = function () {
         loadedAssets++;
-        console.log("Loaded: " + asset.src);
+        // console.log("Loaded: " + asset.src);
     };
     asset.src = file;
     ASSETS[file] = asset;

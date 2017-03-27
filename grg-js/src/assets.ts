@@ -50,12 +50,12 @@ function loadImage(file:string|HTMLImageElement): HTMLImageElement{
     return ASSETS[file];
   }
 
-  console.log("Downloading: " + file);
+  // console.log("Downloading: " + file);
   var asset;
   asset = new Image();
   asset.onload = function(): void{
     loadedAssets++;
-    console.log("Loaded: " + asset.src);
+    // console.log("Loaded: " + asset.src);
   }
   asset.src = file;
   ASSETS[file] = asset;

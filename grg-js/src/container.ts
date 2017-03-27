@@ -25,7 +25,7 @@ class Container{
   }
 
   public *[Symbol.iterator](){
-    for (let sprite of this.children){
+    for (var sprite of this.children){
       yield sprite;
     }
   }

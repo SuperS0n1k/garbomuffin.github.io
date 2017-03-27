@@ -22,7 +22,7 @@ class Container {
         return this.children[id];
     }
     *[Symbol.iterator]() {
-        for (let sprite of this.children) {
+        for (var sprite of this.children) {
             yield sprite;
         }
     }
