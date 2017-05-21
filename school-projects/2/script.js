@@ -55,7 +55,7 @@ function calc(){
     el.style.color = "red";
   }else if (out === 0){
     el.innerHTML = `After this month, you will break even.`;
-    el.style.color = "yellow";
+    el.style.color = "orange";
   }
 }
 
