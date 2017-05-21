@@ -129,3 +129,4 @@ var app = document.getElementById("app");
 var table = document.getElementById("table");
 
 loadData();
+update();
