@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <title>Budgeting</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Budgeting</h1>
+      <div id="app">
+        
+        <hr>
+        
+        <label for="income">Your monthly income:</label>
+        <input type="number" value="0" min="0" id="income" class="form-control">
+
+        <br>
+
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Cost (monthly)</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+
+          <tbody id="table">
+
+          </tbody>
+        </table>
+      </div>
+
+      <br>
+
+      <button type="button" class="btn btn-primary" onclick="calc();">Calculate</button>
+
+      <button type="button" class="btn btn-success" onclick="saveData();">Save</button>
+      <button type="button" class="btn btn-success" onclick="loadData();">Load</button>
+      <button type="button" class="btn btn-warning" onclick="resetData();">Reset</button>
+
+      <button type="button" class="btn btn-primary" style="float: right" onclick="addItem();">+</button>
+
+      <div id="out" class=""></div>
+    </div>
+
+    <script type="text/template" id="item">
+      <tr>
+        <th scope="row">${id}</th>
+
+        <td>
+          <input value="${name}" class="form-control" type="text" placeholder="Enter a name!">
+        </td>
+
+        <td>
+          <input value="${cost}" class="form-control" type="number" min="0" placeholder="Enter a cost!">
+        </td>
+
+        <td>
+          <button type="button" class="btn btn-danger" style="float: right" onclick="removeItem.call(this);">-</button>
+        </td>
+      </tr>
+    </script>
+
+    <script src="script.js"></script>
+  </body>
+</html>
