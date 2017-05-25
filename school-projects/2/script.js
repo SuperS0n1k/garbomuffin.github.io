@@ -28,10 +28,10 @@ class Template {
   }
 }
 
-class Item {
+class Item extends Template {
   constructor(options){
-    this.template = new Template(document.getElementById("item"))
-      .format("name", options && options.name || "")
+    super(document.getElementById("item"));
+    this.format("name", options && options.name || "")
       .format("id", options && options.id || (table.children.length + 1))
       .format("cost", options && options.cost || 0);
   }
@@ -61,7 +61,7 @@ function calc(){
 
 function addItem(){
   var item = new Item();
-  item.template.appendTo(table);
+  item.appendTo(table);
   update();
 }
 
@@ -88,7 +88,7 @@ function save(){
   return data;
 }
 function saveData(){
-  localStorage.setItem("budgetingSaveData", `[${save()}]`);
+  localStorage.setItem("budgetingSaveData", JSON.stringify(save()));
 }
 
 function load(data){
@@ -102,7 +102,7 @@ function load(data){
     new Item({
       name: data[i],
       cost: data[i + 1]
-    }).template.appendTo(table);
+    }).appendTo(table);
   }
 }
 function loadData(){
@@ -113,6 +113,7 @@ function loadData(){
     addItem();
   }
 }
+
 function resetData(){
   clear();
   localStorage.setItem("budgetingSaveData", "");

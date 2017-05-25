@@ -1,17 +1,119 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>Budgeting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
 
   <body>
     <div class="container">
-      <h1>Budgeting</h1>
+      <div class="page-header">
+        <h1>Budgeting</h1>
+      </div>
+
+      <hr>
+
+      <!-- Budgeting Info -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5>What is budgeting?</h5>
+            <p>Planning how to spend your money and make sure you're making more than you're spending.</p>
+          </div>
+
+          <div class="col-md-6">
+            <h5>When should you budget?</h5>
+            <p>Always.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <h5>Examples of needs:</h5>
+            <ul>
+              <li>Food</li>
+              <li>Water</li>
+              <li>Shelter</li>
+              <li>etc</li>
+            </ul>
+          </div>
+
+          <div class="col-md-6">
+            <h5>Examples of wants:</h5>
+            <ul>
+              <li>New phone</li>
+              <li>New clothes</li>
+              <li>Fidget spinners</li>
+              <li>etc</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <h5>Who budgets?</h5>
+            <uL>
+              <li>The government</li>
+              <li>Companies</li>
+              <li>Your family</li>
+              <li>Everyone</li>
+            </uL>
+          </div>
+
+          <div class="col-md-6">
+            <h5>How do you budget?</h5>
+            <p>
+              There are many ways you can budget:
+              <ul>
+                <li>Pen and paper</li>
+                <li>Excel/spreadsheets</li>
+                <li>Using an app</li>
+                <li>And many more</li>
+              </ul>
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <h5>What is the process of budgeting?</h5>
+            <ol>
+              <li>First, figure out how much money you will have to spend.</li>
+              <li>Identify what you <b>NEED</b> to spend your money on. <span class="text-muted">(needs)</span></li>
+              <li>Figure out how much you need to spend in each of those categories, and allocate accordingly.</li>
+              <li>Calculate how much money you will have after needs are paid for</li>
+              <li>Then you should decide what you <b>WANT</b> to buy. <span class="text-muted">(wants)</span></li>
+              <li>Spend some of your remaining money on those categories.</li>
+              <li>Remember to keep some extra!</li>
+            </ol>
+          </div>
+
+          <div class="col-md-6">
+            <h5>Things to save for:</h5>
+            <h6>Planned</h6>
+            <ul>
+              <li>Retirement</li>
+              <li>Vacation</li>
+            </ul>
+            <h6>Unforseen events:</h6>
+            <ul>
+              <li>Natural disaster</li>
+              <li>The economy is doing poorly</li>
+              <li>You lose your job</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Interactive App -->
       <div id="app">
-        
-        <hr>
-        
-        <label for="income">Your monthly income:</label>
+        <h2>Interactive App</h2>
+
+        <label for="income">Availible money:</label>
         <input type="number" value="0" min="0" id="income" class="form-control">
 
         <br>
@@ -30,19 +132,78 @@
 
           </tbody>
         </table>
+
+        <button type="button" class="btn btn-primary" onclick="calc();">Calculate</button>
+
+        <button type="button" class="btn btn-success" onclick="saveData();">Save</button>
+        <button type="button" class="btn btn-success" onclick="loadData();">Load</button>
+        <button type="button" class="btn btn-warning" onclick="resetData();">Reset</button>
+
+        <button type="button" class="btn btn-primary" style="float: right" onclick="addItem();">+</button>
+
+        <div id="out" class=""></div>
       </div>
 
-      <br>
+      <hr>
 
-      <button type="button" class="btn btn-primary" onclick="calc();">Calculate</button>
+      <!-- Project Info -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <h5>Why did this project interest you?</h6>
+            <p>I've wanted to make some sort of budgeting app for a while, and this seemed like an easy way to make myself finally make it.</p>
+          </div>
 
-      <button type="button" class="btn btn-success" onclick="saveData();">Save</button>
-      <button type="button" class="btn btn-success" onclick="loadData();">Load</button>
-      <button type="button" class="btn btn-warning" onclick="resetData();">Reset</button>
+          <div class="col-md-3">
+            <h5>Who is most impacted by your topic?</h5>
+            <p>
+              Everyone
+            </p>
+          </div>
 
-      <button type="button" class="btn btn-primary" style="float: right" onclick="addItem();">+</button>
+          <div class="col-md-3">
+            <h5>What new information did you learn?</h5>
+            <ul>
+              <li>Everyone should budget. It's not something only businesses or governments do, families should also do it.</li>
+              <li>There's actually a lot that can go into making a budget.</li>
+            </ul>
+          </div>
 
-      <div id="out" class=""></div>
+          <div class="col-md-3">
+            <h5>How does this affect the United States?</h5>
+            <p>
+              Since America is a free market economy, budgeting is really important.
+              The government won't take care of you, you have to take care of yourself.
+              You have to spend your money to pay your bills and hopefully still have some left at the end.
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3">
+            <h5>Why is this important?</h5>
+            <p>
+              If you don't budget well, you could end up spending more than you make and end up in a serious situation.
+            </p>
+          </div>
+
+          <div class="col-md-3">
+            <h5>What is the lasting impact?</h5>
+            <p>
+              Budgeting will still be needed in hundreds of years.
+              There will still be people unable to pay back loans because they didn't budget well and spent more than they made.
+            </p>
+          </div>
+
+          <div class="col-md-3">
+            <h5>What connections does your topic have with current issues?</h5>
+            <p>
+              Lots of people are unable to pay back their debts.
+              If they budgeted better, they may have been able to pay back their debts.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script type="text/template" id="item">
@@ -64,5 +225,8 @@
     </script>
 
     <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>
 </html>
