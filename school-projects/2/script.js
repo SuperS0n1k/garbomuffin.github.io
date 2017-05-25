@@ -82,8 +82,8 @@ function update(){
 function save(){
   var data = [document.getElementById("income").value];
   for (var el of table.children){
-    data.push(`"${el.children[1].children[0].value}"`);
-    data.push(`${el.children[2].children[0].value}`);
+    data.push(el.children[1].children[0].value);
+    data.push(el.children[2].children[0].value);
   }
   return data;
 }
@@ -94,8 +94,6 @@ function saveData(){
 function load(data){
   clear();
 
-  data = JSON.parse(data);
-
   document.getElementById("income").value = data[0];
 
   for (var i = 1; i < data.length; i += 2){
@@ -104,11 +102,13 @@ function load(data){
       cost: data[i + 1]
     }).appendTo(table);
   }
+
+  update();
 }
 function loadData(){
   var data = localStorage.getItem("budgetingSaveData");
   if (data){
-    load(localStorage.getItem("budgetingSaveData"));
+    load(JSON.parse(localStorage.getItem("budgetingSaveData")));
   }else{
     addItem();
   }
