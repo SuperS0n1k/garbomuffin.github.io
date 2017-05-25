@@ -104,6 +104,7 @@ function load(data){
   }
 
   update();
+  calc();
 }
 function loadData(){
   var data = localStorage.getItem("budgetingSaveData");
@@ -131,3 +132,17 @@ var table = document.getElementById("table");
 
 loadData();
 update();
+
+
+var example = [
+  1500,
+  "Car",
+  200,
+  "House",
+  300,
+  "Food",
+  200
+];
+function loadExample(){
+  load(example);
+}

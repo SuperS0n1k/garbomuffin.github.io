@@ -21,7 +21,7 @@
         Without it, our government wouldn't provide all the things it does.
         Businesses wouldn't be able to stay alive.
         And your family might not even exist.
-        That's why it's important and you should learn about it.
+        That's why it's important and why you should learn about it.
       </p>
 
       <!-- Budgeting Info -->
@@ -86,21 +86,41 @@
         </div>
 
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-7">
             <h5>What is the process of budgeting?</h5>
             <ol>
               <li>First, figure out how much money you will have to spend.</li>
               <li>Identify what you <b>NEED</b> to spend your money on. <span class="text-muted">(needs)</span></li>
               <li>Figure out how much you need to spend in each of those categories, and allocate accordingly.</li>
-              <li>Calculate how much money you will have after needs are paid for</li>
-              <li>Then you should decide what you <b>WANT</b> to buy. <span class="text-muted">(wants)</span></li>
+              <li>Calculate how much money you will have after needs are paid for.</li>
+              <li>If you don't have any money or have a negative amount you will have to find a way to cut expenses.</li>
+              <li>If you have money left, then you should decide what you <b>WANT</b> to buy. <span class="text-muted">(wants)</span></li>
               <li>Spend some of your remaining money on those categories.</li>
               <li>Remember to keep some extra!</li>
             </ol>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-5">
             <h5>Things to save for:</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Planned</h6>
+                <ul>
+                  <li>Retirement</li>
+                  <li>Vacation</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6>Unforseen</h6>
+                <ul>
+                  <li>Natural disasters</li>
+                  <li>The economy is doing poorly</li>
+                  <li>You lose your job</li>
+                </ul>
+              </div>
+            </div>
+            
+            <!--<h5>Things to save for:</h5>
             <h6>Planned</h6>
             <ul>
               <li>Retirement</li>
@@ -111,7 +131,7 @@
               <li>Natural disaster</li>
               <li>The economy is doing poorly</li>
               <li>You lose your job</li>
-            </ul>
+            </ul>-->
           </div>
         </div>
       </div>
@@ -123,7 +143,10 @@
         <h2>Interactive App</h2>
 
         <label for="income">Availible money:</label>
-        <input type="number" value="0" min="0" id="income" class="form-control">
+        <div class="input-group">
+          <span class="input-group-addon">$</span>
+          <input type="number" class="form-control" id="income">
+        </div>
 
         <br>
 
@@ -147,6 +170,8 @@
         <button type="button" class="btn btn-success" onclick="saveData();">Save</button>
         <button type="button" class="btn btn-success" onclick="loadData();">Load</button>
         <button type="button" class="btn btn-warning" onclick="resetData();">Reset</button>
+
+        <button type="button" class="btn btn-secondary" onclick="loadExample();">Load Example</button>
 
         <button type="button" class="btn btn-primary" style="float: right" onclick="addItem();">+</button>
 
@@ -172,7 +197,7 @@
             <h5>Who is most impacted by your topic?</h5>
             <p>
               Everyone. Everyone needs to budget. <s>Even</s> Especially the government.
-              <b>Trillions</b> of our<span class="text-muted"> (the citizens) </span>money is at stake there.
+              <b>Trillions</b> of our <span class="text-muted">(the citizens)</span> money is at stake there.
             </p>
           </div>
 
@@ -208,8 +233,7 @@
           <div class="col-md-3">
             <h5>What connections does your topic have with current issues?</h5>
             <p>
-              Lots of people are unable to pay back their debts.
-              If they budgeted better, they may have been able to pay back their debts and would be in a much better situation right now.
+              There are lots of people unable to pay their bills that may be able to if they budgeted correctly.
             </p>
           </div>
 
@@ -224,6 +248,8 @@
           </div>
         </div>
       </div>
+
+      <hr>
 
       <!-- Sources -->
       <div class="text-muted sources">
