@@ -1,0 +1,32 @@
+.gray {
+  color: #9B9B9B;
+}
+
+.sarcasm {
+  font-family: "Comic Sans MS", sans-serif;
+  animation: rainbow 10s linear 0s infinite;
+}
+
+@keyframes rainbow{
+  0%{
+      color: #F00;
+  }
+  17%{
+      color: #FF0;
+  }
+  33%{
+      color: #0F0;
+  }
+  50%{
+      color: #0FF;
+  }
+  67%{
+      color: #00F;
+  }
+  84%{
+      color: #F0F;
+  }
+  100%{
+      color: #F00;
+  }
+}

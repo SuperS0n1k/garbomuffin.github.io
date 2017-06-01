@@ -1,0 +1,33 @@
+name: Ping
+author: GarboMuffin
+version: 1.0
+main: garbomuffin.PingPlugin
+
+commands:
+    ping:
+        description: Get your or another player's ping to the server.
+        usage: /ping [player]
+        permission: ping
+        
+permissions:
+    ping:
+        description: Ability to access /ping, at all
+        default: true
+    ping.*:
+        description: Ability to use all features of /ping
+        default: true
+        children:
+            - ping.self
+            - ping.other
+            - ping
+    ping.self:
+        description: Ability to get the ping of one's self.
+        default: true
+        children:
+            - ping
+    ping.other:
+        description: Ability to get the ping of other players and one's self.
+        default: true
+        children:
+            - ping.self
+            - ping
