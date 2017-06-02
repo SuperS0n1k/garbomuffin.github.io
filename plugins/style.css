@@ -1,7 +1,7 @@
-#pluginPage span.float {
+span.float {
   float: right;
 }
 
-#pluginPage span.float button {
+span.float button {
   margin-right: 5px;
 }

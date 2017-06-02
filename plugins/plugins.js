@@ -8,14 +8,14 @@ var plugins = [
     source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/plugins/Ping/src",
 
     body:
-    `
-    A simple, yet effective plugin for getting the ping of yourself or another player.
-    <h4>Usage:</h4>
-    <ul>
-      <li>/ping - Gets your own ping!</li>
-      <li>/ping &lt;some player&gt; - Gets someone elses ping!</li>
-    </ul>
-    `,
+      `
+      A simple, yet effective plugin for getting the ping of yourself or another player.
+      <h4>Usage:</h4>
+      <ul>
+        <li>/ping - Gets your own ping!</li>
+        <li>/ping &lt;some player&gt; - Gets someone elses ping!</li>
+      </ul>
+      `,
 
     permissions: [
       new Permission({
@@ -51,10 +51,19 @@ var plugins = [
           "ping.other",
         ]
       }),
+    ],
+
+    changelog: [
+      new ChangeLog({
+        latest: true,
+        version: "1.0",
+        changes: [
+          "The first release!"
+        ]
+      })
     ]
   }),
-
-    new SpigotPlugin({
+  new SpigotPlugin({
     name: "LagFixer420",
     pluginVersion: "4.2.0",
     minecraftVersion: "1.11.2",
@@ -63,29 +72,29 @@ var plugins = [
     source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/plugins/LagFixer420/src",
 
     body:
-    `
-    Having problems with your TPS dropping?
-    Is <a href="https://dev.bukkit.org/projects/clearlagg" target="_blank">ClearLagg</a> not enough for you?
-    Well then this plugin is just for you.
-    Using some advanced algorithms and coding, this plugin brings your TPS back up to 20, no matter how bad it is!
+      `
+      Having problems with your TPS dropping?
+      Is <a href="https://dev.bukkit.org/projects/clearlagg" target="_blank">ClearLagg</a> not enough for you?
+      Well then this plugin is just for you.
+      Using some advanced algorithms and coding, this plugin brings your TPS back up to 20, no matter how bad it is!
 
-    <div class="row">
-      <div class="col-md-6">
-        <h3>Before</h3>
-        <img src="https://i.imgur.com/bHyLXYw.png" width="100%">
-        <p>
-          Without LagFixer420 - Only 19.95 TPS! Unacceptable!
-        </p>
-      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <h3>Before</h3>
+          <img src="https://i.imgur.com/RpzXIqY.png" width="100%">
+          <p>
+            Without LagFixer420 - 15 TPS! That's horrible!
+          </p>
+        </div>
 
-      <div class="col-md-6">
-        <h3>After</h3>
-        <img src="https://i.imgur.com/3bSJn1c.png" width="100%">
-        <p>
-          With LagFixer420 - A perfect 20 TPS! Tremendous!
-        </p>
+        <div class="col-md-6">
+          <h3>After</h3>
+          <img src="https://i.imgur.com/3bSJn1c.png" width="100%">
+          <p>
+            With LagFixer420 - A perfect 20 TPS! Tremendous!
+          </p>
+        </div>
       </div>
-    </div>
-    `,
+      `,
   }),
 ];

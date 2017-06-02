@@ -1,12 +1,22 @@
 "use strict";
-class Template {
-    constructor(el, props) {
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var Template = (function () {
+    function Template(el, props) {
         this.el = el.innerHTML;
         for (var i in props) {
             this.format(i, props[i]);
         }
     }
-    format(old, replace) {
+    Template.prototype.format = function (old, replace) {
         // WIP
         if (replace instanceof Array) {
             replace = Template.listToHTMLString(replace);
@@ -21,8 +31,8 @@ class Template {
             }
         }
         return this;
-    }
-    append(el) {
+    };
+    Template.prototype.append = function (el) {
         if (typeof el === "string") {
             this.el += el;
         }
@@ -33,8 +43,9 @@ class Template {
             this.el += el.el;
         }
         return this;
-    }
-    appendTo(el, preserveUndefined = false) {
+    };
+    Template.prototype.appendTo = function (el, preserveUndefined) {
+        if (preserveUndefined === void 0) { preserveUndefined = false; }
         // replace stray templates
         if (!preserveUndefined) {
             this.stripUndefined();
@@ -46,69 +57,111 @@ class Template {
             el.el += this.el;
         }
         return this;
-    }
-    stripUndefined() {
+    };
+    Template.prototype.stripUndefined = function () {
         this.el = this.el.replace(/\${.*}/g, "");
         return this;
-    }
-    static listToHTMLString(list) {
+    };
+    Template.listToHTMLString = function (list) {
         var ret = "";
-        for (var i of list) {
-            ret += `<li>${i}</li>`;
+        for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
+            var i = list_1[_i];
+            ret += "<li>" + i + "</li>";
         }
         return ret;
-    }
-}
-class Permission extends Template {
-    constructor(props) {
-        super(document.getElementById("permission"), props);
-        if (props.default) {
-            this.format("default", "(default)");
+    };
+    return Template;
+}());
+var Permission = (function (_super) {
+    __extends(Permission, _super);
+    function Permission(props) {
+        var _this = _super.call(this, document.getElementById("entry"), props) || this;
+        if (props["default"]) {
+            _this.format("default", "(default)");
         }
         // this.name = props.name || "Permission";
         // this.default = typeof props.default !== "undefined" ? props.default : true;
         // this.about = props.about || "About";
         // this.children = props.children || [];
         if (props.children.length > 0) {
-            this.format("child", new Template(document.getElementById("permission-children"))
+            _this.format("child", new Template(document.getElementById("permission-children"))
                 .format("children", props.children));
         }
-        this.stripUndefined();
+        _this.stripUndefined();
+        return _this;
     }
-}
+    return Permission;
+}(Template));
+var ChangeLog = (function (_super) {
+    __extends(ChangeLog, _super);
+    function ChangeLog(props) {
+        var _this = _super.call(this, document.getElementById("entry"), props) || this;
+        _this.format("child", new Template(document.getElementById("changelog-children"), props)
+            .format("children", props.changes));
+        if (props.latest) {
+            _this.format("lts", "(latest)");
+        }
+        _this.stripUndefined();
+        return _this;
+    }
+    return ChangeLog;
+}(Template));
 var SpigotPlugins = {};
-class SpigotPlugin extends Template {
-    constructor(props) {
-        super(document.getElementById("plugin"), props);
-        this.props = props;
-        SpigotPlugins[props.name] = this;
+var SpigotPlugin = (function (_super) {
+    __extends(SpigotPlugin, _super);
+    function SpigotPlugin(props) {
+        var _this = _super.call(this, document.getElementById("plugin"), props) || this;
+        _this.props = props;
+        SpigotPlugins[props.name] = _this;
+        return _this;
     }
-}
-class ActivePage extends Template {
-    constructor(plugin) {
-        super(activePage, plugin.props);
+    return SpigotPlugin;
+}(Template));
+var PluginPage = (function (_super) {
+    __extends(PluginPage, _super);
+    function PluginPage(plugin) {
+        var _this = _super.call(this, activePage, plugin.props) || this;
         // permissions
         var permissions = plugin.props.permissions;
         if (permissions && permissions.length > 0) {
-            var perms = new Template(document.getElementById("permissions"));
+            var perms = new Template(document.getElementById("container")).format("text", "Permissions");
             var row = new Template(document.getElementById("row"));
-            var rowSize = 0;
-            for (var permission of permissions) {
-                if (rowSize === 3) {
-                    rowSize = 0;
-                    row.append("</div>");
-                    perms.append(row);
-                    row = new Template(document.getElementById("row"));
-                }
-                rowSize++;
-                row.append(permission);
-            }
-            row.append("</div>");
-            perms.append(row);
-            perms.append("</div>");
-            this.append(perms);
+            _this.format("perms", createGridLayout(perms, permissions));
         }
+        // changelog
+        var changelog = plugin.props.changelog;
+        if (changelog && changelog.length > 0) {
+            var changes = new Template(document.getElementById("container"))
+                .format("text", "Changelog")
+                .append("</div>");
+            _this.format("change", createGridLayout(changes, plugin.props.changelog, 2));
+        }
+        return _this;
     }
+    return PluginPage;
+}(Template));
+var rowTemplate = document.getElementById("row");
+function createGridLayout(container, items, rowLength) {
+    if (rowLength === void 0) { rowLength = 3; }
+    var colSize = Math.floor(12 / rowLength);
+    ;
+    var row = new Template(rowTemplate);
+    var rs = 0;
+    for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
+        var item = items_1[_i];
+        if (rs === 3) {
+            rs = 0;
+            row.append("</div>");
+            container.append(row);
+            row = new Template(document.getElementById("row"));
+        }
+        rs++;
+        row.append(item);
+    }
+    row.append("</div>");
+    container.append(row);
+    container.append("</div>");
+    return container;
 }
 var loadedPlugins = false;
 var app = document.getElementById("app");
@@ -130,7 +183,7 @@ function setActive(pl) {
     document.getElementById("pluginList").style.display = "none";
     pluginPage.style.display = "block";
     var plugin = SpigotPlugins[pl];
-    new ActivePage(plugin).appendTo(pluginPage);
+    new PluginPage(plugin).appendTo(pluginPage);
 }
 function loadPlugins() {
     document.getElementById("pluginList").style.display = "block";
@@ -138,7 +191,8 @@ function loadPlugins() {
     if (loadedPlugins)
         return;
     loadedPlugins = true;
-    for (var i of plugins) {
+    for (var _i = 0, plugins_1 = plugins; _i < plugins_1.length; _i++) {
+        var i = plugins_1[_i];
         i.appendTo(document.getElementById("pluginList"));
     }
 }

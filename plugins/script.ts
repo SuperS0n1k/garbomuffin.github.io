@@ -19,6 +19,7 @@ interface IPlugin {
 
   permissions?: Permission[]
   config?: string
+  changelog?: ChangeLog[]
 }
 
 interface IPermission {
@@ -26,6 +27,11 @@ interface IPermission {
   default: boolean
   about: string
   children?: string[]
+}
+interface IChangeLog {
+  latest?: boolean
+  version: string
+  changes: string[]
 }
 
 class Template {
@@ -97,7 +103,7 @@ class Template {
 
 class Permission extends Template implements IPermission {
   constructor(props: IPermission){
-    super(document.getElementById("permission"), props);
+    super(document.getElementById("entry"), props);
 
     if (props.default){
       this.format("default", "(default)");
@@ -123,6 +129,26 @@ class Permission extends Template implements IPermission {
   children?: string[]
 }
 
+class ChangeLog extends Template implements IChangeLog {
+  constructor(props){
+    super(document.getElementById("entry"), props);
+
+    this.format("child",
+      new Template(document.getElementById("changelog-children"), props)
+        .format("children", props.changes)
+    );
+
+    if (props.latest){
+      this.format("lts", "(latest)");
+    }
+
+    this.stripUndefined();
+  }
+
+  version: string
+  changes: string[]
+}
+
 var SpigotPlugins:any = {};
 class SpigotPlugin extends Template {
   constructor(props: IPlugin){
@@ -136,36 +162,54 @@ class SpigotPlugin extends Template {
   props: IPlugin
 }
 
-class ActivePage extends Template {
+class PluginPage extends Template {
   constructor(plugin: SpigotPlugin){
     super(activePage, plugin.props);
 
     // permissions
     var permissions = plugin.props.permissions;
     if (permissions && permissions.length > 0){
-      var perms = new Template(document.getElementById("permissions"));
+      var perms = new Template(document.getElementById("container")).format("text", "Permissions");
       var row = new Template(document.getElementById("row"));
 
-      var rowSize = 0;
-      for (var permission of permissions){
-        if (rowSize === 3){
-          rowSize = 0;
-          row.append("</div>");
-          perms.append(row);
-          row = new Template(document.getElementById("row"));
-        }
-        rowSize++;
+      this.format("perms", createGridLayout(perms, permissions));
+    }
 
-        row.append(permission);
-      }
+    // changelog
+    var changelog = plugin.props.changelog;
+    if (changelog && changelog.length > 0){
+      var changes = new Template(document.getElementById("container"))
+      .format("text", "Changelog")
+      .append("</div>")
 
-      row.append("</div>");
-      perms.append(row);
-      perms.append("</div>");
-
-      this.append(perms);
+      this.format("change", createGridLayout(changes, plugin.props.changelog, 2));
     }
   }
+}
+
+var rowTemplate = document.getElementById("row");
+function createGridLayout(container: Template, items: Template[], rowLength = 3): Template{
+  var colSize = Math.floor(12 / rowLength);;
+
+  var row = new Template(rowTemplate);
+  var rs = 0;
+  for (var item of items){
+    if (rs === 3){
+      rs = 0;
+      row.append("</div>");
+      container.append(row);
+      row = new Template(document.getElementById("row"));
+    }
+    rs++;
+
+    row.append(item);
+  }
+
+  row.append("</div>");
+  container.append(row);
+  container.append("</div>");
+
+  return container;
 }
 
 var loadedPlugins = false;
@@ -191,7 +235,7 @@ function setActive(pl: string){
   pluginPage.style.display = "block";
 
   var plugin = SpigotPlugins[pl];
-  new ActivePage(plugin).appendTo(pluginPage);
+  new PluginPage(plugin).appendTo(pluginPage);
 }
 
 function loadPlugins(){

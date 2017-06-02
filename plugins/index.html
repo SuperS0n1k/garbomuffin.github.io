@@ -21,7 +21,13 @@
     </div>
 
     <script type="text/template" id="plugin">
-      <h2><a href="#/${name}">${name}</a> <small>${subtext}</small></h2>
+      <h2>
+        <a href="#/${name}">${name}</a>
+        <small>${subtext}</small>
+        <span class="float">
+          <button onclick="window.open('${download}');" class="btn btn-primary">Download!</button>
+        </span>
+      </h2>
       <div class="container">
         <div class="row">
           <div class="col-md-4">
@@ -61,9 +67,9 @@
           <li><b>Download</b>: <a href="${download}">${name}.jar</a></li>
           <li>Source: <a href="${source}">${name}/src</a></li>
         </ul>
-        
 
         ${perms}
+        ${change}
       </div>
 
       </div>
@@ -73,13 +79,13 @@
       <div class="row">
     </script>
 
-    <script type="text/template" id="permissions">
+    <script type="text/template" id="container">
       <hr>
-      <h3>Permissions</h3>
+      <h3>${text}</h3>
       <div class="container">
     </script>
 
-    <script type="text/template" id="permission">
+    <script type="text/template" id="entry">
       <div class="col-md-4">
         <h4>${name} <small>${default}</small></h4>
         <p>${about}</p>
@@ -89,6 +95,11 @@
 
     <script type="text/template" id="permission-children">
       <h5>Children:</h5>
+      <ul>${children}</ul>
+    </script>
+
+    <script type="text/template" id="changelog-children">
+      <h5>${version}: <small>${lts}</small></h5>
       <ul>${children}</ul>
     </script>
 
