@@ -5,32 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
     <link rel="stylesheet" href="style.css" type="text/css">
+    <title>Plugins</title>
   </head>
   <body>
     <div class="container">
-      <h1>My Plugins</h1>
-      <p>
-        Some very simple, small, and useless Minecraft plugins I've made at some point in my life.
-        Many of these are joke plugins that don't actually do anything useful.
-      </p>
+      <h1>Plugins</h1>
+      <hr>
+      <noscript>
+        Enable javascript.
+      </noscript>
+      <div id="app">
+        <div id="pluginList"></div>
+        <div id="pluginPage"></div>
+      </div>
+    </div>
+
+    <script type="text/template" id="plugin">
+      <h2><a href="#/${name}">${name}</a> <small>${subtext}</small></h2>
       <div class="container">
         <div class="row">
-
           <div class="col-md-4">
-            <h2><a href="Ping">Ping</a> <small>actually useful</small></h2>
-            <p>
-              /ping with permissions and config options
-            </p>
+            <h4>Info</h4>
+            <ul>
+              <li>Plugin Version: <b>${pluginVersion}</b></li>
+              <li>Minecraft Version: <b>${minecraftVersion}</b></li>
+              <li><b>Download</b>: <a href="${download}">${name}.jar</a></li>
+              <li>Source: <a href="${source}">${name}/src</a></li>
+            </ul>
           </div>
 
-          <div class="col-md-4 sarcasm">
-            <h2><a href="LagFixer420">LagFixer420</a></h2>
-            <p>
-              FIXES ALL OF YOUR LAG PROBLEMS!!11!!
-            </p>
+          <div class="col-md-8">
+            <h4>About</h4>
+            <p>${about}</p>
           </div>
         </div>
       </div>
-    </div>
+    </script>
+
+    <script type="text/template" id="activePage">
+      <h2>
+        ${name} <small>${subtext}</small>
+        <span class="float">
+          <button onclick="window.open('${download}');" class="btn btn-primary">Download!</button>
+          <button onclick="location.hash='#';" class="btn btn-danger">Back</button>
+        </span>
+      </h2>
+
+      ${body}
+      <hr>
+
+        <h4>Info</h4>
+        <ul>
+          <li>Plugin Version: <b>${pluginVersion}</b></li>
+          <li>Minecraft Version: <b>${minecraftVersion}</b></li>
+          <li><b>Download</b>: <a href="${download}">${name}.jar</a></li>
+          <li>Source: <a href="${source}">${name}/src</a></li>
+        </ul>
+        
+
+        ${perms}
+      </div>
+
+      </div>
+    </script>
+
+    <script type="text/template" id="row">
+      <div class="row">
+    </script>
+
+    <script type="text/template" id="permissions">
+      <hr>
+      <h3>Permissions</h3>
+      <div class="container">
+    </script>
+
+    <script type="text/template" id="permission">
+      <div class="col-md-4">
+        <h4>${name} <small>${default}</small></h4>
+        <p>${about}</p>
+        ${child}
+      </div>
+    </script>
+
+    <script type="text/template" id="permission-children">
+      <h5>Children:</h5>
+      <ul>${children}</ul>
+    </script>
+
+    <script src="script.js"></script>
+    <script src="plugins.js"></script>
+    <script>load();</script>
   </body>
 </html>
