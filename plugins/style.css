@@ -5,3 +5,7 @@ span.float {
 span.float button {
   margin-right: 5px;
 }
+
+#app div.app {
+  transition: opacity 250ms linear;
+}

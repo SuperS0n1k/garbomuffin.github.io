@@ -72,11 +72,14 @@ var plugins = [
     source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/plugins/LagFixer420/src",
 
     body:
-      `
+    `
       Having problems with your TPS dropping?
       Is <a href="https://dev.bukkit.org/projects/clearlagg" target="_blank">ClearLagg</a> not enough for you?
       Well then this plugin is just for you.
       Using some advanced algorithms and coding, this plugin brings your TPS back up to 20, no matter how bad it is!
+      You are guarunteed to never have a player complain about lag again!
+
+      
 
       <div class="row">
         <div class="col-md-6">
@@ -95,6 +98,19 @@ var plugins = [
           </p>
         </div>
       </div>
-      `,
+    `,
+    endbody:
+    `
+      <!-- FAKE QUOTES -->
+      <hr>
+      <h4>Quotes from users <small>okay maybe it's just one</small></h4>
+
+      <blockquote class="blockquote">
+        <span>
+          <p>After installing this plugin, I never had any more issues with players complaining about lag!</p>
+          <footer class="blockquote-footer"><cite title="Animefan433">Animefan433</cite></footer>
+        </span>
+      </blockquote>
+    `
   }),
 ];

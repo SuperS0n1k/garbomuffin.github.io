@@ -16,6 +16,7 @@ interface IPlugin {
   subtext?: string
 
   body?: string
+  endbody?: string
 
   permissions?: Permission[]
   config?: string
@@ -213,6 +214,7 @@ function createGridLayout(container: Template, items: Template[], rowLength = 3)
 }
 
 var loadedPlugins = false;
+var displayed = false;
 var app = document.getElementById("app");
 var activePage = document.getElementById("activePage");
 
@@ -225,25 +227,50 @@ function load(){
   }
 }
 
-function setActive(pl: string){
+async function setActive(pl: string){
+  // reset the #pluginPage element
   var pluginPage = document.getElementById("pluginPage");
   while (pluginPage.firstChild){
     pluginPage.removeChild(pluginPage.firstChild);
   }
 
-  document.getElementById("pluginList").style.display = "none";
-  pluginPage.style.display = "block";
+  pluginPage.style.display = "block"; // reset some values for the next transition
+  if (displayed){
+    document.getElementById("pluginList").style.opacity = "0"; // starts the transition
+    pluginPage.style.opacity = "0";
+    await sleep(300); // wait
+  }
+  document.getElementById("pluginList").style.display = "none"; // fully hide the old thing
 
-  var plugin = SpigotPlugins[pl];
+  var plugin = SpigotPlugins[pl]; // get the content in there
   new PluginPage(plugin).appendTo(pluginPage);
+
+  pluginPage.style.opacity = "1"; // start the transition
+
+  displayed = true;
 }
 
-function loadPlugins(){
-  document.getElementById("pluginList").style.display = "block";
-  document.getElementById("pluginPage").style.display = "none";
+async function sleep(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function loadPlugins(){
+  if (displayed){
+    document.getElementById("pluginList").style.opacity = "0";
+    document.getElementById("pluginPage").style.opacity = "0";
+    await sleep(250);
+
+    document.getElementById("pluginPage").style.display = "none";
+    document.getElementById("pluginList").style.display = "block";
+    await sleep(50);
+  }
+
+  document.getElementById("pluginList").style.opacity = "1";
+
   if (loadedPlugins) return;
 
   loadedPlugins = true;
+  displayed = true;
 
   for (var i of plugins){
     i.appendTo(document.getElementById("pluginList"));

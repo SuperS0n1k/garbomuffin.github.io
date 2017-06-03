@@ -1,22 +1,12 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var Template = (function () {
-    function Template(el, props) {
+class Template {
+    constructor(el, props) {
         this.el = el.innerHTML;
         for (var i in props) {
             this.format(i, props[i]);
         }
     }
-    Template.prototype.format = function (old, replace) {
+    format(old, replace) {
         // WIP
         if (replace instanceof Array) {
             replace = Template.listToHTMLString(replace);
@@ -31,8 +21,8 @@ var Template = (function () {
             }
         }
         return this;
-    };
-    Template.prototype.append = function (el) {
+    }
+    append(el) {
         if (typeof el === "string") {
             this.el += el;
         }
@@ -43,9 +33,8 @@ var Template = (function () {
             this.el += el.el;
         }
         return this;
-    };
-    Template.prototype.appendTo = function (el, preserveUndefined) {
-        if (preserveUndefined === void 0) { preserveUndefined = false; }
+    }
+    appendTo(el, preserveUndefined = false) {
         // replace stray templates
         if (!preserveUndefined) {
             this.stripUndefined();
@@ -57,76 +46,64 @@ var Template = (function () {
             el.el += this.el;
         }
         return this;
-    };
-    Template.prototype.stripUndefined = function () {
+    }
+    stripUndefined() {
         this.el = this.el.replace(/\${.*}/g, "");
         return this;
-    };
-    Template.listToHTMLString = function (list) {
+    }
+    static listToHTMLString(list) {
         var ret = "";
-        for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
-            var i = list_1[_i];
-            ret += "<li>" + i + "</li>";
+        for (var i of list) {
+            ret += `<li>${i}</li>`;
         }
         return ret;
-    };
-    return Template;
-}());
-var Permission = (function (_super) {
-    __extends(Permission, _super);
-    function Permission(props) {
-        var _this = _super.call(this, document.getElementById("entry"), props) || this;
-        if (props["default"]) {
-            _this.format("default", "(default)");
+    }
+}
+class Permission extends Template {
+    constructor(props) {
+        super(document.getElementById("entry"), props);
+        if (props.default) {
+            this.format("default", "(default)");
         }
         // this.name = props.name || "Permission";
         // this.default = typeof props.default !== "undefined" ? props.default : true;
         // this.about = props.about || "About";
         // this.children = props.children || [];
         if (props.children.length > 0) {
-            _this.format("child", new Template(document.getElementById("permission-children"))
+            this.format("child", new Template(document.getElementById("permission-children"))
                 .format("children", props.children));
         }
-        _this.stripUndefined();
-        return _this;
+        this.stripUndefined();
     }
-    return Permission;
-}(Template));
-var ChangeLog = (function (_super) {
-    __extends(ChangeLog, _super);
-    function ChangeLog(props) {
-        var _this = _super.call(this, document.getElementById("entry"), props) || this;
-        _this.format("child", new Template(document.getElementById("changelog-children"), props)
+}
+class ChangeLog extends Template {
+    constructor(props) {
+        super(document.getElementById("entry"), props);
+        this.format("child", new Template(document.getElementById("changelog-children"), props)
             .format("children", props.changes));
         if (props.latest) {
-            _this.format("lts", "(latest)");
+            this.format("lts", "(latest)");
         }
-        _this.stripUndefined();
-        return _this;
+        this.stripUndefined();
     }
-    return ChangeLog;
-}(Template));
+}
 var SpigotPlugins = {};
-var SpigotPlugin = (function (_super) {
-    __extends(SpigotPlugin, _super);
-    function SpigotPlugin(props) {
-        var _this = _super.call(this, document.getElementById("plugin"), props) || this;
-        _this.props = props;
-        SpigotPlugins[props.name] = _this;
-        return _this;
+class SpigotPlugin extends Template {
+    constructor(props) {
+        super(document.getElementById("plugin"), props);
+        this.props = props;
+        SpigotPlugins[props.name] = this;
     }
-    return SpigotPlugin;
-}(Template));
-var PluginPage = (function (_super) {
-    __extends(PluginPage, _super);
-    function PluginPage(plugin) {
-        var _this = _super.call(this, activePage, plugin.props) || this;
+}
+class PluginPage extends Template {
+    constructor(plugin) {
+        super(activePage, plugin.props);
         // permissions
         var permissions = plugin.props.permissions;
         if (permissions && permissions.length > 0) {
             var perms = new Template(document.getElementById("container")).format("text", "Permissions");
             var row = new Template(document.getElementById("row"));
-            _this.format("perms", createGridLayout(perms, permissions));
+            this.format("perms", createGridLayout(perms, permissions));
         }
         // changelog
         var changelog = plugin.props.changelog;
@@ -134,21 +111,17 @@ var PluginPage = (function (_super) {
             var changes = new Template(document.getElementById("container"))
                 .format("text", "Changelog")
                 .append("</div>");
-            _this.format("change", createGridLayout(changes, plugin.props.changelog, 2));
+            this.format("change", createGridLayout(changes, plugin.props.changelog, 2));
         }
-        return _this;
     }
-    return PluginPage;
-}(Template));
+}
 var rowTemplate = document.getElementById("row");
-function createGridLayout(container, items, rowLength) {
-    if (rowLength === void 0) { rowLength = 3; }
+function createGridLayout(container, items, rowLength = 3) {
     var colSize = Math.floor(12 / rowLength);
     ;
     var row = new Template(rowTemplate);
     var rs = 0;
-    for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
-        var item = items_1[_i];
+    for (var item of items) {
         if (rs === 3) {
             rs = 0;
             row.append("</div>");
@@ -164,6 +137,7 @@ function createGridLayout(container, items, rowLength) {
     return container;
 }
 var loadedPlugins = false;
+var displayed = false;
 var app = document.getElementById("app");
 var activePage = document.getElementById("activePage");
 function load() {
@@ -175,24 +149,42 @@ function load() {
         loadPlugins();
     }
 }
-function setActive(pl) {
+async function setActive(pl) {
+    // reset the #pluginPage element
     var pluginPage = document.getElementById("pluginPage");
     while (pluginPage.firstChild) {
         pluginPage.removeChild(pluginPage.firstChild);
     }
-    document.getElementById("pluginList").style.display = "none";
-    pluginPage.style.display = "block";
-    var plugin = SpigotPlugins[pl];
+    pluginPage.style.display = "block"; // reset some values for the next transition
+    if (displayed) {
+        document.getElementById("pluginList").style.opacity = "0"; // starts the transition
+        pluginPage.style.opacity = "0";
+        await sleep(300); // wait
+    }
+    document.getElementById("pluginList").style.display = "none"; // fully hide the old thing
+    var plugin = SpigotPlugins[pl]; // get the content in there
     new PluginPage(plugin).appendTo(pluginPage);
+    pluginPage.style.opacity = "1"; // start the transition
+    displayed = true;
 }
-function loadPlugins() {
-    document.getElementById("pluginList").style.display = "block";
-    document.getElementById("pluginPage").style.display = "none";
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function loadPlugins() {
+    if (displayed) {
+        document.getElementById("pluginList").style.opacity = "0";
+        document.getElementById("pluginPage").style.opacity = "0";
+        await sleep(250);
+        document.getElementById("pluginPage").style.display = "none";
+        document.getElementById("pluginList").style.display = "block";
+        await sleep(50);
+    }
+    document.getElementById("pluginList").style.opacity = "1";
     if (loadedPlugins)
         return;
     loadedPlugins = true;
-    for (var _i = 0, plugins_1 = plugins; _i < plugins_1.length; _i++) {
-        var i = plugins_1[_i];
+    displayed = true;
+    for (var i of plugins) {
         i.appendTo(document.getElementById("pluginList"));
     }
 }

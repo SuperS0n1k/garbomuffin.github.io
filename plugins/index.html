@@ -15,8 +15,8 @@
         Enable javascript.
       </noscript>
       <div id="app">
-        <div id="pluginList"></div>
-        <div id="pluginPage"></div>
+        <div id="pluginList" class="app"></div>
+        <div id="pluginPage" class="app"></div>
       </div>
     </div>
 
@@ -60,19 +60,18 @@
       ${body}
       <hr>
 
-        <h4>Info</h4>
-        <ul>
-          <li>Plugin Version: <b>${pluginVersion}</b></li>
-          <li>Minecraft Version: <b>${minecraftVersion}</b></li>
-          <li><b>Download</b>: <a href="${download}">${name}.jar</a></li>
-          <li>Source: <a href="${source}">${name}/src</a></li>
-        </ul>
+      <h4>Info</h4>
+      <ul>
+        <li>Plugin Version: <b>${pluginVersion}</b></li>
+        <li>Minecraft Version: <b>${minecraftVersion}</b></li>
+        <li><b>Download</b>: <a href="${download}">${name}.jar</a></li>
+        <li>Source: <a href="${source}">${name}/src</a></li>
+      </ul>
 
-        ${perms}
-        ${change}
-      </div>
+      ${perms}
+      ${change}
 
-      </div>
+      ${endbody}
     </script>
 
     <script type="text/template" id="row">
