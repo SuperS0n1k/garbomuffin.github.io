@@ -84,7 +84,7 @@ var plugins = [
       <div class="row">
         <div class="col-md-6">
           <h3>Before</h3>
-          <img src="https://i.imgur.com/RpzXIqY.png" width="100%">
+          <img src="LagFixer420/before.png" width="100%">
           <p>
             Without LagFixer420 - 15 TPS! That's horrible!
           </p>
@@ -92,7 +92,7 @@ var plugins = [
 
         <div class="col-md-6">
           <h3>After</h3>
-          <img src="https://i.imgur.com/3bSJn1c.png" width="100%">
+          <img src="LagFixer420/after.png" width="100%">
           <p>
             With LagFixer420 - A perfect 20 TPS! Tremendous!
           </p>
@@ -107,7 +107,7 @@ var plugins = [
 
       <blockquote class="blockquote">
         <span>
-          <p>After installing this plugin, I never had any more issues with players complaining about lag!</p>
+          <p>After installing this plugin, all of my players stopped complaining about lag!</p>
           <footer class="blockquote-footer"><cite title="Animefan433">Animefan433</cite></footer>
         </span>
       </blockquote>

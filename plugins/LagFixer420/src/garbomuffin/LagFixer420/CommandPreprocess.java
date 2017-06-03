@@ -15,7 +15,7 @@ public class CommandPreprocess implements Listener {
             event.getPlayer().sendMessage(
                     ChatColor.GOLD + "TPS from last 1m, 5m, 15m: "
                     + ChatColor.GREEN +
-                    "*20.0, *20.0, *20.0"
+                    "20.0, 20.0, 20.0"
             );
             event.setCancelled(true);
         }
