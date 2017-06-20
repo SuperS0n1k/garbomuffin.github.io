@@ -1,4 +1,4 @@
-package com.garbomuffin;
+package garbomuffin.ping;
 
 import org.bukkit.*;
 

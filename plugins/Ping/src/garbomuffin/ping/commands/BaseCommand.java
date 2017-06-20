@@ -1,7 +1,7 @@
-package com.garbomuffin.commands;
+package garbomuffin.ping.commands;
 
-import com.garbomuffin.config.ConfigEntry;
-import com.garbomuffin.PingPlugin;
+import garbomuffin.ping.config.ConfigEntry;
+import garbomuffin.ping.PingPlugin;
 
 import org.bukkit.command.*;
 import org.bukkit.*;

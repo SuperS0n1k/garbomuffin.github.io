@@ -1,4 +1,4 @@
-package com.garbomuffin.config;
+package garbomuffin.ping.config;
 
 import org.bukkit.ChatColor;
 

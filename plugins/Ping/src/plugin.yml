@@ -1,7 +1,7 @@
 name: Ping
 author: GarboMuffin
-version: 1.0
-main: garbomuffin.PingPlugin
+version: 1.1
+main: garbomuffin.ping.PingPlugin
 
 commands:
     ping:

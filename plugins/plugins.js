@@ -1,10 +1,10 @@
 var plugins = [
   new SpigotPlugin({
     name: "Ping",
-    pluginVersion: "1.0",
-    minecraftVersion: "1.11.2",
+    pluginVersion: "1.1",
+    minecraftVersion: "1.12",
     about: "A simple plugin that lets you get the ping of your players!",
-    download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/Ping.jar",
+    download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/Ping-1.12.jar",
     source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/plugins/Ping/src",
 
     body:
@@ -33,7 +33,8 @@ var plugins = [
         children: [
           "ping",
         ]
-      }),new Permission({
+      }),
+      new Permission({
         name: "ping.other",
         default: true,
         about: "The ability to someone else's ping with /ping [player]",
@@ -41,7 +42,8 @@ var plugins = [
           "ping",
           "ping.self",
         ]
-      }),new Permission({
+      }),
+      new Permission({
         name: "ping.*",
         default: true,
         about: "All permissions in this plugin.",

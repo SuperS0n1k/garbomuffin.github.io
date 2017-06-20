@@ -1,10 +1,10 @@
-package com.garbomuffin;
+package garbomuffin.ping;
 
+import garbomuffin.ping.commands.Ping;
 import org.bukkit.plugin.java.*;
 import org.bukkit.*;
 import org.bukkit.plugin.*;
 
-import com.garbomuffin.commands.*;
 
 public class PingPlugin extends JavaPlugin{
     @Override

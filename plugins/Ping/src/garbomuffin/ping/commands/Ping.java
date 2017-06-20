@@ -1,8 +1,8 @@
-package com.garbomuffin.commands;
+package garbomuffin.ping.commands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
-import org.bukkit.craftbukkit.v1_11_R1.entity.*;
+import org.bukkit.craftbukkit.v1_12_R1.entity.*;
 
 public class Ping extends BaseCommand {
     @Override
