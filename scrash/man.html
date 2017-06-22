@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SCRASH(1)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="core.css">
+    <link rel="stylesheet" type="text/css" href="man.css">
+  </head>
+
+  <body lang="en">
+
+    <p>If you're seeing this then tell me what the final name of this thing should be:</p>
+    <ul>
+      <li>scrash (what is is right now) - SCRAtch SHell</li>
+      <li>sash - Scratch'd Again SHell (inspired by bash's naming: Bourne Again SHell)</li>
+      <li>Something simple like Bash In Scratch</li>
+      <li>Something else</li>
+    </ul>
+
+    <h1 id="top"><a href="#top" class="no-underline">scrash(1)</a> <span class="gray">(draft)</span></h1>
+
+    <noscript><p>Although this site works without javascript, it can defintely help the experience.</p></noscript>
+
+    <p>This page is currently a DRAFT. Many explanations are poor. There are lots of typos.</p>
+
+    <man-body>
+      <!-- name -->
+      <man-entry>
+        <man-title>NAME</man-title>
+        <man-details>
+          <b>scrash</b> - a <b>SCRA</b>tch <b>SH</b>ell, based on bash
+        </man-details>
+      </man-entry>
+
+      <!-- description -->
+      <man-entry>
+        <man-title>DESCRIPTION</man-title>
+        <man-details>
+          <b>Scrash</b> is a recreation of many of the core features of bash, in Scratch. <footnote-reference>[1]</footnote-reference>
+        </man-details>
+        <man-details>
+          It is intended to be more of a "demo" than a finished product.
+          <footnote-reference>[2]</footnote-reference>
+        </man-details>
+      </man-entry>
+
+      <!-- syntax -->
+      <man-entry>
+        <man-title>SYNTAX</man-title>
+        <man-details>This section is unfinished.</man-details>
+        <man-details>
+          The syntax is really just a heavily stripped down version of bash's syntax.
+          Specifically, it supports:
+          <man-details><a href="#syntax-comments">comments</a></man-details>
+          <man-details>quoting</man-details>
+          <man-details>escaping</man-details>
+          <man-details><a href="#syntax-variables">variables</a></man-details>
+          <man-details><a href="#syntax-directories">directories</a> (/, ~, ., ..)</man-details>
+          <man-details>semicolons to do multiple commands on one line</man-details>
+        </man-details>
+
+        <!-- comments -->
+        <man-entry>
+          <man-title>COMMENTS</man-title>
+          <man-details>
+            A <code>#</code> defined a comment. Everything passed that <code>#</code> will be effectively ignored by the parser.
+          </man-details>
+
+          <man-details>
+            <shell-command>echo abc #def</shell-command>
+            <shell-response>abc</shell-response>
+          </man-details>
+        </man-entry>
+
+        <!-- variables -->
+        <man-entry>
+          <man-title>VARIABLES</man-title>
+          <man-details>
+            A variable definition is in the form: <code>my_variable_name="Hello, world!"</code>.<br>
+            You should use quotes to define multiword variables.<br>
+            The name of the variable must be a single word.
+          </man-details>
+
+          <man-details>
+            A variable reference is in the form: <code>$my_variable_name</code>.<br>
+            Variable names are not case sensitive.
+          </man-details>
+
+          <man-details>
+            <shell-command>my_variable_name="Hello, world!"</shell-command>
+            <shell-command>echo $my_variable_name</shell-command>
+            <shell-response>Hello, world!</shell-response>
+          </man-details>
+        </man-entry>
+
+        <!-- directory -->
+        <man-entry>
+          <man-title>DIRECTORIES</man-title>
+          <man-details>
+            Special characters:
+
+            <man-entry>
+              <man-title-inline>~</man-title-inline>
+              <man-details>Refers to the home directory. (<code>/home/user/</code>)</man-details>
+            </man-entry>
+
+            <man-entry>
+              <man-title-inline>.</man-title-inline>
+              <man-details>Refers to your current directory.</man-details>
+            </man-entry>
+
+            <man-entry>
+              <man-title-inline>..</man-title-inline>
+              <man-details style="/* fixes 'MAJOR' allignment bug. thank me later */ padding-left: 2.5em;">
+                Refers to the directory up one level of your current directory.
+                (<code>/home/user/</code> => <code>/home/</code>)
+              </man-details>
+            </man-entry>
+          </man-details>
+        </man-entry>
+      </man-entry>
+
+      <!-- credits -->
+      <man-entry>
+        <man-title>AUTHORS</man-title>
+        <man-details>
+          Written by <a href="https://scratch.mit.edu/users/GarboMuffin/">@GarboMuffin</a>
+        </man-details>
+        <man-details>
+          Text engine by <a href="https://scratch.mit.edu/users/TriforceMayhem/">@TriforceMayhem</a>
+        </man-details>
+        <man-details>
+          Some hacked blocks by <a href="https://scratch.mit.edu/users/griffpatch/">@griffpatch</a>
+        </man-details>
+      </man-entry>
+
+      <!-- commands -->
+      <man-entry>
+        <man-title>COMMANDS</man-title>
+
+        <man-details>
+          The following is a list of most of the commands, what they do, and an example how of to use them.<br>
+          Some commands that are either "hidden" (<code>parsedir</code>) or very self explanatory (<code>date</code>) are not listed.
+        </man-details>
+
+        <!-- echo -->
+        <man-entry>
+          <man-title>echo</man-title>
+          <man-details>"Echos" back the given arguments.</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>echo abc def</shell-command>
+              <shell-response>abc def</shell-response>
+            </shell-prompt>
+          </man-details>
+
+        </man-entry>
+
+        <!-- history -->
+        <man-entry>
+          <man-title>history</man-title>
+          <man-details>Lists your command history.</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>history</shell-command>
+              <shell-response>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;echo abc def</shell-response>
+              <shell-response>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;history</shell-response>
+              <shell-response>...</shell-response>
+            </shell-prompt>
+          </man-details>
+
+        </man-entry>
+
+        <!-- clear -->
+        <man-entry>
+          <man-title>clear</man-title>
+          <man-details>Clears the terminal.</man-details>
+
+          <man-details>
+            <shell-prompt>
+              <shell-command>clear</shell-command>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- ls -->
+        <man-entry>
+          <man-title>ls</man-title>
+          <man-details>Lists the contents of a directory.</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>ls</shell-command>
+              <shell-response>a.sh&nbsp;&nbsp;b.sh</shell-response>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- cat -->
+        <man-entry>
+          <man-title>cat</man-title>
+          <man-details>Lists the contents of file(s).</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>cat a.sh</shell-command>
+              <shell-response>echo This is in a.sh</shell-response>
+              <shell-response>./b.sh</shell-response>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- rm -->
+        <man-entry>
+          <man-title>rm</man-title>
+          <man-details>Remove a file or directory.</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>rm a.sh</shell-command>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- pwd -->
+        <man-entry>
+          <man-title>pwd</man-title>
+          <man-details>Prints your current working directory.</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>pwd</shell-command>
+              <shell-response>/home/user/</shell-response>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- ed -->
+        <man-entry>
+          <man-title>ed</man-title>
+          <man-details>A list based text editor.</man-details>
+
+          <man-details>
+            <shell-prompt>
+              <shell-command>ed a.sh</shell-command>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- alias -->
+        <man-entry>
+          <man-title>alias</man-title>
+          <man-details>List or define aliases.</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>alias</shell-command>
+              <shell-response>alias edit='ed'</shell-response>
+              <shell-response>alias editor='ed'</shell-response>
+              <shell-response>...</shell-response>
+            </shell-prompt>
+          </man-details>
+
+          <man-details>
+            <shell-prompt>
+              <shell-command>alias a=b</shell-command>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- cd -->
+        <man-entry>
+          <man-title>cd</man-title>
+          <man-details>Change the current working directory.</man-details>
+          <man-details>Refer to <a href="#syntax-directories">directory syntax</a> for more details.</man-details>
+
+          <man-details>
+            <shell-prompt>
+              <shell-command>cd ..</shell-command>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- mkdir -->
+        <man-entry>
+          <man-title>mkdir</man-title>
+          <man-details>Makes directories.</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>mkdir a</shell-command>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- export FIXME: very low quality explanation, see also: import -->
+        <man-entry>
+          <man-title>export</man-title>
+          <man-details>Exports your current session and generates an "export code".</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>export</shell-command>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+        <!-- import -->
+        <man-entry>
+          <man-title>import</man-title>
+          <man-details>Replaces your current session with a given "export code".</man-details>
+          <man-details>
+            <shell-prompt>
+              <shell-command>import</shell-command>
+            </shell-prompt>
+          </man-details>
+        </man-entry>
+
+      </man-entry>
+
+      <!-- bugs -->
+      <man-entry>
+        <man-title>BUGS</man-title>
+
+        <man-details>A list of bugs can be found <a href="bugs.html">here</a>.</man-details>
+
+      </man-entry>
+    </man-body>
+
+    <footnote-definition>
+      [1] More specifically: The easier features of bash.
+    </footnote-definition>
+    <footnote-definition>
+      [2] I've always complained about Scratch "OS"es not having an editable file system or text editor.
+      A large part of the motivation for this was for me to prove that dynamic file systems are
+      <b>a)</b> possible,
+      <b>b)</b> not as complicated as they may seem <footnote-reference>[3]</footnote-reference>.
+    </footnote-definition>
+    <footnote-definition>
+      [3] The implementation this uses is rather poor in quality and probably will find a way to break on its own.
+      This is by no means a "reference implementation".
+    </footnote-definition>
+
+    <script src="man.js"></script>
+  </body>
+</html>
+
+<!-- Inspired by actual man pages -->

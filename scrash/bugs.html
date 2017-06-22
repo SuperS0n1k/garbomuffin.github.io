@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>scrash bugs</title>
+    <link rel="stylesheet" type="text/css" href="core.css">
+    <link rel="stylesheet" type="text/css" href="bugs.css">
+  </head>
+
+  <body>
+    <h1 id="top"><a href="#top" class="no-underline">scrash bugs</a></h1>
+
+    <noscript>Although this site works without javascript, enabling it can help the experience.</noscript>
+
+    <p>A strikethrough indicates a bug that has been fixed.</p>
+    <p>Report a bug in the project comments.</p>
+
+    <bug-report class="fixed">
+      <bug-id>1</bug-id>
+      <bug-status>Minor/Fixed</bug-status>
+      <bug-details>
+        You can <a href="man.html#commands-rm">rm</a> your current directory.
+      </bug-details>
+    </bug-report>
+
+    <bug-report>
+      <bug-id>2</bug-id>
+      <bug-status>Major/Won't Fix</bug-status>
+      <bug-details>
+        Scrolling, and displaying stuff in general is really slow.<br>
+      </bug-details>
+
+      <bug-details>
+        This is because this uses a costume/stamp based text engine.
+        Moving to a pen text engine is really the only way to fix this.
+        If someone can make a text engine that meats all of these requirements, I may consider using it:
+        <ul>
+          <li>Faster than the current engine</li>
+          <li>Monospace</li>
+          <li>Letters that match the theme of this project. (no comic sans please)</li>
+          <li>Case sensitive</li>
+          <li>Full keyboard support</li>
+          <li>Doesn't suck to use.</li>
+        </ul>
+      </bug-details>
+    </bug-report>
+
+    <bug-report>
+      <bug-id>3</bug-id>
+      <bug-status>Major/Workaround Known</bug-status>
+      <bug-details>
+        Scrolling large amounts (eg. after a long history command) can cause some strange things to happen.
+        <bug-ul>
+          KNOWN FIXES:
+          <ul>
+            <li>Making the screen scroll again. (Pressing enter)</li>
+            <li>Clearing the screen with <code>clear</code>.</li>
+          </ul>
+        </bug-ul>
+      </bug-details>
+    </bug-report>
+
+    <bug-report class="fixed">
+      <bug-id>4</bug-id>
+      <bug-status>Major/Fixed</bug-status>
+      <bug-details>
+        <a href="man.html#commands-rm">rm</a> doesn't remove subdirectories.
+      </bug-details>
+    </bug-report>
+
+    <bug-report>
+      <bug-id>5</bug-id>
+      <bug-status>Minor</bug-status>
+      <bug-details>
+        The cursor always trails a frame behind any text changes. Most noticeable when holding backspace.
+      </bug-details>
+    </bug-report>
+
+    <script src="bugs.js"></script>
+  </body>
+</html>

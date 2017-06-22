@@ -1,0 +1,67 @@
+/* MAN */
+man-entry {
+  padding-left: 3em;
+  display: block;
+  transition: background-color 0.5s linear;
+}
+
+man-details {
+  display: block;
+  padding-left: 3em;
+  padding-bottom: 1em;
+}
+
+man-title, man-title-inline {
+  font-weight: bold;
+  display: block;
+  color: black;
+}
+man-title-inline {
+  display: inline;
+}
+man-title-inline ~ man-details {
+  display: inline-block;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+  man-entry {
+    padding-left: 2em;
+  }
+  man-details {
+    padding-left: 2em;
+  }
+}
+
+man-details > man-details:last-of-type {
+  padding-bottom: 0;
+}
+
+man-title a, man-title-inline a {
+  text-decoration: none;
+}
+
+/* SHELL PROMPTS */
+shell-command {
+  display: block;
+}
+shell-command::before {
+  content: "user@scratch:~$ ";
+  color: gray;
+}
+shell-response {
+  display: block;
+}
+shell-prompt {
+  display: block;
+}
+
+/* FOOTNOTES */
+footnote-definition {
+  display: block;
+  transition: background-color 0.5s linear;
+}
+
+footnote-definition > a {
+  color: blue;
+  text-decoration: none;
+}
