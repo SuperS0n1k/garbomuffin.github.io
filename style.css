@@ -1,0 +1,29 @@
+body {
+  font-family: monospace;
+}
+
+page-entry {
+  padding-left: 3em;
+}
+
+page-link::before {
+  content: "/";
+}
+page-link::after {
+  content: "/";
+}
+page-link-external::before {
+  content: "https://";
+}
+
+page-link-external::after {
+  content: "/";
+}
+page-link-heroku::before {
+  content: ".herokuapp.com";
+}
+
+page-desc {
+  padding-left: 3em;
+  display: block;
+}

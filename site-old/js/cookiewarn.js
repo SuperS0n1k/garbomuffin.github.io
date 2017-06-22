@@ -1,4 +1,6 @@
-document.getElementById("cookiewarn").style.display = "none";
+document.addEventListener("DOMContentLoaded", function(){
+  document.getElementById("cookiewarn").style.display = "none";
+});
 
 // removed
 
