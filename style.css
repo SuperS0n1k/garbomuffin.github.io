@@ -12,18 +12,23 @@ page-link::before {
 page-link::after {
   content: "/";
 }
-page-link-external::before {
+page-link.external::before {
   content: "https://";
 }
 
-page-link-external::after {
+page-link.external::after {
   content: "/";
 }
-page-link-heroku::before {
-  content: ".herokuapp.com";
+page-link.heroku::after {
+  content: ".herokuapp.com/";
 }
 
 page-desc {
   padding-left: 3em;
   display: block;
+}
+
+::selection {
+  color: white;
+  background: black;
 }
