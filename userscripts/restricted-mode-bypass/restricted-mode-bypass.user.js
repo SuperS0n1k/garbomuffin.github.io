@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restricted Mode Bypass
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/restricted-mode-bypass
-// @version      2.0.1
+// @version      2.1.0
 // @description  "I like restricted mode!" -Said nobody ever.
 // @author       GarboMuffin
 // @match        https://www.youtube.com/*
@@ -13,21 +13,19 @@ var quality = localStorage.RMBQuality || "highest";
 var width = localStorage.RMBWidth || 480;
 const SERVER = "https://stark-dawn-58632.herokuapp.com";
 
-var qualities = [
-  "highest (recommended)", "720p", "360p (better audio)", "360p",
-];
-var qualityCodes = {
+const qualities = {
   "highest (recommended)": "highest",
-  "720p": "22",
-  "360p (better audio)": "43",
+  "720p-ish": "22",
+  "360p (better quality)": "43",
   "360p": "18",
+  "custom itag": "custom"
 };
 
 function start(){
   if (document.getElementById("unavailable-message")){
     if (document.getElementById("rmb")) document.getElementById("rmb").style.display = "block";
     document.getElementsByClassName("content")[0].appendChild(document.createElement("br"));
-    document.getElementsByClassName("content")[0].appendChild(button("Watch it anyway.", bypass));
+    document.getElementsByClassName("content")[0].appendChild(button("Restricted? Watch it anyway.", bypass));
   }
 }
 
@@ -96,7 +94,6 @@ function text(text){
 function video(){
   var el = document.createElement("video");
   el.width = width;
-  // el.height = 360;
   el.src = videoUrl();
   el.autoplay = true;
   el.controls = true;
@@ -106,6 +103,14 @@ function video(){
     if (video.currentTime === 0){
       document.getElementById("video").src = videoUrl();
     }else{
+      usingCustom = true;
+      for (var i in qualities){
+        if (qualities[i] === quality){
+          usingCustom = false;
+          break;
+        }
+      }
+
       var a = document.createElement("a");
       a.onclick = function(){
         document.getElementById("video").src = videoUrl();
@@ -113,6 +118,7 @@ function video(){
       a.innerHTML = "Try to restart it.";
       document.getElementById("rmbstatus").innerHTML = `An error occured while playing the video. `;
       document.getElementById("rmbstatus").appendChild(a);
+      if (usingCustom) document.getElementById("rmbstatus").appendChild(text(" (custom itag invalid?)"));
     }
   });
   el.addEventListener("canplay", function(){
@@ -128,6 +134,10 @@ function videoId(){
 
 function videoMeta(id){
   var el = document.getElementById("rmbmeta");
+
+  // data could be already loaded
+  if (el.children.length > 0) return;
+
   fetch(`${SERVER}/info?v=${id}`).then(function(res){
     return res.json();
   }).then(function(json){
@@ -188,17 +198,39 @@ function options(){
   select.id = "a";
   select.onchange = function(){
     var value = this.value;
-    quality = qualityCodes[value];
+    quality = qualities[value];
+    if (quality === "custom"){
+      var q = prompt("Type the custom itag value to use: (number)\nhttps://en.wikipedia.org/wiki/YouTube#Quality_and_formats");
+      if (isFinite(q)){
+        quality = q;
+        usingCustom = true;
+      }else{
+        prompt(`${q} is not a valid number.`);
+      }
+    }else{
+      usingCustom = false;
+    }
     localStorage.RMBQuality = quality;
     document.getElementById("video").src = videoUrl();
   };
-  for (let value of qualities){
-    var option = document.createElement("option");
+
+  var selectedFound = false;
+  var option;
+  for (var value in qualities){
+    if (!qualities.hasOwnProperty(value)) return;
+    option = document.createElement("option");
     option.innerHTML = value;
-    option.value = value;
-    if (qualityCodes[value] === quality) option.setAttribute("selected", "selected");
+    options.value = qualities[value];
+    if (options.value === quality){
+      selectedFound = true;
+      option.setAttribute("selected", "selected");
+    }
     select.appendChild(option);
   }
+  if (!selectedFound){
+    option.setAttribute("selected", "selected");
+  }
+
   el.innerHTML += "Quality: ";
   el.appendChild(select);
   el.appendChild(text(" (changes will restart the video and can take a while)"));
@@ -206,18 +238,39 @@ function options(){
 
   // width
   el.appendChild(text("Player size: "));
+
+  el.appendChild(button("Set", function(){
+    var w = prompt("Set width to: (number, in pixels)");
+    if (isFinite(w)){
+      if (w < 100){
+        alert(`${w} is too small of a number.`);
+      }else{
+        width = Number(w);
+        document.getElementById("video").width = width;
+        localStorage.RMBWidth = width;
+      }
+    }else{
+      alert(`${w} is not a valid number.`);
+    }
+  }));
+  el.appendChild(text(" - "));
+
+  const SIZE_CHANGE_INCREMENT = 30;
   el.appendChild(button("Grow", function(){
-    width += 10;
+    width = Number(width) + SIZE_CHANGE_INCREMENT;
     document.getElementById("video").width = width;
     localStorage.RMBWidth = width;
   }));
-  el.appendChild(text(" "));
+  el.appendChild(text(" - "));
+
   el.appendChild(button("Shrink", function(){
-    if (width > 100) width -= 10;
+    width = Number(width) - SIZE_CHANGE_INCREMENT;
+    if (width < 100) width = 100;
     document.getElementById("video").width = width;
     localStorage.RMBWidth = width;
   }));
-  el.appendChild(text(" "));
+  el.appendChild(text(" - "));
+
   el.appendChild(button("Reset", function(){
     width = 480;
     document.getElementById("video").width = width;
