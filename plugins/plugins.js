@@ -66,9 +66,26 @@ var plugins = [
     ]
   }),
   new SpigotPlugin({
+    name: "RainbowChat",
+    pluginVersion: "1.0",
+    minecraftVersion: "Any Bukkit",
+    about: "Turn your chat into a colorful rainbow!",
+    download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/RainbowChat.jar",
+    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/plugins/RainbowChat/src",
+
+    body:
+      `
+      <p>Every time someone chats their name will become part of a rainbow!</p>
+      <img src="https://i.imgur.com/VaAW8kH.png">
+      `,
+  }),
+
+  new SpigotPlugin({
+    // lagfixer420 is a joke
+
     name: "LagFixer420",
     pluginVersion: "4.2.0",
-    minecraftVersion: "1.11.2",
+    minecraftVersion: "Any Bukkit",
     about: `Fixes all of your lag problems!`,
     download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/LagFixer420.jar",
     source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/plugins/LagFixer420/src",
