@@ -27,24 +27,40 @@ loop
 	MouseGetPos, mousex, mousey
 	
 	PixelGetColor, color, %mousex%, %mousey%
-	Tooltip, %mousey%
+	; Tooltip, %mousey%
 	
 	if color=0xFFFFFF
 	{
 	
 		if (mousey > topy)
 		{
-			newy := mousey - 30
-			Tooltip, a
+            newy := mousey - 30
 		}
 		else
 		{
 			newy := mousey + 30
-			Tooltip, b
 		}
 		
 		MouseMove, mousex, newy
-		SendInput, {Space}
+        
+        PixelGetColor, color, %mousex%, %newy%
+        if color=0xFFFFFF
+        {
+            loop
+            {
+                PixelGetColor, color, %mousex%, %newy%
+                if color=0xFFFFFF
+                {
+                    
+                }
+                else
+                {
+                    Break
+                }
+            }
+        }
+        
+		SendInput, {Space down}
 	}
 }
 
