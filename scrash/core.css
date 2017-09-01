@@ -30,3 +30,8 @@ a:active {
 a.no-underline{
   text-decoration: none;
 }
+
+body {
+  padding-left: 25%;
+  padding-right: 25%;
+}
