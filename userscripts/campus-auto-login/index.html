@@ -17,6 +17,18 @@
 
     <p>Auto login to the District 112 campus portals!</p>
 
+    <p>
+      How does it work? Well when you visit the login page it will see if it has saved your username and password.
+      If it doesn't, it asks you for it and saves it for you.
+      Then it throws your password and username into the form and clicks submit.
+    </p>
+
+    <p>
+      It does NOT get stuck in an infinite loop of death if you enter the wrong password.
+      It just asks you to reset your information.
+      On the old portal it will not click submit if you just signed out of a session. (although it does on the new portal)
+    </p>
+
     <h3><a href="campus-auto-login.user.js">Click here to install it.</a></h3>
 
     <p>
@@ -27,5 +39,10 @@
 
     <h3>Changelog</h3>
     <p>v2.2: added support for the new portal AND the old. should work as you would expect.</p>
+
+    <h3>Problems</h3>
+    <ul>
+      <li>(on school chromebooks) You have to reset your passwords after closing/restarting your browser/chromebook.</li>
+    </ul>
   </body>
 </html>
