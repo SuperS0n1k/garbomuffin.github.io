@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         NO MORE FURRIES
-// @version      1.1.5
+// @version      1.1.6
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/no-more-furries/
 // @description  FURRIES ARENT MEMES GOD DAMMIT
 // @author       GarboMuffin
@@ -11,7 +11,7 @@
 // ==/UserScript==
 
 /*
- * See this in action: https://scratch.mit.edu/search/projects?q=meme
+ * See this in action: https://scratch.mit.edu/search/projects?q=meme or just visit top loved
  * Scroll down for the furries eradicated number. (below the footer)
  *
  * Note that this isn't perfect and the furthur your scroll the more inaccurate
@@ -20,29 +20,6 @@
  *
  * Please don't actually use this.
  */
-
-/*
- * CHANGELOG:
- * v1.1.5:
- *  - Update download location.
- *  - Update filters.
- * v1.1.1, v1.1.2, 1.1.3:
- *  - Updated the filters or lists are whatever I feel like calling them today.
- * v1.1:
- *  - New "case sensitive" filters.
- *  - More filters.
- *  - Fix a bug causing this to work only sometimes on the home page.
- * v1.0.3:
- *  - Update lists.
- * v1.0.2:
- *  - Don't actually use this.
- * v1.0.1:
- *  - Setup auto update.
- * v1.0:
- *  - Inital release.
- */
-
-// I DONT EVEN KNOW WHAT HAPPENED TO THE FORMATTING SEND HELP
 
 var debug = false;
 //debug = true;
@@ -104,6 +81,14 @@ const people = [
   "Xena_NightFury",
   "PennyQuest",
   "BK33",
+  "LeopardSoul",
+  "Lionclaws",
+  "ScratchyT4",
+  "Choco-Doggo",
+  "cupcakenoah",
+  "suitcasedog",
+  "MooDingo",
+  // "ceebee", // haha no but the temptation is certainly there
 ];
 
 // titles that are often associated with furries
@@ -181,10 +166,9 @@ console.log("Blocked users: " + people.length);
 console.log("Blocked titles/patterns: " + (titles.length + moreTitles.length));
 
 var el = document.createElement("div");
-el.id = "harambeforpresident2020";
+el.id = "johncenaforpresident2020";
 el.style.textAlign = "center";
 document.getElementById("footer").appendChild(el);
-const thisel = document.getElementById("harambeforpresident2020");
 
 // thanks react
 if (location.pathname != "/") doStuff();
@@ -194,49 +178,48 @@ var theIntervalThingyYaKnow = setInterval(doStuff, 1000);
 function doStuff(){
   var projects;
   try{
-    projects = Array.from(document.getElementsByClassName("project"));
+  projects = Array.from(document.getElementsByClassName("project"));
   }catch(e){
-    console.log("Seems not to contain projects that can be blocked.");
-    clearInterval(theIntervalThingyYaKnow);
-    return;
+  console.log("Seems not to contain projects that can be blocked.");
+  clearInterval(theIntervalThingyYaKnow);
+  return;
   }
 
   for (var i of projects){
-      var el = i.getElementsByClassName("thumbnail-creator")[0];
-      if (!el) continue; // for some reason bad stuff can happen and yeah
-      var origTitle = el.parentNode.getElementsByTagName("a")[0].innerText;
-      var title = origTitle.toLowerCase();
+  var text = i.getElementsByClassName("thumbnail-creator")[0];
+  if (!text) continue; // for some reason bad stuff can happen and yeah
+  var origTitle = text.parentNode.getElementsByTagName("a")[0].innerText;
+  var title = origTitle.toLowerCase();
 
-      var isPerson = people.includes(el.innerText);
-      var isText = false;
+  var isPerson = people.includes(text.innerText);
+  var isText = false;
 
-      if (!isPerson){ // don't waste time checking for things we already know
-        for (var n of titles){
-          if (title.indexOf(n) > -1){
-            isText = true;
-            break;
-          }
-      }
+  if (!isPerson){ // don't waste time checking for things we already know
+    for (var n of titles){
+    if (title.indexOf(n) > -1){
+      isText = true;
+      break;
     }
-
-    if (!isText && !isPerson){ // maybe it contains some of the other string we know of that are case sensitive
-      for (var b of moreTitles){
-        if (origTitle.includes(b)){
-          isText = true;
-          break;
-        }
-      }
-    }
-
-    if (isPerson || isText){
-      console.log((isPerson ? "User Block: " : "Title Block: ") + el.innerText + " - " + title +
-            (debug ? " (https://scratch.mit.edu/users/" + el.innerText + "/ https://scratch.mit.edu/projects/" +
-            el.parentNode.parentNode.parentNode.getElementsByTagName("a")[0].href : ""));
-
-      i.parentNode.removeChild(i);
-      count++;
     }
   }
 
-  thisel.innerHTML = count + " (likely) furries eradicated.";
+  if (!isText && !isPerson){ // maybe it contains some of the other string we know of that are case sensitive
+    for (var b of moreTitles){
+    if (origTitle.includes(b)){
+      isText = true;
+      break;
+    }
+    }
+  }
+
+  if (isPerson || isText){
+    console.log((isPerson ? "User Block: " : "Title Block: ") + text.innerText + " - " + title +
+          (debug ? " (https://scratch.mit.edu/users/" +text.innerText + "/ https://scratch.mit.edu/projects/" +
+           text.parentNode.parentNode.parentNode.getElementsByTagName("a")[0].href : ""));
+    i.parentNode.removeChild(i);
+    count++;
+  }
+  }
+
+  el.innerHTML = count + " (likely) furries eradicated.";
 }
