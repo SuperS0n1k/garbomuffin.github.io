@@ -43,9 +43,6 @@ page-link.external::before {
 page-link.external::after {
   content: "/";
 }
-page-link.heroku::after {
-  content: ".herokuapp.com/";
-}
 
 page-desc {
   padding-left: 3em;
