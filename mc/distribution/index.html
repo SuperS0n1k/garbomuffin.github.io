@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        padding-left: 12%;
+        padding-right: 12%;
+        font-family: sans-serif;
+      }
+
+      #next-question {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>What Server Distribution Should You Use?</h1>
+
+    <div id="app"></div>
+
+    <script>
+      class Question {
+        constructor(question, options){
+          options = options || {};
+
+          this.question = question;
+          this.yes = options.yes;
+          this.no = options.no;
+
+          this.yesText = options.yesText || "Yes";
+          this.noText = options.noText || "No";
+        }
+
+        render(){
+          var app = document.getElementById("app");
+          while (app.firstChild){
+            app.removeChild(app.firstChild);
+          }
+
+          app.innerHTML = `
+            <h2>${this.question}</h2>
+            <form>
+              <input type="radio" name="question" value="yes" onchange="onAnswer(this);"> ${this.yesText}<br>
+              <input type="radio" name="question" value="no" onchange="onAnswer(this);"> ${this.noText}
+            </form>
+
+            <a href="#" onclick="nextQuestion(this);return false;" id="next-question">Next question.</a>
+          `;
+        }
+      }
+
+      function onAnswer(el){
+        answer = el.value === "yes";
+        document.getElementById("next-question").style.display = "inline";
+      }
+
+      function nextQuestion(el){
+        if (answer){
+          currentQuestion = currentQuestion.yes;
+        }else{
+          currentQuestion = currentQuestion.no;
+        }
+        currentQuestion.render();
+      }
+
+      class Answer {
+        constructor(answer, options){
+          options = options || {};
+
+          this.answer = answer;
+          this.reason = options.reason || "";
+        }
+
+        render(){
+          var app = document.getElementById("app");
+          while (app.firstChild){
+            app.removeChild(app.firstChild);
+          }
+
+          app.innerHTML = `
+            <h2>You should use: <b>${this.answer}</b></h2>
+            <p>${this.reason}</p>
+          `;
+        }
+      }
+
+      const ANSWERS = {
+        Vanilla: new Answer("Vanilla", {
+          reason:
+          `All other server distributions do SOMETHING to change core vanilla mechanics for performance or another reason.`,
+        }),
+        CraftBukkit: new Answer("CraftBukkit", {
+          reason:
+          `Supports plugins while keeping most of Vanilla's complicated mechanics.
+          Please not that this is not 100% compatible with Vanilla and some complicated contraptions may break.
+          (but less than with Spigot)`,
+        }),
+        Paper: new Answer("PaperSpigot", {
+          reason:
+          `Paper is a fork of Spigot, which is a fork of CraftBukkit.
+          It has all the perforamance and plugin support of them with some additional features and options.
+
+          <h4>Why not Spigot?</h4>
+          <p>
+            Paper has one key advantage over Spigot: easy of use.
+            Due to legal reasons you must build your own version of Spigot, and not everyone can do that.
+            Paper <b>does all of that for you</b>. All you have to do is run the jar. No git, no JDK, no maven. Just Java.
+          </p>
+
+          <p>It also has additional performance improvements that you have no reason to miss out on.</p>
+
+          <h4>Why not Sponge/Glowstone/Cuberite/whatever?</h4>
+          <p>
+            Many of these alternatives are not stable and are missing many features.
+            Furthurmore, their plugin choices are much smaller and some of them are even missing basic vanilla features.
+          </p>
+
+          <p>Once they mature and develop larger communities I may start recommending them if there are any real advantages.</p>
+          `,
+        }),
+      };
+
+      var currentQuestion = new Question("Are core vanilla mechanics important? (mob spawning, chunk loading, redstone)", {
+        yes: new Question("Do you need plugins?", {
+          yes: ANSWERS.CraftBukkit,
+          no: ANSWERS.Vanilla,
+        }),
+        no: ANSWERS.Paper,
+      });
+      var answer;
+      currentQuestion.render();
+    </script>
+  </body>
+</html>
