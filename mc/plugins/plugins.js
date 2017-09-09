@@ -5,7 +5,7 @@ var plugins = [
     minecraftVersion: "1.12",
     about: "A simple plugin that lets you get the ping of your players!",
     download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/Ping-1.12.jar",
-    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/plugins/Ping/src",
+    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/mc/plugins/Ping/src",
 
     body:
       `
@@ -71,7 +71,7 @@ var plugins = [
     minecraftVersion: "Any Bukkit",
     about: "Turn your chat into a colorful rainbow!",
     download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/RainbowChat.jar",
-    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/plugins/RainbowChat/src",
+    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/mc/plugins/RainbowChat/src",
 
     body:
       `
@@ -79,7 +79,6 @@ var plugins = [
       <img src="https://i.imgur.com/VaAW8kH.png">
       `,
   }),
-
   new SpigotPlugin({
     // lagfixer420 is a joke
 
@@ -88,7 +87,7 @@ var plugins = [
     minecraftVersion: "Any Bukkit",
     about: `Fixes all of your lag problems!`,
     download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/LagFixer420.jar",
-    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/plugins/LagFixer420/src",
+    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/mc/plugins/LagFixer420/src",
 
     body:
     `
