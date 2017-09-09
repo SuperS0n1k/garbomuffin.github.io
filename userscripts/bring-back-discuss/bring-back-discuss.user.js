@@ -5,6 +5,7 @@
 // @description  some people wanted the discuss button back or something???
 // @author       GarboMuffin
 // @match        https://scratch.mit.edu/*
+// @updateURL    https://garbomuffin.bitbucket.io/userscripts/bring-back-discuss/bring-back-discuss.user.js
 // ==/UserScript==
 
 (function(){
