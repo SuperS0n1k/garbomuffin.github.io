@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>1 SAT/BYTE</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+  <body>
+    <h1>PAY 1 SAT/BYTE</h1>
+    <hr>
+
+    <p>
+      This is the smartest fee choice EVER.
+
+      You pay almost nothing (talking cents, potentially not even plural) and your transaction usually gets confirmed quickly.
+    </p>
+
+    <p>
+      Sites like <a href="https://bitcoinfees.21.co/">this one</a> and
+      <a href="https://btc.com/stats/unconfirmed-tx">this one</a> can recommend really high fees but that's all <s>fake news</s> inaccurate.
+    </p>
+
+    <h2>BEST CASE SENARIO:</h2>
+    <p>Transaction is confirmed in the next block for almost nothing because the mempool is empty.</p>
+
+    <h2>AVERAGE CASE SENARIO:</h2>
+    <p>Transaction takes a couple hours to confirm.</p>
+
+    <h2>WORST CASE SENARIO:</h2>
+    <p>
+      Transaction gets dropped from all node mempools and you get your coins back.
+      <b>This is incredibly rare and if you use RBF and increase the fee this should never happen.</b>
+    </p>
+
+    <h2>Use Replace By Fee</h2>
+    <p>
+      If your wallet supports it, enable RBF (replace by fee) to be able to increase the fee later if need be.<br>
+      This way you can still pay almost nothing in fees under normal conditions and increase the fee is absolutedly required or to speed up confirmation time.
+    </p>
+
+    <h2>Still don't believe me?</h2>
+    <p>
+      Here's some transactions I made using low fees.
+      The ones that took more than a couple blocks were sent out when the mempool was full or being spammed.
+      The sat/bytes aren't very even because electrum is weird.
+    </p>
+
+    <ul>
+      <li>
+        <a href="https://blockchain.info/tx/771b92c940ae1d61d29c943c8e6707ba7322f103d7e6f06eab1a26702f7e993c">1.027 sat/byte</a>:
+        <b>confirmed after ~8 minutes, ~1 block</b> (best case)
+      </li>
+
+      <li>
+        <a href="https://blockchain.info/tx/a308943d9377faa181a4a5f549dc05854fb6ca326150397193b282ee436a0cfc">1.097 sat/byte</a>:
+        confirmed after ~222 minutes, ~22 blocks (average case)
+      </li>
+
+      <li>
+        <a href="https://blockchain.info/tx/771b92c940ae1d61d29c943c8e6707ba7322f103d7e6f06eab1a26702f7e993c">1.265 sat/byte</a>:
+        confirmed after ~32 minutes, ~3 blocks (average case)
+      </li>
+
+      <li>
+        <a href="https://blockchain.info/tx/65e3bf29ddb2c4dbec46f6b2ad5d5eafc65c7f6f0517e19b0bbbd38cc2b9e5d6">2.618 sat/byte</a>:
+        confirmed after ~684 minutes, ~68 blocks (average case)
+      </li>
+
+      <li>
+        <a href="https://blockchain.info/tx/65e3bf29ddb2c4dbec46f6b2ad5d5eafc65c7f6f0517e19b0bbbd38cc2b9e5d6">2.743 sat/byte</a>:
+        <b>confirmed after ~11 minutes, ~1 block</b> (best case)
+      </li>
+
+      <li>
+        <a href="https://blockchain.info/tx/917df33e5b8a7e0b57a2bf09136ecc0f375ad84f789aea39db257ea07d42cf10">2.959 sat/byte</a>:
+        <b>confirmed after ~1 minute, ~1 block</b> (best case)
+      </li>
+    </ul>
+
+    <p>
+      The <a href="https://blockchain.info/block/000000000000000000aa954522c27be90456c5555981e3d2b2b57cb5975079db">latest block at the time of writing</a>
+      contains several cheap transactions. Just scroll down.
+    </p>
+
+    <p>If you think those times are steep then consider the following:</p>
+    <ul>
+      <li>Make your transaction on the weekends. The mempool is emptier.</li>
+      <li>Just sleep overnight. (get some sleep, its good for you)</li>
+      <li>Use segwit and the lightning network.</li>
+    </ul>
+  </body>
+</html>
