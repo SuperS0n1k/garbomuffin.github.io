@@ -27,8 +27,10 @@
     <a href="why.html">Why?</a>
 
     <script>
-      fetch("https://api.coinmarketcap.com/v1/ticker/bitcoin/")
-        .then(res => res.json())
+      fetch("https://api.coinmarketcap.com/v1/ticker/bitcoin/", {
+        referrer: "no-referrer",
+        cache: "no-store",
+      }).then(res => res.json())
         .then(res => {
           var price = Number(res[0].price_usd);
           var cost = price * 0.00000226; // 226 satoshis
