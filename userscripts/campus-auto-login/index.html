@@ -8,6 +8,9 @@
         padding-right: 12%;
         font-family: sans-serif;
       }
+      .no-margin {
+        margin: 0;
+      }
     </style>
   </head>
 
@@ -47,9 +50,9 @@
     </p>
 
     <h3>Changelog</h3>
-    <p>
+    <p class="no-margin">
       <b>v3.0</b>:
-      <ul>
+      <ul class="no-margin">
         <li>Complete rewrite in typescript instead of javascript. (transpiles to javascript)</li>
         <li>The method of saving passwords has changed. You now enter your passwords into the boxes then click "Remember Me"</li>
         <li>Your passwords should (in theory) be stored between restarts. This is really big.</li>
