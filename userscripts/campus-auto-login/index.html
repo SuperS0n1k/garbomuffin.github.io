@@ -4,45 +4,63 @@
     <title>Campus Auto Login</title>
     <style>
       body {
-        padding-left: 25%;
-        padding-right: 25%;
+        padding-left: 12%;
+        padding-right: 12%;
         font-family: sans-serif;
       }
     </style>
   </head>
 
   <body>
-    <h1>Campus Auto Login</h1>
+    <h1>Campus Auto Login (v3.0)</h1>
     <hr>
 
     <p>Auto login to the District 112 campus portals!</p>
 
+    <h3>Installation</h3>
     <p>
-      How does it work? Well when you visit the login page it will see if it has saved your username and password.
-      If it doesn't, it asks you for it and saves it for you.
-      Then it throws your password and username into the form and clicks submit.
-    </p>
-
-    <p>
-      It does NOT get stuck in an infinite loop of death if you enter the wrong password.
-      It just asks you to reset your information.
-      On the old portal it will not click submit if you just signed out of a session. (although it does on the new portal)
+      <ol>
+        <li>Install <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en">TamperMonkey</a>.</li>
+        <li>Click the giant link below and then "Install".</li>
+        <li>You're done. It should (in theory?) update automatically.</li>
+      </ol>
     </p>
 
     <h3><a href="campus-auto-login.user.js">Click here to install it.</a></h3>
 
+    <h3>Usage</h3>
+    <p>
+      <ol>
+        <li>Enter your username and password into the boxes like usual.</li>
+        <li>Instead of clicking "Submit", click the "Remember Me" button this has created.</li>
+        <li>You're good to go, from now on it will automatically set the fields and click submit.</li>
+      </ol>
+    </p>
+
+    <p>It will detect incorrect passwords or captchas and stop submitting and reset passwords. (you will have to tell this to remember them again with the "Remember Me" button)</p>
+
     <p>
       It supports both the
       <a href="https://campus.district112.org/campus/portal/isd112.jsp">old</a> and the
-      <a href="https://campus.district112.org/campus/portal/students/isd112.jsp">new</a> portals.
+      <a href="https://campus.district112.org/campus/portal/students/isd112.jsp">new</a> portals
+      with support for <a href="https://empower.district112.org">empower</a> planned. (but not in yet)
     </p>
 
     <h3>Changelog</h3>
-    <p>v2.2: added support for the new portal AND the old. should work as you would expect.</p>
+    <p>
+      <b>v3.0</b>:
+      <ul>
+        <li>Complete rewrite in typescript instead of javascript. (transpiles to javascript)</li>
+        <li>The method of saving passwords has changed. You now enter your passwords into the boxes then click "Remember Me"</li>
+        <li>Your passwords should (in theory) be stored between restarts. This is really big.</li>
+        <li>You now only need to set your stuff on one version of portal. The credentials are shared.</li>
+      </ul>
+    </p>
+    <p><b>v2.2</b>: added support for the new portal AND the old. should work as you would expect.</p>
 
     <h3>Problems</h3>
     <ul>
-      <li>(on school chromebooks) You have to reset your passwords after closing/restarting your browser/chromebook.</li>
+      <li>Passwords aren't exactly stored in the most secured way ever, but as long as you aren't an idiot it should be safe.</li>
     </ul>
   </body>
 </html>
