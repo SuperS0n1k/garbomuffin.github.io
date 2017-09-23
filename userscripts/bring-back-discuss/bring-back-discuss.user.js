@@ -1,16 +1,21 @@
 // ==UserScript==
 // @name         bring back discuss
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/bring-back-discuss/
-// @version      1.0
+// @version      1.1
 // @description  some people wanted the discuss button back or something???
 // @author       GarboMuffin
 // @match        https://scratch.mit.edu/*
-// @updateURL    https://garbomuffin.bitbucket.io/userscripts/bring-back-discuss/bring-back-discuss.user.js
+// @run-at       document-start
 // ==/UserScript==
 
-(function(){
-  "use strict";
+/*
+ * Changelog:
+ * v1.1:
+ *  - Use DOMContentLoaded event instead of @run-at document-end
+ *    This helps prevent seeing the Tips button for a second.
+ */
 
+document.addEventListener("DOMContentLoaded", function(event) {
   var tipsEl = document.getElementsByClassName("link tips")[0];
   var modernDesign = !!tipsEl;
 
@@ -28,4 +33,5 @@
     oldTipsLink.href = "/discuss/";
     oldTipsLink.textContent = "Discuss";
   }
-})();
+});
+
