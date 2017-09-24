@@ -4,6 +4,15 @@
     <title>bring back discuss</title>
     <link rel="stylesheet" href="/core.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      #special {
+        display: none;
+      }
+      .serious {
+        color: gray;
+        padding-left: 10%;
+      }
+    </style>
   </head>
 
   <body>
@@ -33,16 +42,40 @@
 
     <p>We'll also give you a single view, for free! A single view on one of your projects. Amazing right?</p>
 
-    <p style="padding-left:10%;color:gray;">send me an email: tommyweber33 (at) gmail.com and I will actually give you a free view.</p>
+    <p class="serious">send me an email: tommyweber33 (at) gmail.com and I will actually give you a free view.</p>
 
-    <p>But that's not all, order now and we'll double the offer. Use the promo code 💩 to get two for one! That's two for the price of one!</p>
+    <p>But that's not all, order now and we'll double the offer. Use the promo code 💩 to get TWO DISCUSS BUTTONS FOR THE PRICE OF ONE!</p>
 
-    <p>That's right, you'll get TWO Bring Back Discuss usescripts, a $0 value, all for $0!</p>
+    <p>That's right, you'll get TWO Discuss buttons, a $0 value, all for $0!</p>
+
+    <p>Have a promo code? Enter it here: <input id="promo"> <button onclick="submit();">Submit</button></p>
+
+    <p class="serious">
+      serious note: you have to install tampermonkey (chrome) or greasemonkey (firefox)
+      and then you just simply click the install button
+    </p>
+
+    <h2 id="special"><a href="bring-back-discuss-poop-edition.user.js">INSTALL SPECIAL EDITION</a></h2>
 
     <h2><a href="bring-back-discuss.user.js">INSTALL</a></h2>
-    <p style="padding-left:10%;color:gray;">
-      serious note: you have to install tampermonkey (chrome) or greasemonkey (firefox)
-      and then you can just simply click that link
-    </p>
+
+    <hr>
+
+    <p class="serious">this glorius creation was made by <a href="https://scratch.mit.edu/users/GarboMuffin">GarboMuffin</a></p>
+
+    <script>
+      function submit(){
+        var promo = document.getElementById("promo").value;
+        if (promo === "💩"){
+          document.getElementById("special").style.display = "block";
+          document.getElementById("promo").value = "";
+          setTimeout(function(){
+            alert("ACTIVATED");
+          }, 16);
+        }else{
+          alert("Unkown code");
+        }
+      }
+    </script>
   </body>
 </html>
