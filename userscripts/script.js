@@ -1,3 +1,7 @@
+// This is terrible
+// This should never have been a thing
+// This is going to go
+
 var changelog = document.getElementById("changelog");
 function version(number, notes, date){
   var el = document.createElement("div");
