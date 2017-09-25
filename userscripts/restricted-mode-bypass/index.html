@@ -7,6 +7,25 @@
     <script src="https://code.jquery.com/jquery.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+      /* literally copy+pasted from bootstrap's examples lololol */
+      html {
+        position: relative;
+        min-height: 100%;
+      }
+      body {
+        margin-bottom: 60px;
+      }
+      .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 60px;
+        line-height: 60px;
+        background-color: #f5f5f5;
+      }
+    </style>
   </head>
   <body>
     <header class="jumbotron">
@@ -30,80 +49,210 @@
         You will have to disable it to use this, I will likely update this soon.
       </div>
 
-      <p>Get around restricted mode on YouTube!</p>
-      <p>If it sees that the video you're trying to watch is restricted it will create a "Watch it anyway" button. Click on that to watch it anyway!</p>
-      <p>Due to the way that this has to work, I really would encourage you to try to minimize the times you have to use it.</p>
-      <p>There might be a 10 second delay before the video starts to show, everything else should be explained in the UI.</p>
-      <a href="restricted-mode-bypass.user.js">Install!</a>
+      <p><b>Get around restricted mode on YouTube!</b></p>
+
+      <h3>Installation</h3>
+      <ol>
+        <li>Install <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en">TamperMonkey</a> (chrome) or <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/">GreaseMonkey</a> (firefox)</li>
+        <li>Click the button below this text.</li>
+        <li>In the new popup click Install.</li>
+        <li>YOU'RE DONE.</li>
+        <li>It will update iteslf.</li>
+      </ol>
+
+      <h3>Usage</h3>
+      <ul>
+        <li>If a video is restricted it will create a button titled "Watch it anyway"</li>
+        <li>Click it to watch it anyway!</li>
+        <li>It will now start playing the video and load metadata.</li>
+        <li>Be aware that initially it might take a while to load, sometimes >10 seconds. This is normal! Be patient.</li>
+      </ul>
+
+      <h3><a href="restricted-mode-bypass.user.js"><b>After reading the above text, click here to install!</b></a></h3>
+
+      <hr>
 
       <h3>Changelog:</h3>
-      <noscript>Enable javascript</noscript>
-      <span class="changelog" id="changelog"></span>
+
+      <div class="container">
+        <!-- latest -->
+        <div class="row">
+          <div class="col-md-12" id="2.1.0">
+            <h3>(latest) <a href="#2.1.0">v2.1.0</a> <small>7/1/2017</small></h3>
+            <ul>
+              <li>Support for custom itags.</li>
+              <li>Fix bug showing multiple video detail elements.</li>
+              <li>Set the width to a given number instead of using the weird buttons.</li>
+              <li>The grow/shrink buttons change increments were increased.</li>
+              <li>Other minor changes and bug fixes.</li>
+            </ul>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- 2.0.x -->
+        <div class="row">
+          <div class="col-md-4" id="2.0.1">
+            <h3><a href="#2.0.1">v2.0.1</a> <small>3/23/2017</small></h3>
+            <ul>
+              <li>Remove the heading.</li>
+            </ul>
+          </div>
+
+          <div class="col-md-8" id="2.0.0">
+            <h3><a href="#2.0.0">v2.0.0</a> <small>2/28/2017</small></h3>
+            <ul>
+              <li>Completely rewritten.</li>
+              <li>Uses a new server that functions much better for this purpose.</li>
+              <li>Now shows the video's upload date, title, creator, views, and description.</li>
+              <li>You can change the video's quality.</li>
+              <li>Bug fixes.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 1.5.x -->
+        <div class="row">
+          <div class="col-md-4" id="1.5.2">
+            <h3><a href="#1.5.2">v1.5.2</a></h3>
+            <ul>
+              <li>Small bug fixes.</li>
+            </ul>
+          </div>
+
+          <div class="col-md-4" id="1.5.1">
+            <h3><a href="#1.5.1">v1.5.1</a> <small>1/19/2017</small></h3>
+            <ul>
+              <li>Transition to this site.</li>
+            </ul>
+          </div>
+
+          <div class="col-md-4" id="1.5.0">
+            <h3><a href="#1.5.0">v1.5.0</a> <small>1/18/2017</small></h3>
+            <ul>
+              <li>Made it work again.</li>
+            </ul>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- 1.4.x -->
+        <div class="row">
+          <div class="col-md-4" id="1.4.1">
+            <h3><a href="#1.4.1">v1.4.1</a> <small>11/20/2016</small></h3>
+            <ul>
+              <li>Fix bug when using on a school account.</li>
+            </ul>
+          </div>
+
+          <div class="col-md-4" id="1.4.0">
+            <h3><a href="#1.4.0">v1.4.0</a> <small>11/19/2016</small></h3>
+            <ul>
+              <li>Rewrote a lot of stuff.</li>
+              <li>It will fix the gray controls on it's own now.</li>
+              <li>URL timecodes work.</li>
+            </ul>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- 1.3.x -->
+        <div class="row">
+          <div class="col-md-12" id="1.3.0">
+            <h3><a href="#1.4.0">v1.3.0</a> <small>10/23/2016</small></h3>
+            <ul>
+              <li>Fix some change introduced by YouTube.</li>
+            </ul>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- 1.2.x -->
+        <div class="row">
+          <div class="col-md-4" id="1.2.1">
+            <h3><a href="#1.2.1">v1.2.1</a> <small>10/16/2016</small></h3>
+            <ul>
+              <li>Update description.</li>
+            </ul>
+          </div>
+
+          <div class="col-md-8" id="1.2.0">
+            <h3><a href="#1.2.0">v1.2.0</a> <small>10/7/2016</small></h3>
+            <ul>
+              <li>No longer do you need to refresh to fix the gray controls.</li>
+            </ul>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- 1.1.2 - 1.1.4 -->
+        <div class="row">
+          <div class="col-md-4" id="1.1.4">
+            <h3><a href="#1.1.4">v1.1.4</a> <small>10/7/2016</small></h3>
+            <ul>
+              <li>Small refactoring.</li>
+            </ul>
+          </div>
+
+          <div class="col-md-4" id="1.1.3">
+            <h3><a href="#1.1.3">v1.1.3</a> <small>10/7/2016</small></h3>
+            <ul>
+              <li>Add a space after some text.</li>
+            </ul>
+          </div>
+
+          <div class="col-md-4" id="1.1.2">
+            <h3><a href="#1.1.2">v1.1.2</a> <small>9/20/2016</small></h3>
+            <ul>
+              <li>Fix update location.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 1.1.0 - 1.1.1 -->
+        <div class="row">
+          <div class="col-md-4" id="1.1.1">
+            <h3><a href="#1.1.1">v1.1.1</a> <small>9/20/2016</small></h3>
+            <ul>
+              <li>Add update location.</li>
+            </ul>
+          </div>
+
+          <div class="col-md-8" id="1.1.0">
+            <h3><a href="#1.1.0">v1.1.0</a> <small>9/19/2016</small></h3>
+            <ul>
+              <li>Customizable width.</li>
+              <li>"gray controls" message.</li>
+            </ul>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- 1.0 -->
+        <div class="row">
+          <div class="col-md-12" id="1.0.0">
+            <h3><a href="#1.0.0">v1.0.0</a> <small>9/18/2016</small></h3>
+            <ul>
+              <li>Initial release.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <hr>
     </div>
-    <script src="../script.js"></script>
-    <script>
-      version("2.1.0", [
-        "Support for custom itags.",
-        "Fix bug showing multiple video detail elements.",
-        "Set the width to a given number instead of using the weird buttons.",
-        "The grow/shrink buttons change increments were increased.",
-        "Other minor changes and bug fixes"
-      ], "7/1/2017");
-      version("2.0.1", [
-        "Remove the heading."
-      ], "3/23/2017");
-      version("2.0.0", [
-        "Completely rewritten",
-        "Uses a new server that functions much better for this purpose",
-        "Now shows the video's upload date, title, creator, views, and description",
-        "You can change the video's quality",
-        "Bug fixes",
-      ], "2/28/2017");
-      version("1.5.2, v1.5.3", [
-        "Small bug fixes"
-      ]);
-      version("1.5.1", [
-        "Transition to this site"
-      ], "1/19/2017");
-      version("1.5.0", [
-        "Made it work again"
-      ], "1/18/2017");
-      version("1.4.1", [
-        "Fix bug when using on a school account"
-      ], "11/20/2016");
-      version("1.4.0", [
-        "Rewrote a lot of stuff.",
-        "It will fix the gray controls on it's own now!",
-        "URL timecodes work."
-      ], "11/19/2016");
-      version("1.3.0", [
-        "Fix some change introduced by YouTube"
-      ], "10/23/2016");
-      version("1.2.1", [
-        "Update description"
-      ], "10/16/2016");
-      version("1.2.0", [
-        "No longer do you need to refresh to fix the gray controls"
-      ], "10/7/2016");
-      version("1.1.4", [
-        "Small refactoring",
-      ], "10/7/2016");
-      version("1.1.3", [
-        "Add a space after some text"
-      ], "10/7/2016");
-      version("1.1.2", [
-        "Fix update location"
-      ], "9/19/2016");
-      version("1.1.1", [
-        "Add update location"
-      ], "9/20/2016");
-      version("1.1.0", [
-        "Customizable width",
-        "\"gray controls\" message"
-      ], "9/19/2016");
-      version("1.0.0", [
-        "Initial release"
-      ], "9/18/2016");
-    </script>
+
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted">By GarboMuffin - use at your own risk</span>
+      </div>
+    </footer>
   </body>
 </html>
