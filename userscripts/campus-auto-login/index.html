@@ -72,7 +72,7 @@
     <hr>
 
     <h3>Changelog</h3>
-    <p class="no-margin">
+    <p class="no-margin" id="v3.2">
       <b>v3.2</b>:
       <ul class="no-margin">
         <li>Added support for <a href="https://www.bigideasmath.com/BIM/login">Big Ideas Math (BIM)</a></li>
@@ -82,7 +82,7 @@
       </ul>
     </p>
 
-    <p class="no-margin">
+    <p class="no-margin" id="v3.1">
       <b>v3.1</b>:
       <ul class="no-margin">
         <li><b>How your information is stored has changed. You will have to re-enter your credentials for any site this supports.</b></li>
@@ -95,7 +95,7 @@
       </ul>
     </p>
 
-    <p class="no-margin">
+    <p class="no-margin" id="v3.0">
       <b>v3.0</b>:
       <ul class="no-margin">
         <li>Complete rewrite in typescript instead of javascript. (transpiles to javascript)</li>
@@ -104,12 +104,22 @@
         <li>You now only need to set your stuff on one version of portal. The credentials are shared.</li>
       </ul>
     </p>
-    <p><b>v2.2</b>: added support for the new portal AND the old. should work as you would expect.</p>
+    <p id="v2.2"><b>v2.2</b>: added support for the new portal AND the old. should work as you would expect.</p>
 
-    <h3>Problems</h3>
-    <ul>
-      <li>Passwords aren't exactly stored in the most secured way ever, but as long as you aren't an idiot it should be safe.</li>
-    </ul>
+    <hr>
+
+    <h3>How is this different than a password manager?</h3>
+    <!-- fun fact: you can use both (and i do) -->
+    <p>This is not a password manager. It is not meant to be a replacement. It can't be a replacement.</p>
+    <p>This does not offer critical password manager tools and options, because it is not one.</p>
+    <p>This is designed for specific sites and works well with them and has features a password manager might not be able to provide.</p>
+    <p>This is lightweight, doesn't require an account, and doesn't store your passwords on the cloud.</p>
+    <p>This is free, has no ads, doesn't ask for you to hand over your bank account, and the code is open to all.</p>
+    <p>This works in your browser, on any browser, on any device.</p>
+
+    <hr>
+
+    <p>By GarboMuffin - use at your own risk</p>
 
     <script>
       function openScript(){
@@ -119,6 +129,7 @@
         if (w){
           w.close();
         }else{
+          // some popup blockers make it fail, so provide alternative link
           alert("Couldn't open popup. Do you have them disabled?\n\nTry alternative link.");
           for (var el of document.getElementsByClassName("no-popup")){
             el.style.display = "block";
