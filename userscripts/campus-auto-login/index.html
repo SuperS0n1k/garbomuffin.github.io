@@ -7,30 +7,47 @@
       .no-margin {
         margin: 0;
       }
+      .no-popup {
+        display: none;
+      }
+      button {
+        font-size: 1.25em;
+        cursor: pointer;
+      }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
 
   <body>
-    <h1>Campus Auto Login (v3.1)</h1>
+    <h1>Campus Auto Login (v3.2)</h1>
     <hr>
 
-    <p>Auto login to the District 112 campus portals!</p>
+    <img src="pic.png">
 
-    <h3>Installation</h3>
+    <p>Auto login to the District 112 campus portal and <a href="#supported">other supported sites</a>!</p>
+
+    <h3>Installation (for Chrome, any platform)</h3>
     <p>
       <ol>
         <li>Install <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en">TamperMonkey</a>.</li>
-        <li>Click the giant link below and then "Install".</li>
-        <li>You're done. It should (in theory?) update automatically.</li>
+        <li>Click the button below and then "Install".</li>
+        <li>You're done. It will update automatically.</li>
       </ol>
     </p>
 
-    <h3><a href="campus-auto-login.user.js">Click here to install it.</a></h3>
+    <button onclick="return openScript();"><b>Click here to install it</b> (after reading the above)</button>
+
+    <noscript>Or, since you don't have javascript enabled (why are you using this?), <a href="campus-auto-login.user.js">here's an alternative install link.</a></noscript>
+
+    <!-- if the popup fails or something -->
+    <h3 class="no-popup"><a href="campus-auto-login.user.js">Click here to install it.</a></h3>
+
+    <hr>
 
     <h3>Usage</h3>
     <p>
       <ol>
+        <li>Visit a <a href="#supported">supported site</a>.</li>
         <li>Enter your username and password into the boxes like usual.</li>
         <li>Instead of clicking "Submit", click the "Remember Me" button this has created.</li>
         <li>You're good to go, from now on it will automatically set the fields and click submit.</li>
@@ -39,14 +56,32 @@
 
     <p>It will detect incorrect passwords or captchas and stop submitting and reset passwords. (you will have to tell this to remember them again with the "Remember Me" button)</p>
 
-    <p>
-      It supports both the
-      <a href="https://campus.district112.org/campus/portal/isd112.jsp">old</a> and the
-      <a href="https://campus.district112.org/campus/portal/students/isd112.jsp">new</a> portals
-      with support for <a href="https://empower.district112.org">empower</a> planned. (but not in yet)
-    </p>
+    <p>On some sites it will not resubmit if you have recently logged out.</p>
+
+    <hr>
+
+    <h3 id="supported">Supported sites</h3>
+    <ul>
+      <li><a href="https://campus.district112.org/campus/portal/isd112.jsp">Old Portal</a></li>
+      <li><a href="https://campus.district112.org/campus/portal/students/isd112.jsp">New Portal</a></li>
+      <li><a href="https://student.teachtci.com/student/sign_in">Big Ideas Math (BIM)</a></li>
+      <li><a href="https://www.bigideasmath.com/BIM/login">TeachTCI</a></li>
+      <li>Empower support is <b>PLANNED.</b> It is not implemented yet. Be patient! There's a couple things that make it more difficult.</li>
+    </ul>
+
+    <hr>
 
     <h3>Changelog</h3>
+    <p class="no-margin">
+      <b>v3.2</b>:
+      <ul class="no-margin">
+        <li>Added support for <a href="https://www.bigideasmath.com/BIM/login">Big Ideas Math (BIM)</a></li>
+        <li>It works the same as the others. Credentials are not shared with campus or TCI.</li>
+        <li>Removes a couple more old storage locations from older scripts. (it used cookies back then, man!)</li>
+        <li>Start of rebranding from "Campus Auto Login" to "District 112 Auto Login"</li>
+      </ul>
+    </p>
+
     <p class="no-margin">
       <b>v3.1</b>:
       <ul class="no-margin">
@@ -59,6 +94,7 @@
         <li>Lots of changes on the code level.</li>
       </ul>
     </p>
+
     <p class="no-margin">
       <b>v3.0</b>:
       <ul class="no-margin">
@@ -74,5 +110,21 @@
     <ul>
       <li>Passwords aren't exactly stored in the most secured way ever, but as long as you aren't an idiot it should be safe.</li>
     </ul>
+
+    <script>
+      function openScript(){
+        // open the new window and close it
+        // tampermonkey opens its install prompt and leaves the old window as an empty tab
+        var w = window.open("campus-auto-login.user.js");
+        if (w){
+          w.close();
+        }else{
+          alert("Couldn't open popup. Do you have them disabled?\n\nTry alternative link.");
+          for (var el of document.getElementsByClassName("no-popup")){
+            el.style.display = "block";
+          }
+        }
+      }
+    </script>
   </body>
 </html>

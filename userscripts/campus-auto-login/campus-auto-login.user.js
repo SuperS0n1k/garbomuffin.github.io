@@ -1,5 +1,7 @@
 "use strict";
-/* === CAMPUS AUTO LOGIN v3.1 ===
+/* === CAMPUS AUTO LOGIN v3.2 ===
+ * NEW IN v3.2: BIM SUPPORT
+ *
  * Usage:
  * 1) Type your username/password or any other info into the usual text boxes.
  * 2) Find the "Remember Me" button.
@@ -9,50 +11,22 @@
  *    If at any point your credentials changed it will detect that and you will have to reset it.
  *
  * Supported sites:
- * TCI: https://student.teachtci.com/student/sign_in
- *  - Will not sign in if you recently signed out (by design)
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
- *  - Will not sign in if you recently signed out.
  *  - Credentials are shared between new and old portals.
  * New Portal: https://campus.district112.org/campus/portal/students/isd112.jsp
  *  - Credentials are shared between new and old portals.
+ * TCI: https://student.teachtci.com/student/sign_in
+ * BIM: https://www.bigideasmath.com/BIM/login
  *
  * Empower support is PLANNED.
  */
-/*
-Copyright (c) 2017 GarboMuffin
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-////
-// Below these lines is the raw source code.
-// Do not change it if you do not know what you're doing, you could get your account locked out.
-// Raw TypeScript: https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/campus-auto-login.user.js
-// Transpiled: https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/campus-auto-login.user.js
-////
-// remove keys from older versions
-GM_deleteValue("CALU"); // v3.0 username
-GM_deleteValue("CALP"); // v3.0 password
 // CONFIG
 const SUPPORT_OLD_CAMPUS = true;
 const SUPPORT_NEW_CAMPUS = true;
 const SUPPORT_TCI = true;
+const SUPPORT_BIM = true;
+// when you just sign out of a site it won't click submit (on most sites), set this to true to always submit
+const ALWAYS_SUBMIT = false;
 // INTERNAL CONFIGS - DO NOT TOUCH
 var KeyNames;
 (function (KeyNames) {
@@ -61,6 +35,8 @@ var KeyNames;
     KeyNames["TCI_USERNAME"] = "TCI_USERNAME";
     KeyNames["TCI_PASSWORD"] = "TCI_PASSWORD";
     KeyNames["TCI_TEACHER"] = "TCI_TEACHER";
+    KeyNames["BIM_USERNAME"] = "BIM_USERNAME";
+    KeyNames["BIM_PASSWORD"] = "BIM_PASSWORD";
 })(KeyNames || (KeyNames = {}));
 var PageState;
 (function (PageState) {
@@ -73,6 +49,7 @@ var PageType;
     PageType[PageType["CampusNew"] = 0] = "CampusNew";
     PageType[PageType["CampusOld"] = 1] = "CampusOld";
     PageType[PageType["TCI"] = 2] = "TCI";
+    PageType[PageType["BIM"] = 3] = "BIM";
 })(PageType || (PageType = {}));
 var LogSeverity;
 (function (LogSeverity) {
@@ -97,6 +74,9 @@ function getPageType() {
     else if (location.href.indexOf("campus.district112.org/campus/portal/students/isd112") > -1) {
         return PageType.CampusNew;
     }
+    else if (location.href.indexOf("bigideasmath.com/BIM/login") > -1) {
+        return PageType.BIM;
+    }
     else {
         return null;
     }
@@ -114,7 +94,7 @@ function log(msg, severity = LogSeverity.Info) {
     }
 }
 // IMPLEMENTING AUTO LOGIN
-class Credentials {
+class EncodedCredentials {
     constructor(username, password) {
         this._username = username;
         this._password = password;
@@ -128,7 +108,7 @@ class Credentials {
     }
     ;
 }
-class TCICredentials extends Credentials {
+class TCIEncodedCredentials extends EncodedCredentials {
     constructor(username, password, teacher) {
         super(username, password);
         this._teacher = teacher;
@@ -149,7 +129,7 @@ class BasePortalAutoLogin {
         if (username === null || password === null) {
             return null;
         }
-        return new Credentials(username, password);
+        return new EncodedCredentials(username, password);
     }
     setCredentials(username, password) {
         GM_setValue(KeyNames.CAMPUS_USERNAME, base64encode(username));
@@ -262,7 +242,7 @@ class TCIAutoLogin {
     onload() {
         var el = document.createElement("a");
         el.textContent = "Remember Me";
-        el.style.cursor = "pointer"; // tci does not give a elements a pointer so manually do it
+        el.href = "#";
         el.onclick = () => {
             this.storeCredentials();
             this.submit();
@@ -300,7 +280,66 @@ class TCIAutoLogin {
         if (username === null || password === null || teacher === null) {
             return null;
         }
-        return new TCICredentials(username, password, teacher);
+        return new TCIEncodedCredentials(username, password, teacher);
+    }
+}
+// BIM
+class BIMAutoLogin {
+    resetCredentials() {
+        GM_deleteValue(KeyNames.BIM_USERNAME);
+        GM_deleteValue(KeyNames.BIM_PASSWORD);
+    }
+    submit() {
+        document.getElementById("loginSubmit").click();
+    }
+    setDocumentCredentials(credentials) {
+        document.querySelector("input[name=username]").value = credentials.username;
+        document.querySelector("input[name=password]").value = credentials.password;
+    }
+    setCredentials(username, password) {
+        GM_setValue(KeyNames.BIM_USERNAME, base64encode(username));
+        GM_setValue(KeyNames.BIM_PASSWORD, base64encode(password));
+    }
+    storeCredentials() {
+        const username = document.querySelector("input[name=username]").value;
+        const password = document.querySelector("input[name=password]").value;
+        this.setCredentials(username, password);
+    }
+    onload() {
+        var el = document.createElement("a");
+        el.textContent = "Remember Me";
+        el.className = "forgot-password"; // bim does some styling off of this
+        el.href = "#";
+        el.onclick = () => {
+            this.storeCredentials();
+            this.submit();
+            return false;
+        };
+        var container = document.createElement("p");
+        container.appendChild(el);
+        document.getElementById("loginForm").appendChild(container);
+    }
+    shouldSignIn() {
+        return this.getState() === PageState.Normal && !this.hasRecentlySignedOut();
+    }
+    getState() {
+        if (location.href.indexOf("?error") > -1) {
+            return PageState.Error;
+        }
+        else {
+            return PageState.Normal;
+        }
+    }
+    hasRecentlySignedOut() {
+        return location.href.indexOf("?logout") > -1;
+    }
+    getCredentials() {
+        const username = GM_getValue(KeyNames.BIM_USERNAME, null);
+        const password = GM_getValue(KeyNames.BIM_PASSWORD, null);
+        if (username === null || password === null) {
+            return null;
+        }
+        return new EncodedCredentials(username, password);
     }
 }
 // ACTUALLY RUNNING THE THING
@@ -310,39 +349,57 @@ class TCIAutoLogin {
     if (pageType === null) {
         return;
     }
+    // remove keys from older versions
+    GM_deleteValue("CALU"); // v3.0 username
+    GM_deleteValue("CALP"); // v3.0 password
     var loginManager;
-    if (pageType === PageType.CampusNew) {
-        if (!SUPPORT_NEW_CAMPUS) {
+    switch (pageType) {
+        case PageType.CampusOld:
+            // remove old cookie based storage method from v1 campus-auto-login
+            // just overwrite the cookies with things that expired a long time ago
+            document.cookie = "cid=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            document.cookie = "pid=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            if (!SUPPORT_OLD_CAMPUS) {
+                return;
+            }
+            loginManager = new OldPortalAutoLogin();
+            break;
+        case PageType.CampusNew:
+            if (!SUPPORT_NEW_CAMPUS) {
+                return;
+            }
+            loginManager = new NewPortalAutoLogin();
+            break;
+        case PageType.TCI:
+            if (!SUPPORT_OLD_CAMPUS) {
+                return;
+            }
+            loginManager = new OldPortalAutoLogin();
+            break;
+        case PageType.BIM:
+            // remove old localstorage based storage method from my old bim-auto-login
+            localStorage.removeItem("uid");
+            localStorage.removeItem("pid");
+            if (!SUPPORT_BIM) {
+                return;
+            }
+            loginManager = new BIMAutoLogin();
+            break;
+        default:
+            log("unknown state", LogSeverity.Warn);
             return;
-        }
-        loginManager = new NewPortalAutoLogin();
-    }
-    else if (pageType === PageType.CampusOld) {
-        if (!SUPPORT_OLD_CAMPUS) {
-            return;
-        }
-        loginManager = new OldPortalAutoLogin();
-    }
-    else if (pageType === PageType.TCI) {
-        if (!SUPPORT_TCI) {
-            return;
-        }
-        loginManager = new TCIAutoLogin();
-    }
-    else {
-        return;
     }
     loginManager.onload();
     const state = loginManager.getState();
     if (state !== PageState.Normal) {
         if (state === PageState.Captcha) {
             loginManager.resetCredentials();
-            log("CAPTCHA", LogSeverity.Warn);
+            log("captcha", LogSeverity.Warn);
             alert("A captcha has been detected.\n\nYour credentials have been reset.\n\nPlease enter your credentials AND the captcha.");
         }
         else if (state === PageState.Error) {
             loginManager.resetCredentials();
-            log("ERROR", LogSeverity.Warn);
+            log("credential error", LogSeverity.Warn);
             alert("Credentials have been detected as incorrect.\n\nThey have been reset.");
         }
     }
@@ -352,20 +409,25 @@ class TCIAutoLogin {
     }
     else {
         loginManager.setDocumentCredentials(credentials);
-        if (loginManager.shouldSignIn()) {
+        // if the user just signed out and we can detect that easily don't sign in again
+        // might add some more conditions, but this works good for now
+        if (ALWAYS_SUBMIT || loginManager.shouldSignIn()) {
             loginManager.submit();
+        }
+        else {
+            log("skipping submit");
         }
     }
 })();
-// the metadata block is now down here because reasons
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.1
-// @description  Auto log-in to campus portal and other related sites.
+// @version      3.2
+// @description  Auto log-in to campus portal and other related sites including TCI and BIM.
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
 // @match        https://campus.district112.org/campus/portal/students/isd112.jsp*
 // @match        https://student.teachtci.com/student/sign_in
+// @match        https://www.bigideasmath.com/BIM/login*
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/
 // @downloadURL  https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/campus-auto-login.user.js
 // @run-at       document-idle
