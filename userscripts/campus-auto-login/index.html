@@ -19,7 +19,7 @@
   </head>
 
   <body>
-    <h1>Campus Auto Login (v3.2)</h1>
+    <h1>Campus Auto Login (v3.3)</h1>
     <hr>
 
     <img src="pic.png">
@@ -49,14 +49,17 @@
       <ol>
         <li>Visit a <a href="#supported">supported site</a>.</li>
         <li>Enter your username and password into the boxes like usual.</li>
-        <li>Instead of clicking "Submit", click the "Remember Me" button this has created.</li>
+        <li>
+          Instead of clicking "Submit", click the "Remember Me" button this has created.<br>
+          (it's spot varies for each page, but it's usually near the "Forgot Password" button)
+        </li>
         <li>You're good to go, from now on it will automatically set the fields and click submit.</li>
       </ol>
     </p>
 
     <p>It will detect incorrect passwords or captchas and stop submitting and reset passwords. (you will have to tell this to remember them again with the "Remember Me" button)</p>
 
-    <p>On some sites it will not resubmit if you have recently logged out.</p>
+    <p>On some sites it will not resubmit if you have recently logged out, only fill the password boxes.</p>
 
     <hr>
 
@@ -66,12 +69,23 @@
       <li><a href="https://campus.district112.org/campus/portal/students/isd112.jsp">New Portal</a></li>
       <li><a href="https://student.teachtci.com/student/sign_in">Big Ideas Math (BIM)</a></li>
       <li><a href="https://www.bigideasmath.com/BIM/login">TeachTCI</a></li>
-      <li>Empower support is <b>PLANNED.</b> It is not implemented yet. Be patient! There's a couple things that make it more difficult.</li>
+      <li><a href="https://empower.district112.org">Empower</a> (although very limited)</li>
     </ul>
 
     <hr>
 
     <h3>Changelog</h3>
+    <p class="no-margin" id="v3.3">
+      <b>v3.3</b>:
+      <ul class="no-margin">
+        <li>Added very basic support for <a href="https://empower.district112.org">Empower</a></li>
+        <li>It will automatically click a couple buttons.</li>
+        <li>It can be configured to automatically pick a Google account.</li>
+        <li><b><a href="https://youtu.be/PdQLOfaAReQ">You must enable popups for it to work.</a></b></li>
+        <li>I'll add some more documentation on it at a later date.</li>
+      </ul>
+    </p>
+
     <p class="no-margin" id="v3.2">
       <b>v3.2</b>:
       <ul class="no-margin">

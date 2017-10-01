@@ -1,6 +1,6 @@
 "use strict";
-/* === CAMPUS AUTO LOGIN v3.2 ===
- * NEW IN v3.2: BIM SUPPORT
+/* === CAMPUS AUTO LOGIN v3.3 ===
+ * NEW IN v3.3: EMPOWER SUPPORT, read the changelog on the site!
  *
  * Usage:
  * 1) Type your username/password or any other info into the usual text boxes.
@@ -20,13 +20,42 @@
  *
  * Empower support is PLANNED.
  */
-// CONFIG
-const SUPPORT_OLD_CAMPUS = true;
-const SUPPORT_NEW_CAMPUS = true;
-const SUPPORT_TCI = true;
-const SUPPORT_BIM = true;
-// when you just sign out of a site it won't click submit (on most sites), set this to true to always submit
-const ALWAYS_SUBMIT = false;
+/*
+Copyright (c) 2017 GarboMuffin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+// Here is the config. You can change true to false to enable/disable things.
+// I'll add more documentation soon.
+const CONFIG = {
+    SUPPORT_OLD_CAMPUS: true,
+    SUPPORT_NEW_CAMPUS: true,
+    SUPPORT_TCI: true,
+    SUPPORT_BIM: true,
+    SUPPORT_EMPOWER: true,
+    EMPOWER: {
+        DRIVE_ACCESS: true,
+        GOOGLE_USER: -1,
+        GOOGLE_CONSENT: true,
+    },
+    ALWAYS_SUBMIT: true,
+};
 // INTERNAL CONFIGS - DO NOT TOUCH
 var KeyNames;
 (function (KeyNames) {
@@ -50,6 +79,10 @@ var PageType;
     PageType[PageType["CampusOld"] = 1] = "CampusOld";
     PageType[PageType["TCI"] = 2] = "TCI";
     PageType[PageType["BIM"] = 3] = "BIM";
+    PageType[PageType["Empower"] = 4] = "Empower";
+    PageType[PageType["EmpowerLoggedIn"] = 5] = "EmpowerLoggedIn";
+    PageType[PageType["GoogleChooseAccount"] = 6] = "GoogleChooseAccount";
+    PageType[PageType["GoogleConsent"] = 7] = "GoogleConsent";
 })(PageType || (PageType = {}));
 var LogSeverity;
 (function (LogSeverity) {
@@ -77,6 +110,18 @@ function getPageType() {
     else if (location.href.indexOf("bigideasmath.com/BIM/login") > -1) {
         return PageType.BIM;
     }
+    else if (location.href.indexOf("empower.district112.org/default.aspx") > -1) {
+        return PageType.Empower;
+    }
+    else if (location.href.indexOf("empower.district112.org/iFrame.aspx?iCtrl=PLAYLIST_WINDOW") > -1) {
+        return PageType.EmpowerLoggedIn;
+    }
+    else if (location.href.indexOf("accounts.google.com/signin/oauth/consent") > -1) {
+        return PageType.GoogleConsent;
+    }
+    else if (location.href.indexOf("accounts.google.com/signin/oauth/oauthchooseaccount") > -1) {
+        return PageType.GoogleChooseAccount;
+    }
     else {
         return null;
     }
@@ -92,6 +137,22 @@ function log(msg, severity = LogSeverity.Info) {
     else if (severity === LogSeverity.Err) {
         console.error(LOG_PREFIX, msg);
     }
+}
+function arePopupsEnabled() {
+    // TODO: better way of testing for popups
+    // this method here has the problem of causing annoying popups
+    // we just ask the user to enable popups.
+    return true;
+    // if (CONFIG.EMPOWER.ASSUME_POPUPS) {
+    //   return true;
+    // }
+    // const w = window.open("");
+    // if (w) {
+    //   w.close();
+    //   return true;
+    // } else {
+    //   return false;
+    // }
 }
 // IMPLEMENTING AUTO LOGIN
 class EncodedCredentials {
@@ -115,6 +176,32 @@ class TCIEncodedCredentials extends EncodedCredentials {
     }
     get teacher() {
         return base64decode(this._teacher);
+    }
+}
+class EmptyAutoLogin {
+    resetCredentials() {
+        // do nothing
+    }
+    submit() {
+        // do nothing
+    }
+    setDocumentCredentials() {
+        // do nothing
+    }
+    storeCredentials() {
+        // do nothing
+    }
+    onload() {
+        // do nothing
+    }
+    shouldSignIn() {
+        return false;
+    }
+    getState() {
+        return PageState.Normal;
+    }
+    getCredentials() {
+        return null;
     }
 }
 // PORTAL
@@ -342,16 +429,68 @@ class BIMAutoLogin {
         return new EncodedCredentials(username, password);
     }
 }
+// EMPOWER, oh dear god this is a mess
+// because empower is a special snowflake none of the normal methods do anything
+// its all in onload
+class EmpowerConsts {
+}
+EmpowerConsts.POPUP = `YOU NEED TO ALLOW POPUPS.\n\nSee: https://youtu.be/PdQLOfaAReQ\n\n(copy+paste the link)`;
+class EmpowerAutoLogin extends EmptyAutoLogin {
+    onload() {
+        if (arePopupsEnabled()) {
+            log("popups allowed");
+            OpenGoogleLogin(); // global method in empower
+        }
+        else {
+            log("popups blocked");
+            alert(EmpowerConsts.POPUP);
+        }
+    }
+}
+class EmpowerLoggedInManager extends EmptyAutoLogin {
+    onload() {
+        if (!CONFIG.EMPOWER.DRIVE_ACCESS) {
+            return;
+        }
+        if (arePopupsEnabled()) {
+            log("popups allowed");
+            driveAPIObjectLocker._OpenLogin = driveAPIObjectLocker.OpenLogin;
+            driveAPIObjectLocker.OpenLogin = function () {
+                this._OpenLogin();
+                document.getElementsByClassName("googleLoginModalLoginLink")[0].click();
+            };
+            window._alert = alert;
+        }
+        else {
+            log("popups blocked");
+            alert(EmpowerConsts.POPUP);
+        }
+    }
+}
+class GoogleChooseAccountManager extends EmptyAutoLogin {
+    onload() {
+        const site = document.getElementsByClassName("uBOgn")[0].textContent;
+        if (site === "district112.org") {
+            const users = document.getElementsByClassName("C5uAFc w6VTHd");
+            const user = users[CONFIG.EMPOWER.GOOGLE_USER];
+            const button = user.getElementsByTagName("div")[0];
+            button.click();
+        }
+    }
+}
+class GoogleConsentManager extends EmptyAutoLogin {
+    onload() {
+        const site = document.getElementsByClassName("uBOgn")[0].textContent;
+        if (site === "district112.org") {
+            const buttons = document.getElementsByClassName("RveJvd snByac");
+            buttons[1].click();
+        }
+    }
+}
 // ACTUALLY RUNNING THE THING
 (function () {
+    log("loaded");
     const pageType = getPageType();
-    // unknown page type, don't do anything
-    if (pageType === null) {
-        return;
-    }
-    // remove keys from older versions
-    GM_deleteValue("CALU"); // v3.0 username
-    GM_deleteValue("CALP"); // v3.0 password
     var loginManager;
     switch (pageType) {
         case PageType.CampusOld:
@@ -359,31 +498,52 @@ class BIMAutoLogin {
             // just overwrite the cookies with things that expired a long time ago
             document.cookie = "cid=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
             document.cookie = "pid=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-            if (!SUPPORT_OLD_CAMPUS) {
+            if (!CONFIG.SUPPORT_OLD_CAMPUS) {
                 return;
             }
             loginManager = new OldPortalAutoLogin();
             break;
         case PageType.CampusNew:
-            if (!SUPPORT_NEW_CAMPUS) {
+            if (!CONFIG.SUPPORT_NEW_CAMPUS) {
                 return;
             }
             loginManager = new NewPortalAutoLogin();
             break;
         case PageType.TCI:
-            if (!SUPPORT_OLD_CAMPUS) {
+            if (!CONFIG.SUPPORT_OLD_CAMPUS) {
                 return;
             }
             loginManager = new OldPortalAutoLogin();
             break;
         case PageType.BIM:
-            // remove old localstorage based storage method from my old bim-auto-login
-            localStorage.removeItem("uid");
-            localStorage.removeItem("pid");
-            if (!SUPPORT_BIM) {
+            if (!CONFIG.SUPPORT_BIM) {
                 return;
             }
             loginManager = new BIMAutoLogin();
+            break;
+        case PageType.Empower:
+            if (!CONFIG.SUPPORT_EMPOWER) {
+                return;
+            }
+            loginManager = new EmpowerAutoLogin();
+            break;
+        case PageType.EmpowerLoggedIn:
+            if (!CONFIG.SUPPORT_EMPOWER) {
+                return;
+            }
+            loginManager = new EmpowerLoggedInManager();
+            break;
+        case PageType.GoogleChooseAccount:
+            if (CONFIG.EMPOWER.GOOGLE_USER === -1) {
+                return;
+            }
+            loginManager = new GoogleChooseAccountManager();
+            break;
+        case PageType.GoogleConsent:
+            if (!CONFIG.EMPOWER.GOOGLE_CONSENT) {
+                return;
+            }
+            loginManager = new GoogleConsentManager();
             break;
         default:
             log("unknown state", LogSeverity.Warn);
@@ -392,13 +552,12 @@ class BIMAutoLogin {
     loginManager.onload();
     const state = loginManager.getState();
     if (state !== PageState.Normal) {
+        loginManager.resetCredentials();
         if (state === PageState.Captcha) {
-            loginManager.resetCredentials();
             log("captcha", LogSeverity.Warn);
             alert("A captcha has been detected.\n\nYour credentials have been reset.\n\nPlease enter your credentials AND the captcha.");
         }
         else if (state === PageState.Error) {
-            loginManager.resetCredentials();
             log("credential error", LogSeverity.Warn);
             alert("Credentials have been detected as incorrect.\n\nThey have been reset.");
         }
@@ -411,7 +570,7 @@ class BIMAutoLogin {
         loginManager.setDocumentCredentials(credentials);
         // if the user just signed out and we can detect that easily don't sign in again
         // might add some more conditions, but this works good for now
-        if (ALWAYS_SUBMIT || loginManager.shouldSignIn()) {
+        if (CONFIG.ALWAYS_SUBMIT || loginManager.shouldSignIn()) {
             loginManager.submit();
         }
         else {
@@ -421,13 +580,17 @@ class BIMAutoLogin {
 })();
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.2
+// @version      3.3
 // @description  Auto log-in to campus portal and other related sites including TCI and BIM.
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
 // @match        https://campus.district112.org/campus/portal/students/isd112.jsp*
 // @match        https://student.teachtci.com/student/sign_in
 // @match        https://www.bigideasmath.com/BIM/login*
+// @match        https://empower.district112.org/default.aspx*
+// @match        https://empower.district112.org/iFrame.aspx?iCtrl=PLAYLIST_WINDOW*
+// @match        https://accounts.google.com/signin/oauth?*
+// @match        https://accounts.google.com/signin/oauth/consent?*
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/
 // @downloadURL  https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/campus-auto-login.user.js
 // @run-at       document-idle
