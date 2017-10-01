@@ -1,3 +1,41 @@
+/* CORE STYLES */
+body{
+  font-family: monospace;
+  padding-left: 1em;
+  transition: background-color 0.5s linear;
+}
+code {
+  color: red;
+}
+.gray {
+  color: gray;
+}
+.no-transition {
+  transition: none !important;
+}
+
+/* LINKS */
+a {
+  text-decoration: underline;
+  color: black;
+}
+a:hover {
+  text-decoration: underline !important;
+}
+a:active {
+  color: red;
+  text-decoration: underline;
+}
+
+a.no-underline{
+  text-decoration: none;
+}
+
+body {
+  padding-left: 25%;
+  padding-right: 25%;
+}
+
 /* MAN */
 man-entry {
   padding-left: 3em;
