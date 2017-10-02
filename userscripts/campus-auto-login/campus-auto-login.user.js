@@ -1,5 +1,6 @@
 "use strict";
-/* === CAMPUS AUTO LOGIN v3.3 ===
+/* === CAMPUS AUTO LOGIN v3.3.1 ===
+ * NEW IN v3.3.1: fixed a potentially major bug
  * NEW IN v3.3: EMPOWER SUPPORT, read the changelog on the site!
  *
  * Usage:
@@ -54,7 +55,7 @@ const CONFIG = {
         GOOGLE_USER: -1,
         GOOGLE_CONSENT: true,
     },
-    ALWAYS_SUBMIT: true,
+    ALWAYS_SUBMIT: false,
 };
 // INTERNAL CONFIGS - DO NOT TOUCH
 var KeyNames;
@@ -580,7 +581,7 @@ class GoogleConsentManager extends EmptyAutoLogin {
 })();
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.3
+// @version      3.3.1
 // @description  Auto log-in to campus portal and other related sites including TCI and BIM.
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*

@@ -7,8 +7,8 @@
       .no-margin {
         margin: 0;
       }
-      .no-popup {
-        display: none;
+      .gray {
+        color: gray;
       }
       button {
         font-size: 1.25em;
@@ -35,17 +35,69 @@
       </ol>
     </p>
 
-    <button onclick="return openScript();"><b>Click here to install it</b> (after reading the above)</button>
-
-    <noscript>Or, since you don't have javascript enabled (why are you using this?), <a href="campus-auto-login.user.js">here's an alternative install link.</a></noscript>
-
-    <!-- if the popup fails or something -->
-    <h3 class="no-popup"><a href="campus-auto-login.user.js">Click here to install it.</a></h3>
+    <button onclick="return openScript();"><b>Click here to install it</b> (after reading the above and preferably the below)</button>
+    <p class="gray">Button doesn't work? <a href="campus-auto-login.user.js">Click here instead.</a></p>
 
     <hr>
 
-    <h3>Usage</h3>
+    <h3>What does it do?</h3>
+    <p>What it does exactly can vary from site to site, but know that it usually signs you in automatically! (after setting credentials, of course)</p>
+
+    <p>It will detect incorrect passwords or captchas and stop submitting and reset passwords. (you will have to tell this to remember them again with the "Remember Me" button)</p>
+
+    <p>On some sites it will not resubmit if you have recently logged out, only fill the password boxes.</p>
+
+    <hr>
+
+    <h3 id="supported">Supported sites</h3>
+    <ul>
+      <li>
+        <a href="https://campus.district112.org/campus/portal/isd112.jsp">Old Portal</a>
+        <ul>
+          <li>See <a href="#basic">basic usage</a>.</li>
+          <li>Credentials are shared between old and new portal.</li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="https://campus.district112.org/campus/portal/students/isd112.jsp">New Portal</a>
+        <ul>
+            <li>See <a href="#basic">basic usage</a>.</li>
+          <li>Credentials are shared between old and new portal.</li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="https://student.teachtci.com/student/sign_in">Big Ideas Math (BIM)</a>
+        <ul>
+            <li>See <a href="#basic">basic usage</a>.</li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="https://www.bigideasmath.com/BIM/login">TeachTCI</a>
+        <ul>
+            <li>See <a href="#basic">basic usage</a>.</li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="https://empower.district112.org">Empower</a> (although very limited)
+        <ul>
+          <li><b><a href="https://youtu.be/PdQLOfaAReQ">Enable popups</a>.</b> (that button will show up if the popups were blocked, if you're on a school chromebook they're already enabled)</li>
+          <li>It will automatically click Sign in with google.</li>
+          <li>It will automatically allow Empower any permissions it want.</li>
+          <li>It will automatically click messages to grant Empower drive permissions.</li>
+          <li>It can be configured to automatically pick a Google account.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <hr>
+
+    <h3 id="basic">Basic Usage</h3>
     <p>
+      Here's the basic usage for most sites. Some sites have additional changes, see above.
       <ol>
         <li>Visit a <a href="#supported">supported site</a>.</li>
         <li>Enter your username and password into the boxes like usual.</li>
@@ -57,20 +109,50 @@
       </ol>
     </p>
 
-    <p>It will detect incorrect passwords or captchas and stop submitting and reset passwords. (you will have to tell this to remember them again with the "Remember Me" button)</p>
-
-    <p>On some sites it will not resubmit if you have recently logged out, only fill the password boxes.</p>
-
     <hr>
 
-    <h3 id="supported">Supported sites</h3>
-    <ul>
-      <li><a href="https://campus.district112.org/campus/portal/isd112.jsp">Old Portal</a></li>
-      <li><a href="https://campus.district112.org/campus/portal/students/isd112.jsp">New Portal</a></li>
-      <li><a href="https://student.teachtci.com/student/sign_in">Big Ideas Math (BIM)</a></li>
-      <li><a href="https://www.bigideasmath.com/BIM/login">TeachTCI</a></li>
-      <li><a href="https://empower.district112.org">Empower</a> (although very limited)</li>
-    </ul>
+    <h3>Config</h3>
+    <p>You only need to read this if you want to edit the config.</p>
+    <p>This script is configurable, you can enable/disable support for sites or other features.</p>
+    <h4>How to edit it</h4>
+    <ol>
+      <li>Click on the tampermonkey extension icon</li>
+      <li>Click on dashboard</li>
+      <li>Find this script and click on it.</li>
+      <li>Scroll through the code until you find an area labeled "Config". It's currently on line 46.</li>
+      <li>
+        Here you can change values to change how the script functions.<br>
+        Don't forget the comma at and it is case sensitive.
+      </li>
+    </ol>
+
+    <pre>
+      const CONFIG = {
+        SUPPORT_OLD_CAMPUS: true, // should it support the old campus?
+        SUPPORT_NEW_CAMPUS: true, // should it support the new campus?
+        SUPPORT_TCI: true,        // should it support TeachTCI?
+        SUPPORT_BIM: true,        // should it support BIM?
+        SUPPORT_EMPOWER: true,    // should it support empower?
+        EMPOWER: {                // empower config
+            DRIVE_ACCESS: true,   // should it automatically click the button to grant drive permissions
+                                  // this one: https://i.imgur.com/hpDHhUf.png
+            GOOGLE_USER: -1,      // what user should it automatically pick for empower?
+                                  // this is 0 indexed, that means that the first user is 0, the second is 1, third is 2, etc.
+                                  // set to -1 to disable
+                                  // see: https://i.imgur.com/tqafElG.png
+            GOOGLE_CONSENT: true, // should it automatically give empower the permissions it need?
+                                  // this one: https://i.imgur.com/5fTtvu0.png
+        },
+        ALWAYS_SUBMIT: false,     // should it always click the signin button?
+                                  // WARNING: IT WILL IGNORE INVALID CREDENTIALS AND ALWAYS CLICK SUBMIT
+                                  // THIS IS A TERRIBLE IDEA
+                                  // THIS WILL LIKELY BE REMOVED IN A FUTURE RELEASE
+                                  // (or fixed to not be as terrible)
+      };
+    </pre>
+    <p>As of now, this is what the config looks like, with added comments. (the stuff after the <code>//</code> is ignored.)</p>
+
+    <p>Currently the config is reset between updates, I'm looking for a better way to do this. (maybe a config page instead? idk, that's the most likely)</p>
 
     <hr>
 
@@ -145,9 +227,6 @@
         }else{
           // some popup blockers make it fail, so provide alternative link
           alert("Couldn't open popup. Do you have them disabled?\n\nTry alternative link.");
-          for (var el of document.getElementsByClassName("no-popup")){
-            el.style.display = "block";
-          }
         }
       }
     </script>
