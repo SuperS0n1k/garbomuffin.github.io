@@ -19,7 +19,7 @@
   </head>
 
   <body>
-    <h1>Campus Auto Login (v3.3)</h1>
+    <h1>Campus Auto Login (v3.4)</h1>
     <hr>
 
     <img src="pic.png">
@@ -37,6 +37,7 @@
 
     <button onclick="return openScript();"><b>Click here to install it</b> (after reading the above and preferably the below)</button>
     <p class="gray">Button doesn't work? <a href="campus-auto-login.user.js">Click here instead.</a></p>
+    <p class="gray">Want to see the source? <a href="https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/userscripts/campus-auto-login/src/">Here you go.</a></p>
 
     <hr>
 
@@ -142,12 +143,7 @@
                                   // see: https://i.imgur.com/tqafElG.png
             GOOGLE_CONSENT: true, // should it automatically give empower the permissions it need?
                                   // this one: https://i.imgur.com/5fTtvu0.png
-        },
-        ALWAYS_SUBMIT: false,     // should it always click the signin button?
-                                  // WARNING: IT WILL IGNORE INVALID CREDENTIALS AND ALWAYS CLICK SUBMIT
-                                  // THIS IS A TERRIBLE IDEA
-                                  // THIS WILL LIKELY BE REMOVED IN A FUTURE RELEASE
-                                  // (or fixed to not be as terrible)
+        }
       };
     </pre>
     <p>As of now, this is what the config looks like, with added comments. (the stuff after the <code>//</code> is ignored.)</p>
@@ -157,6 +153,13 @@
     <hr>
 
     <h3>Changelog</h3>
+    <p class="no-margin" id="v3.4">
+      <b>v3.4</b>
+      <ul class="no-margin">
+        <li>Rewrote it in a much more modular way using rollup.</li>
+      </ul>
+    </p>
+
     <p class="no-margin" id="v3.3.1">
       <b>v3.3.1</b>
       <ul class="no-margin">

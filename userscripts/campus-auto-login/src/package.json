@@ -1,0 +1,16 @@
+{
+  "name": "new",
+  "version": "1.0.0",
+  "description": "",
+  "main": "campus-auto-login.user.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "author": "GarboMuffin",
+  "license": "MIT",
+  "dependencies": {
+    "rollup-plugin-typescript2": "^0.7.0",
+    "rollup-watch": "^4.3.1"
+  }
+}

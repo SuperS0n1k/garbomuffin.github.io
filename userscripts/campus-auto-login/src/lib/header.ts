@@ -1,0 +1,56 @@
+/* === CAMPUS AUTO LOGIN v3.4 ===
+ * NEW IN v3.4: modularity of the source improved. this doesn't mean much for the user, sadly.
+ *
+ * Supported sites:
+ * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
+ * New Portal: https://campus.district112.org/campus/portal/students/isd112.jsp
+ * TCI: https://student.teachtci.com/student/sign_in
+ * BIM: https://www.bigideasmath.com/BIM/login
+ * Empower: https://empower.district112.org
+ *
+ * Usage depends on the site.
+ * See the website for usage information.
+ * https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/#supported
+ */
+
+/*
+Copyright (c) 2017 GarboMuffin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+// Here is the config, you can change the values around to change behavior of the script.
+// Make sure the syntax is still valid, things are case sensitive, and the comma after the value is required!
+
+export const CONFIG = {
+  SUPPORT_OLD_CAMPUS: true,
+  SUPPORT_NEW_CAMPUS: true,
+  SUPPORT_TCI: true,
+  SUPPORT_BIM: true,
+  SUPPORT_EMPOWER: true,
+  EMPOWER: {
+      DRIVE_ACCESS: true,
+      GOOGLE_USER: -1,
+      GOOGLE_CONSENT: true,
+  }
+};
+
+// Don't touch anything below this line!
+// Real source: https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/userscripts/campus-auto-login/src/
+
