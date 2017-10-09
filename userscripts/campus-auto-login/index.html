@@ -19,7 +19,7 @@
   </head>
 
   <body>
-    <h1>Campus Auto Login (v3.4)</h1>
+    <h1>Campus Auto Login (v3.5)</h1>
     <hr>
 
     <img src="pic.png">
@@ -113,50 +113,26 @@
     <hr>
 
     <h3>Config</h3>
-    <p>You only need to read this if you want to edit the config.</p>
-    <p>This script is configurable, you can enable/disable support for sites or other features.</p>
-    <h4>How to edit it</h4>
-    <ol>
-      <li>Click on the tampermonkey extension icon</li>
-      <li>Click on dashboard</li>
-      <li>Find this script and click on it.</li>
-      <li>Scroll through the code until you find an area labeled "Config". It's currently on line 46.</li>
-      <li>
-        Here you can change values to change how the script functions.<br>
-        Don't forget the comma at and it is case sensitive.
-      </li>
-    </ol>
-
-    <pre>
-      const CONFIG = {
-        SUPPORT_OLD_CAMPUS: true, // should it support the old campus?
-        SUPPORT_NEW_CAMPUS: true, // should it support the new campus?
-        SUPPORT_TCI: true,        // should it support TeachTCI?
-        SUPPORT_BIM: true,        // should it support BIM?
-        SUPPORT_EMPOWER: true,    // should it support empower?
-        EMPOWER: {                // empower config
-            DRIVE_ACCESS: true,   // should it automatically click the button to grant drive permissions
-                                  // this one: https://i.imgur.com/hpDHhUf.png
-            GOOGLE_USER: -1,      // what user should it automatically pick for empower?
-                                  // this is 0 indexed, that means that the first user is 0, the second is 1, third is 2, etc.
-                                  // set to -1 to disable
-                                  // see: https://i.imgur.com/tqafElG.png
-            GOOGLE_CONSENT: true, // should it automatically give empower the permissions it need?
-                                  // this one: https://i.imgur.com/5fTtvu0.png
-        }
-      };
-    </pre>
-    <p>As of now, this is what the config looks like, with added comments. (the stuff after the <code>//</code> is ignored.)</p>
-
-    <p>Currently the config is reset between updates, I'm looking for a better way to do this. (maybe a config page instead? idk, that's the most likely)</p>
+    <p>After installing the script you can visit <a href="https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html">this site</a> to edit the config.</p>
 
     <hr>
 
     <h3>Changelog</h3>
     <p class="no-margin" id="v3.4">
+      <b>v3.5</b>
+      <ul class="no-margin">
+        <li>Added a config page <a href="https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html">found here</a></li>
+        <li>It no longer requires editing the source to change the config.</li>
+        <li>Config changes last between updates.</li>
+      </ul>
+    </p>
+
+    <p class="no-margin" id="v3.4">
       <b>v3.4</b>
       <ul class="no-margin">
         <li>Rewrote it in a much more modular way using rollup.</li>
+        <li>Removed ALWAYS_SUBMIT.</li>
+        <li>Fixed TCI.</li>
       </ul>
     </p>
 
@@ -213,15 +189,19 @@
     <p id="v2.2"><b>v2.2</b>: added support for the new portal AND the old. should work as you would expect.</p>
 
     <hr>
+    
+    <h3>Bugs</h3>
+    <ul>
+      <li>Sometimes it doesn't pick a Google user</li>
+    </ul>
 
-    <h3>How is this different than a password manager?</h3>
-    <!-- fun fact: you can use both (and i do) -->
-    <p>This is not a password manager. It is not meant to be a replacement. It can't be a replacement.</p>
-    <p>This does not offer critical password manager tools and options, because it is not one.</p>
-    <p>This is designed for specific sites and works well with them and has features a password manager might not be able to provide.</p>
-    <p>This is lightweight, doesn't require an account, and doesn't store your passwords on the cloud.</p>
-    <p>This is free, has no ads, doesn't ask for you to hand over your bank account, and the code is open to all.</p>
-    <p>This works in your browser, on any browser, on any device.</p>
+    <hr>
+
+    <h3>Security</h3>
+    <p>This script has to store your credentials somewhere for the auto login part of it to work. There's no other way.</p>
+    <p>Admittedly, the way this stores your information is not the most secure thing ever.</p>
+    <p>Just don't be a moron, don't enable sync, and don't let someone who knows base64 steal your chromebook and you're safe.</p>
+    <p>I am considering more secure ways to store credentials, but nothing is much more secure than this. (to my knowledge)</p>
 
     <hr>
 

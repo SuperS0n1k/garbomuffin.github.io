@@ -1,5 +1,6 @@
-/* === CAMPUS AUTO LOGIN v3.4 ===
- * NEW IN v3.4: modularity of the source improved. this doesn't mean much for the user, sadly.
+/* === CAMPUS AUTO LOGIN v3.5 ===
+ * NEW IN v3.5: added config page!, now editing the config is MUCH easier and saves between updates
+ * https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html
  *
  * Supported sites:
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
@@ -7,6 +8,8 @@
  * TCI: https://student.teachtci.com/student/sign_in
  * BIM: https://www.bigideasmath.com/BIM/login
  * Empower: https://empower.district112.org
+ * 
+ * Config: https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html
  *
  * Usage depends on the site.
  * See the website for usage information.
@@ -35,22 +38,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Here is the config, you can change the values around to change behavior of the script.
-// Make sure the syntax is still valid, things are case sensitive, and the comma after the value is required!
-
-export const CONFIG = {
-  SUPPORT_OLD_CAMPUS: true,
-  SUPPORT_NEW_CAMPUS: true,
-  SUPPORT_TCI: true,
-  SUPPORT_BIM: true,
-  SUPPORT_EMPOWER: true,
-  EMPOWER: {
-      DRIVE_ACCESS: true,
-      GOOGLE_USER: -1,
-      GOOGLE_CONSENT: true,
-  }
-};
-
 // Don't touch anything below this line!
 // Real source: https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/userscripts/campus-auto-login/src/
 
+export var DUMMY_VAR_TO_PUT_HEADER_AT_TOP_OF_FILE = "";

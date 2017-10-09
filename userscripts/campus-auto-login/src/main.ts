@@ -1,4 +1,5 @@
-import { CONFIG } from "./lib/header";
+import { DUMMY_VAR_TO_PUT_HEADER_AT_TOP_OF_FILE } from "./lib/header";
+DUMMY_VAR_TO_PUT_HEADER_AT_TOP_OF_FILE.toString();
 
 import { EncodedCredentials } from "./lib/credentials";
 import { PageType, PageState, getPageType } from "./lib/page";
@@ -11,6 +12,9 @@ import * as TCI from "./lib/auto-login/tci";
 import * as BIM from "./lib/auto-login/bim";
 import * as Empower from "./lib/auto-login/empower";
 import * as Google from "./lib/auto-login/google";
+import * as ConfigPage from "./lib/config";
+
+const CONFIG = ConfigPage.CONFIG;
 
 (function () {
   log("loaded");
@@ -35,7 +39,7 @@ import * as Google from "./lib/auto-login/google";
       break;
 
     case PageType.TCI:
-      if (!CONFIG.SUPPORT_OLD_CAMPUS) {
+      if (!CONFIG.SUPPORT_TCI) {
         return;
       }
       loginManager = new TCI.TCIAutoLogin();
@@ -74,6 +78,10 @@ import * as Google from "./lib/auto-login/google";
         return;
       }
       loginManager = new Google.GoogleConsentManager();
+      break;
+
+    case PageType.Config:
+      loginManager = new ConfigPage.ConfigManager();
       break;
 
     default:
@@ -115,7 +123,7 @@ import * as Google from "./lib/auto-login/google";
 
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.4
+// @version      3.5
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -126,10 +134,12 @@ import * as Google from "./lib/auto-login/google";
 // @match        https://empower.district112.org/iFrame.aspx?iCtrl=PLAYLIST_WINDOW*
 // @match        https://accounts.google.com/signin/oauth?*
 // @match        https://accounts.google.com/signin/oauth/consent?*
+// @match        https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/
 // @downloadURL  https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/campus-auto-login.user.js
 // @run-at       document-idle
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
+// @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // ==/UserScript==

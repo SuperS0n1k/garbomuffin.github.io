@@ -98,3 +98,6 @@ $RECYCLE.BIN/
 *.ogg
 *.mp3
 *.wav
+
+# build files i guess?
+userscripts/campus-auto-login/src/campus-auto-login.user.js
