@@ -101,3 +101,6 @@ $RECYCLE.BIN/
 
 # build files i guess?
 userscripts/campus-auto-login/src/campus-auto-login.user.js
+
+# rollup artifacts
+.rpt2_cache

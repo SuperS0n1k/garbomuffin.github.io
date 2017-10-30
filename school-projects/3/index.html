@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/core.css">
+
+    <style>
+      canvas {
+        display: block;
+      }
+      textarea {
+        display: block;
+        width: 600px;
+        height: 400px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>code to picture (beta)</h1>
+
+    <h3>Instructions</h3>
+    <p>Enter the image code below and click the button. The color pallete may need to be adjusted using some more buttons below.</p>
+    <p>There is an outline to make it easier to count individual pixels. A black pixel is an even pixel and a red pixel is a multiple of 10.</p>
+
+    <textarea id="input"></textarea>
+    <button id="button">Actually clicking this shouldn't be required but you do you</button>
+
+    <br>
+    <button id="reilly-palette">Load Reilly's Palette</button>
+    <button id="houck-palette">Load Houck's Palette</button>
+    <button id="custom-palette">Load Custom Palette</button>
+    <button id="reset-palette">Reset Palette</button>
+
+    <p>Result:</p>
+
+    <canvas id="canvas" width="480" height="360"></canvas>
+
+    <script src="script.js"></script>
+  </body>
+</html>
