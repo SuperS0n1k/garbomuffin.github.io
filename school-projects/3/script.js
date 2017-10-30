@@ -66,8 +66,24 @@ function parse(value){
 const defaultPalette = ["white", "blue", "gray", "pink", "purple", "red", "green", "yellow"];
 var colors = defaultPalette;
 
-function render(data){
+var lastData;
+
+function render(data, opts){
   clearCanvas();
+
+  if (!data){
+    if (!lastData){
+      return;
+    }
+    data = lastData;
+  }
+
+  opts = opts || {};
+
+  lastData = data;
+
+  canvas.height = (data.length + 1) * scale;
+  canvas.width = 1000; // hopefully that's large enough lol
 
   for (var lineIndex = 0; lineIndex < data.length; lineIndex++){
     const line = data[lineIndex];
@@ -95,9 +111,36 @@ function render(data){
         ctx.fillStyle = colors[color.color - 1];
         ctx.fillRect(x * scale, y * scale, scale, scale);
 
+        if (x === opts.x && y === opts.y){
+          console.log("test");
+          ctx.strokeStyle = "black";
+          ctx.rect(x * scale, y * scale, scale, scale);
+          ctx.stroke();
+        }
+
         x++;
       }
+
+      if (0 === opts.x && y === opts.y){
+        const scaledY = scale * y + (scale / 2);
+
+        ctx.strokeStyle = y % 10 === 0 ? "red" : "black";
+        ctx.beginPath();
+        ctx.moveTo(0, scaledY);
+        ctx.lineTo((x + 1) * scale, scaledY);
+        ctx.stroke();
+      }
     }
+  }
+
+  if (0 === opts.y){
+    const scaledX = scale * opts.x + (scale / 2);
+
+    ctx.strokeStyle = opts.x % 10 === 0 ? "red" : "black";
+    ctx.beginPath();
+    ctx.moveTo(scaledX, 0);
+    ctx.lineTo(scaledX, canvas.height);
+    ctx.stroke();
   }
 }
 
@@ -193,4 +236,23 @@ document.getElementById("custom-palette").onclick = function(){
 
   colors = newPalette;
   onchange();
+}
+
+canvas.onmousemove = function(e){
+  const x = e.offsetX;
+  const y = e.offsetY;
+
+  if (x < 0 || y < 0){
+    return;
+  }
+
+  const xCoord = Math.ceil((x - scale) / scale);
+  const yCoord = Math.ceil((y - scale) / scale);
+
+  document.getElementById("selected").textContent = `Coordinate under mouse: (${xCoord}, ${yCoord})`;
+
+  render(false, {
+    x: xCoord,
+    y: yCoord,
+  });
 }
