@@ -2,7 +2,7 @@ const input = document.getElementById("input");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-const scale = 10;
+var scale = 10;
 
 button.onclick = onchange;
 input.onchange = onchange;
@@ -83,7 +83,7 @@ function render(data, opts){
   lastData = data;
 
   canvas.height = (data.length + 1) * scale;
-  canvas.width = 1000; // hopefully that's large enough lol
+  canvas.width = (maxWidth(data) + 1) * scale;
 
   for (var lineIndex = 0; lineIndex < data.length; lineIndex++){
     const line = data[lineIndex];
@@ -112,7 +112,6 @@ function render(data, opts){
         ctx.fillRect(x * scale, y * scale, scale, scale);
 
         if (x === opts.x && y === opts.y){
-          console.log("test");
           ctx.strokeStyle = "black";
           ctx.rect(x * scale, y * scale, scale, scale);
           ctx.stroke();
@@ -142,6 +141,20 @@ function render(data, opts){
     ctx.lineTo(scaledX, canvas.height);
     ctx.stroke();
   }
+}
+
+function maxWidth(data){
+  var max = 0;
+  for (var row of data){
+    var width = 0;
+    for (var color of row){
+      width += Number(color.amount);
+    }
+    if (width > max){
+      max = width;
+    }
+  }
+  return max;
 }
 
 function clearCanvas(){
@@ -255,4 +268,10 @@ canvas.onmousemove = function(e){
     x: xCoord,
     y: yCoord,
   });
+}
+
+document.getElementById("scale").onclick = function(){
+  var newScale = prompt("Please enter the new scale.\n\nIt must be a positive whole number.");
+  scale = newScale;
+  onchange();
 }
