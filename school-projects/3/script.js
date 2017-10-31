@@ -205,6 +205,11 @@ document.getElementById("houck-palette").onclick = function(){
   onchange();
 }
 
+document.getElementById("david-palette").onclick = function(){
+  colors = ["white", "green", "red", "lightgray", "gray", "darkgray", "brown", "black", "yellow"];
+  onchange();
+}
+
 document.getElementById("reset-palette").onclick = function(){
   colors = defaultPalette;
   onchange();
