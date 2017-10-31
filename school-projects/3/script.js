@@ -6,7 +6,7 @@ const ctx = canvas.getContext("2d");
 
 var scale = 10;
 
-button.onclick = onchange;
+document.getElementById("render").onclick = onchange;
 input.onchange = onchange;
 
 function onchange(){
@@ -15,17 +15,33 @@ function onchange(){
 
   if (parseResult){
     render(parseResult);
+
+    localStorage.setItem("last_input", value);
+    localStorage.setItem("last_palette", JSON.stringify(colors));
   }
 }
 
+/**
+ * Determines which function to use to parse the input and returns it
+ */
 function parse(data){
+  // houck's protocol always has parenthesis for it to be valid while david's doesn't.
   if (data.indexOf("(") > -1){
-	return houckParse(data);
+    return houckParse(data);
   }else{
-	return davidParse(data);
+    return davidParse(data);
   }
 }
 
+/**
+ * Parse an input following the protocol used by David
+ * 
+ * Protocol:
+ * XXXXX-XXXXX ...
+ * 
+ * Where X's are colors
+ * -'s are optional for organization, they are ignored by this
+ */
 function davidParse(data){
   const ret = [];
 
@@ -36,7 +52,7 @@ function davidParse(data){
   for (const line of lines){
     const lineData = [];
     for (const c of line){
-      lineData.push({color: Number(c) + 1, amount: 1});
+      lineData.push({color: Number(c), amount: 1});
     }
     ret.push(lineData);
   }
@@ -44,7 +60,20 @@ function davidParse(data){
   return ret;
 }
 
+/**
+ * Parse an input following the protocol used by Mr. Houck
+ * 
+ * Format:
+ * 'AMOUNT (COLOR), '
+ * Where amount is the amount to repeat and color is the color to use
+ * Each color is comma seperated
+ * 
+ * Any spaces are ignored.
+ */
 function houckParse(value){
+  /**
+   * Prompt the user of an invalid input on the current line and stops execution
+   */
   function malformed(){
     alert(`INVALID INPUT @ LINE ${lineNumber + 1}, ITEM ${inputNumber + 1}`);
     throw new Error("malformed input");
@@ -58,11 +87,6 @@ function houckParse(value){
     const row = [];
     const fullLine = lines[lineNumber];
 
-    if (fullLine.trim() === ""){
-      ret.push([]);
-      continue;
-    }
-
     const dividedRow = fullLine.replace(/\s/g, "").split(",");
 
     for (var inputNumber = 0; inputNumber < dividedRow.length; inputNumber++){
@@ -75,10 +99,10 @@ function houckParse(value){
 
       const split = i.replace(")", "").split("(");
 
-      var amount = split[0];
-      var color = split[1];
+      var amount = Number(split[0]);
+      var color = Number(split[1]) - 1;
 
-      if (!color || !amount || !isFinite(color) || !isFinite(amount)){
+      if (typeof amount === "undefined" || isNaN(color) || isNaN(amount)){
         malformed();
       }
 
@@ -92,21 +116,25 @@ function houckParse(value){
 }
 
 const defaultPalette = ["white", "blue", "gray", "pink", "purple", "red", "green", "yellow"];
-var colors = defaultPalette;
+var colors = JSON.parse(localStorage.getItem("last_palette") || JSON.stringify(defaultPalette));
 
-var lastData;
+var lastData = null;
 
-function render(data, opts){
-  clearCanvas();
-
+/**
+ * Renders the data with the opts
+ * If the data argument isn't provided it will use whatever the last data was.
+ * 
+ * opts.x is the x of the square the cursor is over
+ * opts.y is the y of the square the cursor is over
+ */
+function render(data = lastData, opts = {}){
+  // the mousemove event can be called before any data has been saved (as a result lastData is null)
+  // if so then just skip everything
   if (!data){
-    if (!lastData){
-      return;
-    }
-    data = lastData;
+    return;
   }
 
-  opts = opts || {};
+  clearCanvas();
 
   lastData = data;
 
@@ -121,9 +149,14 @@ function render(data, opts){
 
     for (const color of line){
       for (var i = 0; i < color.amount; i++){
-        ctx.fillStyle = colors[color.color - 1] || "white";
+        // set the color, if its not defined default to white
+        // the parse functions have to handle 0 indexing madness
+        ctx.fillStyle = colors[color.color] || "white";
         ctx.fillRect(x * scale, y * scale, scale, scale);
 
+        // if this box is the one the mouse is over draw an outline
+        // this could be moved out of the loop and would also then support drawing rectangles where there isn't data
+        // but not making the outline is useful for debugging any missing colors at the end
         if (x === opts.x && y === opts.y){
           ctx.strokeStyle = "black";
           ctx.rect(x * scale, y * scale, scale, scale);
@@ -135,7 +168,9 @@ function render(data, opts){
     }
   }
 }
-
+/**
+ * Takes data provided to the render function and returns the highest width of any row.
+ */
 function maxWidth(data){
   var max = 0;
   for (var row of data){
@@ -149,7 +184,9 @@ function maxWidth(data){
   }
   return max;
 }
-
+/**
+ * Clear the canvas, could probably be moved into the render() function
+ */
 function clearCanvas(){
   const width = canvas.width;
   const height = canvas.height;
@@ -160,7 +197,7 @@ function clearCanvas(){
 }
 
 window.onload = function(){
-  input.value = `20 (1), 2 (8), 20 (1)
+  input.value = localStorage.getItem("last_input") || `20 (1), 2 (8), 20 (1)
 17 (1), 4 (7), 3 (2), 18 (1)
 14 (1), 2 (6), 5 (7), 7 (2), 14 (1)
 11 (1), 4 (6), 6 (7), 9 (2), 12 (1)
@@ -253,9 +290,9 @@ canvas.onmousemove = function(e){
   const xCoord = Math.floor(x / scale);
   const yCoord = Math.floor(y / scale);
 
-  document.getElementById("selected").textContent = `Coordinate under mouse: (${xCoord + 1}, ${yCoord + 1})`;
+  document.getElementById("selected").textContent = `Coordinate under cursor: (${xCoord + 1}, ${yCoord + 1})`;
 
-  render(null, {
+  render(lastData, {
     x: xCoord,
     y: yCoord,
   });
@@ -263,6 +300,14 @@ canvas.onmousemove = function(e){
 
 document.getElementById("scale").onclick = function(){
   var newScale = prompt("Please enter the new scale.\n\nIt must be a positive whole number.");
+  // TODO: maybe make sure the input is a number
   scale = newScale;
   onchange();
 };
+
+document.getElementById("reset-everything").onclick = function(){
+  if (confirm("Are you sure you would like to reset everything?")){
+    localStorage.clear();
+    location.reload();
+  }
+}

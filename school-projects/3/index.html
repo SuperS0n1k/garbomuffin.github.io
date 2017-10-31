@@ -14,6 +14,10 @@
       h3 {
         margin-bottom: 0;
       }
+      button {
+        margin: 5px;
+        padding: 5px;
+      }
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
@@ -22,7 +26,7 @@
   </head>
 
   <body>
-    <h1>code to picture (beta) (v0.4)</h1>
+    <h1>code to picture (beta) (v0.5)</h1>
 
     <hr>
 
@@ -34,23 +38,26 @@
     <ul>
       <li>Any grid size will work (if it fits in your screen)</li>
       <li>Custom palettes</li>
-      <li>Supports Houck's protocol and some others</li>
+      <li>Supports Houck's protocol and David's (automatically determines which)</li>
       <li>If it detects an error in the code it will tell you where it was</li>
       <li>A bunch of stuff to make it easy to find coordinates</li>
     </ul>
 
     <textarea id="input" class="lined" rows="20" cols="100" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
-    <button id="button" title="You really shouldn't NEED to click this.">Render</button>
+    <button id="render" title="You really shouldn't NEED to click this."><b>Render</b></button>
 
     <br>
+    <button id="reset-palette">Reset Palette</button>
     <button id="reilly-palette">Load Reilly's Palette</button>
     <button id="david-palette">Load David's Palette</button>
     <button id="houck-palette">Load Houck's Palette</button>
     <button id="custom-palette">Load Custom Palette</button>
-    <button id="reset-palette">Reset Palette</button>
 
     <br>
     <button id="scale">Set Scale (size of pixels, default 10)</button>
+
+    <br>
+    <button id="reset-everything">Reset Everything</button>
 
     <h3>Result:</h3>
 
