@@ -1,3 +1,5 @@
+"use strict";
+
 const input = document.getElementById("input");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -17,6 +19,11 @@ function onchange(){
 }
 
 function parse(value){
+  function malformed(){
+    alert(`INVALID INPUT @ LINE ${lineNumber + 1}, ITEM ${inputNumber + 1}`);
+    throw new Error("malformed input");
+  }
+
   const lines = value.split("\n");
 
   const ret = [];
@@ -33,11 +40,6 @@ function parse(value){
     const dividedRow = fullLine.replace(/\s/g, "").split(",");
 
     for (var inputNumber = 0; inputNumber < dividedRow.length; inputNumber++){
-
-      function malformed(){
-        alert(`INVALID INPUT @ LINE ${lineNumber + 1}, ITEM ${inputNumber + 1}`);
-        throw new Error("malformed input");
-      }
 
       const i = dividedRow[inputNumber];
 
@@ -82,8 +84,8 @@ function render(data, opts){
 
   lastData = data;
 
-  canvas.height = (data.length + 1) * scale;
-  canvas.width = (maxWidth(data) + 1) * scale;
+  canvas.height = data.length * scale;
+  canvas.width = maxWidth(data) * scale;
 
   for (var lineIndex = 0; lineIndex < data.length; lineIndex++){
     const line = data[lineIndex];
@@ -91,24 +93,9 @@ function render(data, opts){
     var y = lineIndex;
     var x = 0;
 
-    if (y % 2 === 0){
-      ctx.fillStyle = y % 10 === 0 ? "red" : "black";
-      ctx.fillRect(0, y * scale, scale, scale);
-    }
-
-    x++;
-    y++;
-
     for (const color of line){
       for (var i = 0; i < color.amount; i++){
-        if (x % 2 === 0){
-          ctx.fillStyle = x % 10 === 0 ? "red" : "black";
-          ctx.fillRect(x * scale, 0, scale, scale);
-        }
-
-        ctx.fillStyle = "white";
-
-        ctx.fillStyle = colors[color.color - 1];
+        ctx.fillStyle = colors[color.color - 1] || "white";
         ctx.fillRect(x * scale, y * scale, scale, scale);
 
         if (x === opts.x && y === opts.y){
@@ -119,27 +106,7 @@ function render(data, opts){
 
         x++;
       }
-
-      if (0 === opts.x && y === opts.y){
-        const scaledY = scale * y + (scale / 2);
-
-        ctx.strokeStyle = y % 10 === 0 ? "red" : "black";
-        ctx.beginPath();
-        ctx.moveTo(0, scaledY);
-        ctx.lineTo((x + 1) * scale, scaledY);
-        ctx.stroke();
-      }
     }
-  }
-
-  if (0 === opts.y){
-    const scaledX = scale * opts.x + (scale / 2);
-
-    ctx.strokeStyle = opts.x % 10 === 0 ? "red" : "black";
-    ctx.beginPath();
-    ctx.moveTo(scaledX, 0);
-    ctx.lineTo(scaledX, canvas.height);
-    ctx.stroke();
   }
 }
 
@@ -167,9 +134,9 @@ function clearCanvas(){
 }
 
 window.onload = function(){
-  input.value = `20 (1), 2 (8), 19 (1)
-17 (1), 4 (7), 3 (2), 17 (1)
-14 (1), 2 (6), 5 (7), 7 (2), 13 (1)
+  input.value = `20 (1), 2 (8), 20 (1)
+17 (1), 4 (7), 3 (2), 18 (1)
+14 (1), 2 (6), 5 (7), 7 (2), 14 (1)
 11 (1), 4 (6), 6 (7), 9 (2), 12 (1)
 9 (1), 5 (6), 7(7), 9(2), 2 (5), 10 (1)
 8 (1), 5 (6), 8 (7), 10 (2), 2 (5), 9 (1)
@@ -180,22 +147,22 @@ window.onload = function(){
 4 (1), 6 (6), 11 (7), 12 (2), 5 (5), 4 (1)
 3 (1), 6 (6), 12 (7), 12 (2), 6 (5), 3 (1)
 3 (1), 6 (6), 5 (7), 5 (8), 2 (7), 3 (2), 8 (4), 1 (2), 7 (5), 2 (1)
-2 (1), 6 (6), 2 (2), 10 (8), 2 (3), 11 (4), 5 (6), 2 (5)
+2 (1), 6 (6), 2 (2), 10 (8), 2 (3), 11 (4), 5 (6), 2 (5), 2 (1)
 2 (1), 3 (6), 4 (2), 11 (8), 2 (3), 11 (4), 8 (6), 1 (1)
 1 (1), 2 (6), 6 (2), 11 (8), 2 (3), 11 (4), 7 (6), 2 (1)
-5 (1), 4 (6), 11 (8), 2 (3), 11 (4), 3 (6)
+5 (1), 4 (6), 11 (8), 2 (3), 11 (4), 3 (6), 6 (1)
 7 (1), 2 (6), 11 (8), 2 (3), 12 (4), 8 (1)
 8 (1), 1 (6), 10 (1), 1 (8), 2 (3), 2 (4), 9 (1), 1 (4), 8 (1)
-20 (1), 2 (3), 19 (1)
-20 (1), 2 (3), 19 (1)
-20 (1), 2 (3), 19 (1)
-20 (1), 2 (3), 19 (1)
-20 (1), 2 (3), 19 (1)
-20 (1), 2 (3), 19 (1)
-20 (1), 2 (3), 19 (1)
-20 (1), 2 (6), 19 (1)
-20 (1), 2 (6), 2 (1), 1 (6), 16 (1)
-20 (1), 2 (6), 1 (1), 2 (6), 16 (1)
+20 (1), 2 (3), 20 (1)
+20 (1), 2 (3), 20 (1)
+20 (1), 2 (3), 20 (1)
+20 (1), 2 (3), 20 (1)
+20 (1), 2 (3), 20 (1)
+20 (1), 2 (3), 20 (1)
+20 (1), 2 (3), 20 (1)
+20 (1), 2 (6), 20 (1)
+20 (1), 2 (6), 2 (1), 1 (6), 17 (1)
+20 (1), 2 (6), 1 (1), 2 (6), 17 (1)
 20 (1), 4 (6), 18 (1)
 20 (1), 3 (6), 19 (1)
 21 (1), 1 (6), 20 (1)`;
@@ -228,7 +195,7 @@ document.getElementById("custom-palette").onclick = function(){
       throw new Error("This error is normal. It stops script execution when you type 'cancel'.");
     }
     const isNumber = isWholeNumber(answer);
-    
+
     return answer;
   }
 
@@ -243,7 +210,7 @@ document.getElementById("custom-palette").onclick = function(){
 
   colors = newPalette;
   onchange();
-}
+};
 
 canvas.onmousemove = function(e){
   const x = e.offsetX;
@@ -253,19 +220,19 @@ canvas.onmousemove = function(e){
     return;
   }
 
-  const xCoord = Math.ceil((x - scale) / scale);
-  const yCoord = Math.ceil((y - scale) / scale);
+  const xCoord = Math.floor(x / scale);
+  const yCoord = Math.floor(y / scale);
 
-  document.getElementById("selected").textContent = `Coordinate under mouse: (${xCoord}, ${yCoord})`;
+  document.getElementById("selected").textContent = `Coordinate under mouse: (${xCoord + 1}, ${yCoord + 1})`;
 
   render(false, {
     x: xCoord,
     y: yCoord,
   });
-}
+};
 
 document.getElementById("scale").onclick = function(){
   var newScale = prompt("Please enter the new scale.\n\nIt must be a positive whole number.");
   scale = newScale;
   onchange();
-}
+};

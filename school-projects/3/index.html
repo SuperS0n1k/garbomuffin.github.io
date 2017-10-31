@@ -6,9 +6,7 @@
     <style>
       canvas {
         display: block;
-      }
-      textarea {
-        display: block;
+        border: 1px solid black;
       }
       ul {
         margin-top: 0;
@@ -24,7 +22,9 @@
   </head>
 
   <body>
-    <h1>code to picture (beta) (v0.2)</h1>
+    <h1>code to picture (beta) (v0.3)</h1>
+
+    <hr>
 
     <h3>Instructions</h3>
     <p>Enter the image code below and click the button. The color pallete may need to be adjusted using some more buttons below.</p>
@@ -39,7 +39,7 @@
       <li>A bunch of stuff to make it easy to find coordinates</li>
     </ul>
 
-    <textarea id="input" class="lined" rows="20" cols="100"></textarea>
+    <textarea id="input" class="lined" rows="20" cols="100" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
     <button id="button" title="You really shouldn't NEED to click this.">Render</button>
 
     <br>
@@ -51,21 +51,18 @@
     <br>
     <button id="scale">Set Scale (size of pixels, default 10)</button>
 
-    <p>Result:</p>
+    <h3>Result:</h3>
 
     <p id="selected">Coordinate under mouse: (0, 0)</p>
 
     <canvas id="canvas"></canvas>
 
+    <hr>
+
+    <p>This site uses a <a href="http://alan.blog-city.com/jquerylinedtextarea.htm">jquery-linedtextarea</a> for the line numbered text input.</p>
+    <p>Everything else was done by me.</p>
 
     <script src="script.js"></script>
-
-    <script>
-      $(function() {
-        $(".lined").linedtextarea(
-          {selectedLine: 1}
-        );
-      });
-    </script>
+    <script>$(".lined").linedtextarea();</script>
   </body>
 </html>
