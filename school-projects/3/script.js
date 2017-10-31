@@ -194,15 +194,14 @@ document.getElementById("custom-palette").onclick = function(){
     if (answer === "cancel"){
       throw new Error("This error is normal. It stops script execution when you type 'cancel'.");
     }
-    const isNumber = isWholeNumber(answer);
 
     return answer;
   }
 
   const newPalette = [];
-  const colorCount = prompt("How many different colors are there?");
+  const colorCount = promptUser("How many different colors are there?");
   for (var i = 0; i < colorCount; i++){
-    var colorName = prompt(`What is color #${i + 1}?\n\nUse either a hex code (eg. #ABCDEF) or the english name (eg. "white" or "red")`);
+    var colorName = promptUser(`What is color #${i + 1}?\n\nUse either a hex code (eg. #ABCDEF) or the english name (eg. "white" or "red")`);
     newPalette.push(colorName);
   }
 
@@ -225,7 +224,7 @@ canvas.onmousemove = function(e){
 
   document.getElementById("selected").textContent = `Coordinate under mouse: (${xCoord + 1}, ${yCoord + 1})`;
 
-  render(false, {
+  render(null, {
     x: xCoord,
     y: yCoord,
   });
