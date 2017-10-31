@@ -18,7 +18,33 @@ function onchange(){
   }
 }
 
-function parse(value){
+function parse(data){
+  if (data.indexOf("(") > -1){
+	return houckParse(data);
+  }else{
+	return davidParse(data);
+  }
+}
+
+function davidParse(data){
+  const ret = [];
+
+  data = data.replace(/-/g, "");
+
+  const lines = data.split("\n");
+
+  for (const line of lines){
+    const lineData = [];
+    for (const c of line){
+      lineData.push({color: Number(c) + 1, amount: 1});
+    }
+    ret.push(lineData);
+  }
+
+  return ret;
+}
+
+function houckParse(value){
   function malformed(){
     alert(`INVALID INPUT @ LINE ${lineNumber + 1}, ITEM ${inputNumber + 1}`);
     throw new Error("malformed input");
