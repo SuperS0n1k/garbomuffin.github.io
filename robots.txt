@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /userscripts
+Disallow: /plugins
+Disallow: /site-old
+Disallow: /scratch
+Disallow: /school-projects
+Disallow: /mc
+Disallow: /games
