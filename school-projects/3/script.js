@@ -243,7 +243,7 @@ document.getElementById("houck-palette").onclick = function(){
 }
 
 document.getElementById("david-palette").onclick = function(){
-  colors = ["white", "green", "red", "lightgray", "gray", "darkgray", "brown", "black", "yellow"];
+  colors = ["white", "green", "red", "orange", "gray", "darkgray", "brown", "black", "yellow"];
   onchange();
 }
 
