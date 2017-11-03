@@ -4,8 +4,8 @@ var plugins = [
     pluginVersion: "1.1",
     minecraftVersion: "1.12",
     about: "A simple plugin that lets you get the ping of your players!",
-    download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/Ping-1.12.jar",
-    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/mc/plugins/Ping/src",
+    download: "https://github.com/GarboMuffin/sitedownloads/raw/master/LagFixer420.jar",
+    source: "https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/mc/plugins/Ping/src",
 
     body:
       `
@@ -70,8 +70,8 @@ var plugins = [
     pluginVersion: "1.0",
     minecraftVersion: "Any Bukkit",
     about: "Turn your chat into a colorful rainbow!",
-    download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/RainbowChat.jar",
-    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/mc/plugins/RainbowChat/src",
+    download: "https://github.com/GarboMuffin/sitedownloads/raw/master/RainbowChat.jar",
+    source: "https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/mc/plugins/RainbowChat/src",
 
     body:
       `
@@ -86,8 +86,8 @@ var plugins = [
     pluginVersion: "4.2.0",
     minecraftVersion: "Any Bukkit",
     about: `Fixes all of your lag problems!`,
-    download: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/downloads/LagFixer420.jar",
-    source: "https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/mc/plugins/LagFixer420/src",
+    download: "https://github.com/GarboMuffin/sitedownloads/raw/master/LagFixer420.jar",
+    source: "https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/mc/plugins/LagFixer420/src",
 
     body:
     `
@@ -96,8 +96,6 @@ var plugins = [
       Well then this plugin is just for you.
       Using some advanced algorithms and coding, this plugin brings your TPS back up to 20, no matter how bad it is!
       You are guarunteed to never have a player complain about lag again!
-
-      
 
       <div class="row">
         <div class="col-md-6">

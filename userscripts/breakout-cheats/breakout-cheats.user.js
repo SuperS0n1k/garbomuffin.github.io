@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name        Breakout Cheats
-// @namespace   http://garbomuffin.bitbucket.io/userscripts/breakout-cheats/
-// @version     1.1.2
+// @namespace   http://garbomuffin.github.io/userscripts/breakout-cheats/
+// @version     1.1.3
 // @description Because cheating is fun.
 // @author      GarboMuffin
 // @match       https://sites.google.com/site/digitalbreakoutjb/game*
 // @match       https://docs.google.com/forms/*
-// @updateURL   http://garbomuffin.bitbucket.io/userscripts/breakout-cheats/breakout-cheats.user.js
-// @downloadURL http://garbomuffin.bitbucket.io/userscripts/breakout-cheats/breakout-cheats.user.js
+// @updateURL   http://garbomuffin.github.io/userscripts/breakout-cheats/breakout-cheats.user.js
+// @downloadURL http://garbomuffin.github.io/userscripts/breakout-cheats/breakout-cheats.user.js
 // ==/UserScript==
 
 // A userscript that contains a collection of cheats designed for cheating digital breakouts.

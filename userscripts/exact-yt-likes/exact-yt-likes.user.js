@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Exact YT Likes
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/exact-yt-likes
-// @version      1.1
+// @version      1.1.1
 // @description  Exact likes on YouTube with the new layout
 // @author       GarboMuffin
 // @match        https://www.youtube.com/watch*
 // @run-at       document-idle
-// @downloadURL  https://garbomuffin.bitbucket.io/userscripts/exact-yt-likes/exact-yt-likes.user.js
+// @downloadURL  https://garbomuffin.github.io/userscripts/exact-yt-likes/exact-yt-likes.user.js
 // ==/UserScript==
 
 (function(){

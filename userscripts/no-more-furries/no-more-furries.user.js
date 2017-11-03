@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         NO MORE FURRIES
-// @version      1.1.6
-// @namespace    https://garbomuffin.bitbucket.io/userscripts/no-more-furries/
+// @version      1.1.7
+// @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
 // @description  FURRIES ARENT MEMES GOD DAMMIT
 // @author       GarboMuffin
 // @match        https://scratch.mit.edu/*
 // @run-at       document-idle
-// @downloadURL  https://garbomuffin.bitbucket.io/userscripts/no-more-furries/no-more-furries.user.js
-// @updateURL    https://garbomuffin.bitbucket.io/userscripts/no-more-furries/no-more-furries.user.js
+// @downloadURL  https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
+// @updateURL    https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
 // ==/UserScript==
 
 /*

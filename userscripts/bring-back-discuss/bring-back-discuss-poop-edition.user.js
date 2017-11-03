@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         bring back discuss (💩 edition)
 // @namespace    https://garbomuffin.bitbucket.io/userscripts/bring-back-discuss/
-// @version      1.0
+// @version      1.0.1
 // @description  some people wanted the discuss button back or something???
 // @author       GarboMuffin
 // @match        https://scratch.mit.edu/*

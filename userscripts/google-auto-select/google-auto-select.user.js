@@ -31,13 +31,13 @@ const WHITELIST = [
 
 // ==UserScript==
 // @name         Google Auto Select
-// @version      0.1
+// @version      0.1.1
 // @description  Auto log-in to campus portal.
 // @author       GarboMuffin
 // @match        https://accounts.google.com/signin/oauth?*
 // @match        https://accounts.google.com/signin/oauth/consent?*
-// @namespace    https://garbomuffin.bitbucket.io/userscripts/google-auto-select/
-// @downloadURL  https://garbomuffin.bitbucket.io/userscripts/google-auto-select/google-auto-select.user.js
+// @namespace    https://garbomuffin.github.io/userscripts/google-auto-select/
+// @downloadURL  https://garbomuffin.github.io/userscripts/google-auto-select/google-auto-select.user.js
 // @run-at       document-idle
 // ==/UserScript==
 

@@ -652,7 +652,7 @@ const CONFIG = CONFIG$1;
 })();
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.5
+// @version      3.5.1
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -663,9 +663,9 @@ const CONFIG = CONFIG$1;
 // @match        https://empower.district112.org/iFrame.aspx?iCtrl=PLAYLIST_WINDOW*
 // @match        https://accounts.google.com/signin/oauth?*
 // @match        https://accounts.google.com/signin/oauth/consent?*
-// @match        https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html
-// @namespace    https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/
-// @downloadURL  https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/campus-auto-login.user.js
+// @match        https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
+// @namespace    https://garbomuffin.github.io/userscripts/campus-auto-login/
+// @downloadURL  https://garbomuffin.github.io/userscripts/campus-auto-login/campus-auto-login.user.js
 // @run-at       document-idle
 // @grant        GM_getValue
 // @grant        GM_setValue
