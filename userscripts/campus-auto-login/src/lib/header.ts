@@ -39,6 +39,6 @@ SOFTWARE.
 */
 
 // Don't touch anything below this line!
-// Real source: https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/userscripts/campus-auto-login/src/
+// Real source: https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/userscripts/campus-auto-login/src
 
 export var DUMMY_VAR_TO_PUT_HEADER_AT_TOP_OF_FILE = "";
