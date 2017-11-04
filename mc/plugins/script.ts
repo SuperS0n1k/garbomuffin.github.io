@@ -1,6 +1,7 @@
 "use strict";
 
 declare var plugins: SpigotPlugin[]
+declare function ga(...args: any[]): any;
 
 type TemplateFormat = string|string[]|Template
 
@@ -248,6 +249,8 @@ async function setActive(pl: string){
   pluginPage.style.opacity = "1"; // start the transition
 
   displayed = true;
+
+  ga("send", "event", "Plugin", "load", pl);
 }
 
 async function sleep(ms){

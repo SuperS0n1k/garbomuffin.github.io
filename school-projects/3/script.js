@@ -1,5 +1,10 @@
 "use strict";
 
+// if ga is blocked by adblock then make it a noop just to avoid reference errors
+if (typeof ga === "undefined"){
+  window.ga = () => {};
+}
+
 const input = document.getElementById("input");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -27,8 +32,10 @@ function onchange(){
 function parse(data){
   // houck's protocol always has parenthesis for it to be valid while david's doesn't.
   if (data.indexOf("(") > -1){
+    ga("send", "event", "Parse", "use", "houck");
     return houckParse(data);
   }else{
+    ga("send", "event", "Parse", "use", "david");
     return davidParse(data);
   }
 }
