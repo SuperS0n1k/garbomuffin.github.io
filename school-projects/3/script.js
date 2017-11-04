@@ -1,9 +1,7 @@
 "use strict";
 
-// if ga is blocked by adblock then make it a noop just to avoid reference errors
-if (typeof ga === "undefined"){
-  window.ga = () => {};
-}
+// if ga is blocked by adblock then make it a noop just to avoid errors
+window.ga = window.ga || function(){};
 
 const input = document.getElementById("input");
 const canvas = document.getElementById("canvas");
@@ -107,7 +105,7 @@ function houckParse(value){
       const split = i.replace(")", "").split("(");
 
       var amount = Number(split[0]);
-      var color = Number(split[1]) - 1;
+      var color = Number(split[1]);
 
       if (typeof amount === "undefined" || isNaN(color) || isNaN(amount)){
         malformed();
@@ -122,8 +120,9 @@ function houckParse(value){
   return ret;
 }
 
-const defaultPalette = ["white", "blue", "gray", "pink", "purple", "red", "green", "yellow"];
+const defaultPalette = ["none", "white", "blue", "gray", "pink", "purple", "red", "green", "yellow"];
 var colors = JSON.parse(localStorage.getItem("last_palette") || JSON.stringify(defaultPalette));
+updatePalette();
 
 var lastData = null;
 
@@ -240,43 +239,43 @@ window.onload = function(){
 }
 
 document.getElementById("reilly-palette").onclick = function(){
-  colors = ["white", "red", "orange", "yellow", "green", "blue", "indigo", "violet", "magenta"];
+  colors = ["none", "white", "red", "orange", "yellow", "green", "blue", "indigo", "violet", "magenta"];
   onchange();
+  updatePalette();
 }
 
 document.getElementById("houck-palette").onclick = function(){
-  colors = ["white", "blue", "gray", "orange", "black", "red", "green", "yellow"];
+  colors = ["none", "white", "blue", "gray", "orange", "black", "red", "green", "yellow"];
   onchange();
+  updatePalette();
 }
 
 document.getElementById("david-palette").onclick = function(){
   colors = ["white", "green", "red", "orange", "gray", "darkgray", "brown", "black", "yellow", "tan"];
   onchange();
+  updatePalette();
 }
 
 document.getElementById("reset-palette").onclick = function(){
   colors = defaultPalette;
   onchange();
+  updatePalette();
 }
 
 document.getElementById("custom-palette").onclick = function(){
   alert(([
-    "Instructions", "Answer the questions", "At any time type 'cancel' to stop", "Please only type WHOLE POSITIVE NUMBERS"
-  ]).join("\n\n"));
-
-  function promptUser(q){
-    const answer = prompt(q);
-    if (answer === "cancel"){
-      throw new Error("This error is normal. It stops script execution when you type 'cancel'.");
-    }
-
-    return answer;
-  }
+    "PLEASE READ INSTRUCTIONS:",
+    "Answer the questions",
+    "Enter an empty input to stop",
+    "Type \"none\" if that number isn't used.",
+  ]).join("\n * "));
 
   const newPalette = [];
-  const colorCount = promptUser("How many different colors are there?");
-  for (var i = 0; i < colorCount; i++){
-    var colorName = promptUser(`What is color #${i + 1}?\n\nUse either a hex code (eg. #ABCDEF) or the english name (eg. "white" or "red")`);
+  for (var i = 0; /* continue until empty input (logic inside) */; i++){
+    var colorName = prompt(`What is color #${i}?\n\nUse either a hex code (eg. #ABCDEF) or sometimes english names (eg. "white" or "red")`);
+    if (!colorName){
+      break;
+    }
     newPalette.push(colorName);
   }
 
@@ -284,6 +283,7 @@ document.getElementById("custom-palette").onclick = function(){
 
   colors = newPalette;
   onchange();
+  updatePalette();
 };
 
 canvas.onmousemove = function(e){
@@ -316,5 +316,38 @@ document.getElementById("reset-everything").onclick = function(){
   if (confirm("Are you sure you would like to reset everything?")){
     localStorage.clear();
     location.reload();
+  }
+}
+
+function updatePalette(){
+  // remove all elements
+  const paletteList = document.getElementById("palette");
+  while (paletteList.firstChild){
+    paletteList.removeChild(paletteList.firstChild);
+  }
+
+  for (var i = 0; i < colors.length; i++){
+    const color = colors[i];
+
+    if (color === "none" || !color){
+      continue;
+    }
+
+    const row = document.createElement("tr");
+    const numberElement = document.createElement("th");
+    numberElement.insertAdjacentHTML("beforeend", i);
+
+    const colorElement = document.createElement("th");
+    colorElement.insertAdjacentHTML("beforeend", `<div class="palette-color" style="background-color: ${color};"></div>`);
+    
+    const colorNameElement = document.createElement("th");
+    colorNameElement.insertAdjacentHTML("beforeend", `(${color})`);
+
+    // el.insertAdjacentHTML("beforeend", `${i} = <span style="color: ${color}">${color}</span> (${color})`);
+
+    row.appendChild(numberElement);
+    row.appendChild(colorElement);
+    row.appendChild(colorNameElement);
+    paletteList.appendChild(row);
   }
 }

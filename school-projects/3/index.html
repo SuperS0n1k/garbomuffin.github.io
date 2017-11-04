@@ -8,15 +8,43 @@
         display: block;
         border: 1px solid black;
       }
+
+      /* remove a bunch of empty space */
       ul {
         margin-top: 0;
       }
       h3 {
         margin-bottom: 0;
       }
+
+      .no-margin {
+        margin: 0;
+      }
+
+      /* make it look maybe slightly nicer */
       button {
         margin: 5px;
         padding: 5px;
+      }
+
+      /* disable centering */
+      tr {
+        vertical-align: top;
+      }
+      .no-center {
+        text-align: left;
+      }
+
+      /* color list stuff */
+      #palette {
+        margin: 0px 10px;
+        padding: 5px;
+        border: 1px solid darkgray;
+      }
+      .palette-color {
+        width: 3em;
+        height: 1em;
+        border-radius: 10px;
       }
     </style>
 
@@ -36,7 +64,7 @@
   </head>
 
   <body>
-    <h1>code to picture (beta) (v0.5)</h1>
+    <h1>code to picture (v0.6)</h1>
 
     <hr>
 
@@ -53,21 +81,32 @@
       <li>A bunch of stuff to make it easy to find coordinates</li>
     </ul>
 
-    <textarea id="input" class="lined" rows="20" cols="100" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
-    <button id="render" title="You really shouldn't NEED to click this."><b>Render</b></button>
+    <table>
+      <tr>
+        <th class="no-center">
+          <textarea id="input" class="lined" rows="20" cols="100" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+          <button id="render" title="You really shouldn't NEED to click this."><b>Render</b></button>
 
-    <br>
-    <button id="reset-palette">Reset Palette</button>
-    <button id="reilly-palette">Load Reilly's Palette</button>
-    <button id="david-palette">Load David's Palette</button>
-    <button id="houck-palette">Load Houck's Palette</button>
-    <button id="custom-palette">Load Custom Palette</button>
+          <br>
+          <button id="reset-palette">Reset Palette</button>
+          <button id="reilly-palette">Load Reilly's Palette</button>
+          <button id="david-palette">Load David's Palette</button>
+          <button id="houck-palette">Load Houck's Palette</button>
+          <button id="custom-palette">Load Custom Palette</button>
 
-    <br>
-    <button id="scale">Set Scale (size of pixels, default 10)</button>
+          <br>
+          <button id="scale">Set Scale (size of pixels, default 10)</button>
 
-    <br>
-    <button id="reset-everything">Reset Everything</button>
+          <br>
+          <button id="reset-everything">Reset Everything</button>
+        </th>
+
+        <th>
+          <h4 class="no-margin">Palette</h4>
+          <table id="palette"></table>
+        </th>
+      </tr>
+    </table>
 
     <h3>Result:</h3>
 
