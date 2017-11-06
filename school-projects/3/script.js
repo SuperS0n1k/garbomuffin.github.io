@@ -251,7 +251,7 @@ document.getElementById("houck-palette").onclick = function(){
 }
 
 document.getElementById("david-palette").onclick = function(){
-  colors = ["white", "green", "red", "orange", "gray", "darkgray", "brown", "black", "yellow", "tan"];
+  colors = ["white", "green", "red", "orange", "darkgray", "gray", "brown", "black", "yellow", "tan"];
   onchange();
   updatePalette();
 }
