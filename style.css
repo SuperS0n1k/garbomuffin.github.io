@@ -3,13 +3,6 @@ body {
   font-size: 1.1em;
 }
 
-@media only screen and (min-width: 760px) {
-  body {
-    padding-left: 12%;
-    padding-right: 12%;
-  }
-}
-
 hr {
   border-color: #EEE;
   border-style: solid;
