@@ -10,7 +10,6 @@ export enum PageType {
   TCI,
   BIM,
   Empower,
-  EmpowerLoggedIn,
   GoogleChooseAccount,
   GoogleConsent,
 
@@ -28,8 +27,6 @@ export function getPageType(): PageType | null {
     return PageType.BIM;
   } else if (location.href.indexOf("empower.district112.org/default.aspx") > -1) {
     return PageType.Empower;
-  } else if (location.href.indexOf("empower.district112.org/iFrame.aspx?iCtrl=PLAYLIST_WINDOW") > -1) {
-    return PageType.EmpowerLoggedIn;
   } else if (location.href.indexOf("accounts.google.com/signin/oauth/consent") > -1) {
     return PageType.GoogleConsent;
   } else if (location.href.indexOf("accounts.google.com/signin/oauth/oauthchooseaccount") > -1) {

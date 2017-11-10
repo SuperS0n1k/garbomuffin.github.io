@@ -59,22 +59,15 @@ const CONFIG = ConfigPage.CONFIG;
       loginManager = new Empower.EmpowerAutoLogin();
       break;
 
-    case PageType.EmpowerLoggedIn:
-      if (!CONFIG.EMPOWER.DRIVE_ACCESS) {
-        return;
-      }
-      loginManager = new Empower.EmpowerLoggedInManager();
-      break;
-
     case PageType.GoogleChooseAccount:
-      if (CONFIG.EMPOWER.GOOGLE_USER === -1) {
+      if (CONFIG.GOOGLE.USER === -1) {
         return;
       }
       loginManager = new Google.GoogleChooseAccountManager(CONFIG);
       break;
 
     case PageType.GoogleConsent:
-      if (!CONFIG.EMPOWER.GOOGLE_CONSENT) {
+      if (!CONFIG.GOOGLE.CONSENT) {
         return;
       }
       loginManager = new Google.GoogleConsentManager();
@@ -123,7 +116,7 @@ const CONFIG = ConfigPage.CONFIG;
 
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.5
+// @version      3.5.2
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -131,12 +124,11 @@ const CONFIG = ConfigPage.CONFIG;
 // @match        https://student.teachtci.com/student/sign_in
 // @match        https://www.bigideasmath.com/BIM/login*
 // @match        https://empower.district112.org/default.aspx*
-// @match        https://empower.district112.org/iFrame.aspx?iCtrl=PLAYLIST_WINDOW*
 // @match        https://accounts.google.com/signin/oauth?*
 // @match        https://accounts.google.com/signin/oauth/consent?*
-// @match        https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html
-// @namespace    https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/
-// @downloadURL  https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/campus-auto-login.user.js
+// @match        https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
+// @namespace    https://garbomuffin.github.io/userscripts/campus-auto-login/
+// @downloadURL  https://garbomuffin.github.io/userscripts/campus-auto-login/campus-auto-login.user.js
 // @run-at       document-idle
 // @grant        GM_getValue
 // @grant        GM_setValue

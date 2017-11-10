@@ -1,6 +1,10 @@
-/* === CAMPUS AUTO LOGIN v3.5 ===
+/* === CAMPUS AUTO LOGIN v3.5.2 ===
+ * NEW IN v3.5.2: fix some bugs
+ * 
+ * NEW IN v3.5.1: migration to github
+ * 
  * NEW IN v3.5: added config page!, now editing the config is MUCH easier and saves between updates
- * https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html
+ * https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
  *
  * Supported sites:
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
@@ -8,12 +12,12 @@
  * TCI: https://student.teachtci.com/student/sign_in
  * BIM: https://www.bigideasmath.com/BIM/login
  * Empower: https://empower.district112.org
- * 
- * Config: https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html
+ *
+ * Config: https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
  *
  * Usage depends on the site.
  * See the website for usage information.
- * https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/#supported
+ * https://garbomuffin.github.io/userscripts/campus-auto-login/#supported
  */
 
 /*

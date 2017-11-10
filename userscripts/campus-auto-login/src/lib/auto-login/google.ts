@@ -6,14 +6,14 @@ import { PageState } from "../page";
 /// <reference path="../gm.ts" />
 
 interface GoogleAccountConfig {
-  EMPOWER: {
-    GOOGLE_USER: number
+  GOOGLE: {
+    USER: number
   }
 }
 export class GoogleChooseAccountManager extends EmptyAutoLogin {
   constructor(options: GoogleAccountConfig) {
     super();
-    this.user = options.EMPOWER.GOOGLE_USER;
+    this.user = options.GOOGLE.USER;
   }
 
   private user: number;

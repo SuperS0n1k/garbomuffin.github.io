@@ -28,34 +28,3 @@ export class EmpowerAutoLogin extends EmptyAutoLogin {
     }
   }
 }
-
-// when logged into empower there's some stuff we can do
-interface EmpowerDriveLockerAPI {
-  OpenLogin(): void;
-  _OpenLogin(): void; // something we create
-  LoadDriveItems(): void;
-
-  // make typescript stop complaining about proxies
-  [s: string]: any;
-}
-declare var driveAPIObjectLocker: EmpowerDriveLockerAPI;
-
-export class EmpowerLoggedInManager extends EmptyAutoLogin {
-  onload() {
-    if (getPopups()) {
-      log("popups allowed");
-
-      driveAPIObjectLocker._OpenLogin = driveAPIObjectLocker.OpenLogin;
-      driveAPIObjectLocker.OpenLogin = function () {
-        this._OpenLogin();
-        (document.getElementsByClassName("googleLoginModalLoginLink")[0] as HTMLLinkElement).click();
-      };
-
-      (window as any)._alert = alert;
-
-    } else {
-      log("popups blocked");
-      alert(EMPOWER_CONSTS.POPUP);
-    }
-  }
-}

@@ -53,16 +53,8 @@ GM_config.init({
       default: true,
     },
 
-    EmpowerDrivePopup: {
-      label: "Automatically open Empower Google Drive popups",
-      type: "checkbox",
-      title: "Should it automatically click on buttons from empower requesting drive acess. Actually granting that is covered later.",
-      section: "Empower",
-      default: true,
-    },
-
     GoogleUser: {
-      label: "(only for people with multiple google accounts) Which spot are you in in your Google user list? This can click that for you. -1 to disable. The first user is 0, second is 1, third is 2 etc. https://i.imgur.com/tqafElG.png",
+      label: "Which spot are you in in your Google user list? This can click that for you. -1 to disable. The first user is 0, second is 1, third is 2 etc. https://i.imgur.com/tqafElG.png",
       type: "int",
       title: "Should it automatically click on buttons from empower requesting drive acess. Actually granting that is covered later.",
       section: "Google",
@@ -86,10 +78,9 @@ export const CONFIG = {
   SUPPORT_TCI: getOrDefault("TCISupport", true),
   SUPPORT_BIM: getOrDefault("BIMSupport", true),
   SUPPORT_EMPOWER: getOrDefault("EmpowerSupport", true),
-  EMPOWER: {
-    DRIVE_ACCESS: getOrDefault("EmpowerDrivePopup", true),
-    GOOGLE_USER: getOrDefault("GoogleUser", -1),
-    GOOGLE_CONSENT: getOrDefault("GoogleGrantPermissions", true),
+  GOOGLE: {
+    USER: getOrDefault("GoogleUser", -1),
+    CONSENT: getOrDefault("GoogleGrantPermissions", true),
   }
 };
 

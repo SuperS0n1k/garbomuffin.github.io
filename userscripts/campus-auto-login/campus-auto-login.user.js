@@ -1,6 +1,10 @@
-/* === CAMPUS AUTO LOGIN v3.5 ===
+/* === CAMPUS AUTO LOGIN v3.5.2 ===
+ * NEW IN v3.5.2: fix some bugs
+ *
+ * NEW IN v3.5.1: migration to github
+ *
  * NEW IN v3.5: added config page!, now editing the config is MUCH easier and saves between updates
- * https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html
+ * https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
  *
  * Supported sites:
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
@@ -9,11 +13,11 @@
  * BIM: https://www.bigideasmath.com/BIM/login
  * Empower: https://empower.district112.org
  *
- * Config: https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html
+ * Config: https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
  *
  * Usage depends on the site.
  * See the website for usage information.
- * https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/#supported
+ * https://garbomuffin.github.io/userscripts/campus-auto-login/#supported
  */
 /*
 Copyright (c) 2017 GarboMuffin
@@ -53,10 +57,9 @@ var PageType;
     PageType[PageType["TCI"] = 2] = "TCI";
     PageType[PageType["BIM"] = 3] = "BIM";
     PageType[PageType["Empower"] = 4] = "Empower";
-    PageType[PageType["EmpowerLoggedIn"] = 5] = "EmpowerLoggedIn";
-    PageType[PageType["GoogleChooseAccount"] = 6] = "GoogleChooseAccount";
-    PageType[PageType["GoogleConsent"] = 7] = "GoogleConsent";
-    PageType[PageType["Config"] = 8] = "Config";
+    PageType[PageType["GoogleChooseAccount"] = 5] = "GoogleChooseAccount";
+    PageType[PageType["GoogleConsent"] = 6] = "GoogleConsent";
+    PageType[PageType["Config"] = 7] = "Config";
 })(PageType || (PageType = {}));
 function getPageType() {
     if (location.href.indexOf("student.teachtci.com/student/sign_in") > -1) {
@@ -73,9 +76,6 @@ function getPageType() {
     }
     else if (location.href.indexOf("empower.district112.org/default.aspx") > -1) {
         return PageType.Empower;
-    }
-    else if (location.href.indexOf("empower.district112.org/iFrame.aspx?iCtrl=PLAYLIST_WINDOW") > -1) {
-        return PageType.EmpowerLoggedIn;
     }
     else if (location.href.indexOf("accounts.google.com/signin/oauth/consent") > -1) {
         return PageType.GoogleConsent;
@@ -423,28 +423,11 @@ class EmpowerAutoLogin extends EmptyAutoLogin {
         }
     }
 }
-class EmpowerLoggedInManager extends EmptyAutoLogin {
-    onload() {
-        if (getPopups()) {
-            log("popups allowed");
-            driveAPIObjectLocker._OpenLogin = driveAPIObjectLocker.OpenLogin;
-            driveAPIObjectLocker.OpenLogin = function () {
-                this._OpenLogin();
-                document.getElementsByClassName("googleLoginModalLoginLink")[0].click();
-            };
-            window._alert = alert;
-        }
-        else {
-            log("popups blocked");
-            alert(EMPOWER_CONSTS.POPUP);
-        }
-    }
-}
 
 class GoogleChooseAccountManager extends EmptyAutoLogin {
     constructor(options) {
         super();
-        this.user = options.EMPOWER.GOOGLE_USER;
+        this.user = options.GOOGLE.USER;
     }
     onload() {
         const site = document.getElementsByClassName("uBOgn")[0].textContent;
@@ -507,15 +490,8 @@ GM_config.init({
             title: "Should it run on Empower?",
             default: true,
         },
-        EmpowerDrivePopup: {
-            label: "Automatically open Empower Google Drive popups",
-            type: "checkbox",
-            title: "Should it automatically click on buttons from empower requesting drive acess. Actually granting that is covered later.",
-            section: "Empower",
-            default: true,
-        },
         GoogleUser: {
-            label: "(only for people with multiple google accounts) Which spot are you in in your Google user list? This can click that for you. -1 to disable. The first user is 0, second is 1, third is 2 etc. https://i.imgur.com/tqafElG.png",
+            label: "Which spot are you in in your Google user list? This can click that for you. -1 to disable. The first user is 0, second is 1, third is 2 etc. https://i.imgur.com/tqafElG.png",
             type: "int",
             title: "Should it automatically click on buttons from empower requesting drive acess. Actually granting that is covered later.",
             section: "Google",
@@ -536,10 +512,9 @@ const CONFIG$1 = {
     SUPPORT_TCI: getOrDefault("TCISupport", true),
     SUPPORT_BIM: getOrDefault("BIMSupport", true),
     SUPPORT_EMPOWER: getOrDefault("EmpowerSupport", true),
-    EMPOWER: {
-        DRIVE_ACCESS: getOrDefault("EmpowerDrivePopup", true),
-        GOOGLE_USER: getOrDefault("GoogleUser", -1),
-        GOOGLE_CONSENT: getOrDefault("GoogleGrantPermissions", true),
+    GOOGLE: {
+        USER: getOrDefault("GoogleUser", -1),
+        CONSENT: getOrDefault("GoogleGrantPermissions", true),
     }
 };
 function getOrDefault(key, def) {
@@ -594,20 +569,14 @@ const CONFIG = CONFIG$1;
             }
             loginManager = new EmpowerAutoLogin();
             break;
-        case PageType.EmpowerLoggedIn:
-            if (!CONFIG.EMPOWER.DRIVE_ACCESS) {
-                return;
-            }
-            loginManager = new EmpowerLoggedInManager();
-            break;
         case PageType.GoogleChooseAccount:
-            if (CONFIG.EMPOWER.GOOGLE_USER === -1) {
+            if (CONFIG.GOOGLE.USER === -1) {
                 return;
             }
             loginManager = new GoogleChooseAccountManager(CONFIG);
             break;
         case PageType.GoogleConsent:
-            if (!CONFIG.EMPOWER.GOOGLE_CONSENT) {
+            if (!CONFIG.GOOGLE.CONSENT) {
                 return;
             }
             loginManager = new GoogleConsentManager();
@@ -652,7 +621,7 @@ const CONFIG = CONFIG$1;
 })();
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.5.1
+// @version      3.5.2
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -660,7 +629,6 @@ const CONFIG = CONFIG$1;
 // @match        https://student.teachtci.com/student/sign_in
 // @match        https://www.bigideasmath.com/BIM/login*
 // @match        https://empower.district112.org/default.aspx*
-// @match        https://empower.district112.org/iFrame.aspx?iCtrl=PLAYLIST_WINDOW*
 // @match        https://accounts.google.com/signin/oauth?*
 // @match        https://accounts.google.com/signin/oauth/consent?*
 // @match        https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
