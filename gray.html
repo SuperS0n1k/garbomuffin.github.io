@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      div.color {
+        width: 100%;
+        padding: 5vh;
+      }
+
+      div.color p {
+        text-align: center;
+        font-family: monospace;
+      }
+
+      div.color p.css {
+        font-size: 3em;
+      }
+
+      #lightgray {
+        background-color: lightgray;
+        position: absolute;
+        top: 0%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      #darkgray {
+        background-color: darkgray;
+        position: absolute;
+        top: 25%;
+        height: 100%;
+        z-index: 1;
+      }
+
+      #gray {
+        background-color: gray;
+        position: absolute;
+        top: 50%;
+        height: 100%;
+        z-index: 2;
+      }
+
+      #dimgray {
+        background-color: dimgray;
+        position: absolute;
+        top: 75%;
+        height: 100%;
+        z-index: 3;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div class="color" id="lightgray">
+      <p class="css">background-color: <b>light</b>gray;</p>
+    </div>
+
+    <div class="color" id="darkgray">
+      <p class="css">background-color: <b>dark</b>gray;</p>
+    </div>
+
+    <div class="color" id="gray">
+      <p class="css">background-color: gray;</p>
+    </div>
+
+    <div class="color" id="dimgray">
+      <p class="css">background-color: <b>dim</b>gray;</p>
+    </div>
+  </body>
+
+</html>
