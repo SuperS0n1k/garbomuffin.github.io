@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/core.css">
+
+    <style>
+      canvas {
+        display: block;
+        border: 1px black solid;
+      }
+
+      th {
+        vertical-align: top;
+        text-align: left;
+      }
+
+      .play-stats {
+        list-style: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Balloon Pop (v0.1)</h1>
+
+    <table>
+      <tr>
+        <th>
+          <canvas id="canvas" width="480" height="360"></canvas>
+        </th>
+
+        <th>
+          <ul class="play-stats">
+            <li>Score: <span id="score">0</span></li>
+            <li>Your Highscore: <span id="player-highscore">0</span></li>
+            <li>Global Highscore: <span id="global-highscore">0</span> (beta)</li>
+          </ul>
+        </th>
+      </tr>
+    </table>
+
+    <button id="start">Start</button>
+
+    <p>Things I still need to do:</p>
+    <ul>
+      <li>Difficulty scaling</li>
+      <li>Putting the statistics in a better spot</li>
+      <li>Game over is weird</li>
+      <li>Score stuff</li>
+    </ul>
+
+    <script src="dist/bundle.js"></script>
+  </body>
+</html>
