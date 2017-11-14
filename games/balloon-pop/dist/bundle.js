@@ -138,29 +138,23 @@ class TaskRunner {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__task__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__scale__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(14);
 // It's a sprite.
+// It can be rendered.
+// Wow.
+// Amazing.
 
 
-// if obj is defined, return obj
-// else return def
-// used as less verbose option defaulting without neglecting falsy values (|| does that)
-function option(obj, def) {
-    if (typeof obj === "undefined") {
-        return def;
-    }
-    else {
-        return obj;
-    }
-}
+
 class Sprite extends __WEBPACK_IMPORTED_MODULE_0__task__["b" /* TaskRunner */] {
     constructor(options) {
         super();
         this.runtime = Sprite.runtime;
         this.position = options.position;
         this.texture = options.texture;
-        this.width = option(options.width, this.texture.width);
-        this.height = option(options.height, this.texture.height);
-        this.scale = option(options.scale, new __WEBPACK_IMPORTED_MODULE_1__scale__["a" /* Scale */](1));
+        this.width = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getOrDefault */])(options.width, this.texture.width);
+        this.height = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getOrDefault */])(options.height, this.texture.height);
+        this.scale = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getOrDefault */])(options.scale, new __WEBPACK_IMPORTED_MODULE_1__scale__["a" /* Scale */](1));
         this.runtime.sprites.push(this);
     }
     update() {
@@ -374,12 +368,16 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__container__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__drivers_mouse__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_mouse__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__task__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errors_exit__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__drivers_mouse_touchscreen__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils__ = __webpack_require__(14);
 // this is the main game runtime object
 // rendering is done here
 // a lot of stuff is done here
+
+
 
 
 
@@ -395,7 +393,14 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_3__task__["b" /* TaskRunner 
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
         this.loop = this.loop.bind(this);
-        this.mouse = new __WEBPACK_IMPORTED_MODULE_2__drivers_mouse__["a" /* Mouse */](this);
+        if (!Object(__WEBPACK_IMPORTED_MODULE_6__utils__["b" /* isMobile */])()) {
+            console.log("using normal mouse");
+            this.mouse = new __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_mouse__["a" /* Mouse */](this);
+        }
+        else {
+            console.log("using mobile mouse");
+            this.mouse = new __WEBPACK_IMPORTED_MODULE_5__drivers_mouse_touchscreen__["a" /* Mouse */](this);
+        }
         // set the current runtime on some objects
         __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* Sprite */].runtime = this;
         __WEBPACK_IMPORTED_MODULE_1__container__["a" /* Container */].runtime = this;
@@ -564,84 +569,7 @@ class Container {
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* unused harmony export Button */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__task__ = __webpack_require__(0);
-// handles mouse events
-// a simple "driver" for the mouse
-
-var Button;
-(function (Button) {
-    Button[Button["left"] = 0] = "left";
-    Button[Button["middle"] = 1] = "middle";
-    Button[Button["right"] = 2] = "right";
-})(Button || (Button = {}));
-class MouseButton {
-    constructor(mouse, button) {
-        this.isDown = false;
-        this.framesDown = 0;
-        this.button = button;
-        document.addEventListener("mousedown", function (e) {
-            if (e.button === this.button) {
-                this.isDown = true;
-            }
-        }.bind(this));
-        document.addEventListener("mouseup", function (e) {
-            if (e.button === this.button) {
-                this.isDown = false;
-            }
-        }.bind(this));
-        mouse.addTask(this.update.bind(this));
-    }
-    update() {
-        if (this.isDown) {
-            this.framesDown++;
-        }
-        else {
-            this.framesDown = 0;
-        }
-    }
-    get isUp() {
-        return !this.isDown;
-    }
-    get isClick() {
-        return this.framesDown === 1;
-    }
-}
-/* unused harmony export MouseButton */
-
-class Mouse extends __WEBPACK_IMPORTED_MODULE_0__task__["b" /* TaskRunner */] {
-    constructor(runtime) {
-        super();
-        this.right = new MouseButton(this, Button.right);
-        this.middle = new MouseButton(this, Button.middle);
-        this.left = new MouseButton(this, Button.left);
-        runtime.canvas.addEventListener("mousemove", function (e) {
-            this.x = e.layerX;
-            this.y = e.layerY;
-        }.bind(this));
-        runtime.canvas.addEventListener("mousedown", function (e) {
-            e.preventDefault();
-        }.bind(this));
-    }
-    update() {
-        this.runTasks();
-    }
-    get isDown() {
-        return this.left.isDown;
-    }
-    get isClick() {
-        return this.left.isClick;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Mouse;
-
-
-
-/***/ }),
+/* 7 */,
 /* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -670,7 +598,7 @@ class BalloonSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__["a" /* 
         // due to the lack of an onclick() method we
         // a) figure out if the mouse is over us
         // b) found out if this is the first frame the mouse has been down
-        const containsMouse = this.containsPoint(this.runtime.mouse);
+        const containsMouse = this.containsPoint(this.runtime.mouse.position);
         if (containsMouse && this.runtime.mouse.isClick) {
             console.log("click");
             this.score();
@@ -723,6 +651,222 @@ class ExitError extends Error {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ExitError;
 
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(12);
+// handles mouse events
+// a simple "driver" for the mouse
+
+class TouchscreenButton extends __WEBPACK_IMPORTED_MODULE_0__base__["b" /* BaseMouseButton */] {
+    constructor(mouse) {
+        super(mouse); // It's a bird! It's a plane! No it's Supermouse!
+        document.addEventListener("touchstart", function (e) {
+            this.isDown = true;
+        }.bind(this));
+        document.addEventListener("touchend", function (e) {
+            this.isDown = false;
+        }.bind(this));
+        document.addEventListener("touchcancel", function (e) {
+            this.isDown = false;
+        }.bind(this));
+    }
+}
+/* unused harmony export TouchscreenButton */
+
+class Mouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
+    constructor(runtime) {
+        super();
+        this.runtime = runtime;
+        // only the left mouse button does stuff
+        this.left = new TouchscreenButton(this);
+        this.middle = new __WEBPACK_IMPORTED_MODULE_0__base__["d" /* EmptyMouseButton */]();
+        this.right = new __WEBPACK_IMPORTED_MODULE_0__base__["d" /* EmptyMouseButton */]();
+        runtime.canvas.addEventListener("touchmove", (e) => {
+            this.handleEvent(e);
+        });
+        runtime.canvas.addEventListener("touchstart", (e) => {
+            this.handleEvent(e);
+        });
+        runtime.canvas.addEventListener("touchend", (e) => {
+            this.handleEvent(e);
+        });
+        runtime.canvas.addEventListener("touchcancel", (e) => {
+            this.handleEvent(e);
+        });
+        this.addTask(() => {
+            console.log(this.isClick);
+        });
+    }
+    handleEvent(e) {
+        e.preventDefault();
+        const offset = this.findOffset(this.runtime.canvas);
+        this.position.x = e.changedTouches[0].clientX - offset.x;
+        this.position.y = e.changedTouches[0].clientY - offset.y;
+    }
+    // https://developer.mozilla.org/en-US/docs/Web/API/Touch_events with minor modifications
+    findOffset(el) {
+        var curleft = 0;
+        var curtop = 0;
+        do {
+            curleft += el.offsetLeft;
+            curtop += el.offsetTop;
+        } while (el = el.offsetParent);
+        return { x: curleft - document.body.scrollLeft, y: curtop - document.body.scrollTop };
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Mouse;
+
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return Button; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__position__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(0);
+
+
+class BaseMouse extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunner */] {
+    constructor() {
+        super(...arguments);
+        this.position = new __WEBPACK_IMPORTED_MODULE_0__position__["a" /* Position */](0, 0);
+    }
+    update() {
+        this.runTasks();
+    }
+    get isDown() {
+        return this.left.isDown;
+    }
+    get isUp() {
+        return this.left.isUp;
+    }
+    get isClick() {
+        return this.left.isClick;
+    }
+    get framesDown() {
+        return this.left.framesDown;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = BaseMouse;
+
+class BaseMouseButton {
+    constructor(mouse) {
+        this.isDown = false;
+        this.framesDown = 0;
+        mouse.addTask(this.update.bind(this));
+    }
+    update() {
+        if (this.isDown) {
+            this.framesDown++;
+        }
+        else {
+            this.framesDown = 0;
+        }
+    }
+    get isUp() {
+        return !this.isDown;
+    }
+    get isClick() {
+        return this.framesDown === 1;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = BaseMouseButton;
+
+class EmptyMouseButton {
+    constructor() {
+        this.isDown = false;
+        this.isUp = true;
+        this.isClick = false;
+        this.framesDown = 0;
+    }
+    update() { }
+}
+/* harmony export (immutable) */ __webpack_exports__["d"] = EmptyMouseButton;
+
+var Button;
+(function (Button) {
+    Button[Button["left"] = 0] = "left";
+    Button[Button["middle"] = 1] = "middle";
+    Button[Button["right"] = 2] = "right";
+})(Button || (Button = {}));
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(12);
+// handles mouse events
+// a simple "driver" for the mouse
+
+class MouseButton extends __WEBPACK_IMPORTED_MODULE_0__base__["b" /* BaseMouseButton */] {
+    constructor(mouse, button) {
+        super(mouse); // It's a bird! It's a plane! No it's Supermouse!
+        this.button = button;
+        document.addEventListener("mousedown", function (e) {
+            if (e.button === this.button) {
+                this.isDown = true;
+            }
+        }.bind(this));
+        document.addEventListener("mouseup", function (e) {
+            if (e.button === this.button) {
+                this.isDown = false;
+            }
+        }.bind(this));
+    }
+}
+/* unused harmony export MouseButton */
+
+class Mouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
+    constructor(runtime) {
+        super();
+        this.right = new MouseButton(this, __WEBPACK_IMPORTED_MODULE_0__base__["c" /* Button */].right);
+        this.middle = new MouseButton(this, __WEBPACK_IMPORTED_MODULE_0__base__["c" /* Button */].middle);
+        this.left = new MouseButton(this, __WEBPACK_IMPORTED_MODULE_0__base__["c" /* Button */].left);
+        runtime.canvas.addEventListener("mousemove", function (e) {
+            this.position.x = e.layerX;
+            this.position.y = e.layerY;
+        }.bind(this));
+        runtime.canvas.addEventListener("mousedown", function (e) {
+            e.preventDefault();
+        }.bind(this));
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Mouse;
+
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = isMobile;
+/* harmony export (immutable) */ __webpack_exports__["a"] = getOrDefault;
+// https://stackoverflow.com/a/3540295
+// tests if the device is probably a mobile phone
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+// if obj is defined, return obj
+// else return def
+// used as less verbose option defaulting without neglecting falsy values (|| does that)
+function getOrDefault(obj, def) {
+    if (typeof obj === "undefined") {
+        return def;
+    }
+    else {
+        return obj;
+    }
+}
 
 
 /***/ })

@@ -26,7 +26,7 @@ export class BalloonSprite extends Sprite {
     // due to the lack of an onclick() method we
     // a) figure out if the mouse is over us
     // b) found out if this is the first frame the mouse has been down
-    const containsMouse = this.containsPoint(this.runtime.mouse);
+    const containsMouse = this.containsPoint(this.runtime.mouse.position);
     if (containsMouse && this.runtime.mouse.isClick) {
       console.log("click");
       this.score();

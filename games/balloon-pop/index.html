@@ -24,10 +24,22 @@
         width: 100%;
       }
     </style>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77118590-7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-77118590-7');
+    </script>
   </head>
 
   <body>
-    <h1>Balloon Pop (v0.2)</h1>
+    <h1>Balloon Pop (v0.3)</h1>
 
     <table>
       <tr>
@@ -46,11 +58,12 @@
       </tr>
     </table>
 
+    <p><b>Now with mobile support!</b></p>
+
     <p>Things I still need to do:</p>
     <ul>
-      <li><b>Touchscreen support</b> - in next version</li>
-      <li>Putting the statistics in a better spot - low priority</li>
-      <li>Global highscore is really broken - low priority</li>
+      <li>Putting the statistics in a better spot</li>
+      <li>Global highscore is really broken (it's still in beta and will always be easyish to cheat)</li>
     </ul>
 
     <script src="dist/bundle.js"></script>

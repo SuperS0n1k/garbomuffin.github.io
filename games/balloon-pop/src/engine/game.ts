@@ -5,11 +5,13 @@
 import { TImage } from "./types";
 import { Sprite } from "./sprite";
 import { Container } from "./container";
-import { Mouse } from "./drivers/mouse";
+import { Mouse } from "./drivers/mouse/mouse";
 import { TaskRunner, Task } from "./task";
 import { BalloonSprite } from "../sprites/balloon";
 import { Position } from "./position";
 import { ExitError } from "./errors/exit";
+import { Mouse as TouchscreenMouse } from "./drivers/mouse/touchscreen";
+import { isMobile } from "./utils";
 
 export class GameRuntime extends TaskRunner {
   private _assetPromises: Promise<TImage>[] = [];
@@ -29,7 +31,14 @@ export class GameRuntime extends TaskRunner {
     this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
     this.loop = this.loop.bind(this);
-    this.mouse = new Mouse(this);
+
+    if (!isMobile()){
+      console.log("using normal mouse");
+      this.mouse = new Mouse(this);
+    }else{
+      console.log("using mobile mouse");
+      this.mouse = new TouchscreenMouse(this);
+    }
 
     // set the current runtime on some objects
     Sprite.runtime = this as any;

@@ -1,4 +1,7 @@
 // It's a sprite.
+// It can be rendered.
+// Wow.
+// Amazing.
 
 import { Position } from "./position";
 import { TImage, TGame } from "./types";
@@ -6,6 +9,7 @@ import { GameRuntime } from "./game";
 import { TaskRunner, Task } from "./task";
 import { Container } from "./container";
 import { Scale } from "./scale";
+import { getOrDefault } from "./utils";
 
 // the options that can be given
 export interface ISpriteOptions {
@@ -16,17 +20,6 @@ export interface ISpriteOptions {
   height?: number;
 
   scale?: Scale;
-}
-
-// if obj is defined, return obj
-// else return def
-// used as less verbose option defaulting without neglecting falsy values (|| does that)
-function option(obj: any, def: any) {
-  if (typeof obj === "undefined") {
-    return def;
-  } else {
-    return obj;
-  }
 }
 
 export class Sprite extends TaskRunner {
@@ -45,10 +38,10 @@ export class Sprite extends TaskRunner {
     this.position = options.position;
     this.texture = options.texture;
 
-    this.width = option(options.width, this.texture.width);
-    this.height = option(options.height, this.texture.height);
+    this.width = getOrDefault(options.width, this.texture.width);
+    this.height = getOrDefault(options.height, this.texture.height);
 
-    this.scale = option(options.scale, new Scale(1));
+    this.scale = getOrDefault(options.scale, new Scale(1));
 
     this.runtime.sprites.push(this);
   }
