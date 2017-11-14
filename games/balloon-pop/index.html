@@ -16,17 +16,24 @@
 
       .play-stats {
         list-style: none;
+        padding-left: 10px;
+        margin-top: 0;
+      }
+
+      .start {
+        width: 100%;
       }
     </style>
   </head>
 
   <body>
-    <h1>Balloon Pop (v0.1)</h1>
+    <h1>Balloon Pop (v0.2)</h1>
 
     <table>
       <tr>
         <th>
-          <canvas id="canvas" width="480" height="360"></canvas>
+          <canvas id="canvas" width="360" height="480"></canvas>
+          <button id="start" class="start">Start</button>
         </th>
 
         <th>
@@ -39,14 +46,11 @@
       </tr>
     </table>
 
-    <button id="start">Start</button>
-
     <p>Things I still need to do:</p>
     <ul>
-      <li>Difficulty scaling</li>
-      <li>Putting the statistics in a better spot</li>
-      <li>Game over is weird</li>
-      <li>Score stuff</li>
+      <li><b>Touchscreen support</b> - in next version</li>
+      <li>Putting the statistics in a better spot - low priority</li>
+      <li>Global highscore is really broken - low priority</li>
     </ul>
 
     <script src="dist/bundle.js"></script>
