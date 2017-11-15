@@ -1,6 +1,7 @@
 import { GameRuntime } from "./engine/game";
 import { Position } from "./engine/position";
 import { IRepeatingTaskOptions, Task } from "./engine/task";
+import { getOrDefault, isFileUrl } from "./engine/utils";
 import { BalloonSprite } from "./sprites/balloon";
 
 export class BalloonPopGame extends GameRuntime {
@@ -11,6 +12,8 @@ export class BalloonPopGame extends GameRuntime {
 
   constructor() {
     super(document.getElementById("canvas") as HTMLCanvasElement);
+
+    this.highscore = getOrDefault(Number(localStorage.getItem("highscore")), 0);
 
     this.addTask(new Task({
       run: this.createBalloon,
@@ -63,6 +66,10 @@ export class BalloonPopGame extends GameRuntime {
 
   // TODO: rewrite using subscriptions
   public getGlobalHighscore() {
+    if (isFileUrl()) {
+      return;
+    }
+
     const options = {
       method: "post",
       headers: {
@@ -74,6 +81,7 @@ export class BalloonPopGame extends GameRuntime {
         query: `{Highscore(id: "cj9ungg2zbh4f0167o0kigi5r"){score}}`,
       }),
     };
+
     return fetch("https://api.graph.cool/simple/v1/cj9un6whi02dn0163xh8unei0", options as any)
       .then((res) => res.json())
       .then((res) => res.data.Highscore.score)
@@ -85,6 +93,10 @@ export class BalloonPopGame extends GameRuntime {
 
   // TODO: rewrite
   public setGlobalHighscore(score: number) {
+    if (isFileUrl()) {
+      return;
+    }
+
     const options = {
       method: "post",
       headers: {
@@ -100,6 +112,8 @@ export class BalloonPopGame extends GameRuntime {
   // renders a game over screen and stops the game
   public gameover() {
     this.resetCanvas();
+
+    // TODO: use a TextSprite once it's stable
 
     this.ctx.font = "50px Arial";
     this.ctx.fillStyle = "black";
@@ -131,6 +145,7 @@ export class BalloonPopGame extends GameRuntime {
   }
   set highscore(highscore) {
     (document.getElementById("player-highscore") as HTMLElement).textContent = highscore.toString();
+    localStorage.setItem("highscore", highscore.toString());
     this._highscore = highscore;
   }
 

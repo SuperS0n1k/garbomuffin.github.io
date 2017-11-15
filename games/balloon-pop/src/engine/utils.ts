@@ -4,6 +4,11 @@ export function isMobile() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
+// disable a couple error prone features when on a file: url
+export function isFileUrl() {
+  return location.href.startsWith("file:");
+}
+
 // if obj is defined, return obj
 // else return def
 // used as less verbose option defaulting without neglecting falsy values (|| does that)

@@ -68,7 +68,45 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(1);
+/* harmony export (immutable) */ __webpack_exports__["c"] = isMobile;
+/* harmony export (immutable) */ __webpack_exports__["b"] = isFileUrl;
+/* harmony export (immutable) */ __webpack_exports__["a"] = getOrDefault;
+/* unused harmony export decimalToHex */
+// https://stackoverflow.com/a/3540295
+// tests if the device is probably a mobile phone
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+// disable a couple error prone features when on a file: url
+function isFileUrl() {
+    return location.href.startsWith("file:");
+}
+// if obj is defined, return obj
+// else return def
+// used as less verbose option defaulting without neglecting falsy values (|| does that)
+function getOrDefault(obj, def) {
+    if (typeof obj === "undefined") {
+        return def;
+    }
+    else {
+        return obj;
+    }
+}
+// https://stackoverflow.com/a/697841
+function decimalToHex(number) {
+    if (number < 0) {
+        number = 0xFFFFFFFF + number + 1;
+    }
+    return number.toString(16).toUpperCase();
+}
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(0);
 // Tasks and TaskRunners
 
 // a task is something to be run at a certain time, maybe repeating
@@ -144,39 +182,6 @@ class TaskRunner {
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["b"] = isMobile;
-/* harmony export (immutable) */ __webpack_exports__["a"] = getOrDefault;
-/* unused harmony export decimalToHex */
-// https://stackoverflow.com/a/3540295
-// tests if the device is probably a mobile phone
-function isMobile() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-// if obj is defined, return obj
-// else return def
-// used as less verbose option defaulting without neglecting falsy values (|| does that)
-function getOrDefault(obj, def) {
-    if (typeof obj === "undefined") {
-        return def;
-    }
-    else {
-        return obj;
-    }
-}
-// https://stackoverflow.com/a/697841
-function decimalToHex(number) {
-    if (number < 0) {
-        number = 0xFFFFFFFF + number + 1;
-    }
-    return number.toString(16).toUpperCase();
-}
-
-
-/***/ }),
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -200,7 +205,7 @@ class Position {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(1);
 
 
 class BaseMouse extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunner */] {
@@ -271,8 +276,8 @@ class EmptyMouseButton {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__scale__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(0);
 
 
 
@@ -337,10 +342,6 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_sprites_textsprite__ = __webpack_require__(15);
-
-
 
 const game = new __WEBPACK_IMPORTED_MODULE_0__game__["a" /* BalloonPopGame */]();
 // add in all of our assets
@@ -351,11 +352,6 @@ function run() {
     document.getElementById("start").onclick = () => {
         document.getElementById("start").style.display = "none";
         game.start();
-        new __WEBPACK_IMPORTED_MODULE_2__engine_sprites_textsprite__["a" /* TextSprite */]({
-            text: "123",
-            fontSize: 10,
-            position: new __WEBPACK_IMPORTED_MODULE_1__engine_position__["a" /* Position */](100, 100),
-        });
     };
 }
 
@@ -367,8 +363,10 @@ function run() {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_game__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_balloon__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_utils__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_balloon__ = __webpack_require__(13);
+
 
 
 
@@ -380,6 +378,7 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
         this._highscore = 0;
         this.lastKnownGlobalHighscore = 0;
         this.startTime = performance.now();
+        this.highscore = Object(__WEBPACK_IMPORTED_MODULE_3__engine_utils__["a" /* getOrDefault */])(Number(localStorage.getItem("highscore")), 0);
         this.addTask(new __WEBPACK_IMPORTED_MODULE_2__engine_task__["a" /* Task */]({
             run: this.createBalloon,
             repeatEvery: 60,
@@ -401,7 +400,7 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
         const texture = this.getAsset("balloon");
         const width = texture.width / 10;
         const height = texture.height / 10;
-        const sprite = new __WEBPACK_IMPORTED_MODULE_3__sprites_balloon__["a" /* BalloonSprite */]({
+        const sprite = new __WEBPACK_IMPORTED_MODULE_4__sprites_balloon__["a" /* BalloonSprite */]({
             position: new __WEBPACK_IMPORTED_MODULE_1__engine_position__["a" /* Position */](Math.random() * (this.canvas.width - width), -texture.height),
             height, width, texture,
         });
@@ -422,6 +421,9 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
     }
     // TODO: rewrite using subscriptions
     getGlobalHighscore() {
+        if (Object(__WEBPACK_IMPORTED_MODULE_3__engine_utils__["b" /* isFileUrl */])()) {
+            return;
+        }
         const options = {
             method: "post",
             headers: {
@@ -443,6 +445,9 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
     }
     // TODO: rewrite
     setGlobalHighscore(score) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_3__engine_utils__["b" /* isFileUrl */])()) {
+            return;
+        }
         const options = {
             method: "post",
             headers: {
@@ -457,6 +462,7 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
     // renders a game over screen and stops the game
     gameover() {
         this.resetCanvas();
+        // TODO: use a TextSprite once it's stable
         this.ctx.font = "50px Arial";
         this.ctx.fillStyle = "black";
         const text = "Game Over!";
@@ -482,6 +488,7 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
     }
     set highscore(highscore) {
         document.getElementById("player-highscore").textContent = highscore.toString();
+        localStorage.setItem("highscore", highscore.toString());
         this._highscore = highscore;
     }
     onexit() {
@@ -507,8 +514,8 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_touchscreen__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__errors_exit__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprite__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__task__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__task__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils__ = __webpack_require__(0);
 
 
 
@@ -529,7 +536,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_5__task__["b" /* TaskRunner 
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
         // mouse driver, support pc and mobile to some degree
-        if (!Object(__WEBPACK_IMPORTED_MODULE_6__utils__["b" /* isMobile */])()) {
+        if (!Object(__WEBPACK_IMPORTED_MODULE_6__utils__["c" /* isMobile */])()) {
             console.log("using normal mouse");
             this.mouse = new __WEBPACK_IMPORTED_MODULE_1__drivers_mouse_mouse__["a" /* Mouse */](this);
         }
@@ -891,7 +898,7 @@ class BalloonSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespr
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
 
 
 class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
@@ -907,34 +914,6 @@ class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractS
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ImageSprite;
-
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(1);
-
-
-class TextSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
-    constructor(options) {
-        super(options);
-        this.text = options.text;
-        this.fontSize = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.fontSize, 0);
-        this.fontFamily = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.fontFamily, "sans-serif");
-    }
-    get font() {
-        return `${this.fontSize}px ${this.fontFamily}`;
-    }
-    render(ctx) {
-        ctx.font = this.font;
-        ctx.fillText(this.text, this.x, this.y);
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = TextSprite;
 
 
 

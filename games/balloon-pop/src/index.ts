@@ -18,11 +18,5 @@ function run() {
   (document.getElementById("start") as HTMLButtonElement).onclick = () => {
     (document.getElementById("start") as HTMLButtonElement).style.display = "none";
     game.start();
-
-    new TextSprite({
-      text: "123",
-      fontSize: 10,
-      position: new Position(100, 100),
-    });
   };
 }
