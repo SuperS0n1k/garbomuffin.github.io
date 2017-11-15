@@ -1,27 +1,35 @@
+import { GameRuntime } from "../../game";
 import { Position } from "../../position";
 import { TaskRunner } from "../../task";
 
 export interface IMouseButton {
-  isDown: boolean
-  isUp: boolean
-  isClick: boolean
-  framesDown: number
-  update(): void
+  isDown: boolean;
+  isUp: boolean;
+  isClick: boolean;
+  framesDown: number;
+  update(): void;
 }
 
 // isDown, isClick etc. should all just return the left mouse button's result
 export interface IMouse extends IMouseButton {
-  left: IMouseButton
-  right: IMouseButton
-  middle: IMouseButton
-  position: Position
+  left: IMouseButton;
+  right: IMouseButton;
+  middle: IMouseButton;
+  position: Position;
 }
 
 export class BaseMouse extends TaskRunner implements IMouse {
-  public right: IMouseButton
-  public middle: IMouseButton
-  public left: IMouseButton
+  public runtime: GameRuntime;
+  public right: IMouseButton;
+  public middle: IMouseButton;
+  public left: IMouseButton;
   public position: Position = new Position(0, 0);
+
+  constructor(runtime: GameRuntime) {
+    super();
+
+    this.runtime = runtime;
+  }
 
   public update() {
     this.runTasks();
@@ -48,7 +56,7 @@ export class BaseMouseButton implements IMouseButton {
   public isDown: boolean = false;
   public framesDown: number = 0;
 
-  constructor(mouse: BaseMouse){
+  constructor(mouse: BaseMouse) {
     mouse.addTask(this.update.bind(this));
   }
 
@@ -69,16 +77,12 @@ export class BaseMouseButton implements IMouseButton {
   }
 }
 
+// A mouse button that doesn't do anything and always returns basic defaults
+// Used by mobile mouse support as only left click is supported there
 export class EmptyMouseButton implements IMouseButton {
   public readonly isDown = false;
   public readonly isUp = true;
   public readonly isClick = false;
   public readonly framesDown = 0;
-  public update(){}
-}
-
-export enum Button {
-  left = 0,
-  middle = 1,
-  right = 2,
+  public update() { }
 }

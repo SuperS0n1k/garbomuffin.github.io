@@ -1,21 +1,17 @@
+import { Container } from "./container";
+import { Mouse } from "./drivers/mouse/mouse";
+import { TouchscreenMouse } from "./drivers/mouse/touchscreen";
+import { ExitError } from "./errors/exit";
+import { AbstractSprite } from "./sprite";
+import { TaskRunner } from "./task";
+import { TImage } from "./types";
+import { isMobile } from "./utils";
+
 // this is the main game runtime object
 // rendering is done here
 // a lot of stuff is done here
 
-import { TImage } from "./types";
-import { Sprite } from "./sprite";
-import { Container } from "./container";
-import { Mouse } from "./drivers/mouse/mouse";
-import { TaskRunner, Task } from "./task";
-import { BalloonSprite } from "../sprites/balloon";
-import { Position } from "./position";
-import { ExitError } from "./errors/exit";
-import { Mouse as TouchscreenMouse } from "./drivers/mouse/touchscreen";
-import { isMobile } from "./utils";
-
 export class GameRuntime extends TaskRunner {
-  private _assetPromises: Promise<TImage>[] = [];
-
   // see resetVariables()
   public readonly assets: Map<string, TImage> = new Map();
   public sprites: Container;
@@ -24,24 +20,26 @@ export class GameRuntime extends TaskRunner {
   public canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
 
+  private _assetPromises: Array<Promise<TImage>> = [];
+
   constructor(canvas: HTMLCanvasElement) {
     super();
 
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-    this.loop = this.loop.bind(this);
-
-    if (!isMobile()){
+    // mouse driver, support pc and mobile to some degree
+    if (!isMobile()) {
       console.log("using normal mouse");
       this.mouse = new Mouse(this);
-    }else{
+    } else {
       console.log("using mobile mouse");
       this.mouse = new TouchscreenMouse(this);
     }
 
     // set the current runtime on some objects
-    Sprite.runtime = this as any;
+    // i dont want to do this but it works
+    AbstractSprite.runtime = this as any;
     Container.runtime = this as any;
 
     // reset other variables
@@ -50,11 +48,11 @@ export class GameRuntime extends TaskRunner {
     // debugging
     (window as any).runtime = this;
 
-    // tasks
-    this.addTask(new Task({
-      run: this.updateMouse,
-      repeatEvery: 0,
-    }));
+    // run the mouse driver
+    this.addTask(this.updateMouse);
+
+    // classess are weird
+    this.loop = this.loop.bind(this);
   }
 
   ///
@@ -63,24 +61,30 @@ export class GameRuntime extends TaskRunner {
 
   // add an asset and start loading it
   public addAsset(src: string) {
-    var originalSrc = src;
+    // uses the original src for storage
+    // TODO: consider using the new src and adding that into getAsset?
+    const originalSrc = src;
+
+    // add the extension and folder
     src = `assets/${src}.png`;
 
     console.log("adding asset", src);
 
-    const promise = new Promise<TImage>(function (this: GameRuntime, resolve: any, reject: any) {
+    // create a promise that will resolve when onload is called or
+    // reject when onerror is called
+    const promise = new Promise<TImage>((resolve: any, reject: any) => {
       const image = document.createElement("img");
       image.src = src;
-      image.onload = function () {
+      image.onload = () => {
         resolve();
       };
 
-      image.onerror = function () {
+      image.onerror = () => {
         reject();
       };
 
       this.assets.set(originalSrc, image);
-    }.bind(this));
+    });
 
     this._assetPromises.push(promise);
 
@@ -120,11 +124,11 @@ export class GameRuntime extends TaskRunner {
 
   // the main loop - calls all tasks in all sprites
   public loop() {
-    // 1. Update sprites and this
+    // update sprites and this
     try {
       this.update();
     } catch (e) {
-      // 1.1. Handle exiting
+      // handle exiting
       if (e instanceof ExitError) {
         this.onexit();
         return;
@@ -133,10 +137,10 @@ export class GameRuntime extends TaskRunner {
       }
     }
 
-    // 2. Render
+    // render
     this.render();
 
-    // Get ready for the next frame
+    // request the next frame to render
     requestAnimationFrame(this.loop);
   }
 
@@ -153,6 +157,7 @@ export class GameRuntime extends TaskRunner {
   }
 
   public render() {
+    // clear the canvas
     this.resetCanvas();
 
     // render all sprites onto our canvas
@@ -165,6 +170,8 @@ export class GameRuntime extends TaskRunner {
   // stops ALL execution
   public exit() {
     console.warn("exiting using exit()");
+
+    // instances of ExitError are treated specially by the update function
     throw new ExitError();
   }
 

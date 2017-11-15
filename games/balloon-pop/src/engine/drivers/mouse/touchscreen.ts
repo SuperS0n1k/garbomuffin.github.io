@@ -1,67 +1,50 @@
+import { GameRuntime } from "../../game";
+import { Position } from "../../position";
+import { BaseMouse, BaseMouseButton, EmptyMouseButton, IMouse, IMouseButton } from "./base";
+
 // handles mouse events
 // a simple "driver" for the mouse
 
 // TODO: touchscreen support
 // probably will use another "driver" that is compatible
 
-import { GameRuntime } from "../../game";
-import { TaskRunner } from "../../task";
-import { IMouseButton, IMouse, BaseMouse, BaseMouseButton, EmptyMouseButton } from "./base";
-import { Position } from "../../position";
-
-export class TouchscreenButton extends BaseMouseButton implements IMouseButton {
-  constructor(mouse: Mouse) {
+class TouchscreenButton extends BaseMouseButton implements IMouseButton {
+  constructor(mouse: TouchscreenMouse) {
     super(mouse); // It's a bird! It's a plane! No it's Supermouse!
 
-    document.addEventListener("touchstart", function (this: TouchscreenButton, e: any) {
+    document.addEventListener("touchstart", (e: any) => {
       this.isDown = true;
-    }.bind(this));
+    });
 
-    document.addEventListener("touchend", function (this: TouchscreenButton, e: any) {
+    document.addEventListener("touchend", (e: any) => {
       this.isDown = false;
-    }.bind(this));
+    });
 
-    document.addEventListener("touchcancel", function (this: TouchscreenButton, e: any) {
+    document.addEventListener("touchcancel", (e: any) => {
       this.isDown = false;
-    }.bind(this));
+    });
   }
 }
 
-export class Mouse extends BaseMouse implements IMouse {
-  private readonly runtime: GameRuntime;
-
+export class TouchscreenMouse extends BaseMouse implements IMouse {
   constructor(runtime: GameRuntime) {
-    super();
-
-    this.runtime = runtime;
+    super(runtime);
 
     // only the left mouse button does stuff
     this.left = new TouchscreenButton(this);
     this.middle = new EmptyMouseButton();
     this.right = new EmptyMouseButton();
 
-    runtime.canvas.addEventListener("touchmove", (e: any) => {
-      this.handleEvent(e);
-    });
+    // stop scrolling, zooming, or other stuff that you can do with your fingers
+    this.handleEvent = this.handleEvent.bind(this);
 
-    runtime.canvas.addEventListener("touchstart", (e: any) => {
-      this.handleEvent(e);
-    });
-
-    runtime.canvas.addEventListener("touchend", (e: any) => {
-      this.handleEvent(e);
-    });
-
-    runtime.canvas.addEventListener("touchcancel", (e: any) => {
-      this.handleEvent(e);
-    });
-
-    this.addTask(() => {
-      console.log(this.isClick);
-    })
+    runtime.canvas.addEventListener("touchmove", this.handleEvent);
+    runtime.canvas.addEventListener("touchstart", this.handleEvent);
+    runtime.canvas.addEventListener("touchend", this.handleEvent);
+    runtime.canvas.addEventListener("touchcancel", this.handleEvent);
   }
 
-  private handleEvent(e: any){
+  private handleEvent(e: any) {
     e.preventDefault();
 
     const offset = this.findOffset(this.runtime.canvas);
@@ -71,15 +54,16 @@ export class Mouse extends BaseMouse implements IMouse {
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/API/Touch_events with minor modifications
-  private findOffset(el: HTMLElement){
-    var curleft = 0;
-    var curtop = 0;
-  
-    do {
+  private findOffset(el: HTMLElement): Position {
+    let curleft = 0;
+    let curtop = 0;
+
+    while (el.offsetParent) {
       curleft += el.offsetLeft;
       curtop += el.offsetTop;
-    } while (el = (el.offsetParent as HTMLElement));
+      el = el.offsetParent as HTMLElement;
+    }
 
-    return { x: curleft-document.body.scrollLeft, y: curtop-document.body.scrollTop };
+    return new Position(curleft - document.body.scrollLeft, curtop - document.body.scrollTop);
   }
 }

@@ -3,6 +3,6 @@
 
 export class ExitError extends Error {
   constructor() {
-    super("Game execution stopped");
+    super("Stopping game execution");
   }
 }

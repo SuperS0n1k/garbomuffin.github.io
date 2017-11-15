@@ -1,10 +1,9 @@
-import { ISpriteOptions, Sprite } from "../engine/sprite";
-import { Task } from "../engine/task";
+import { IImageSpriteOptions, ImageSprite } from "../engine/sprites/imagesprite";
 
 export const BASE_SPEED = 3;
 
-export class BalloonSprite extends Sprite {
-  constructor(options: ISpriteOptions) {
+export class BalloonSprite extends ImageSprite {
+  constructor(options: IImageSpriteOptions) {
     super(options);
 
     // make it so our update task actually happens
@@ -19,7 +18,7 @@ export class BalloonSprite extends Sprite {
 
     // if we went below the screen gameover
     if (this.y >= this.runtime.canvas.height) {
-      this.gameover();
+      this.runtime.gameover();
       return;
     }
 
@@ -28,18 +27,9 @@ export class BalloonSprite extends Sprite {
     // b) found out if this is the first frame the mouse has been down
     const containsMouse = this.containsPoint(this.runtime.mouse.position);
     if (containsMouse && this.runtime.mouse.isClick) {
-      console.log("click");
-      this.score();
+      this.destroy();
+      this.runtime.score++;
     }
-  }
-
-  private score() {
-    this.destroy();
-    this.runtime.score++;
-  }
-
-  private gameover() {
-    this.runtime.gameover();
   }
 
   get speed() {

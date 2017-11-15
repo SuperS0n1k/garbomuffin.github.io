@@ -1,7 +1,7 @@
 import { GameRuntime } from "./engine/game";
-import { Task, RepeatingTaskOptions } from "./engine/task";
-import { BalloonSprite } from "./sprites/balloon";
 import { Position } from "./engine/position";
+import { IRepeatingTaskOptions, Task } from "./engine/task";
+import { BalloonSprite } from "./sprites/balloon";
 
 export class BalloonPopGame extends GameRuntime {
   private _score: number = 0;
@@ -28,6 +28,10 @@ export class BalloonPopGame extends GameRuntime {
     }));
   }
 
+  public start() {
+    super.start();
+  }
+
   // creats a balloon in a random location above the screen
   public createBalloon(task: Task) {
     const texture = this.getAsset("balloon");
@@ -35,7 +39,7 @@ export class BalloonPopGame extends GameRuntime {
     const height = texture.height / 10;
 
     const sprite = new BalloonSprite({
-      position: new Position(Math.random() * (this.canvas.width - width), -texture.height /* spawn offscreen*/),
+      position: new Position(Math.random() * (this.canvas.width - width), -texture.height),
       height, width, texture,
     });
 
@@ -46,7 +50,7 @@ export class BalloonPopGame extends GameRuntime {
 
   // returns how many frames should be between each balloon spawn
   public getSpawnRate(task: Task) {
-    const BASE_SPEED = (task.originalOptions as RepeatingTaskOptions).repeatEvery;
+    const BASE_SPEED = (task.originalOptions as IRepeatingTaskOptions).repeatEvery;
     return BASE_SPEED ** (1 - this.difficulty / 3);
   }
 
@@ -62,20 +66,20 @@ export class BalloonPopGame extends GameRuntime {
     const options = {
       method: "post",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       // what the fuck?
       // this works?
       body: JSON.stringify({
-        query: `{Highscore(id: "cj9ungg2zbh4f0167o0kigi5r"){score}}`
+        query: `{Highscore(id: "cj9ungg2zbh4f0167o0kigi5r"){score}}`,
       }),
     };
     return fetch("https://api.graph.cool/simple/v1/cj9un6whi02dn0163xh8unei0", options as any)
-      .then(res => res.json())
-      .then(res => res.data.Highscore.score)
-      .then(score => {
+      .then((res) => res.json())
+      .then((res) => res.data.Highscore.score)
+      .then((score) => {
         this.lastKnownGlobalHighscore = score;
-        (document.getElementById("global-highscore") as HTMLElement).textContent = score
+        (document.getElementById("global-highscore") as HTMLElement).textContent = score;
       });
   }
 
@@ -84,10 +88,10 @@ export class BalloonPopGame extends GameRuntime {
     const options = {
       method: "post",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation{updateHighscore(id: "cj9ungg2zbh4f0167o0kigi5r" score: ${score}){id score}}`
+        query: `mutation{updateHighscore(id: "cj9ungg2zbh4f0167o0kigi5r" score: ${score}){id score}}`,
       }),
     };
     return fetch("https://api.graph.cool/simple/v1/cj9un6whi02dn0163xh8unei0", options as any);

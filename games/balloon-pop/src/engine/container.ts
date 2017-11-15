@@ -3,12 +3,11 @@
 // these were used more heavily in my older games
 // currently only one of these are used: the sprites list
 
-import { Sprite } from "./sprite";
 import { GameRuntime } from "./game";
-import { TGame } from "./types";
+import { Sprite, TGame } from "./types";
 
 export class Container<T extends Sprite = Sprite> {
-  static runtime: TGame;
+  public static runtime: TGame;
   public runtime: TGame = Container.runtime;
   public sprites: T[] = [];
 
@@ -16,13 +15,13 @@ export class Container<T extends Sprite = Sprite> {
     this.runtime.containers.push(this);
   }
 
-  *[Symbol.iterator]() {
+  public push(...items: T[]): number {
+    return this.sprites.push(...items);
+  }
+
+  public *[Symbol.iterator]() {
     for (const sprite of this.sprites) {
       yield sprite;
     }
-  }
-
-  public push(...items: T[]): number {
-    return this.sprites.push(...items);
   }
 }

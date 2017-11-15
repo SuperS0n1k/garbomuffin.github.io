@@ -1,6 +1,6 @@
 // https://stackoverflow.com/a/3540295
 // tests if the device is probably a mobile phone
-export function isMobile(){
+export function isMobile() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
@@ -13,4 +13,13 @@ export function getOrDefault(obj: any, def: any) {
   } else {
     return obj;
   }
+}
+
+// https://stackoverflow.com/a/697841
+export function decimalToHex(number: number) {
+  if (number < 0) {
+    number = 0xFFFFFFFF + number + 1;
+  }
+
+  return number.toString(16).toUpperCase();
 }
