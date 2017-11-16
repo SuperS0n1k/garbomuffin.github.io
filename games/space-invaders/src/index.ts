@@ -19,8 +19,8 @@ game.addAsset("bullet");
 game.waitForAssets().then(run);
 
 function run() {
-  // (document.getElementById("start") as HTMLButtonElement).onclick = () => {
-  //   (document.getElementById("start") as HTMLButtonElement).style.display = "none";
-  game.start();
-  // };
+  (document.getElementById("start") as HTMLButtonElement).onclick = () => {
+    (document.getElementById("start") as HTMLButtonElement).style.display = "none";
+    game.start();
+  };
 }

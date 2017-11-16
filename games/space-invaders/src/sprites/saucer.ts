@@ -11,7 +11,7 @@ export class SaucerSprite extends ImageSprite {
     this.y += this.speed;
 
     if (this.y >= this.runtime.canvas.height) {
-      this.destroy();
+      this.runtime.gameover();
     }
   }
 

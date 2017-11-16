@@ -2,7 +2,7 @@ import { Container } from "./container";
 import { Position } from "./position";
 import { Scale } from "./scale";
 import { TaskRunner } from "./task";
-import { TGame } from "./types";
+import { TGame, Sprite } from "./types";
 import { getOrDefault } from "./utils";
 
 export interface ISpriteOptions {
@@ -61,6 +61,13 @@ export abstract class AbstractSprite extends TaskRunner {
       p.x < this.x + this.width &&
       p.y > this.y &&
       p.y < this.y + this.height;
+  }
+
+  public intersects(sprite: Sprite) {
+    return this.x < sprite.x + sprite.width &&
+      this.x + this.width > sprite.x &&
+      this.y < sprite.y + sprite.height &&
+      this.y + this.height > sprite.y;
   }
 
   get x() {

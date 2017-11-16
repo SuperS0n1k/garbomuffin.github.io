@@ -4,6 +4,7 @@ import { IRepeatingTaskOptions, Task } from "./engine/task";
 import { RocketSprite } from "./sprites/rocket";
 import { SaucerSprite } from "./sprites/saucer";
 import { BulletSprite } from "./sprites/bullet";
+import { getOrDefault } from "./engine/utils";
 
 export class SpaceInvaderGame extends GameRuntime {
   private _score: number = 0;
@@ -18,7 +19,11 @@ export class SpaceInvaderGame extends GameRuntime {
     this.addTask(new Task({
       run: this.createEnemy,
       repeatEvery: 180, // 3 seconds
+      delay: 60,
     }));
+
+    this.score = 0;
+    this.highscore = getOrDefault(Number(localStorage.getItem("highscore")), 0);
 
     this.addTask(this.detectShooting);
   }
@@ -42,9 +47,11 @@ export class SpaceInvaderGame extends GameRuntime {
 
   public shoot() {
     const texture = this.getAsset("bullet");
+    const width = texture.width / 15;
+    const height = texture.height / 15;
     new BulletSprite({
-      position: this.rocketSprite.position,
-      texture, width: texture.width / 10, height: texture.height / 10,
+      position: new Position(this.rocketSprite.position),
+      texture, width, height,
     });
     console.log("shoot");
   }
@@ -56,7 +63,7 @@ export class SpaceInvaderGame extends GameRuntime {
     const height = texture.height / 15;
 
     const sprite = new SaucerSprite({
-      position: new Position(Math.random() * (this.canvas.width - width), -texture.height),
+      position: new Position(Math.random() * (this.canvas.width - width), -height),
       height, width, texture,
     });
 
@@ -105,6 +112,7 @@ export class SpaceInvaderGame extends GameRuntime {
   }
   set highscore(highscore) {
     (document.getElementById("player-highscore") as HTMLElement).textContent = highscore.toString();
+    localStorage.setItem("highscore", highscore.toString());
     this._highscore = highscore;
   }
 

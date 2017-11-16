@@ -152,9 +152,16 @@ class TaskRunner {
 // can make for some nicer code sometimes
 class Position {
     constructor(x = 0, y = 0, z = 0) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        if (typeof x === "object") {
+            this.x = x.x;
+            this.y = x.y;
+            this.z = x.z;
+        }
+        else {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Position;
@@ -281,10 +288,10 @@ game.addAsset("bullet");
 // wait for it to load then run our stuff
 game.waitForAssets().then(run);
 function run() {
-    // (document.getElementById("start") as HTMLButtonElement).onclick = () => {
-    //   (document.getElementById("start") as HTMLButtonElement).style.display = "none";
-    game.start();
-    // };
+    document.getElementById("start").onclick = () => {
+        document.getElementById("start").style.display = "none";
+        game.start();
+    };
 }
 
 
@@ -299,6 +306,8 @@ function run() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_rocket__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_saucer__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_bullet__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__engine_utils__ = __webpack_require__(2);
+
 
 
 
@@ -315,7 +324,10 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
         this.addTask(new __WEBPACK_IMPORTED_MODULE_2__engine_task__["a" /* Task */]({
             run: this.createEnemy,
             repeatEvery: 180,
+            delay: 60,
         }));
+        this.score = 0;
+        this.highscore = Object(__WEBPACK_IMPORTED_MODULE_6__engine_utils__["a" /* getOrDefault */])(Number(localStorage.getItem("highscore")), 0);
         this.addTask(this.detectShooting);
     }
     start() {
@@ -334,9 +346,11 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
     }
     shoot() {
         const texture = this.getAsset("bullet");
+        const width = texture.width / 15;
+        const height = texture.height / 15;
         new __WEBPACK_IMPORTED_MODULE_5__sprites_bullet__["a" /* BulletSprite */]({
-            position: this.rocketSprite.position,
-            texture, width: texture.width / 10, height: texture.height / 10,
+            position: new __WEBPACK_IMPORTED_MODULE_1__engine_position__["a" /* Position */](this.rocketSprite.position),
+            texture, width, height,
         });
         console.log("shoot");
     }
@@ -346,7 +360,7 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
         const width = texture.width / 15;
         const height = texture.height / 15;
         const sprite = new __WEBPACK_IMPORTED_MODULE_4__sprites_saucer__["a" /* SaucerSprite */]({
-            position: new __WEBPACK_IMPORTED_MODULE_1__engine_position__["a" /* Position */](Math.random() * (this.canvas.width - width), -texture.height),
+            position: new __WEBPACK_IMPORTED_MODULE_1__engine_position__["a" /* Position */](Math.random() * (this.canvas.width - width), -height),
             height, width, texture,
         });
         // difficulty scaling
@@ -386,6 +400,7 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
     }
     set highscore(highscore) {
         document.getElementById("player-highscore").textContent = highscore.toString();
+        localStorage.setItem("highscore", highscore.toString());
         this._highscore = highscore;
     }
     onexit() {
@@ -772,6 +787,12 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
             p.y > this.y &&
             p.y < this.y + this.height;
     }
+    intersects(sprite) {
+        return this.x < sprite.x + sprite.width &&
+            this.x + this.width > sprite.x &&
+            this.y < sprite.y + sprite.height &&
+            this.y + this.height > sprite.y;
+    }
     get x() {
         return this.position.x;
     }
@@ -872,7 +893,7 @@ class SaucerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
     move() {
         this.y += this.speed;
         if (this.y >= this.runtime.canvas.height) {
-            this.destroy();
+            this.runtime.gameover();
         }
     }
     get speed() {
@@ -902,7 +923,8 @@ class BulletSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
     collision() {
         for (let sprite of this.runtime.sprites) {
             if (sprite instanceof __WEBPACK_IMPORTED_MODULE_1__saucer__["a" /* SaucerSprite */]) {
-                if (this.containsPoint(sprite.position)) {
+                if (this.intersects(sprite)) {
+                    this.runtime.score++;
                     sprite.destroy();
                     this.destroy();
                 }
@@ -915,7 +937,7 @@ class BulletSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
         const speed = this.speed;
         this.y -= speed;
         // if we went below the screen gameover
-        if (this.y <= 0) {
+        if (this.y + this.height <= 0) {
             this.destroy();
             return;
         }

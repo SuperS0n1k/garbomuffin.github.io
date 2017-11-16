@@ -6,9 +6,15 @@ export class Position {
   public y: number;
   public z?: number;
 
-  constructor(x: number = 0, y: number = 0, z: number = 0) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+  constructor(x: number | Position = 0, y: number = 0, z: number = 0) {
+    if (typeof x === "object"){
+      this.x = x.x;
+      this.y = x.y;
+      this.z = x.z;
+    }else{
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
   }
 }

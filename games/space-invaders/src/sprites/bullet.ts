@@ -15,7 +15,8 @@ export class BulletSprite extends ImageSprite {
   private collision() {
     for (let sprite of this.runtime.sprites) {
       if (sprite instanceof SaucerSprite) {
-        if (this.containsPoint(sprite.position)) {
+        if (this.intersects(sprite)) {
+          this.runtime.score++;
           sprite.destroy();
           this.destroy();
         }
@@ -30,7 +31,7 @@ export class BulletSprite extends ImageSprite {
     this.y -= speed;
 
     // if we went below the screen gameover
-    if (this.y <= 0) {
+    if (this.y + this.height <= 0) {
       this.destroy();
       return;
     }
