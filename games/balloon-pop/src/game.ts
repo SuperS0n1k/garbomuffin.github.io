@@ -126,6 +126,16 @@ export class BalloonPopGame extends GameRuntime {
     this.exit();
   }
 
+  public onexit() {
+    (document.getElementById("start") as HTMLButtonElement).style.display = "block";
+  }
+
+  protected resetVariables() {
+    super.resetVariables();
+    this.score = 0;
+    this.startTime = performance.now();
+  }
+
   get difficulty() {
     return (performance.now() - this.startTime) / 1000 / 100;
   }
@@ -147,15 +157,5 @@ export class BalloonPopGame extends GameRuntime {
     (document.getElementById("player-highscore") as HTMLElement).textContent = highscore.toString();
     localStorage.setItem("highscore", highscore.toString());
     this._highscore = highscore;
-  }
-
-  public onexit() {
-    (document.getElementById("start") as HTMLButtonElement).style.display = "block";
-  }
-
-  protected resetVariables() {
-    super.resetVariables();
-    this.score = 0;
-    this.startTime = performance.now();
   }
 }

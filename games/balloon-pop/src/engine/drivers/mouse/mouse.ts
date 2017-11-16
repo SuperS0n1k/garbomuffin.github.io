@@ -44,8 +44,10 @@ export class Mouse extends BaseMouse implements IMouse {
     this.left = new MouseButton(this, Button.left);
 
     runtime.canvas.addEventListener("mousemove", (e: any) => {
-      this.position.x = e.layerX;
-      this.position.y = e.layerY;
+      const offset = this.findOffset(this.runtime.canvas);
+
+      this.position.x = e.clientX - offset.x;
+      this.position.y = e.clientY - offset.y;
     });
 
     runtime.canvas.addEventListener("mousedown", (e: any) => {

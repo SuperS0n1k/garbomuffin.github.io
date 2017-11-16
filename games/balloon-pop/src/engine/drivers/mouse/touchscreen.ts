@@ -1,5 +1,4 @@
 import { GameRuntime } from "../../game";
-import { Position } from "../../position";
 import { BaseMouse, BaseMouseButton, EmptyMouseButton, IMouse, IMouseButton } from "./base";
 
 // handles mouse events
@@ -51,19 +50,5 @@ export class TouchscreenMouse extends BaseMouse implements IMouse {
 
     this.position.x = e.changedTouches[0].clientX - offset.x;
     this.position.y = e.changedTouches[0].clientY - offset.y;
-  }
-
-  // https://developer.mozilla.org/en-US/docs/Web/API/Touch_events with minor modifications
-  private findOffset(el: HTMLElement): Position {
-    let curleft = 0;
-    let curtop = 0;
-
-    while (el.offsetParent) {
-      curleft += el.offsetLeft;
-      curtop += el.offsetTop;
-      el = el.offsetParent as HTMLElement;
-    }
-
-    return new Position(curleft - document.body.scrollLeft, curtop - document.body.scrollTop);
   }
 }

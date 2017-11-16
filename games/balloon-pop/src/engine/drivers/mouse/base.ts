@@ -35,6 +35,20 @@ export class BaseMouse extends TaskRunner implements IMouse {
     this.runTasks();
   }
 
+  // https://developer.mozilla.org/en-US/docs/Web/API/Touch_events with minor modifications
+  protected findOffset(el: HTMLElement): Position {
+    let curleft = 0;
+    let curtop = 0;
+
+    while (el.offsetParent) {
+      curleft += el.offsetLeft;
+      curtop += el.offsetTop;
+      el = el.offsetParent as HTMLElement;
+    }
+
+    return new Position(curleft - document.body.scrollLeft, curtop - document.body.scrollTop);
+  }
+
   get isDown() {
     return this.left.isDown;
   }

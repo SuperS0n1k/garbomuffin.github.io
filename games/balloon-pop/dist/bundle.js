@@ -186,25 +186,7 @@ class TaskRunner {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-// a simple position class that removes some verbosity from code
-// can make for some nicer code sometimes
-class Position {
-    constructor(x = 0, y = 0, z = 0) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Position;
-
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__position__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__position__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(1);
 
 
@@ -216,6 +198,17 @@ class BaseMouse extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunner */
     }
     update() {
         this.runTasks();
+    }
+    // https://developer.mozilla.org/en-US/docs/Web/API/Touch_events with minor modifications
+    findOffset(el) {
+        let curleft = 0;
+        let curtop = 0;
+        while (el.offsetParent) {
+            curleft += el.offsetLeft;
+            curtop += el.offsetTop;
+            el = el.offsetParent;
+        }
+        return new __WEBPACK_IMPORTED_MODULE_0__position__["a" /* Position */](curleft - document.body.scrollLeft, curtop - document.body.scrollTop);
     }
     get isDown() {
         return this.left.isDown;
@@ -267,6 +260,24 @@ class EmptyMouseButton {
     update() { }
 }
 /* harmony export (immutable) */ __webpack_exports__["c"] = EmptyMouseButton;
+
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// a simple position class that removes some verbosity from code
+// can make for some nicer code sometimes
+class Position {
+    constructor(x = 0, y = 0, z = 0) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Position;
 
 
 
@@ -362,7 +373,7 @@ function run() {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_game__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_position__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_position__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_utils__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_balloon__ = __webpack_require__(13);
@@ -470,6 +481,14 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
         this.ctx.fillText("Game Over!", (this.canvas.width / 2) - width / 2, this.canvas.height / 2);
         this.exit();
     }
+    onexit() {
+        document.getElementById("start").style.display = "block";
+    }
+    resetVariables() {
+        super.resetVariables();
+        this.score = 0;
+        this.startTime = performance.now();
+    }
     get difficulty() {
         return (performance.now() - this.startTime) / 1000 / 100;
     }
@@ -490,14 +509,6 @@ class BalloonPopGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* G
         document.getElementById("player-highscore").textContent = highscore.toString();
         localStorage.setItem("highscore", highscore.toString());
         this._highscore = highscore;
-    }
-    onexit() {
-        document.getElementById("start").style.display = "block";
-    }
-    resetVariables() {
-        super.resetVariables();
-        this.score = 0;
-        this.startTime = performance.now();
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BalloonPopGame;
@@ -707,7 +718,7 @@ class Container {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(2);
 
 // handles mouse events
 // a simple "driver" for the mouse
@@ -742,8 +753,9 @@ class Mouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
         this.middle = new MouseButton(this, Button.middle);
         this.left = new MouseButton(this, Button.left);
         runtime.canvas.addEventListener("mousemove", (e) => {
-            this.position.x = e.layerX;
-            this.position.y = e.layerY;
+            const offset = this.findOffset(this.runtime.canvas);
+            this.position.x = e.clientX - offset.x;
+            this.position.y = e.clientY - offset.y;
         });
         runtime.canvas.addEventListener("mousedown", (e) => {
             e.preventDefault();
@@ -759,15 +771,13 @@ class Mouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__base__ = __webpack_require__(3);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(2);
 
 // handles mouse events
 // a simple "driver" for the mouse
 // TODO: touchscreen support
 // probably will use another "driver" that is compatible
-class TouchscreenButton extends __WEBPACK_IMPORTED_MODULE_1__base__["b" /* BaseMouseButton */] {
+class TouchscreenButton extends __WEBPACK_IMPORTED_MODULE_0__base__["b" /* BaseMouseButton */] {
     constructor(mouse) {
         super(mouse); // It's a bird! It's a plane! No it's Supermouse!
         document.addEventListener("touchstart", (e) => {
@@ -781,13 +791,13 @@ class TouchscreenButton extends __WEBPACK_IMPORTED_MODULE_1__base__["b" /* BaseM
         });
     }
 }
-class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_1__base__["a" /* BaseMouse */] {
+class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
     constructor(runtime) {
         super(runtime);
         // only the left mouse button does stuff
         this.left = new TouchscreenButton(this);
-        this.middle = new __WEBPACK_IMPORTED_MODULE_1__base__["c" /* EmptyMouseButton */]();
-        this.right = new __WEBPACK_IMPORTED_MODULE_1__base__["c" /* EmptyMouseButton */]();
+        this.middle = new __WEBPACK_IMPORTED_MODULE_0__base__["c" /* EmptyMouseButton */]();
+        this.right = new __WEBPACK_IMPORTED_MODULE_0__base__["c" /* EmptyMouseButton */]();
         // stop scrolling, zooming, or other stuff that you can do with your fingers
         this.handleEvent = this.handleEvent.bind(this);
         runtime.canvas.addEventListener("touchmove", this.handleEvent);
@@ -800,17 +810,6 @@ class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_1__base__["a" /* BaseMo
         const offset = this.findOffset(this.runtime.canvas);
         this.position.x = e.changedTouches[0].clientX - offset.x;
         this.position.y = e.changedTouches[0].clientY - offset.y;
-    }
-    // https://developer.mozilla.org/en-US/docs/Web/API/Touch_events with minor modifications
-    findOffset(el) {
-        let curleft = 0;
-        let curtop = 0;
-        while (el.offsetParent) {
-            curleft += el.offsetLeft;
-            curtop += el.offsetTop;
-            el = el.offsetParent;
-        }
-        return new __WEBPACK_IMPORTED_MODULE_0__position__["a" /* Position */](curleft - document.body.scrollLeft, curtop - document.body.scrollTop);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = TouchscreenMouse;
