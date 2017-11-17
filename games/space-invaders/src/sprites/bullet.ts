@@ -29,7 +29,7 @@ export class BulletSprite extends ImageSprite {
   }
 
   private move() {
-    const speed = this.speed;
+    const speed = BulletSprite.BASE_SPEED;
     this.y -= speed;
 
     if (this.y + this.height <= 0) {
@@ -37,9 +37,5 @@ export class BulletSprite extends ImageSprite {
       this.destroy();
       return;
     }
-  }
-
-  get speed() {
-    return BulletSprite.BASE_SPEED ** (1 + this.runtime.difficulty);
   }
 }

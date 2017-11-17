@@ -927,16 +927,13 @@ class BulletSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
         }
     }
     move() {
-        const speed = this.speed;
+        const speed = BulletSprite.BASE_SPEED;
         this.y -= speed;
         if (this.y + this.height <= 0) {
             this.runtime.score--;
             this.destroy();
             return;
         }
-    }
-    get speed() {
-        return BulletSprite.BASE_SPEED ** (1 + this.runtime.difficulty);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BulletSprite;
