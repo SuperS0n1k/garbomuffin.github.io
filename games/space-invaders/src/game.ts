@@ -1,10 +1,10 @@
 import { GameRuntime } from "./engine/game";
 import { Position } from "./engine/position";
 import { IRepeatingTaskOptions, Task } from "./engine/task";
+import { getOrDefault } from "./engine/utils";
+import { BulletSprite } from "./sprites/bullet";
 import { RocketSprite } from "./sprites/rocket";
 import { SaucerSprite } from "./sprites/saucer";
-import { BulletSprite } from "./sprites/bullet";
-import { getOrDefault } from "./engine/utils";
 
 export class SpaceInvaderGame extends GameRuntime {
   private _score: number = 0;
@@ -34,7 +34,7 @@ export class SpaceInvaderGame extends GameRuntime {
     const texture = this.getAsset("rocket");
     this.rocketSprite = new RocketSprite({
       position: new Position(100, this.canvas.height - texture.height / 10),
-      texture: texture,
+      texture,
       height: texture.height / 10, width: texture.width / 10,
     });
   }
@@ -43,9 +43,21 @@ export class SpaceInvaderGame extends GameRuntime {
     if (this.mouse.isClick) {
       this.shoot();
     }
+
+    if (
+        this.keyboard.keys[32].justPressed || // Space
+        this.keyboard.keys[90].justPressed || // Z
+        this.keyboard.keys[38].justPressed    // Up arrow
+      ) {
+      this.shoot();
+    }
   }
 
   public shoot() {
+    if (!this.rocketSprite) {
+      return;
+    }
+
     const texture = this.getAsset("bullet");
     const width = texture.width / 15;
     const height = texture.height / 15;
@@ -53,14 +65,13 @@ export class SpaceInvaderGame extends GameRuntime {
       position: new Position(this.rocketSprite.position),
       texture, width, height,
     });
-    console.log("shoot");
   }
 
   // creats a balloon in a random location above the screen
   public createEnemy(task: Task) {
     const texture = this.getAsset("saucer");
-    const width = texture.width / 15;
-    const height = texture.height / 15;
+    const width = texture.width / 20;
+    const height = texture.height / 20;
 
     const sprite = new SaucerSprite({
       position: new Position(Math.random() * (this.canvas.width - width), -height),
@@ -100,16 +111,23 @@ export class SpaceInvaderGame extends GameRuntime {
   get score() {
     return this._score;
   }
+
   set score(score) {
+    score = Math.max(score, 0);
+
     (document.getElementById("score") as HTMLElement).textContent = score.toString();
+
     if (score > this.highscore) {
       this.highscore = score;
     }
+
     this._score = score;
   }
+
   get highscore() {
     return this._highscore;
   }
+
   set highscore(highscore) {
     (document.getElementById("player-highscore") as HTMLElement).textContent = highscore.toString();
     localStorage.setItem("highscore", highscore.toString());

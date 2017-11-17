@@ -2,36 +2,38 @@ import { IImageSpriteOptions, ImageSprite } from "../engine/sprites/imagesprite"
 import { SaucerSprite } from "./saucer";
 
 export class BulletSprite extends ImageSprite {
-  public static readonly BASE_SPEED = 3;
+  public static readonly BASE_SPEED = 6;
 
   constructor(options: IImageSpriteOptions) {
     super(options);
 
-    // make it so our update task actually happens
     this.addTask(this.move);
     this.addTask(this.collision);
   }
 
   private collision() {
-    for (let sprite of this.runtime.sprites) {
-      if (sprite instanceof SaucerSprite) {
-        if (this.intersects(sprite)) {
-          this.runtime.score++;
-          sprite.destroy();
-          this.destroy();
-        }
+    for (const sprite of this.runtime.sprites) {
+      if (!(sprite instanceof SaucerSprite)) {
+        continue;
       }
+
+      if (!this.intersects(sprite)) {
+        continue;
+      }
+
+      this.runtime.score++;
+      sprite.destroy();
+      this.destroy();
+      break;
     }
   }
 
-  // called every frame a balloon exists
   private move() {
-    // move us down relavent to the difficulty
     const speed = this.speed;
     this.y -= speed;
 
-    // if we went below the screen gameover
     if (this.y + this.height <= 0) {
+      this.runtime.score--;
       this.destroy();
       return;
     }

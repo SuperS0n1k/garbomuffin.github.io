@@ -2,7 +2,7 @@ import { Container } from "./container";
 import { Position } from "./position";
 import { Scale } from "./scale";
 import { TaskRunner } from "./task";
-import { TGame, Sprite } from "./types";
+import { Sprite, TGame } from "./types";
 import { getOrDefault } from "./utils";
 
 export interface ISpriteOptions {
@@ -47,6 +47,7 @@ export abstract class AbstractSprite extends TaskRunner {
     for (const container of this.runtime.containers) {
       this._removeFromContainer(container);
     }
+    this.resetTasks(); // stop all future things from running
   }
 
   private _removeFromContainer(container: Container) {

@@ -1,4 +1,6 @@
 import { Container } from "./container";
+import { AbstractKeyboard } from "./drivers/keyboard/base";
+import { Keyboard } from "./drivers/keyboard/keyboard";
 import { Mouse } from "./drivers/mouse/mouse";
 import { TouchscreenMouse } from "./drivers/mouse/touchscreen";
 import { ExitError } from "./errors/exit";
@@ -17,6 +19,7 @@ export class GameRuntime extends TaskRunner {
   public sprites: Container;
   public containers: Container[] = [];
   public mouse: Mouse;
+  public keyboard: AbstractKeyboard;
   public canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
 
@@ -36,6 +39,8 @@ export class GameRuntime extends TaskRunner {
       console.log("using mobile mouse");
       this.mouse = new TouchscreenMouse(this);
     }
+
+    this.keyboard = new Keyboard(this);
 
     // set the current runtime on some objects
     // i dont want to do this but it works
@@ -92,11 +97,11 @@ export class GameRuntime extends TaskRunner {
   }
 
   // wait for all assets to load
-  public async waitForAssets() {
+  public waitForAssets() {
     // Promise.all will fail on an error and that is probably preferred behavior
-    await Promise.all(this._assetPromises);
-
-    console.log("loaded assets");
+    return Promise.all(this._assetPromises)
+      .then(() => console.log("loaded assets"))
+      .then(() => this._assetPromises = []);
   }
 
   // get an asset with a name
