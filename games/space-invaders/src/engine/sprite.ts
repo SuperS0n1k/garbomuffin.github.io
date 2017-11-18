@@ -1,27 +1,27 @@
 import { Container } from "./container";
-import { Position } from "./position";
-import { Scale } from "./scale";
+import { Vector } from "./vector";
+import { Vector2D } from "./vector2d";
 import { TaskRunner } from "./task";
 import { Sprite, TGame } from "./types";
 import { getOrDefault } from "./utils";
 
 export interface ISpriteOptions {
-  position: Position;
+  position: Vector;
 
   width?: number;
   height?: number;
 
-  scale?: Scale;
+  scale?: Vector2D;
 }
 
 export abstract class AbstractSprite extends TaskRunner {
   public static runtime: TGame;
   public runtime: TGame = AbstractSprite.runtime;
 
-  public position: Position;
+  public position: Vector;
   public width: number;
   public height: number;
-  public scale: Scale;
+  public scale: Vector2D;
 
   public constructor(options: ISpriteOptions) {
     super();
@@ -31,7 +31,7 @@ export abstract class AbstractSprite extends TaskRunner {
     this.width = getOrDefault(options.width, 0);
     this.height = getOrDefault(options.height, 0);
 
-    this.scale = getOrDefault(options.scale, new Scale());
+    this.scale = getOrDefault(options.scale, new Vector2D(1, 1));
 
     this.runtime.sprites.push(this);
   }
@@ -57,7 +57,7 @@ export abstract class AbstractSprite extends TaskRunner {
     }
   }
 
-  public containsPoint(p: Position) {
+  public containsPoint(p: Vector) {
     return p.x > this.x &&
       p.x < this.x + this.width &&
       p.y > this.y &&

@@ -1,4 +1,4 @@
-import { GameRuntime } from "../../game";
+import { GameRuntime } from "../../runtime";
 import { BaseMouse, BaseMouseButton, IMouse, IMouseButton } from "./base";
 
 // handles mouse events

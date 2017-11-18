@@ -1,4 +1,4 @@
-import { GameRuntime } from "../../game";
+import { GameRuntime } from "../../runtime";
 import { AbstractKeyboard } from "./base";
 
 export class Keyboard extends AbstractKeyboard {

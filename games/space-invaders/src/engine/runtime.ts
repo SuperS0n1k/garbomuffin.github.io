@@ -165,10 +165,17 @@ export class GameRuntime extends TaskRunner {
     // clear the canvas
     this.resetCanvas();
 
+    // sort sprites by z TODO: find a better for to do this
+    this.sortSprites();
+
     // render all sprites onto our canvas
     for (const sprite of this.sprites) {
       sprite.render(this.ctx);
     }
+  }
+
+  private sortSprites() {
+    this.sprites.sort();
   }
 
   // throws an error that is handled gracefully by the update function

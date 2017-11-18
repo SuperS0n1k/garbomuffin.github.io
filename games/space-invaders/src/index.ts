@@ -1,7 +1,5 @@
 import { SpaceInvaderGame } from "./game";
 
-import { Position } from "./engine/position";
-import { Scale } from "./engine/scale";
 import { Task } from "./engine/task";
 
 import { BulletSprite } from "./sprites/bullet";

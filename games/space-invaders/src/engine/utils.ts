@@ -16,10 +16,6 @@ export function getOrDefault(obj: any, def: any) {
 }
 
 // https://stackoverflow.com/a/697841
-export function decimalToHex(number: number) {
-  if (number < 0) {
-    number = 0xFFFFFFFF + number + 1;
-  }
-
+export function toHex(number: number) {
   return number.toString(16).toUpperCase();
 }

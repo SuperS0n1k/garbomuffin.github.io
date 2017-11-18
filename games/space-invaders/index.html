@@ -9,15 +9,13 @@
         border: 1px black solid;
       }
 
+      button {
+        padding: 10px;
+      }
+
       th {
         vertical-align: top;
         text-align: left;
-      }
-
-      .play-stats {
-        list-style: none;
-        padding-left: 10px;
-        margin-top: 0;
       }
 
       .start {
@@ -39,7 +37,7 @@
   </head>
 
   <body>
-    <h1>Space Invaders (v0.1)
+    <h1>Space Invaders (v0.2)
     </h1>
 
     <table>
@@ -48,16 +46,22 @@
           <canvas id="canvas" width="360" height="480"></canvas>
           <button id="start" class="start">Start</button>
         </th>
-
-        <th>
-          <ul class="play-stats">
-            <li>Score: <span id="score">0</span></li>
-            <li>Your Highscore: <span id="player-highscore">0</span></li>
-            <li>Global Highscore: <span id="global-highscore">0</span> (beta)</li>
-          </ul>
-        </th>
       </tr>
     </table>
+
+    <h3>How to play:</h3>
+    <ul>
+      <li>Move with either arrow keys or your mouse</li>
+      <li>Shoot by clicking or pressing space or up or z</li>
+      <li>Score by shooting the aliens</li>
+      <li>Shots that miss will deduct points</li>
+      <li>Don't let the aliens reach the bottom</li>
+    </ul>
+
+    <h3>Things to still implement:</h3>
+    <ul>
+      <li>Better game over screen</li>
+    </ul>
 
     <script src="dist/bundle.js"></script>
   </body>

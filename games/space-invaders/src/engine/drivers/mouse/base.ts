@@ -1,5 +1,5 @@
-import { GameRuntime } from "../../game";
-import { Position } from "../../position";
+import { GameRuntime } from "../../runtime";
+import { Vector } from "../../vector";
 import { TaskRunner } from "../../task";
 
 export interface IMouseButton {
@@ -15,7 +15,7 @@ export interface IMouse extends IMouseButton {
   left: IMouseButton;
   right: IMouseButton;
   middle: IMouseButton;
-  position: Position;
+  position: Vector;
 }
 
 export class BaseMouse extends TaskRunner implements IMouse {
@@ -23,7 +23,7 @@ export class BaseMouse extends TaskRunner implements IMouse {
   public right: IMouseButton;
   public middle: IMouseButton;
   public left: IMouseButton;
-  public position: Position = new Position(0, 0);
+  public position: Vector = new Vector(0, 0);
 
   constructor(runtime: GameRuntime) {
     super();

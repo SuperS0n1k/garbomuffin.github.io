@@ -3,8 +3,10 @@
 // these were used more heavily in my older games
 // currently only one of these are used: the sprites list
 
-import { GameRuntime } from "./game";
+import { GameRuntime } from "./runtime";
 import { Sprite, TGame } from "./types";
+
+import "../3rd-party/stableSort";
 
 export class Container<T extends Sprite = Sprite> {
   public static runtime: TGame;
@@ -23,5 +25,11 @@ export class Container<T extends Sprite = Sprite> {
     for (const sprite of this.sprites) {
       yield sprite;
     }
+  }
+
+  public sort() {
+    this.sprites.stableSort((a, b) => {
+      return a.position.z - b.position.z;
+    });
   }
 }

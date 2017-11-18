@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,7 +70,7 @@
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["b"] = isMobile;
 /* harmony export (immutable) */ __webpack_exports__["a"] = getOrDefault;
-/* unused harmony export decimalToHex */
+/* harmony export (immutable) */ __webpack_exports__["c"] = toHex;
 // https://stackoverflow.com/a/3540295
 // tests if the device is probably a mobile phone
 function isMobile() {
@@ -88,10 +88,7 @@ function getOrDefault(obj, def) {
     }
 }
 // https://stackoverflow.com/a/697841
-function decimalToHex(number) {
-    if (number < 0) {
-        number = 0xFFFFFFFF + number + 1;
-    }
+function toHex(number) {
     return number.toString(16).toUpperCase();
 }
 
@@ -181,23 +178,22 @@ class TaskRunner {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector2d__ = __webpack_require__(7);
+
 // a simple position class that removes some verbosity from code
 // can make for some nicer code sometimes
-class Position {
+class Vector extends __WEBPACK_IMPORTED_MODULE_0__vector2d__["a" /* Vector2D */] {
     constructor(x = 0, y = 0, z = 0) {
+        super(x, y);
         if (typeof x === "object") {
-            this.x = x.x;
-            this.y = x.y;
             this.z = x.z;
         }
         else {
-            this.x = x;
-            this.y = y;
             this.z = z;
         }
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Position;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Vector;
 
 
 
@@ -206,7 +202,79 @@ class Position {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector2d__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(0);
+
+
+
+class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunner */] {
+    constructor(options) {
+        super();
+        this.runtime = AbstractSprite.runtime;
+        this.position = options.position;
+        this.width = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getOrDefault */])(options.width, 0);
+        this.height = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getOrDefault */])(options.height, 0);
+        this.scale = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getOrDefault */])(options.scale, new __WEBPACK_IMPORTED_MODULE_0__vector2d__["a" /* Vector2D */](1, 1));
+        this.runtime.sprites.push(this);
+    }
+    update() {
+        this.runTasks();
+    }
+    destroy() {
+        this._removeFromContainer(this.runtime.sprites);
+        for (const container of this.runtime.containers) {
+            this._removeFromContainer(container);
+        }
+        this.resetTasks(); // stop all future things from running
+    }
+    _removeFromContainer(container) {
+        const index = container.sprites.indexOf(this);
+        if (index > -1) {
+            container.sprites.splice(index, 1);
+        }
+    }
+    containsPoint(p) {
+        return p.x > this.x &&
+            p.x < this.x + this.width &&
+            p.y > this.y &&
+            p.y < this.y + this.height;
+    }
+    intersects(sprite) {
+        return this.x < sprite.x + sprite.width &&
+            this.x + this.width > sprite.x &&
+            this.y < sprite.y + sprite.height &&
+            this.y + this.height > sprite.y;
+    }
+    get x() {
+        return this.position.x;
+    }
+    set x(x) {
+        this.position.x = x;
+    }
+    get y() {
+        return this.position.y;
+    }
+    set y(y) {
+        this.position.y = y;
+    }
+    get z() {
+        return this.position.z;
+    }
+    set z(z) {
+        this.position.z = z;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractSprite;
+
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
 
 
@@ -227,18 +295,50 @@ class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractS
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__position__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__color__ = __webpack_require__(21);
+
+
+
+class TextSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
+    constructor(options) {
+        super(options);
+        this.text = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.text, "");
+        this.fontSize = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.fontSize, 10);
+        this.fontFamily = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.fontFamily, "sans-serif");
+        this.color = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.color, new __WEBPACK_IMPORTED_MODULE_2__color__["a" /* NamedColor */]("black"));
+    }
+    get font() {
+        return `${this.fontSize}px ${this.fontFamily}`;
+    }
+    render(ctx) {
+        ctx.font = this.font;
+        ctx.fillStyle = this.color.toString();
+        ctx.fillText(this.text, this.x, this.y);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = TextSprite;
+
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(1);
 
 
 class BaseMouse extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunner */] {
     constructor(runtime) {
         super();
-        this.position = new __WEBPACK_IMPORTED_MODULE_0__position__["a" /* Position */](0, 0);
+        this.position = new __WEBPACK_IMPORTED_MODULE_0__vector__["a" /* Vector */](0, 0);
         this.runtime = runtime;
     }
     update() {
@@ -298,110 +398,68 @@ class EmptyMouseButton {
 
 
 /***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__scale__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(0);
-
-
-
-class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunner */] {
-    constructor(options) {
-        super();
-        this.runtime = AbstractSprite.runtime;
-        this.position = options.position;
-        this.width = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getOrDefault */])(options.width, 0);
-        this.height = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getOrDefault */])(options.height, 0);
-        this.scale = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getOrDefault */])(options.scale, new __WEBPACK_IMPORTED_MODULE_0__scale__["a" /* Scale */]());
-        this.runtime.sprites.push(this);
-    }
-    update() {
-        this.runTasks();
-    }
-    destroy() {
-        this._removeFromContainer(this.runtime.sprites);
-        for (const container of this.runtime.containers) {
-            this._removeFromContainer(container);
-        }
-        this.resetTasks(); // stop all future things from running
-    }
-    _removeFromContainer(container) {
-        const index = container.sprites.indexOf(this);
-        if (index > -1) {
-            container.sprites.splice(index, 1);
-        }
-    }
-    containsPoint(p) {
-        return p.x > this.x &&
-            p.x < this.x + this.width &&
-            p.y > this.y &&
-            p.y < this.y + this.height;
-    }
-    intersects(sprite) {
-        return this.x < sprite.x + sprite.width &&
-            this.x + this.width > sprite.x &&
-            this.y < sprite.y + sprite.height &&
-            this.y + this.height > sprite.y;
-    }
-    get x() {
-        return this.position.x;
-    }
-    set x(x) {
-        this.position.x = x;
-    }
-    get y() {
-        return this.position.y;
-    }
-    set y(y) {
-        this.position.y = y;
-    }
-    get z() {
-        return this.position.z;
-    }
-    set z(z) {
-        this.position.z = z;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractSprite;
-
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(3);
-
-class SaucerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
-    constructor(options) {
-        super(options);
-        this.addTask(this.move);
-    }
-    move() {
-        this.y += this.speed;
-        if (this.y >= this.runtime.canvas.height) {
-            this.runtime.gameover();
-        }
-    }
-    get speed() {
-        return 3;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = SaucerSprite;
-
-
-
-/***/ }),
 /* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+class Vector2D {
+    constructor(x = 0, y = 0) {
+        if (typeof x === "object") {
+            this.x = x.x;
+            this.y = x.y;
+        }
+        else {
+            this.x = x;
+            this.y = y;
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Vector2D;
+
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+
+class SaucerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
+    constructor(options) {
+        super(options);
+        this.hSpeed = options.hSpeed;
+        this.addTask(this.move);
+    }
+    shouldDeductHealth() {
+        return this.intersects(this.runtime.rocketSprite) ||
+            this.y >= this.runtime.canvas.height;
+    }
+    move() {
+        this.y += SaucerSprite.Y_SPEED;
+        if (this.shouldDeductHealth()) {
+            this.runtime.lives--;
+            this.destroy();
+            return;
+        }
+        this.x += this.hSpeed;
+        if (this.x <= 0 || this.x + this.width >= this.runtime.canvas.width) {
+            this.hSpeed = -this.hSpeed;
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = SaucerSprite;
+
+SaucerSprite.Y_SPEED = 3;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(10);
 
 const game = new __WEBPACK_IMPORTED_MODULE_0__game__["a" /* SpaceInvaderGame */]();
 // add in all of our assets
@@ -419,17 +477,21 @@ function run() {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_game__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_position__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_runtime__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_bullet__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_rocket__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_saucer__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_bullet__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_rocket__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_saucer__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_text_highscore__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_text_score__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_text_lives__ = __webpack_require__(24);
 
 
 
@@ -437,9 +499,14 @@ function run() {
 
 
 
-class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /* GameRuntime */] {
+
+
+
+
+class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* GameRuntime */] {
     constructor() {
         super(document.getElementById("canvas"));
+        this._lives = 3;
         this._score = 0;
         this._highscore = 0;
         this.lastKnownGlobalHighscore = 0;
@@ -457,10 +524,25 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
         super.start();
         const texture = this.getAsset("rocket");
         this.rocketSprite = new __WEBPACK_IMPORTED_MODULE_5__sprites_rocket__["a" /* RocketSprite */]({
-            position: new __WEBPACK_IMPORTED_MODULE_1__engine_position__["a" /* Position */](100, this.canvas.height - texture.height / 10),
+            position: new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](100, this.canvas.height - texture.height / 10),
             texture,
             height: texture.height / 10, width: texture.width / 10,
         });
+        this.createStatsDisplay();
+    }
+    createStatsDisplay() {
+        const sprites = [
+            __WEBPACK_IMPORTED_MODULE_7__sprites_text_highscore__["a" /* HighscoreTextSprite */], __WEBPACK_IMPORTED_MODULE_8__sprites_text_score__["a" /* ScoreTextSprite */], __WEBPACK_IMPORTED_MODULE_10__sprites_text_lives__["a" /* LivesTextSprite */],
+        ];
+        const fontSize = 25;
+        for (let i = 0; i < sprites.length; i++) {
+            const y = (i + 1) * fontSize + 5;
+            const x = 0;
+            new sprites[i]({
+                position: new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](x, y, 10),
+                fontSize,
+            });
+        }
     }
     detectShooting() {
         if (this.mouse.isClick) {
@@ -481,7 +563,7 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
         const width = texture.width / 15;
         const height = texture.height / 15;
         new __WEBPACK_IMPORTED_MODULE_4__sprites_bullet__["a" /* BulletSprite */]({
-            position: new __WEBPACK_IMPORTED_MODULE_1__engine_position__["a" /* Position */](this.rocketSprite.position),
+            position: new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](this.rocketSprite.position),
             texture, width, height,
         });
     }
@@ -491,7 +573,8 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
         const width = texture.width / 20;
         const height = texture.height / 20;
         const sprite = new __WEBPACK_IMPORTED_MODULE_6__sprites_saucer__["a" /* SaucerSprite */]({
-            position: new __WEBPACK_IMPORTED_MODULE_1__engine_position__["a" /* Position */](Math.random() * (this.canvas.width - width), -height),
+            position: new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](Object(__WEBPACK_IMPORTED_MODULE_9__utils__["a" /* getRandomInt */])(0, this.canvas.width - width), -height),
+            hSpeed: Object(__WEBPACK_IMPORTED_MODULE_9__utils__["a" /* getRandomInt */])(-5000, 5000) / 1000,
             height, width, texture,
         });
         // difficulty scaling
@@ -506,6 +589,7 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
     // renders a game over screen and stops the game
     gameover() {
         this.resetCanvas();
+        // TODO: consider using a TextSprite?
         this.ctx.font = "50px Arial";
         this.ctx.fillStyle = "black";
         const text = "Game Over!";
@@ -521,7 +605,6 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
     }
     set score(score) {
         score = Math.max(score, 0);
-        document.getElementById("score").textContent = score.toString();
         if (score > this.highscore) {
             this.highscore = score;
         }
@@ -531,9 +614,19 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
         return this._highscore;
     }
     set highscore(highscore) {
-        document.getElementById("player-highscore").textContent = highscore.toString();
         localStorage.setItem("highscore", highscore.toString());
         this._highscore = highscore;
+    }
+    get lives() {
+        return this._lives;
+    }
+    set lives(lives) {
+        if (lives <= 0) {
+            this.gameover();
+        }
+        else {
+            this._lives = lives;
+        }
     }
     onexit() {
         document.getElementById("start").style.display = "block";
@@ -549,16 +642,16 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_game__["a" /*
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__container__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__drivers_keyboard_keyboard__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_mouse__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__drivers_mouse_touchscreen__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errors_exit__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprite__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__container__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__drivers_keyboard_keyboard__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_mouse__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__drivers_mouse_touchscreen__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errors_exit__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprite__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__task__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils__ = __webpack_require__(0);
 
@@ -691,10 +784,15 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
     render() {
         // clear the canvas
         this.resetCanvas();
+        // sort sprites by z TODO: find a better for to do this
+        this.sortSprites();
         // render all sprites onto our canvas
         for (const sprite of this.sprites) {
             sprite.render(this.ctx);
         }
+    }
+    sortSprites() {
+        this.sprites.sort();
     }
     // throws an error that is handled gracefully by the update function
     // stops ALL execution
@@ -723,14 +821,17 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__);
 // a container contains sprites
 // isn't that earth shattering or what?
 // these were used more heavily in my older games
 // currently only one of these are used: the sprites list
+
 class Container {
     constructor() {
         this.runtime = Container.runtime;
@@ -745,17 +846,91 @@ class Container {
             yield sprite;
         }
     }
+    sort() {
+        this.sprites.stableSort((a, b) => {
+            return a.position.z - b.position.z;
+        });
+    }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Container;
 
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(14);
+
+class Keyboard extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* AbstractKeyboard */] {
+    constructor(runtime) {
+        super(runtime);
+        document.addEventListener("keydown", (e) => {
+            const keyCode = e.keyCode;
+            this.keys[keyCode].isPressed = true;
+        });
+        document.addEventListener("keyup", (e) => {
+            const keyCode = e.keyCode;
+            this.keys[keyCode].isPressed = false;
+        });
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Keyboard;
+
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__task__ = __webpack_require__(1);
+
+class AbstractKeyboard extends __WEBPACK_IMPORTED_MODULE_0__task__["b" /* TaskRunner */] {
+    constructor(runtime) {
+        super();
+        this.keys = [];
+        runtime.addTask(this.update.bind(this));
+        for (let i = 0; i < AbstractKeyboard.KEY_COUNT; i++) {
+            this.keys[i] = new Key(this, i);
+        }
+    }
+    update() {
+        this.runTasks();
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractKeyboard;
+
+AbstractKeyboard.KEY_COUNT = 256;
+class Key {
+    constructor(keyboard, keyCode) {
+        this.isPressed = false;
+        this.framesDown = 0;
+        keyboard.addTask(this.update.bind(this));
+    }
+    update() {
+        if (this.isPressed) {
+            this.framesDown++;
+        }
+        else {
+            this.framesDown = 0;
+        }
+    }
+    get justPressed() {
+        return this.framesDown === 1;
+    }
+}
+/* unused harmony export Key */
+
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(6);
 
 // handles mouse events
 // a simple "driver" for the mouse
@@ -803,19 +978,19 @@ class Mouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
 
 
 /***/ }),
-/* 12 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__base__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__vector__ = __webpack_require__(2);
 
 
 // handles mouse events
 // a simple "driver" for the mouse
 // TODO: touchscreen support
 // probably will use another "driver" that is compatible
-class TouchscreenButton extends __WEBPACK_IMPORTED_MODULE_1__base__["b" /* BaseMouseButton */] {
+class TouchscreenButton extends __WEBPACK_IMPORTED_MODULE_0__base__["b" /* BaseMouseButton */] {
     constructor(mouse) {
         super(mouse); // It's a bird! It's a plane! No it's Supermouse!
         document.addEventListener("touchstart", (e) => {
@@ -829,13 +1004,13 @@ class TouchscreenButton extends __WEBPACK_IMPORTED_MODULE_1__base__["b" /* BaseM
         });
     }
 }
-class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_1__base__["a" /* BaseMouse */] {
+class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
     constructor(runtime) {
         super(runtime);
         // only the left mouse button does stuff
         this.left = new TouchscreenButton(this);
-        this.middle = new __WEBPACK_IMPORTED_MODULE_1__base__["c" /* EmptyMouseButton */]();
-        this.right = new __WEBPACK_IMPORTED_MODULE_1__base__["c" /* EmptyMouseButton */]();
+        this.middle = new __WEBPACK_IMPORTED_MODULE_0__base__["c" /* EmptyMouseButton */]();
+        this.right = new __WEBPACK_IMPORTED_MODULE_0__base__["c" /* EmptyMouseButton */]();
         // stop scrolling, zooming, or other stuff that you can do with your fingers
         this.handleEvent = this.handleEvent.bind(this);
         runtime.canvas.addEventListener("touchmove", this.handleEvent);
@@ -858,7 +1033,7 @@ class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_1__base__["a" /* BaseMo
             curtop += el.offsetTop;
             el = el.offsetParent;
         }
-        return new __WEBPACK_IMPORTED_MODULE_0__position__["a" /* Position */](curleft - document.body.scrollLeft, curtop - document.body.scrollTop);
+        return new __WEBPACK_IMPORTED_MODULE_1__vector__["a" /* Vector */](curleft - document.body.scrollLeft, curtop - document.body.scrollTop);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = TouchscreenMouse;
@@ -866,7 +1041,7 @@ class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_1__base__["a" /* BaseMo
 
 
 /***/ }),
-/* 13 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -882,28 +1057,12 @@ class ExitError extends Error {
 
 
 /***/ }),
-/* 14 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-// used in rendering. could be used as a coordinate although you should use Position for that
-class Scale {
-    constructor(x = 1, y = x) {
-        this.x = x;
-        this.y = y;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Scale;
-
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__saucer__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__saucer__ = __webpack_require__(8);
 
 
 class BulletSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
@@ -942,11 +1101,11 @@ BulletSprite.BASE_SPEED = 6;
 
 
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
 
 class RocketSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
     constructor(options) {
@@ -998,73 +1157,152 @@ RocketSprite.KB_FRICTION = 0.75;
 
 
 /***/ }),
-/* 17 */,
-/* 18 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(5);
 
-class Keyboard extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* AbstractKeyboard */] {
-    constructor(runtime) {
-        super(runtime);
-        document.addEventListener("keydown", (e) => {
-            const keyCode = e.keyCode;
-            this.keys[keyCode].isPressed = true;
-        });
-        document.addEventListener("keyup", (e) => {
-            const keyCode = e.keyCode;
-            this.keys[keyCode].isPressed = false;
-        });
+class HighscoreTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__["a" /* TextSprite */] {
+    constructor(options) {
+        super(options);
+        this.addTask(this.updateText);
+    }
+    updateText() {
+        this.text = `Highscore: ${this.runtime.highscore}`;
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Keyboard;
+/* harmony export (immutable) */ __webpack_exports__["a"] = HighscoreTextSprite;
 
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__task__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(0);
 
-class AbstractKeyboard extends __WEBPACK_IMPORTED_MODULE_0__task__["b" /* TaskRunner */] {
-    constructor(runtime) {
-        super();
-        this.keys = [];
-        runtime.addTask(this.update.bind(this));
-        for (let i = 0; i < AbstractKeyboard.KEY_COUNT; i++) {
-            this.keys[i] = new Key(this, i);
-        }
+// TODO: implement
+// should support inputting individual r, g, b colors
+// inputting a hex code like #ABCDEF
+// inputting a color name like black
+class Color {
+}
+/* unused harmony export Color */
+
+class RGBColor {
+    constructor(r = 0, g = 0, b = 0) {
+        this.red = r;
+        this.green = g;
+        this.blue = b;
     }
-    update() {
-        this.runTasks();
+    toString() {
+        return `#${Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* toHex */])(this.red)}${Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* toHex */])(this.green)}${Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* toHex */])(this.red)}`;
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractKeyboard;
+/* unused harmony export RGBColor */
 
-AbstractKeyboard.KEY_COUNT = 256;
-class Key {
-    constructor(keyboard, keyCode) {
-        this.isPressed = false;
-        this.framesDown = 0;
-        keyboard.addTask(this.update.bind(this));
+class NamedColor {
+    constructor(color) {
+        this.color = color;
     }
-    update() {
-        if (this.isPressed) {
-            this.framesDown++;
-        }
-        else {
-            this.framesDown = 0;
-        }
-    }
-    get justPressed() {
-        return this.framesDown === 1;
+    toString() {
+        return this.color;
     }
 }
-/* unused harmony export Key */
+/* harmony export (immutable) */ __webpack_exports__["a"] = NamedColor;
 
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(5);
+
+class ScoreTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__["a" /* TextSprite */] {
+    constructor(options) {
+        super(options);
+        this.addTask(this.updateText);
+    }
+    updateText() {
+        this.text = `Score: ${this.runtime.score}`;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ScoreTextSprite;
+
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getRandomInt;
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(5);
+
+class LivesTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__["a" /* TextSprite */] {
+    constructor(options) {
+        super(options);
+        this.addTask(this.updateText);
+    }
+    updateText() {
+        this.text = `Lives: ${this.runtime.lives}`;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = LivesTextSprite;
+
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// https://gist.github.com/fsufitch/18bb4692d5f46b649890f8fd58765fbc
+let defaultCmp = (a, b) => {
+    if (a < b) {
+        return -1;
+    }
+    else if (a > b) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+};
+Array.prototype.stableSort = function (cmp = defaultCmp) {
+    const self = this; // for typing
+    const stabilized = self.map((el, index) => ([el, index]));
+    const stableCmp = (a, b) => {
+        const order = cmp(a[0], b[0]);
+        if (order !== 0) {
+            return order;
+        }
+        return a[1] - b[1];
+    };
+    stabilized.sort(stableCmp);
+    for (let i = 0; i < self.length; i++) {
+        self[i] = stabilized[i][0];
+    }
+    return self;
+};
 
 
 /***/ })

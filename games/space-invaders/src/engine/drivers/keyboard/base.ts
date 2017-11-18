@@ -1,4 +1,4 @@
-import { GameRuntime } from "../../game";
+import { GameRuntime } from "../../runtime";
 import { TaskRunner } from "../../task";
 
 export abstract class AbstractKeyboard extends TaskRunner {

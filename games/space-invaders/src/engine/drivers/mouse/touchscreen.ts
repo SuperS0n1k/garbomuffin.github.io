@@ -1,6 +1,6 @@
-import { GameRuntime } from "../../game";
-import { Position } from "../../position";
+import { GameRuntime } from "../../runtime";
 import { BaseMouse, BaseMouseButton, EmptyMouseButton, IMouse, IMouseButton } from "./base";
+import { Vector } from "../../vector";
 
 // handles mouse events
 // a simple "driver" for the mouse
@@ -54,7 +54,7 @@ export class TouchscreenMouse extends BaseMouse implements IMouse {
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/API/Touch_events with minor modifications
-  private findOffset(el: HTMLElement): Position {
+  private findOffset(el: HTMLElement): Vector {
     let curleft = 0;
     let curtop = 0;
 
@@ -64,6 +64,6 @@ export class TouchscreenMouse extends BaseMouse implements IMouse {
       el = el.offsetParent as HTMLElement;
     }
 
-    return new Position(curleft - document.body.scrollLeft, curtop - document.body.scrollTop);
+    return new Vector(curleft - document.body.scrollLeft, curtop - document.body.scrollTop);
   }
 }

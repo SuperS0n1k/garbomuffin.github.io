@@ -1,17 +1,23 @@
-import { GameRuntime } from "./engine/game";
-import { Position } from "./engine/position";
+import { GameRuntime } from "./engine/runtime";
+import { Vector } from "./engine/vector";
 import { IRepeatingTaskOptions, Task } from "./engine/task";
 import { getOrDefault } from "./engine/utils";
 import { BulletSprite } from "./sprites/bullet";
 import { RocketSprite } from "./sprites/rocket";
 import { SaucerSprite } from "./sprites/saucer";
+import { TextSprite } from "./engine/sprites/textsprite";
+import { HighscoreTextSprite } from "./sprites/text/highscore";
+import { ScoreTextSprite } from "./sprites/text/score";
+import { getRandomInt } from "./utils";
+import { LivesTextSprite } from "./sprites/text/lives";
 
 export class SpaceInvaderGame extends GameRuntime {
+  private _lives: number = 3;
   private _score: number = 0;
   private _highscore: number = 0;
   private lastKnownGlobalHighscore: number = 0;
   private startTime: number = performance.now();
-  private rocketSprite: RocketSprite;
+  public rocketSprite: RocketSprite;
 
   constructor() {
     super(document.getElementById("canvas") as HTMLCanvasElement);
@@ -33,10 +39,29 @@ export class SpaceInvaderGame extends GameRuntime {
 
     const texture = this.getAsset("rocket");
     this.rocketSprite = new RocketSprite({
-      position: new Position(100, this.canvas.height - texture.height / 10),
+      position: new Vector(100, this.canvas.height - texture.height / 10),
       texture,
       height: texture.height / 10, width: texture.width / 10,
     });
+
+    this.createStatsDisplay();
+  }
+
+  private createStatsDisplay() {
+    const sprites: Array<typeof TextSprite> = [
+      HighscoreTextSprite, ScoreTextSprite, LivesTextSprite,
+    ];
+    const fontSize = 25;
+
+    for (let i = 0; i < sprites.length; i++) {
+      const y = (i + 1) * fontSize + 5;
+      const x = 0;
+
+      new sprites[i]({
+        position: new Vector(x, y, 10),
+        fontSize,
+      });
+    }
   }
 
   public detectShooting() {
@@ -62,7 +87,7 @@ export class SpaceInvaderGame extends GameRuntime {
     const width = texture.width / 15;
     const height = texture.height / 15;
     new BulletSprite({
-      position: new Position(this.rocketSprite.position),
+      position: new Vector(this.rocketSprite.position),
       texture, width, height,
     });
   }
@@ -74,7 +99,8 @@ export class SpaceInvaderGame extends GameRuntime {
     const height = texture.height / 20;
 
     const sprite = new SaucerSprite({
-      position: new Position(Math.random() * (this.canvas.width - width), -height),
+      position: new Vector(getRandomInt(0, this.canvas.width - width), -height),
+      hSpeed: getRandomInt(-5000, 5000) / 1000,
       height, width, texture,
     });
 
@@ -92,6 +118,8 @@ export class SpaceInvaderGame extends GameRuntime {
   // renders a game over screen and stops the game
   public gameover() {
     this.resetCanvas();
+
+    // TODO: consider using a TextSprite?
 
     this.ctx.font = "50px Arial";
     this.ctx.fillStyle = "black";
@@ -115,8 +143,6 @@ export class SpaceInvaderGame extends GameRuntime {
   set score(score) {
     score = Math.max(score, 0);
 
-    (document.getElementById("score") as HTMLElement).textContent = score.toString();
-
     if (score > this.highscore) {
       this.highscore = score;
     }
@@ -129,9 +155,20 @@ export class SpaceInvaderGame extends GameRuntime {
   }
 
   set highscore(highscore) {
-    (document.getElementById("player-highscore") as HTMLElement).textContent = highscore.toString();
     localStorage.setItem("highscore", highscore.toString());
     this._highscore = highscore;
+  }
+
+  get lives() {
+    return this._lives;
+  }
+
+  set lives(lives) {
+    if (lives <= 0) {
+      this.gameover();
+    } else {
+      this._lives = lives;
+    }
   }
 
   public onexit() {

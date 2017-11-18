@@ -1,21 +1,40 @@
 import { IImageSpriteOptions, ImageSprite } from "../engine/sprites/imagesprite";
 
+export interface ISaucerSpriteOptions extends IImageSpriteOptions {
+  hSpeed: number;
+}
+
 export class SaucerSprite extends ImageSprite {
-  constructor(options: IImageSpriteOptions) {
+  public static readonly Y_SPEED = 3;
+
+  private hSpeed: number;
+
+  constructor(options: ISaucerSpriteOptions) {
     super(options);
+
+    this.hSpeed = options.hSpeed;
 
     this.addTask(this.move);
   }
 
-  private move() {
-    this.y += this.speed;
-
-    if (this.y >= this.runtime.canvas.height) {
-      this.runtime.gameover();
-    }
+  private shouldDeductHealth() {
+    return this.intersects(this.runtime.rocketSprite) ||
+      this.y >= this.runtime.canvas.height;
   }
 
-  get speed() {
-    return 3;
+  private move() {
+    this.y += SaucerSprite.Y_SPEED;
+
+    if (this.shouldDeductHealth()) {
+      this.runtime.lives--;
+      this.destroy();
+      return;
+    }
+
+    this.x += this.hSpeed;
+
+    if (this.x <= 0 || this.x + this.width >= this.runtime.canvas.width) {
+      this.hSpeed = -this.hSpeed;
+    }
   }
 }
