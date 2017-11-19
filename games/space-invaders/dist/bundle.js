@@ -562,12 +562,26 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
         if (this.mouse.isClick) {
             this.shoot();
         }
-        if (this.keyboard.keys[32].justPressed || // Space
-            this.keyboard.keys[90].justPressed || // Z
-            this.keyboard.keys[38].justPressed // Up arrow
-        ) {
+        const space = this.keyboard.keys[32];
+        const z = this.keyboard.keys[90];
+        const up = this.keyboard.keys[38];
+        if (space.justPressed || z.justPressed || up.justPressed) {
             this.shoot();
         }
+        const testRapidfire = (key) => {
+            if (key.framesDown > 1 && key.framesDown % 10 === 0) {
+                this.shoot();
+            }
+        };
+        testRapidfire(space);
+        testRapidfire(z);
+        testRapidfire(up);
+        // if (this.keyboard.keys[32].framesDown % 10 === 0 || // Space
+        //     this.keyboard.keys[90].framesDown > 1 || // Z
+        //     this.keyboard.keys[38].framesDown > 1    // Up arrow)
+        //    ) {
+        //   this.shoot();
+        // }
     }
     shoot() {
         if (!this.rocketSprite) {

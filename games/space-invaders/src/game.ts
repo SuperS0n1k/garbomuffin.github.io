@@ -11,6 +11,7 @@ import { ScoreTextSprite } from "./sprites/text/score";
 import { getRandomInt } from "./utils";
 import { LivesTextSprite } from "./sprites/text/lives";
 import { GlobalHighscoreTextSprite } from "./sprites/text/globalhighscore";
+import { Key } from "./engine/drivers/keyboard/base";
 
 export class SpaceInvaderGame extends GameRuntime {
   private _lives: number = 3;
@@ -85,13 +86,30 @@ export class SpaceInvaderGame extends GameRuntime {
       this.shoot();
     }
 
-    if (
-        this.keyboard.keys[32].justPressed || // Space
-        this.keyboard.keys[90].justPressed || // Z
-        this.keyboard.keys[38].justPressed    // Up arrow
-      ) {
+    const space = this.keyboard.keys[32];
+    const z = this.keyboard.keys[90];
+    const up = this.keyboard.keys[38];
+
+    if (space.justPressed || z.justPressed || up.justPressed) {
       this.shoot();
     }
+
+    const testRapidfire = (key: Key) => {
+      if (key.framesDown > 1 && key.framesDown % 10 === 0) {
+        this.shoot();
+      }
+    };
+
+    testRapidfire(space);
+    testRapidfire(z);
+    testRapidfire(up);
+
+    // if (this.keyboard.keys[32].framesDown % 10 === 0 || // Space
+    //     this.keyboard.keys[90].framesDown > 1 || // Z
+    //     this.keyboard.keys[38].framesDown > 1    // Up arrow)
+    //    ) {
+    //   this.shoot();
+    // }
   }
 
   public shoot() {
