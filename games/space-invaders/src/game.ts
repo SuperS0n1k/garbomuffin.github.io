@@ -38,7 +38,7 @@ export class SpaceInvaderGame extends GameRuntime {
     // see if we beat the global highscore every second
     this.addTask(new Task({
       run: this.checkForNewGlobalHighscore,
-      repeatEvery: 60,
+      repeatEvery: 60, // 1 second
     }));
 
     this.score = 0;
@@ -220,6 +220,7 @@ export class SpaceInvaderGame extends GameRuntime {
         "Content-Type": "application/json",
       },
     };
+    this.globalHighscore = score;
     return fetch(`${this.highscoreServer}/set`, opts as any);
   }
 

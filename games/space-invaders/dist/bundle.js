@@ -672,6 +672,7 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
                 "Content-Type": "application/json",
             },
         };
+        this.globalHighscore = score;
         return fetch(`${this.highscoreServer}/set`, opts);
     }
     checkForNewGlobalHighscore() {
