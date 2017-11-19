@@ -18,7 +18,7 @@
         text-align: left;
       }
 
-      .start {
+      #start {
         width: 100%;
       }
     </style>
@@ -44,7 +44,9 @@
       <tr>
         <th>
           <canvas id="canvas" width="360" height="480"></canvas>
-          <button id="start" class="start">Start</button>
+          <button id="start">Start</button>
+
+          <p id="user-container">Your name: <input type="text" id="user" maxlength="10" value="Anonymous"></p>
         </th>
       </tr>
     </table>

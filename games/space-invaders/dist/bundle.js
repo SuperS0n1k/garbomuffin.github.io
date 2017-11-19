@@ -493,6 +493,8 @@ function run() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_text_lives__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_text_globalhighscore__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__sprites_text_globalhighscoreholder__ = __webpack_require__(27);
+
 
 
 
@@ -513,6 +515,7 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
         this._highscore = 0;
         this.startTime = performance.now();
         this.globalHighscore = 0;
+        this.globalHighscoreHolder = "Anonymous";
         this.addTask(new __WEBPACK_IMPORTED_MODULE_2__engine_task__["a" /* Task */]({
             run: this.createEnemy,
             repeatEvery: 180,
@@ -546,12 +549,16 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
     }
     createStatsDisplay() {
         const sprites = [
-            __WEBPACK_IMPORTED_MODULE_7__sprites_text_highscore__["a" /* HighscoreTextSprite */], __WEBPACK_IMPORTED_MODULE_11__sprites_text_globalhighscore__["a" /* GlobalHighscoreTextSprite */], __WEBPACK_IMPORTED_MODULE_8__sprites_text_score__["a" /* ScoreTextSprite */], __WEBPACK_IMPORTED_MODULE_10__sprites_text_lives__["a" /* LivesTextSprite */],
+            __WEBPACK_IMPORTED_MODULE_7__sprites_text_highscore__["a" /* HighscoreTextSprite */],
+            __WEBPACK_IMPORTED_MODULE_11__sprites_text_globalhighscore__["a" /* GlobalHighscoreTextSprite */],
+            __WEBPACK_IMPORTED_MODULE_12__sprites_text_globalhighscoreholder__["a" /* GlobalHighscoreHolderTextSprite */],
+            __WEBPACK_IMPORTED_MODULE_8__sprites_text_score__["a" /* ScoreTextSprite */],
+            __WEBPACK_IMPORTED_MODULE_10__sprites_text_lives__["a" /* LivesTextSprite */],
         ];
-        const fontSize = 25;
+        const fontSize = 20;
         for (let i = 0; i < sprites.length; i++) {
-            const y = (i + 1) * fontSize + 5;
-            const x = 0;
+            const y = (i + 1) * fontSize;
+            const x = 3;
             new sprites[i]({
                 position: new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](x, y, 10),
                 fontSize,
@@ -576,12 +583,6 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
         testRapidfire(space);
         testRapidfire(z);
         testRapidfire(up);
-        // if (this.keyboard.keys[32].framesDown % 10 === 0 || // Space
-        //     this.keyboard.keys[90].framesDown > 1 || // Z
-        //     this.keyboard.keys[38].framesDown > 1    // Up arrow)
-        //    ) {
-        //   this.shoot();
-        // }
     }
     shoot() {
         if (!this.rocketSprite) {
@@ -618,11 +619,14 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
     gameover() {
         this.resetCanvas();
         // TODO: consider using a TextSprite?
-        this.ctx.font = "50px Arial";
-        this.ctx.fillStyle = "black";
-        const text = "Game Over!";
-        const width = this.ctx.measureText(text).width;
-        this.ctx.fillText("Game Over!", (this.canvas.width / 2) - width / 2, this.canvas.height / 2);
+        const showCenteredText = (text, y, fontSize) => {
+            this.ctx.font = `${fontSize}px Arial`;
+            this.ctx.fillStyle = "black";
+            const width = this.ctx.measureText(text).width;
+            this.ctx.fillText(text, (this.canvas.width / 2) - width / 2, y);
+        };
+        showCenteredText("Game Over!", this.canvas.height / 2, 50);
+        showCenteredText(`Score: ${this.score}`, this.canvas.height / 2 + 50, 25);
         this.exit();
     }
     get difficulty() {
@@ -656,6 +660,9 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
             this._lives = lives;
         }
     }
+    get username() {
+        return document.getElementById("user").value;
+    }
     onexit() {
         document.getElementById("start").style.display = "block";
     }
@@ -675,23 +682,28 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
     updateGlobalHighscore() {
         return fetch(`${this.highscoreServer}/get`)
             .then((res) => res.json())
-            .then((res) => res.highscore)
-            .then((res) => this.globalHighscore = res);
+            .then((res) => {
+            this.globalHighscore = res.highscore;
+            this.globalHighscoreHolder = res.user;
+        });
     }
-    setGlobalHighscore(score) {
+    setGlobalHighscore(highscore, user) {
         const opts = {
             method: "POST",
-            body: JSON.stringify({ highscore: score }),
+            body: JSON.stringify({
+                highscore, user,
+            }),
             headers: {
                 "Content-Type": "application/json",
             },
         };
-        this.globalHighscore = score;
+        this.globalHighscore = highscore;
+        this.globalHighscoreHolder = user;
         return fetch(`${this.highscoreServer}/set`, opts);
     }
     checkForNewGlobalHighscore() {
         if (this.score > this.globalHighscore) {
-            this.setGlobalHighscore(this.score);
+            this.setGlobalHighscore(this.score, this.username);
         }
     }
 }
@@ -1393,6 +1405,26 @@ class GlobalHighscoreTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_spri
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = GlobalHighscoreTextSprite;
+
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(2);
+
+class GlobalHighscoreHolderTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__["a" /* TextSprite */] {
+    constructor(options) {
+        super(options);
+        this.addTask(this.updateText);
+    }
+    updateText() {
+        this.text = `Highscore Holder: ${this.runtime.globalHighscoreHolder}`;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = GlobalHighscoreHolderTextSprite;
 
 
 

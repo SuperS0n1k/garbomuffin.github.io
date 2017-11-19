@@ -12,6 +12,7 @@ import { getRandomInt } from "./utils";
 import { LivesTextSprite } from "./sprites/text/lives";
 import { GlobalHighscoreTextSprite } from "./sprites/text/globalhighscore";
 import { Key } from "./engine/drivers/keyboard/base";
+import { GlobalHighscoreHolderTextSprite } from "./sprites/text/globalhighscoreholder";
 
 export class SpaceInvaderGame extends GameRuntime {
   private _lives: number = 3;
@@ -19,6 +20,7 @@ export class SpaceInvaderGame extends GameRuntime {
   private _highscore: number = 0;
   private startTime: number = performance.now();
   public globalHighscore: number = 0;
+  public globalHighscoreHolder: string = "Anonymous";
   public rocketSprite: RocketSprite;
 
   constructor() {
@@ -66,13 +68,17 @@ export class SpaceInvaderGame extends GameRuntime {
 
   private createStatsDisplay() {
     const sprites: Array<typeof TextSprite> = [
-      HighscoreTextSprite, GlobalHighscoreTextSprite, ScoreTextSprite, LivesTextSprite,
+      HighscoreTextSprite,
+      GlobalHighscoreTextSprite,
+      GlobalHighscoreHolderTextSprite,
+      ScoreTextSprite,
+      LivesTextSprite,
     ];
-    const fontSize = 25;
+    const fontSize = 20;
 
     for (let i = 0; i < sprites.length; i++) {
-      const y = (i + 1) * fontSize + 5;
-      const x = 0;
+      const y = (i + 1) * fontSize;
+      const x = 3;
 
       new sprites[i]({
         position: new Vector(x, y, 10),
@@ -103,13 +109,6 @@ export class SpaceInvaderGame extends GameRuntime {
     testRapidfire(space);
     testRapidfire(z);
     testRapidfire(up);
-
-    // if (this.keyboard.keys[32].framesDown % 10 === 0 || // Space
-    //     this.keyboard.keys[90].framesDown > 1 || // Z
-    //     this.keyboard.keys[38].framesDown > 1    // Up arrow)
-    //    ) {
-    //   this.shoot();
-    // }
   }
 
   public shoot() {
@@ -155,13 +154,15 @@ export class SpaceInvaderGame extends GameRuntime {
 
     // TODO: consider using a TextSprite?
 
-    this.ctx.font = "50px Arial";
-    this.ctx.fillStyle = "black";
+    const showCenteredText = (text: string, y: number, fontSize: number) => {
+      this.ctx.font = `${fontSize}px Arial`;
+      this.ctx.fillStyle = "black";
+      const width = this.ctx.measureText(text).width;
+      this.ctx.fillText(text, (this.canvas.width / 2) - width / 2, y);
+    };
 
-    const text = "Game Over!";
-    const width = this.ctx.measureText(text).width;
-
-    this.ctx.fillText("Game Over!", (this.canvas.width / 2) - width / 2, this.canvas.height / 2);
+    showCenteredText("Game Over!", this.canvas.height / 2, 50);
+    showCenteredText(`Score: ${this.score}`, this.canvas.height / 2 + 50, 25);
 
     this.exit();
   }
@@ -205,6 +206,10 @@ export class SpaceInvaderGame extends GameRuntime {
     }
   }
 
+  get username() {
+    return (document.getElementById("user") as HTMLInputElement).value;
+  }
+
   public onexit() {
     (document.getElementById("start") as HTMLButtonElement).style.display = "block";
   }
@@ -226,25 +231,30 @@ export class SpaceInvaderGame extends GameRuntime {
   private updateGlobalHighscore() {
     return fetch(`${this.highscoreServer}/get`)
       .then((res) => res.json())
-      .then((res) => res.highscore)
-      .then((res) => this.globalHighscore = res);
+      .then((res) => {
+        this.globalHighscore = res.highscore;
+        this.globalHighscoreHolder = res.user;
+      });
   }
 
-  private setGlobalHighscore(score: number) {
+  private setGlobalHighscore(highscore: number, user: string) {
     const opts = {
       method: "POST",
-      body: JSON.stringify({highscore: score}),
+      body: JSON.stringify({
+        highscore, user,
+      }),
       headers: {
         "Content-Type": "application/json",
       },
     };
-    this.globalHighscore = score;
+    this.globalHighscore = highscore;
+    this.globalHighscoreHolder = user;
     return fetch(`${this.highscoreServer}/set`, opts as any);
   }
 
   private checkForNewGlobalHighscore() {
     if (this.score > this.globalHighscore) {
-      this.setGlobalHighscore(this.score);
+      this.setGlobalHighscore(this.score, this.username);
     }
   }
 }
