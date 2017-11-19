@@ -178,6 +178,38 @@ class TaskRunner {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__color__ = __webpack_require__(22);
+
+
+
+class TextSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
+    constructor(options) {
+        super(options);
+        this.text = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.text, "");
+        this.fontSize = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.fontSize, 10);
+        this.fontFamily = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.fontFamily, "sans-serif");
+        this.color = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.color, new __WEBPACK_IMPORTED_MODULE_2__color__["a" /* NamedColor */]("black"));
+    }
+    get font() {
+        return `${this.fontSize}px ${this.fontFamily}`;
+    }
+    render(ctx) {
+        ctx.font = this.font;
+        ctx.fillStyle = this.color.toString();
+        ctx.fillText(this.text, this.x, this.y);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = TextSprite;
+
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector2d__ = __webpack_require__(7);
 
 // a simple position class that removes some verbosity from code
@@ -198,7 +230,7 @@ class Vector extends __WEBPACK_IMPORTED_MODULE_0__vector2d__["a" /* Vector2D */]
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -270,11 +302,11 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
 
 
@@ -295,43 +327,11 @@ class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractS
 
 
 /***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__color__ = __webpack_require__(21);
-
-
-
-class TextSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
-    constructor(options) {
-        super(options);
-        this.text = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.text, "");
-        this.fontSize = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.fontSize, 10);
-        this.fontFamily = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.fontFamily, "sans-serif");
-        this.color = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getOrDefault */])(options.color, new __WEBPACK_IMPORTED_MODULE_2__color__["a" /* NamedColor */]("black"));
-    }
-    get font() {
-        return `${this.fontSize}px ${this.fontFamily}`;
-    }
-    render(ctx) {
-        ctx.font = this.font;
-        ctx.fillStyle = this.color.toString();
-        ctx.fillText(this.text, this.x, this.y);
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = TextSprite;
-
-
-
-/***/ }),
 /* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(1);
 
 
@@ -423,7 +423,7 @@ class Vector2D {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(5);
 
 class SaucerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
     constructor(options) {
@@ -482,16 +482,18 @@ function run() {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_runtime__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_bullet__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_rocket__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_bullet__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_rocket__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_saucer__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_text_highscore__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_text_score__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_text_lives__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_text_highscore__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_text_score__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_text_lives__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_text_globalhighscore__ = __webpack_require__(26);
+
 
 
 
@@ -509,12 +511,17 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
         this._lives = 3;
         this._score = 0;
         this._highscore = 0;
-        this.lastKnownGlobalHighscore = 0;
         this.startTime = performance.now();
+        this.globalHighscore = 0;
         this.addTask(new __WEBPACK_IMPORTED_MODULE_2__engine_task__["a" /* Task */]({
             run: this.createEnemy,
             repeatEvery: 180,
             delay: 60,
+        }));
+        this.updateGlobalHighscore();
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_2__engine_task__["a" /* Task */]({
+            run: this.checkForNewGlobalHighscore,
+            repeatEvery: 60 * 10,
         }));
         this.score = 0;
         this.highscore = Object(__WEBPACK_IMPORTED_MODULE_3__engine_utils__["a" /* getOrDefault */])(Number(localStorage.getItem("highscore")), 0);
@@ -532,7 +539,7 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
     }
     createStatsDisplay() {
         const sprites = [
-            __WEBPACK_IMPORTED_MODULE_7__sprites_text_highscore__["a" /* HighscoreTextSprite */], __WEBPACK_IMPORTED_MODULE_8__sprites_text_score__["a" /* ScoreTextSprite */], __WEBPACK_IMPORTED_MODULE_10__sprites_text_lives__["a" /* LivesTextSprite */],
+            __WEBPACK_IMPORTED_MODULE_7__sprites_text_highscore__["a" /* HighscoreTextSprite */], __WEBPACK_IMPORTED_MODULE_11__sprites_text_globalhighscore__["a" /* GlobalHighscoreTextSprite */], __WEBPACK_IMPORTED_MODULE_8__sprites_text_score__["a" /* ScoreTextSprite */], __WEBPACK_IMPORTED_MODULE_10__sprites_text_lives__["a" /* LivesTextSprite */],
         ];
         const fontSize = 25;
         for (let i = 0; i < sprites.length; i++) {
@@ -636,6 +643,27 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
         this.score = 0;
         this.startTime = performance.now();
     }
+    updateGlobalHighscore() {
+        return fetch("https://garbomuffin.tk/games/space-invaders/get")
+            .then((res) => res.json())
+            .then((res) => res.highscore)
+            .then((res) => this.globalHighscore = res);
+    }
+    setGlobalHighscore(score) {
+        const opts = {
+            method: "POST",
+            body: JSON.stringify({ highscore: score }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+        return fetch("https://garbomuffin.tk/games/space-invaders/set", opts);
+    }
+    checkForNewGlobalHighscore() {
+        if (this.score > this.globalHighscore) {
+            this.setGlobalHighscore(this.score);
+        }
+    }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = SpaceInvaderGame;
 
@@ -647,11 +675,11 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__container__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__drivers_keyboard_keyboard__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_mouse__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__drivers_mouse_touchscreen__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errors_exit__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprite__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__drivers_keyboard_keyboard__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_mouse__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__drivers_mouse_touchscreen__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errors_exit__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprite__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__task__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils__ = __webpack_require__(0);
 
@@ -825,7 +853,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__);
 // a container contains sprites
 // isn't that earth shattering or what?
@@ -858,10 +886,46 @@ class Container {
 
 /***/ }),
 /* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// https://gist.github.com/fsufitch/18bb4692d5f46b649890f8fd58765fbc
+let defaultCmp = (a, b) => {
+    if (a < b) {
+        return -1;
+    }
+    else if (a > b) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+};
+Array.prototype.stableSort = function (cmp = defaultCmp) {
+    const self = this; // for typing
+    const stabilized = self.map((el, index) => ([el, index]));
+    const stableCmp = (a, b) => {
+        const order = cmp(a[0], b[0]);
+        if (order !== 0) {
+            return order;
+        }
+        return a[1] - b[1];
+    };
+    stabilized.sort(stableCmp);
+    for (let i = 0; i < self.length; i++) {
+        self[i] = stabilized[i][0];
+    }
+    return self;
+};
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(15);
 
 class Keyboard extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* AbstractKeyboard */] {
     constructor(runtime) {
@@ -881,7 +945,7 @@ class Keyboard extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* AbstractKeyboa
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -926,7 +990,7 @@ class Key {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -978,12 +1042,12 @@ class Mouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__vector__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__vector__ = __webpack_require__(3);
 
 
 // handles mouse events
@@ -1041,7 +1105,7 @@ class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMo
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1057,11 +1121,11 @@ class ExitError extends Error {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__saucer__ = __webpack_require__(8);
 
 
@@ -1101,11 +1165,11 @@ BulletSprite.BASE_SPEED = 6;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(5);
 
 class RocketSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
     constructor(options) {
@@ -1157,11 +1221,11 @@ RocketSprite.KB_FRICTION = 0.75;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(2);
 
 class HighscoreTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__["a" /* TextSprite */] {
     constructor(options) {
@@ -1177,7 +1241,7 @@ class HighscoreTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_te
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1216,11 +1280,11 @@ class NamedColor {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(2);
 
 class ScoreTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__["a" /* TextSprite */] {
     constructor(options) {
@@ -1236,7 +1300,7 @@ class ScoreTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsp
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1250,11 +1314,11 @@ function getRandomInt(min, max) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(2);
 
 class LivesTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__["a" /* TextSprite */] {
     constructor(options) {
@@ -1270,39 +1334,23 @@ class LivesTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsp
 
 
 /***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 26 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__ = __webpack_require__(2);
 
-// https://gist.github.com/fsufitch/18bb4692d5f46b649890f8fd58765fbc
-let defaultCmp = (a, b) => {
-    if (a < b) {
-        return -1;
+class GlobalHighscoreTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_textsprite__["a" /* TextSprite */] {
+    constructor(options) {
+        super(options);
+        this.addTask(this.updateText);
     }
-    else if (a > b) {
-        return 1;
+    updateText() {
+        this.text = `Global Highscore: ${this.runtime.globalHighscore}`;
     }
-    else {
-        return 0;
-    }
-};
-Array.prototype.stableSort = function (cmp = defaultCmp) {
-    const self = this; // for typing
-    const stabilized = self.map((el, index) => ([el, index]));
-    const stableCmp = (a, b) => {
-        const order = cmp(a[0], b[0]);
-        if (order !== 0) {
-            return order;
-        }
-        return a[1] - b[1];
-    };
-    stabilized.sort(stableCmp);
-    for (let i = 0; i < self.length; i++) {
-        self[i] = stabilized[i][0];
-    }
-    return self;
-};
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = GlobalHighscoreTextSprite;
+
 
 
 /***/ })

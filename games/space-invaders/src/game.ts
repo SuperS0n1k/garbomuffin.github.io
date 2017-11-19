@@ -10,13 +10,14 @@ import { HighscoreTextSprite } from "./sprites/text/highscore";
 import { ScoreTextSprite } from "./sprites/text/score";
 import { getRandomInt } from "./utils";
 import { LivesTextSprite } from "./sprites/text/lives";
+import { GlobalHighscoreTextSprite } from "./sprites/text/globalhighscore";
 
 export class SpaceInvaderGame extends GameRuntime {
   private _lives: number = 3;
   private _score: number = 0;
   private _highscore: number = 0;
-  private lastKnownGlobalHighscore: number = 0;
   private startTime: number = performance.now();
+  public globalHighscore: number = 0;
   public rocketSprite: RocketSprite;
 
   constructor() {
@@ -26,6 +27,12 @@ export class SpaceInvaderGame extends GameRuntime {
       run: this.createEnemy,
       repeatEvery: 180, // 3 seconds
       delay: 60,
+    }));
+
+    this.updateGlobalHighscore();
+    this.addTask(new Task({
+      run: this.checkForNewGlobalHighscore,
+      repeatEvery: 60 * 10, // 10 seconds
     }));
 
     this.score = 0;
@@ -49,7 +56,7 @@ export class SpaceInvaderGame extends GameRuntime {
 
   private createStatsDisplay() {
     const sprites: Array<typeof TextSprite> = [
-      HighscoreTextSprite, ScoreTextSprite, LivesTextSprite,
+      HighscoreTextSprite, GlobalHighscoreTextSprite, ScoreTextSprite, LivesTextSprite,
     ];
     const fontSize = 25;
 
@@ -179,5 +186,29 @@ export class SpaceInvaderGame extends GameRuntime {
     super.resetVariables();
     this.score = 0;
     this.startTime = performance.now();
+  }
+
+  private updateGlobalHighscore() {
+    return fetch("https://garbomuffin.tk/games/space-invaders/get")
+      .then((res) => res.json())
+      .then((res) => res.highscore)
+      .then((res) => this.globalHighscore = res);
+  }
+
+  private setGlobalHighscore(score: number) {
+    const opts = {
+      method: "POST",
+      body: JSON.stringify({highscore: score}),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    return fetch("https://garbomuffin.tk/games/space-invaders/set", opts as any);
+  }
+
+  private checkForNewGlobalHighscore() {
+    if (this.score > this.globalHighscore) {
+      this.setGlobalHighscore(this.score);
+    }
   }
 }
