@@ -518,14 +518,21 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
             repeatEvery: 180,
             delay: 60,
         }));
-        this.updateGlobalHighscore();
+        // query for current highscore every minute
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_2__engine_task__["a" /* Task */]({
+            run: this.updateGlobalHighscore,
+            repeatEvery: 60 * 60,
+        }));
+        // see if we beat the global highscore every second
         this.addTask(new __WEBPACK_IMPORTED_MODULE_2__engine_task__["a" /* Task */]({
             run: this.checkForNewGlobalHighscore,
-            repeatEvery: 60 * 10,
+            repeatEvery: 60,
         }));
         this.score = 0;
         this.highscore = Object(__WEBPACK_IMPORTED_MODULE_3__engine_utils__["a" /* getOrDefault */])(Number(localStorage.getItem("highscore")), 0);
         this.addTask(this.detectShooting);
+        // run inital tasks once
+        this.runTasks();
     }
     start() {
         super.start();
@@ -643,8 +650,16 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
         this.score = 0;
         this.startTime = performance.now();
     }
+    get highscoreServer() {
+        if (location.href.includes("localhost:8080")) {
+            return "http://localhost:8123/games/space-invaders";
+        }
+        else {
+            return "https://garbomuffin.tk/games/space-invaders";
+        }
+    }
     updateGlobalHighscore() {
-        return fetch("https://garbomuffin.tk/games/space-invaders/get")
+        return fetch(`${this.highscoreServer}/get`)
             .then((res) => res.json())
             .then((res) => res.highscore)
             .then((res) => this.globalHighscore = res);
@@ -657,7 +672,7 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
                 "Content-Type": "application/json",
             },
         };
-        return fetch("https://garbomuffin.tk/games/space-invaders/set", opts);
+        return fetch(`${this.highscoreServer}/set`, opts);
     }
     checkForNewGlobalHighscore() {
         if (this.score > this.globalHighscore) {
@@ -932,16 +947,29 @@ class Keyboard extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* AbstractKeyboa
         super(runtime);
         document.addEventListener("keydown", (e) => {
             const keyCode = e.keyCode;
+            if (Keyboard.PREVENT.includes(keyCode)) {
+                e.preventDefault();
+            }
             this.keys[keyCode].isPressed = true;
         });
         document.addEventListener("keyup", (e) => {
             const keyCode = e.keyCode;
+            if (Keyboard.PREVENT.includes(keyCode)) {
+                e.preventDefault();
+            }
             this.keys[keyCode].isPressed = false;
         });
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Keyboard;
 
+Keyboard.PREVENT = [
+    32,
+    37,
+    38,
+    39,
+    40,
+];
 
 
 /***/ }),

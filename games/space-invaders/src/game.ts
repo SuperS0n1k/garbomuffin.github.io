@@ -29,16 +29,25 @@ export class SpaceInvaderGame extends GameRuntime {
       delay: 60,
     }));
 
-    this.updateGlobalHighscore();
+    // query for current highscore every minute
+    this.addTask(new Task({
+      run: this.updateGlobalHighscore,
+      repeatEvery: 60 * 60, // 1 minute
+    }));
+
+    // see if we beat the global highscore every second
     this.addTask(new Task({
       run: this.checkForNewGlobalHighscore,
-      repeatEvery: 60 * 10, // 10 seconds
+      repeatEvery: 60,
     }));
 
     this.score = 0;
     this.highscore = getOrDefault(Number(localStorage.getItem("highscore")), 0);
 
     this.addTask(this.detectShooting);
+
+    // run inital tasks once
+    this.runTasks();
   }
 
   public start() {
@@ -188,8 +197,16 @@ export class SpaceInvaderGame extends GameRuntime {
     this.startTime = performance.now();
   }
 
+  private get highscoreServer() {
+    if (location.href.includes("localhost:8080")) {
+      return "http://localhost:8123/games/space-invaders";
+    } else {
+      return "https://garbomuffin.tk/games/space-invaders";
+    }
+  }
+
   private updateGlobalHighscore() {
-    return fetch("https://garbomuffin.tk/games/space-invaders/get")
+    return fetch(`${this.highscoreServer}/get`)
       .then((res) => res.json())
       .then((res) => res.highscore)
       .then((res) => this.globalHighscore = res);
@@ -203,7 +220,7 @@ export class SpaceInvaderGame extends GameRuntime {
         "Content-Type": "application/json",
       },
     };
-    return fetch("https://garbomuffin.tk/games/space-invaders/set", opts as any);
+    return fetch(`${this.highscoreServer}/set`, opts as any);
   }
 
   private checkForNewGlobalHighscore() {
