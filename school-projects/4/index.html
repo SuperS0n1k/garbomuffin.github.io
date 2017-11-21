@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/core.css">
+
+    <style>
+      /* remove empty space */
+      ul {
+        margin-top: 0;
+      }
+
+      /* disable centering */
+      tr, th, td {
+        vertical-align: top;
+      }
+
+      /* config page */
+      #start {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        padding: 5px;
+        width: 100%;
+        height: 10%;
+      }
+
+      /* inital config */
+      #config {
+        display: block;
+      }
+      #prompter {
+        display: none;
+      }
+
+      /* prompter lines */
+      #prompter-lines-container {
+        /* black background */
+        background-color: black;
+        color: white;
+
+        overflow: hidden;
+
+        /* fill screen */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #prompter-lines {
+        list-style: none;
+        line-height: 2em;
+        font-size: 2em;
+      }
+
+      /* prompter options */
+      #prompter-options-container {
+        position: absolute;
+        background-color: black;
+        border-top: 1px white solid;
+        padding-top: 10px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+      }
+    </style>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77118590-7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-77118590-7');
+    </script>
+  </head>
+
+  <body>
+    <div id="config">
+      <h1>EasIER Prompter (VERY EARLY PROTOTYPE)</h1>
+
+      <hr>
+
+      <p>No sign in. No ads. Always free. Open source.</p>
+
+      <table>
+        <tr>
+          <td>
+            <textarea id="input" cols="80" rows="20" spellcheck="false"></textarea>
+          </td>
+
+          <td>
+            <!-- TODO: options here? -->
+          </td>
+        </tr>
+      </table>
+
+      <button id="start"><b>Start</b></button>
+    </div>
+
+    <div id="prompter">
+      <div id="prompter-lines-container">
+        <ul id="prompter-lines">
+          
+        </ul>
+      </div>
+
+      <div id="prompter-options-container">
+        <ul id="prompter-options">
+          <button id="prompter-start-stop">Start</button>
+          <button id="prompter-reverse">Reverse Direction</button>
+          <button id="prompter-speed-up">Speed++</button>
+          <button id="prompter-speed-down">Speed--</button>
+          <button id="prompter-edit">Edit</button>
+        </ul>
+      </div>
+    </div>
+
+    <script src="dist/bundle.js"></script>
+  </body>
+</html>

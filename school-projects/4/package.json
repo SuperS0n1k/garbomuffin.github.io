@@ -1,0 +1,16 @@
+{
+  "name": "game-base",
+  "version": "1.0.0",
+  "description": "Simple game engine",
+  "scripts": {
+    "bundle": "webpack",
+    "watch": "webpack --watch"
+  },
+  "author": "GarboMuffin",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-loader": "^3.1.1",
+    "typescript": "^2.6.1",
+    "webpack": "^3.8.1"
+  }
+}
