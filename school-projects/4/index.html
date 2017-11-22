@@ -54,6 +54,7 @@
         padding: 5px;
         width: 100%;
         height: 10%;
+        font-size: 3em;
       }
 
       /* inital config */
@@ -62,14 +63,12 @@
       }
       #prompter {
         display: none;
+        color: white;
       }
 
       /* prompter lines */
       #prompter-lines-container {
-        /* black background */
         background-color: black;
-        color: white;
-
         overflow: hidden;
 
         /* fill screen */
@@ -87,8 +86,8 @@
 
       /* prompter options */
       #prompter-options-container {
-        position: absolute;
         background-color: black;
+        position: absolute;
         border-top: 1px white solid;
         padding-top: 10px;
         bottom: 0;
@@ -164,8 +163,12 @@
         <ul id="prompter-options">
           <button id="prompter-start-stop">Start</button>
           <button id="prompter-reverse">Moving Down</button>
-          <button id="prompter-speed-up">Speed++</button>
-          <button id="prompter-speed-down">Speed--</button>
+
+          <span>Speed:</span>
+          <button id="prompter-speed-down">&lt;</button>
+          <span id="options-current-speed"></span>
+          <button id="prompter-speed-up">&gt;</button>
+
           <button id="prompter-edit">Edit</button>
         </ul>
       </div>

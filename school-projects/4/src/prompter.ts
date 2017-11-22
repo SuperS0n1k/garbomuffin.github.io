@@ -125,7 +125,6 @@ export class EasierPrompter implements IEasierPrompterOptions {
       }
 
       const keyCode = e.keyCode;
-      console.log(keyCode);
 
       switch (keyCode) {
         case 32: // space
@@ -152,10 +151,23 @@ export class EasierPrompter implements IEasierPrompterOptions {
           break;
       }
     });
+
+    document.addEventListener("wheel", (e) => {
+      if (!this.isFocused) {
+        return;
+      }
+
+      this.currentOffset += e.deltaY;
+      this.render();
+    });
   }
 
   private loadConfig() {
     this.config = config.load(this.defaultConfig);
+
+    // trigger the setter (which has side effects kill me)
+    this.speed = this.speed;
+
     this.optionsElements.fontSize.value = this.config.fontSize.toString();
     this.optionsElements.boldText.checked = this.config.boldText;
     this.inputElement.value = this.config.lastPrompt;
@@ -180,9 +192,7 @@ export class EasierPrompter implements IEasierPrompterOptions {
   }
 
   private loop() {
-    if (this.runningState === RunningState.Running) {
-      this.render();
-    }
+    this.render();
 
     if (this.runningState !== RunningState.Paused) {
       requestAnimationFrame(this.loop);
@@ -190,12 +200,14 @@ export class EasierPrompter implements IEasierPrompterOptions {
   }
 
   private render() {
-    this.currentOffset += this.speed * this.direction;
+    if (this.runningState === RunningState.Running) {
+      this.currentOffset += this.speed * this.direction;
 
-    if (this.currentOffset < 0) {
-      this.currentOffset = 0;
-    } else if (this.currentOffset > this.textHeight) {
-      this.currentOffset = this.textHeight;
+      if (this.currentOffset < 0) {
+        this.currentOffset = 0;
+      } else if (this.currentOffset > this.textHeight) {
+        this.currentOffset = this.textHeight;
+      }
     }
 
     this.prompterLinesElement.style.marginTop = `-${this.currentOffset}px`;
@@ -243,6 +255,7 @@ export class EasierPrompter implements IEasierPrompterOptions {
       this._speed = 0;
     } else {
       this._speed = speed;
+      (document.getElementById("options-current-speed") as HTMLElement).textContent = speed.toString();
     }
   }
 }

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,9 +68,33 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = save;
+/* harmony export (immutable) */ __webpack_exports__["a"] = load;
+// Saves configs and whatever
+const CONFIG_KEY = "easierprompter_Config";
+function save(config) {
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+}
+function load(defaults) {
+    const localData = localStorage.getItem(CONFIG_KEY);
+    if (localData) {
+        return JSON.parse(localData);
+    }
+    else {
+        save(defaults);
+        return defaults;
+    }
+}
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__prompter__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__prompter__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(0);
 
 
 function getElement(id) {
@@ -114,11 +138,11 @@ window.prompter = prompter;
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(0);
 
 var RunningState;
 (function (RunningState) {
@@ -188,7 +212,6 @@ class EasierPrompter {
                 return;
             }
             const keyCode = e.keyCode;
-            console.log(keyCode);
             switch (keyCode) {
                 case 32:// space
                     this.togglePlayState();
@@ -210,9 +233,18 @@ class EasierPrompter {
                     break;
             }
         });
+        document.addEventListener("wheel", (e) => {
+            if (!this.isFocused) {
+                return;
+            }
+            this.currentOffset += e.deltaY;
+            this.render();
+        });
     }
     loadConfig() {
         this.config = __WEBPACK_IMPORTED_MODULE_0__config__["a" /* load */](this.defaultConfig);
+        // trigger the setter (which has side effects kill me)
+        this.speed = this.speed;
         this.optionsElements.fontSize.value = this.config.fontSize.toString();
         this.optionsElements.boldText.checked = this.config.boldText;
         this.inputElement.value = this.config.lastPrompt;
@@ -233,20 +265,20 @@ class EasierPrompter {
         this.stop();
     }
     loop() {
-        if (this.runningState === RunningState.Running) {
-            this.render();
-        }
+        this.render();
         if (this.runningState !== RunningState.Paused) {
             requestAnimationFrame(this.loop);
         }
     }
     render() {
-        this.currentOffset += this.speed * this.direction;
-        if (this.currentOffset < 0) {
-            this.currentOffset = 0;
-        }
-        else if (this.currentOffset > this.textHeight) {
-            this.currentOffset = this.textHeight;
+        if (this.runningState === RunningState.Running) {
+            this.currentOffset += this.speed * this.direction;
+            if (this.currentOffset < 0) {
+                this.currentOffset = 0;
+            }
+            else if (this.currentOffset > this.textHeight) {
+                this.currentOffset = this.textHeight;
+            }
         }
         this.prompterLinesElement.style.marginTop = `-${this.currentOffset}px`;
     }
@@ -287,35 +319,12 @@ class EasierPrompter {
         }
         else {
             this._speed = speed;
+            document.getElementById("options-current-speed").textContent = speed.toString();
         }
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = EasierPrompter;
 
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["b"] = save;
-/* harmony export (immutable) */ __webpack_exports__["a"] = load;
-// Saves configs and whatever
-const CONFIG_KEY = "easierprompter_Config";
-function save(config) {
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-}
-function load(defaults) {
-    const localData = localStorage.getItem(CONFIG_KEY);
-    if (localData) {
-        return JSON.parse(localData);
-    }
-    else {
-        save(defaults);
-        return defaults;
-    }
-}
 
 
 /***/ })
