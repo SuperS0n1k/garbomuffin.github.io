@@ -224,7 +224,7 @@ export class SpaceInvaderGame extends GameRuntime {
     if (location.href.includes("localhost:8080")) {
       return "http://localhost:8123/games/space-invaders";
     } else {
-      return "https://garbomuffin.tk/games/space-invaders";
+      return "https://garbomuffin.com/games/space-invaders";
     }
   }
 

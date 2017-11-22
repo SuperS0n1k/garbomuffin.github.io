@@ -676,7 +676,7 @@ class SpaceInvaderGame extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a"
             return "http://localhost:8123/games/space-invaders";
         }
         else {
-            return "https://garbomuffin.tk/games/space-invaders";
+            return "https://garbomuffin.com/games/space-invaders";
         }
     }
     updateGlobalHighscore() {
