@@ -14,6 +14,35 @@
         vertical-align: top;
       }
 
+      button {
+        padding: 5px;
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      input[type="text"], input[type="number"] {
+        width: 100px;
+      }
+
+      /* noscript message */
+      /* this is the most time i've put into a noscript message ever */
+      #noscript {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        color: white;
+        background-color: black;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2em;
+      }
+
       /* config page */
       #start {
         position: absolute;
@@ -47,10 +76,10 @@
         width: 100%;
         height: 100%;
       }
+
+      /* hide list bullets TODO: consider using <p> instead of <ul> and <li>? */
       #prompter-lines {
         list-style: none;
-        line-height: 2em;
-        font-size: 2em;
       }
 
       /* prompter options */
@@ -77,12 +106,28 @@
   </head>
 
   <body>
+    <noscript>
+      <div id="noscript">
+        <div>
+          <h1>ENABLE JAVASCRIPT</h1>
+        </div>
+      </div>
+    </noscript>
+
     <div id="config">
       <h1>EasIER Prompter (VERY EARLY PROTOTYPE)</h1>
 
       <hr>
 
-      <p>No sign in. No ads. Always free. Open source.</p>
+      <p>A simple prompter... that just works.</p>
+
+      <p>
+        <a href="https://i.imgur.com/waDLvuh.png">No sign in</a>.
+        <a href="https://i.imgur.com/agCc84W.png">Always free.</a>
+        <a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/school-projects/4">Open source.</a>
+      </p>
+
+      <noscript><h1>ENABLE JAVASCRIPT YOU NERD</h1></noscript>
 
       <table>
         <tr>
@@ -90,8 +135,9 @@
             <textarea id="input" cols="80" rows="20" spellcheck="false"></textarea>
           </td>
 
-          <td>
-            <!-- TODO: options here? -->
+          <td class="options">
+            <label>Font Size: <input id="options-font-size" type="number" min="0"></label>
+            <label>Bold: <input id="options-bold" type="checkbox"></label>
           </td>
         </tr>
       </table>
@@ -101,15 +147,13 @@
 
     <div id="prompter">
       <div id="prompter-lines-container">
-        <ul id="prompter-lines">
-          
-        </ul>
+        <ul id="prompter-lines"></ul>
       </div>
 
       <div id="prompter-options-container">
         <ul id="prompter-options">
           <button id="prompter-start-stop">Start</button>
-          <button id="prompter-reverse">Reverse Direction</button>
+          <button id="prompter-reverse">Moving Down</button>
           <button id="prompter-speed-up">Speed++</button>
           <button id="prompter-speed-down">Speed--</button>
           <button id="prompter-edit">Edit</button>

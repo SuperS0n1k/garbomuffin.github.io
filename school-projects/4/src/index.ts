@@ -5,6 +5,11 @@ function getElement(id: string) {
 }
 
 const prompter = new EasierPrompter({
+  optionsElements: {
+    fontSize: getElement("options-font-size") as HTMLInputElement,
+    boldText: getElement("options-bold") as HTMLInputElement,
+  },
+
   buttons: {
     startStop: getElement("prompter-start-stop") as HTMLButtonElement,
     reverse: getElement("prompter-reverse") as HTMLButtonElement,
@@ -20,6 +25,11 @@ const prompter = new EasierPrompter({
   prompterLinesElement: getElement("prompter-lines") as HTMLUListElement,
 
   configContainer: getElement("config"),
+  defaultConfig: {
+    fontSize: 75,
+    boldText: false,
+    lastPrompt: "Enter your script!",
+  },
 });
 
 (getElement("start") as HTMLButtonElement).onclick = () => {

@@ -75,6 +75,10 @@ function getElement(id) {
     return document.getElementById(id);
 }
 const prompter = new __WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* EasierPrompter */]({
+    optionsElements: {
+        fontSize: getElement("options-font-size"),
+        boldText: getElement("options-bold"),
+    },
     buttons: {
         startStop: getElement("prompter-start-stop"),
         reverse: getElement("prompter-reverse"),
@@ -87,6 +91,11 @@ const prompter = new __WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* EasierPrompt
     prompterLinesContainer: getElement("prompter-lines-container"),
     prompterLinesElement: getElement("prompter-lines"),
     configContainer: getElement("config"),
+    defaultConfig: {
+        fontSize: 75,
+        boldText: false,
+        lastPrompt: "Enter your script!",
+    },
 });
 getElement("start").onclick = () => {
     prompter.showPrompt();
@@ -100,6 +109,8 @@ window.prompter = prompter;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(2);
+
 var RunningState;
 (function (RunningState) {
     RunningState[RunningState["Running"] = 0] = "Running";
@@ -119,6 +130,8 @@ class EasierPrompter {
         }
         this.loop = this.loop.bind(this);
         this.setupButtons();
+        this.config = __WEBPACK_IMPORTED_MODULE_0__config__["a" /* load */](options.defaultConfig);
+        this.loadConfig();
     }
     // IMPLEMENTATION SPECIFIC STUFF
     setupButtons() {
@@ -151,10 +164,27 @@ class EasierPrompter {
         const computedHeight = getComputedStyle(this.prompterLinesElement).height;
         this.textHeight = Number(computedHeight.substring(0, computedHeight.length - 2));
     }
+    loadStyles() {
+        this.config.fontSize = Number(this.optionsElements.fontSize.value);
+        this.prompterLinesElement.style.fontSize = `${this.config.fontSize}px`;
+        this.config.boldText = this.optionsElements.boldText.checked;
+        this.prompterLinesElement.style.fontWeight = this.config.boldText ? "bold" : "";
+    }
     // CORE
+    loadConfig() {
+        this.config = __WEBPACK_IMPORTED_MODULE_0__config__["a" /* load */](this.defaultConfig);
+        this.optionsElements.fontSize.value = this.config.fontSize.toString();
+        this.optionsElements.boldText.checked = this.config.boldText;
+        this.inputElement.value = this.config.lastPrompt;
+    }
+    saveConfig() {
+        __WEBPACK_IMPORTED_MODULE_0__config__["b" /* save */](this.config);
+    }
     showPrompt() {
         this.prompterContainer.style.display = "block";
+        this.loadStyles();
         this.loadScript();
+        this.saveConfig();
     }
     hidePrompt() {
         this.prompterContainer.style.display = "none";
@@ -176,8 +206,6 @@ class EasierPrompter {
         }
     }
     start() {
-        console.log("starting prompter");
-        this.showPrompt();
         this.buttons.startStop.textContent = "Pause";
         this.runningState = RunningState.Running;
         this.loop();
@@ -197,10 +225,40 @@ class EasierPrompter {
     }
     reverseDirection() {
         this.direction = -this.direction;
+        if (this.direction === 1) {
+            this.buttons.reverse.textContent = "Moving Down";
+        }
+        else {
+            this.buttons.reverse.textContent = "Moving Up";
+        }
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = EasierPrompter;
 
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = save;
+/* harmony export (immutable) */ __webpack_exports__["a"] = load;
+// Saves configs and whatever
+const CONFIG_KEY = "easierprompter_Config";
+function save(config) {
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+}
+function load(defaults) {
+    const localData = localStorage.getItem(CONFIG_KEY);
+    if (localData) {
+        return JSON.parse(localData);
+    }
+    else {
+        save(defaults);
+        return defaults;
+    }
+}
 
 
 /***/ })

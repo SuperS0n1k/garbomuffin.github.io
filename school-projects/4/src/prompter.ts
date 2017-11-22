@@ -1,5 +1,8 @@
+import * as config from "./config";
+
 interface IEasierPrompterOptions {
   buttons: IEasierPrompterButtons;
+  optionsElements: IEasierPrompterConfigElements;
 
   inputElement: HTMLTextAreaElement;
 
@@ -7,6 +10,8 @@ interface IEasierPrompterOptions {
   prompterLinesContainer: HTMLElement;
   prompterLinesElement: HTMLUListElement;
   configContainer: HTMLElement;
+
+  defaultConfig: config.IStoredConfig;
 }
 
 interface IEasierPrompterButtons {
@@ -17,17 +22,24 @@ interface IEasierPrompterButtons {
   edit: HTMLButtonElement;
 }
 
+interface IEasierPrompterConfigElements {
+  fontSize: HTMLInputElement;
+  boldText: HTMLInputElement;
+}
+
 enum RunningState {
   Running, Paused,
 }
 
 export class EasierPrompter implements IEasierPrompterOptions {
+  public optionsElements: IEasierPrompterConfigElements;
   public buttons: IEasierPrompterButtons;
   public inputElement: HTMLTextAreaElement;
   public prompterContainer: HTMLElement;
   public prompterLinesContainer: HTMLElement;
   public prompterLinesElement: HTMLUListElement;
   public configContainer: HTMLElement;
+  public defaultConfig: config.IStoredConfig;
 
   private speed: number = 3;
   private direction: number = 1;
@@ -35,6 +47,7 @@ export class EasierPrompter implements IEasierPrompterOptions {
   private currentOffset: number = 0;
 
   private textHeight: number;
+  public config: config.IStoredConfig;
 
   constructor(options: IEasierPrompterOptions) {
     // use a terrible for loop to just load all of the options
@@ -47,6 +60,9 @@ export class EasierPrompter implements IEasierPrompterOptions {
     this.loop = this.loop.bind(this);
 
     this.setupButtons();
+
+    this.config = config.load(options.defaultConfig);
+    this.loadConfig();
   }
 
   // IMPLEMENTATION SPECIFIC STUFF
@@ -89,11 +105,32 @@ export class EasierPrompter implements IEasierPrompterOptions {
     this.textHeight = Number(computedHeight.substring(0, computedHeight.length - 2));
   }
 
+  private loadStyles() {
+    this.config.fontSize = Number(this.optionsElements.fontSize.value);
+    this.prompterLinesElement.style.fontSize = `${this.config.fontSize}px`;
+
+    this.config.boldText = this.optionsElements.boldText.checked;
+    this.prompterLinesElement.style.fontWeight = this.config.boldText ? "bold" : "";
+  }
+
   // CORE
+
+  private loadConfig() {
+    this.config = config.load(this.defaultConfig);
+    this.optionsElements.fontSize.value = this.config.fontSize.toString();
+    this.optionsElements.boldText.checked = this.config.boldText;
+    this.inputElement.value = this.config.lastPrompt;
+  }
+
+  private saveConfig() {
+    config.save(this.config);
+  }
 
   public showPrompt() {
     this.prompterContainer.style.display = "block";
+    this.loadStyles();
     this.loadScript();
+    this.saveConfig();
   }
 
   private hidePrompt() {
@@ -120,9 +157,6 @@ export class EasierPrompter implements IEasierPrompterOptions {
   }
 
   private start() {
-    console.log("starting prompter");
-    this.showPrompt();
-
     this.buttons.startStop.textContent = "Pause";
 
     this.runningState = RunningState.Running;
@@ -147,5 +181,10 @@ export class EasierPrompter implements IEasierPrompterOptions {
 
   private reverseDirection() {
     this.direction = -this.direction;
+    if (this.direction === 1) {
+      this.buttons.reverse.textContent = "Moving Down";
+    } else {
+      this.buttons.reverse.textContent = "Moving Up";
+    }
   }
 }
