@@ -127,10 +127,11 @@ var RunningState;
 })(RunningState || (RunningState = {}));
 class EasierPrompter {
     constructor(options) {
-        this.speed = 3;
+        this._speed = 3;
         this.direction = 1;
         this.runningState = RunningState.Paused;
         this.currentOffset = 0;
+        this.isFocused = false;
         // use a terrible for loop to just load all of the options
         for (const property in options) {
             if (options.hasOwnProperty(property)) {
@@ -141,6 +142,7 @@ class EasierPrompter {
         this.setupButtons();
         this.config = __WEBPACK_IMPORTED_MODULE_0__config__["a" /* load */](options.defaultConfig);
         this.loadConfig();
+        this.loadEvents();
     }
     // IMPLEMENTATION SPECIFIC STUFF
     setupButtons() {
@@ -180,6 +182,35 @@ class EasierPrompter {
         this.prompterLinesElement.style.fontWeight = this.config.boldText ? "bold" : "";
     }
     // CORE
+    loadEvents() {
+        document.addEventListener("keydown", (e) => {
+            if (!this.isFocused) {
+                return;
+            }
+            const keyCode = e.keyCode;
+            console.log(keyCode);
+            switch (keyCode) {
+                case 32:// space
+                    this.togglePlayState();
+                    break;
+                case 38:// up
+                    this.speed++;
+                    break;
+                case 40:// down
+                    this.speed--;
+                    break;
+                case 27:// escape
+                    if (this.currentOffset === 0) {
+                        this.hidePrompt();
+                        break;
+                    }
+                    this.stop();
+                    this.currentOffset = 0;
+                    this.render();
+                    break;
+            }
+        });
+    }
     loadConfig() {
         this.config = __WEBPACK_IMPORTED_MODULE_0__config__["a" /* load */](this.defaultConfig);
         this.optionsElements.fontSize.value = this.config.fontSize.toString();
@@ -191,28 +222,33 @@ class EasierPrompter {
     }
     showPrompt() {
         this.prompterContainer.style.display = "block";
+        this.isFocused = true;
         this.loadStyles();
         this.loadScript();
         this.saveConfig();
     }
     hidePrompt() {
+        this.isFocused = false;
         this.prompterContainer.style.display = "none";
         this.stop();
     }
     loop() {
         if (this.runningState === RunningState.Running) {
-            this.currentOffset += this.speed * this.direction;
-            if (this.currentOffset < 0) {
-                this.currentOffset = 0;
-            }
-            else if (this.currentOffset > this.textHeight) {
-                this.currentOffset = this.textHeight;
-            }
-            this.prompterLinesElement.style.marginTop = `-${this.currentOffset}px`;
+            this.render();
         }
         if (this.runningState !== RunningState.Paused) {
             requestAnimationFrame(this.loop);
         }
+    }
+    render() {
+        this.currentOffset += this.speed * this.direction;
+        if (this.currentOffset < 0) {
+            this.currentOffset = 0;
+        }
+        else if (this.currentOffset > this.textHeight) {
+            this.currentOffset = this.textHeight;
+        }
+        this.prompterLinesElement.style.marginTop = `-${this.currentOffset}px`;
     }
     start() {
         this.buttons.startStop.textContent = "Pause";
@@ -239,6 +275,18 @@ class EasierPrompter {
         }
         else {
             this.buttons.reverse.textContent = "Moving Up";
+        }
+    }
+    // GETTERS AND SETTERS
+    get speed() {
+        return this._speed;
+    }
+    set speed(speed) {
+        if (speed < 0) {
+            this._speed = 0;
+        }
+        else {
+            this._speed = speed;
         }
     }
 }
