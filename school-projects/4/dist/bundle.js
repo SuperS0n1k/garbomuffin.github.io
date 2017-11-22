@@ -70,10 +70,17 @@
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__prompter__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(2);
+
 
 function getElement(id) {
     return document.getElementById(id);
 }
+const defaultConfig = {
+    fontSize: 75,
+    boldText: false,
+    lastPrompt: "Enter your script here!",
+};
 const prompter = new __WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* EasierPrompter */]({
     optionsElements: {
         fontSize: getElement("options-font-size"),
@@ -91,14 +98,16 @@ const prompter = new __WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* EasierPrompt
     prompterLinesContainer: getElement("prompter-lines-container"),
     prompterLinesElement: getElement("prompter-lines"),
     configContainer: getElement("config"),
-    defaultConfig: {
-        fontSize: 75,
-        boldText: false,
-        lastPrompt: "Enter your script!",
-    },
+    defaultConfig,
 });
 getElement("start").onclick = () => {
     prompter.showPrompt();
+};
+getElement("options-reset").onclick = () => {
+    if (confirm("Are you sure?")) {
+        __WEBPACK_IMPORTED_MODULE_1__config__["b" /* save */](defaultConfig);
+        location.reload();
+    }
 };
 // debugging from the console
 window.prompter = prompter;
