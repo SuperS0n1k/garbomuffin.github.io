@@ -102,13 +102,15 @@ function getElement(id) {
 }
 const defaultConfig = {
     fontSize: 75,
-    boldText: false,
+    boldText: true,
     lastPrompt: "Enter your script here!",
+    removeButtonFocus: true,
 };
 const prompter = new __WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* EasierPrompter */]({
     optionsElements: {
         fontSize: getElement("options-font-size"),
         boldText: getElement("options-bold"),
+        removeButtonFocus: getElement("options-remove-focus"),
     },
     buttons: {
         startStop: getElement("prompter-start-stop"),
@@ -248,6 +250,14 @@ class EasierPrompter {
         this.optionsElements.fontSize.value = this.config.fontSize.toString();
         this.optionsElements.boldText.checked = this.config.boldText;
         this.inputElement.value = this.config.lastPrompt;
+        this.optionsElements.removeButtonFocus.checked = this.config.removeButtonFocus;
+        for (const button of document.getElementsByTagName("button")) {
+            button.addEventListener("click", (e) => {
+                if (this.config.removeButtonFocus) {
+                    e.srcElement.blur();
+                }
+            });
+        }
     }
     saveConfig() {
         __WEBPACK_IMPORTED_MODULE_0__config__["b" /* save */](this.config);

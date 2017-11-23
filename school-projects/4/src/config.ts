@@ -5,6 +5,7 @@ const CONFIG_KEY = "easierprompter_Config";
 export interface IStoredConfig {
   fontSize: number;
   boldText: boolean;
+  removeButtonFocus: boolean;
 
   lastPrompt: string;
 }

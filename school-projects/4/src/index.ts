@@ -7,14 +7,16 @@ function getElement(id: string) {
 
 const defaultConfig = {
   fontSize: 75,
-  boldText: false,
+  boldText: true,
   lastPrompt: "Enter your script here!",
+  removeButtonFocus: true,
 };
 
 const prompter = new EasierPrompter({
   optionsElements: {
     fontSize: getElement("options-font-size") as HTMLInputElement,
     boldText: getElement("options-bold") as HTMLInputElement,
+    removeButtonFocus: getElement("options-remove-focus") as HTMLInputElement,
   },
 
   buttons: {

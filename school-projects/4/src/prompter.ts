@@ -25,6 +25,7 @@ interface IEasierPrompterButtons {
 interface IEasierPrompterConfigElements {
   fontSize: HTMLInputElement;
   boldText: HTMLInputElement;
+  removeButtonFocus: HTMLInputElement;
 }
 
 enum RunningState {
@@ -171,6 +172,15 @@ export class EasierPrompter implements IEasierPrompterOptions {
     this.optionsElements.fontSize.value = this.config.fontSize.toString();
     this.optionsElements.boldText.checked = this.config.boldText;
     this.inputElement.value = this.config.lastPrompt;
+    this.optionsElements.removeButtonFocus.checked = this.config.removeButtonFocus;
+
+    for (const button of document.getElementsByTagName("button")) {
+      button.addEventListener("click", (e) => {
+        if (this.config.removeButtonFocus) {
+          (e.srcElement as HTMLButtonElement).blur();
+        }
+      });
+    }
   }
 
   private saveConfig() {
