@@ -68,22 +68,9 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["b"] = save;
-/* harmony export (immutable) */ __webpack_exports__["a"] = load;
-// Saves configs and whatever
-const CONFIG_KEY = "easierprompter_Config";
-function save(config) {
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-}
-function load(defaults) {
-    const localData = localStorage.getItem(CONFIG_KEY);
-    if (localData) {
-        return JSON.parse(localData);
-    }
-    else {
-        save(defaults);
-        return defaults;
-    }
+/* harmony export (immutable) */ __webpack_exports__["a"] = getElement;
+function getElement(id) {
+    return document.getElementById(id);
 }
 
 
@@ -93,49 +80,14 @@ function load(defaults) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__prompter__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_config__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__ = __webpack_require__(4);
 
 
-function getElement(id) {
-    return document.getElementById(id);
-}
-const defaultConfig = {
-    fontSize: 75,
-    boldText: true,
-    lastPrompt: "Enter your script here!",
-    removeButtonFocus: true,
-};
-const prompter = new __WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* EasierPrompter */]({
-    optionsElements: {
-        fontSize: getElement("options-font-size"),
-        boldText: getElement("options-bold"),
-        removeButtonFocus: getElement("options-remove-focus"),
-    },
-    buttons: {
-        startStop: getElement("prompter-start-stop"),
-        reverse: getElement("prompter-reverse"),
-        speedUp: getElement("prompter-speed-up"),
-        speedDown: getElement("prompter-speed-down"),
-        edit: getElement("prompter-edit"),
-    },
-    inputElement: getElement("input"),
-    prompterContainer: getElement("prompter"),
-    prompterLinesContainer: getElement("prompter-lines-container"),
-    prompterLinesElement: getElement("prompter-lines"),
-    configContainer: getElement("config"),
-    defaultConfig,
-});
-getElement("start").onclick = () => {
-    prompter.showPrompt();
-};
-getElement("options-reset").onclick = () => {
-    if (confirm("Are you sure?")) {
-        __WEBPACK_IMPORTED_MODULE_1__config__["b" /* save */](defaultConfig);
-        location.reload();
-    }
-};
-// debugging from the console
+const config = new __WEBPACK_IMPORTED_MODULE_0__config_config__["a" /* Config */]();
+config.load();
+const prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Prompter */](config);
+window.config = config;
 window.prompter = prompter;
 
 
@@ -144,196 +96,293 @@ window.prompter = prompter;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
 
-var RunningState;
-(function (RunningState) {
-    RunningState[RunningState["Running"] = 0] = "Running";
-    RunningState[RunningState["Paused"] = 1] = "Paused";
-})(RunningState || (RunningState = {}));
-class EasierPrompter {
-    constructor(options) {
-        this._speed = 3;
-        this.direction = 1;
-        this.runningState = RunningState.Paused;
-        this.currentOffset = 0;
-        this.isFocused = false;
-        // use a terrible for loop to just load all of the options
-        for (const property in options) {
-            if (options.hasOwnProperty(property)) {
-                this[property] = options[property];
-            }
-        }
-        this.loop = this.loop.bind(this);
-        this.setupButtons();
-        this.config = __WEBPACK_IMPORTED_MODULE_0__config__["a" /* load */](options.defaultConfig);
-        this.loadConfig();
-        this.loadEvents();
+
+class Config extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractConfig */] {
+    constructor() {
+        super();
+        this.prompterElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
+        this.speedElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-current-speed");
+        this.textInputElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input");
+        this.fontSizeElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-font-size");
+        this.fontFamilyElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-font-family");
+        this.boldTextElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-bold-text");
     }
-    // IMPLEMENTATION SPECIFIC STUFF
-    setupButtons() {
-        this.buttons.startStop.onclick = () => {
-            this.togglePlayState();
-        };
-        this.buttons.reverse.onclick = () => {
-            this.reverseDirection();
-        };
-        this.buttons.speedUp.onclick = () => {
-            this.speed++;
-        };
-        this.buttons.speedDown.onclick = () => {
-            this.speed--;
-        };
-        this.buttons.edit.onclick = () => {
-            this.hidePrompt();
-        };
-    }
-    loadScript() {
-        while (this.prompterLinesElement.firstChild) {
-            this.prompterLinesElement.removeChild(this.prompterLinesElement.firstChild);
-        }
-        const input = this.inputElement.value;
-        for (const line of input.split("\n")) {
-            const el = document.createElement("li");
-            el.textContent = line;
-            this.prompterLinesElement.appendChild(el);
-        }
-        const computedHeight = getComputedStyle(this.prompterLinesElement).height;
-        this.textHeight = Number(computedHeight.substring(0, computedHeight.length - 2));
-    }
-    loadStyles() {
-        this.config.fontSize = Number(this.optionsElements.fontSize.value);
-        this.prompterLinesElement.style.fontSize = `${this.config.fontSize}px`;
-        this.config.boldText = this.optionsElements.boldText.checked;
-        this.prompterLinesElement.style.fontWeight = this.config.boldText ? "bold" : "";
-    }
-    // CORE
-    loadEvents() {
-        document.addEventListener("keydown", (e) => {
-            if (!this.isFocused) {
-                return;
-            }
-            const keyCode = e.keyCode;
-            switch (keyCode) {
-                case 32:// space
-                    this.togglePlayState();
-                    break;
-                case 38:// up
-                    this.speed++;
-                    break;
-                case 40:// down
-                    this.speed--;
-                    break;
-                case 27:// escape
-                    if (this.currentOffset === 0) {
-                        this.hidePrompt();
-                        break;
-                    }
-                    this.stop();
-                    this.currentOffset = 0;
-                    this.render();
-                    break;
-            }
-        });
-        document.addEventListener("wheel", (e) => {
-            if (!this.isFocused) {
-                return;
-            }
-            this.currentOffset += e.deltaY;
-            this.render();
-        });
-    }
-    loadConfig() {
-        this.config = __WEBPACK_IMPORTED_MODULE_0__config__["a" /* load */](this.defaultConfig);
-        // trigger the setter (which has side effects kill me)
-        this.speed = this.speed;
-        this.optionsElements.fontSize.value = this.config.fontSize.toString();
-        this.optionsElements.boldText.checked = this.config.boldText;
-        this.inputElement.value = this.config.lastPrompt;
-        this.optionsElements.removeButtonFocus.checked = this.config.removeButtonFocus;
-        for (const button of document.getElementsByTagName("button")) {
-            button.addEventListener("click", (e) => {
-                if (this.config.removeButtonFocus) {
-                    e.srcElement.blur();
-                }
-            });
-        }
-    }
-    saveConfig() {
-        __WEBPACK_IMPORTED_MODULE_0__config__["b" /* save */](this.config);
-    }
-    showPrompt() {
-        this.prompterContainer.style.display = "block";
-        this.isFocused = true;
-        this.loadStyles();
-        this.loadScript();
-        this.saveConfig();
-    }
-    hidePrompt() {
-        this.isFocused = false;
-        this.prompterContainer.style.display = "none";
-        this.stop();
-    }
-    loop() {
-        this.render();
-        if (this.runningState !== RunningState.Paused) {
-            requestAnimationFrame(this.loop);
-        }
-    }
-    render() {
-        if (this.runningState === RunningState.Running) {
-            this.currentOffset += this.speed * this.direction;
-            if (this.currentOffset < 0) {
-                this.currentOffset = 0;
-            }
-            else if (this.currentOffset > this.textHeight) {
-                this.currentOffset = this.textHeight;
-            }
-        }
-        this.prompterLinesElement.style.marginTop = `-${this.currentOffset}px`;
-    }
-    start() {
-        this.buttons.startStop.textContent = "Pause";
-        this.runningState = RunningState.Running;
-        this.loop();
-    }
-    stop() {
-        this.runningState = RunningState.Paused;
-        this.buttons.startStop.textContent = "Start";
-    }
-    // BUTTONS
-    togglePlayState() {
-        if (this.runningState === RunningState.Paused) {
-            this.start();
-        }
-        else if (this.runningState === RunningState.Running) {
-            this.stop();
-        }
-    }
-    reverseDirection() {
-        this.direction = -this.direction;
-        if (this.direction === 1) {
-            this.buttons.reverse.textContent = "Moving Down";
-        }
-        else {
-            this.buttons.reverse.textContent = "Moving Up";
-        }
-    }
-    // GETTERS AND SETTERS
     get speed() {
-        return this._speed;
+        return Number(this.speedElement.textContent);
     }
     set speed(speed) {
-        if (speed < 0) {
-            this._speed = 0;
-        }
-        else {
-            this._speed = speed;
-            document.getElementById("options-current-speed").textContent = speed.toString();
-        }
+        this.speedElement.textContent = speed.toFixed(1);
+    }
+    get fontSize() {
+        return Number(this.fontSizeElement.value);
+    }
+    set fontSize(fontSize) {
+        this.fontSizeElement.value = fontSize.toString();
+        this.prompterElement.style.fontSize = `${fontSize}px`;
+    }
+    get fontFamily() {
+        return this.fontFamilyElement.value;
+    }
+    set fontFamily(fontFamily) {
+        this.fontFamilyElement.value = fontFamily;
+        // set the font with sans-serif as a fallback
+        this.prompterElement.style.fontFamily = `${fontFamily} sans-serif`;
+    }
+    get boldText() {
+        return this.boldTextElement.checked;
+    }
+    set boldText(boldText) {
+        this.boldTextElement.checked = boldText;
+        this.prompterElement.style.fontWeight = boldText ? "bold" : "";
+    }
+    get text() {
+        return this.textInputElement.value;
+    }
+    set text(text) {
+        this.textInputElement.value = text;
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = EasierPrompter;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Config;
+
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class AbstractConfig {
+    generateJSON() {
+        return JSON.stringify({
+            speed: this.speed,
+            fontSize: this.fontSize,
+            fontFamily: this.fontFamily,
+            boldText: this.boldText,
+            text: this.text,
+        });
+    }
+    save() {
+        localStorage.setItem(AbstractConfig.STORAGE_KEY, this.generateJSON());
+        return this;
+    }
+    load() {
+        const storage = localStorage.getItem(AbstractConfig.STORAGE_KEY);
+        if (storage !== null) {
+            try {
+                const data = JSON.parse(storage);
+                for (const key of Object.keys(data)) {
+                    const value = data[key];
+                    this[key] = value;
+                }
+            }
+            catch (e) {
+                // invalid json, save the current one and abort
+                alert("Stored config invalid. Ignoring.");
+            }
+        }
+        return this;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractConfig;
+
+AbstractConfig.STORAGE_KEY = "EasierPrompter_Config";
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
+
+
+class Prompter extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractPrompter */] {
+    constructor(config) {
+        super(config);
+        this.prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
+        this.addListeners();
+    }
+    reverseDirection() {
+        super.reverseDirection();
+        if (this.direction === __WEBPACK_IMPORTED_MODULE_0__abstract__["b" /* Direction */].Up) {
+            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").textContent = "Moving Up";
+        }
+        else {
+            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").textContent = "Moving Down";
+        }
+    }
+    // Makes buttons work
+    addListeners() {
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("start-button").addEventListener("click", (e) => {
+            this.show();
+        });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").addEventListener("click", (e) => {
+            if (this.scrolling) {
+                this.stop();
+            }
+            else {
+                this.start();
+            }
+        });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").addEventListener("click", (e) => {
+            this.reverseDirection();
+        });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-exit").addEventListener("click", (e) => {
+            this.hide();
+        });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", (e) => {
+            this.config.speed += Prompter.SPEED_INCREMENT;
+        });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", (e) => {
+            this.config.speed -= Prompter.SPEED_INCREMENT;
+        });
+    }
+    // Applies the margin style to scroll the script
+    render(distance) {
+        const lines = this.prompterLines;
+        lines.style.marginTop = `-${distance}px`;
+    }
+    // Changes an element's visibility
+    setDisplay(el, show) {
+        el.style.display = show ? "block" : "none";
+    }
+    // Shows the script
+    show() {
+        super.show();
+        this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("main"), false);
+        this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter"), true);
+    }
+    // Hides the script
+    hide() {
+        super.hide();
+        this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("main"), true);
+        this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter"), false);
+    }
+    getScript() {
+        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input").value;
+    }
+    // Removes all existing lines from the script element
+    resetScript() {
+        while (this.prompterLines.firstChild) {
+            this.prompterLines.removeChild(this.prompterLines.firstChild);
+        }
+    }
+    loadScript(script) {
+        this.resetScript();
+        const prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
+        for (const line of script.split("\n")) {
+            const listItem = document.createElement("li");
+            listItem.textContent = line;
+            prompterLines.appendChild(listItem);
+        }
+    }
+    calculateTextLength() {
+        const styles = window.getComputedStyle(this.prompterLines);
+        const height = styles.height.replace("px", "");
+        this.textLength = Number(height);
+    }
+    start() {
+        super.start();
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Stop";
+    }
+    stop() {
+        super.stop();
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Start";
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Prompter;
+
+Prompter.SPEED_INCREMENT = 0.5;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Direction; });
+var Direction;
+(function (Direction) {
+    Direction[Direction["Up"] = 1] = "Up";
+    Direction[Direction["Down"] = -1] = "Down";
+})(Direction || (Direction = {}));
+class AbstractPrompter {
+    constructor(config) {
+        this._scrollDistance = 0;
+        this.showing = false;
+        this.scrolling = false;
+        this.direction = Direction.Up;
+        this.textLength = Infinity;
+        this.config = config;
+        this.loop = this.loop.bind(this);
+        this.loop();
+    }
+    // Start the scrolling
+    start() {
+        this.scrolling = true;
+    }
+    // Stop the scrolling
+    stop() {
+        this.scrolling = false;
+    }
+    // Reverse the going direction
+    reverseDirection() {
+        if (this.direction === Direction.Up) {
+            this.direction = Direction.Down;
+        }
+        else {
+            this.direction = Direction.Up;
+        }
+    }
+    // Main loop - renders and scrolls
+    loop() {
+        requestAnimationFrame(this.loop);
+        if (!this.showing) {
+            return;
+        }
+        if (this.scrolling) {
+            this.scroll();
+        }
+        this.render(this.scrollDistance);
+    }
+    // Move the current scroll distance according to the speed
+    scroll() {
+        this.scrollDistance += this.config.speed * this.direction;
+    }
+    // show the prompter
+    // call super.show() in implementations
+    show() {
+        this.showing = true;
+        this.scrollDistance = 0;
+        this.loadScript(this.getScript());
+        this.calculateTextLength();
+        this.config.save();
+        this.config.load();
+    }
+    // hide & stop the prompter
+    // call super.hide() in implementations
+    hide() {
+        this.stop();
+        this.showing = false;
+    }
+    get scrollDistance() {
+        return this._scrollDistance;
+    }
+    set scrollDistance(distance) {
+        if (distance < 0) {
+            distance = 0;
+        }
+        if (distance > this.textLength) {
+            distance = this.textLength;
+        }
+        this._scrollDistance = distance;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractPrompter;
 
 
 
