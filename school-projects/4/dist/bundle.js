@@ -117,14 +117,14 @@ class Config extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractConf
         this.speedElement.textContent = speed.toFixed(1);
     }
     get fontSize() {
-        return Number(this.fontSizeElement.value);
+        return Number(this.fontSizeElement.value) || 75;
     }
     set fontSize(fontSize) {
         this.fontSizeElement.value = fontSize.toString();
         this.prompterElement.style.fontSize = `${fontSize}px`;
     }
     get fontFamily() {
-        return this.fontFamilyElement.value;
+        return this.fontFamilyElement.value || "sans-serif";
     }
     set fontFamily(fontFamily) {
         this.fontFamilyElement.value = fontFamily;

@@ -22,7 +22,7 @@ export class Config extends AbstractConfig {
   }
 
   public get fontSize() {
-    return Number(this.fontSizeElement.value);
+    return Number(this.fontSizeElement.value) || 75;
   }
 
   public set fontSize(fontSize) {
@@ -31,7 +31,7 @@ export class Config extends AbstractConfig {
   }
 
   public get fontFamily() {
-    return this.fontFamilyElement.value;
+    return this.fontFamilyElement.value || "sans-serif";
   }
 
   public set fontFamily(fontFamily) {
