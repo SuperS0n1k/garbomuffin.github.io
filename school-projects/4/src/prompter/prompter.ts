@@ -17,9 +17,9 @@ export class Prompter extends AbstractPrompter {
     super.reverseDirection();
 
     if (this.direction === Direction.Up) {
-      getElement("options-toggle-direction").textContent = "Moving Up";
-    } else {
       getElement("options-toggle-direction").textContent = "Moving Down";
+    } else {
+      getElement("options-toggle-direction").textContent = "Moving Up";
     }
   }
 

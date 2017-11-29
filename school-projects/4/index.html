@@ -89,17 +89,9 @@
 
     <!-- Editor Styling -->
     <style>
-      #start-button-container {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 10%;
-      }
-
       #start-button {
         width: 100%;
-        height: 100%;
+        height: 3em;
       }
 
       #main {
@@ -158,11 +150,11 @@
     </noscript>
 
     <div id="main">
-      <h1>Easier Prompter (v0.2)</h1>
+      <h1>Easier Prompter (v0.2.1)</h1>
 
       <hr>
 
-      <p><a href="../4-old">If this is buggy try out the old version</a>. It has keyboard shortcuts and is more tested. It is no longer updated.</p>
+      <p><b><a href="../4-old">If this is buggy try out the old version</a>. It has keyboard shortcuts and is more tested. It is no longer updated.</b></p>
 
       <div id="editor">
         <table>
@@ -176,25 +168,29 @@
 
             <th id="editor-options-container">
               <div><label>Font size: <input type="number" id="options-font-size"></label></div>
-              <div><label>Font family: <input type="text" id="options-font-family"></label></div>
+              <div><label>Font family: <input type="text" id="options-font-family" readonly></label></div>
               <div><label>Bold text: <input type="checkbox" id="options-bold-text"></label></div>
             </th>
           </tr>
         </table>
 
-        <div id="start-button-container">
-          <button id="start-button">Start</button>
-        </div>
+        <button id="start-button">Start</button>
       </div>
 
       <hr>
 
       <div>
         <h3 class="no-margin">What is this?</h3>
-        <p>This is a simple teleprompter. You enter your script above then press the start button below.</p>
+        <p>This is a simple teleprompter. You enter your script above then press the start button above.</p>
 
         <h3 class="no-margin">How is this better than any other prompter out there?</h3>
-        <p>It's not.</p>
+        <ul>
+          <li>No sign in.</li>
+          <li>Written in pure javascript and no flash player.</li>
+          <li>All client side. I never see your scripts.</li>
+          <li>No ads.</li>
+          <li>It' really up to you. Use what best fits your needs.</li>
+        </ul>
       </div>
 
     </div>
