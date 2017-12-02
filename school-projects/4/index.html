@@ -150,11 +150,18 @@
     </noscript>
 
     <div id="main">
-      <h1>Easier Prompter (v0.2.1)</h1>
+      <h1>Easier Prompter (v0.2.2)</h1>
 
       <hr>
 
       <p><b><a href="../4-old">If this is buggy try out the old version</a>. It has keyboard shortcuts and is more tested. It is no longer updated.</b></p>
+
+      <p>
+        Current focuses:
+        keyboard shortcuts,
+        saving between reloads (broke due to major refactoring),
+        code modularity.
+      </p>
 
       <div id="editor">
         <table>
@@ -168,7 +175,7 @@
 
             <th id="editor-options-container">
               <div><label>Font size: <input type="number" id="options-font-size"></label></div>
-              <div><label>Font family: <input type="text" id="options-font-family" readonly></label></div>
+              <div><label>Font family: <input type="text" id="options-font-family"></label></div>
               <div><label>Bold text: <input type="checkbox" id="options-bold-text"></label></div>
             </th>
           </tr>
@@ -186,10 +193,10 @@
         <h3 class="no-margin">How is this better than any other prompter out there?</h3>
         <ul>
           <li>No sign in.</li>
-          <li>Written in pure javascript and no flash player.</li>
+          <li>Written in pure javascript with no additional plugins.</li>
           <li>All client side. I never see your scripts.</li>
           <li>No ads.</li>
-          <li>It' really up to you. Use what best fits your needs.</li>
+          <li>It's really up to you. Use what best fits your needs.</li>
         </ul>
       </div>
 
@@ -211,7 +218,7 @@
       <div id="prompter-options">
         <button id="options-toggle-run">Start</button>
 
-        <button id="options-toggle-direction">Moving Up</button>
+        <button id="options-toggle-direction">Moving Down</button>
 
         <span>Speed:</span>
         <button id="options-speed-down">&lt;</button>

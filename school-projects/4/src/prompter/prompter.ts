@@ -1,13 +1,13 @@
 import { AbstractPrompter, Direction } from "./abstract";
 import { getElement } from "../utils";
-import { Config } from "../config/config";
+import { ConfigManager } from "../config/config";
+
+const SPEED_INCREMENT = 0.5;
 
 export class Prompter extends AbstractPrompter {
-  private static readonly SPEED_INCREMENT = 0.5;
-
   private prompterLines = getElement("prompter-lines") as HTMLUListElement;
 
-  constructor(config: Config) {
+  constructor(config: ConfigManager) {
     super(config);
 
     this.addListeners();
@@ -46,11 +46,11 @@ export class Prompter extends AbstractPrompter {
     });
 
     getElement("options-speed-up").addEventListener("click", (e) => {
-      this.config.speed += Prompter.SPEED_INCREMENT;
+      this.config.speed += SPEED_INCREMENT;
     });
 
     getElement("options-speed-down").addEventListener("click", (e) => {
-      this.config.speed -= Prompter.SPEED_INCREMENT;
+      this.config.speed -= SPEED_INCREMENT;
     });
   }
 

@@ -69,8 +69,14 @@
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getElement;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(5);
+
 function getElement(id) {
-    return document.getElementById(id);
+    const el = document.getElementById(id);
+    if (el === null) {
+        throw new __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__["a" /* ElementIDNotFoundError */](id);
+    }
+    return el;
 }
 
 
@@ -81,11 +87,66 @@ function getElement(id) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_config__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_option__ = __webpack_require__(6);
 
 
-const config = new __WEBPACK_IMPORTED_MODULE_0__config_config__["a" /* Config */]();
-config.load();
+
+
+const prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("prompter-lines");
+const config = new __WEBPACK_IMPORTED_MODULE_0__config_config__["a" /* ConfigManager */]();
+config.options.speed = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
+    name: "speed",
+    default: 1.5,
+    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-current-speed"),
+    type: "number",
+    setterOpts: {
+        transform: (value) => value.toFixed(1),
+    },
+});
+config.options.fontSize = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
+    name: "fontSize",
+    default: 75,
+    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-size"),
+    type: "number",
+    setterOpts: {
+        onchange: true,
+        callback: (value) => {
+            prompterElement.style.fontSize = `${value}px`;
+        },
+    },
+});
+config.options.fontFamily = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
+    name: "fontFamily",
+    default: "sans-serif",
+    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-family"),
+    type: "text",
+    setterOpts: {
+        onchange: true,
+        callback: (value) => {
+            prompterElement.style.fontFamily = `${value}, sans-serif`;
+        },
+    },
+});
+config.options.boldText = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
+    name: "fontFamily",
+    default: true,
+    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-bold-text"),
+    type: "checkbox",
+    setterOpts: {
+        onchange: true,
+        callback: (value) => {
+            prompterElement.style.fontWeight = value ? "bold" : "normal";
+        },
+    },
+});
+config.options.text = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
+    name: "text",
+    default: "Enter your script here!",
+    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("text-input"),
+    type: "text",
+});
 const prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Prompter */](config);
 window.config = config;
 window.prompter = prompter;
@@ -96,56 +157,20 @@ window.prompter = prompter;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
-
-
-class Config extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractConfig */] {
+const STORAGE_KEY = "EasierPrompter_Config";
+// TODO: saving & loading
+class ConfigManager {
     constructor() {
-        super();
-        this.prompterElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
-        this.speedElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-current-speed");
-        this.textInputElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input");
-        this.fontSizeElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-font-size");
-        this.fontFamilyElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-font-family");
-        this.boldTextElement = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-bold-text");
+        this.options = {};
     }
     get speed() {
-        return Number(this.speedElement.textContent);
+        return this.options.speed.get();
     }
-    set speed(speed) {
-        this.speedElement.textContent = speed.toFixed(1);
-    }
-    get fontSize() {
-        return Number(this.fontSizeElement.value) || 75;
-    }
-    set fontSize(fontSize) {
-        this.fontSizeElement.value = fontSize.toString();
-        this.prompterElement.style.fontSize = `${fontSize}px`;
-    }
-    get fontFamily() {
-        return this.fontFamilyElement.value || "sans-serif";
-    }
-    set fontFamily(fontFamily) {
-        this.fontFamilyElement.value = fontFamily;
-        // set the font with sans-serif as a fallback
-        this.prompterElement.style.fontFamily = `${fontFamily} sans-serif`;
-    }
-    get boldText() {
-        return this.boldTextElement.checked;
-    }
-    set boldText(boldText) {
-        this.boldTextElement.checked = boldText;
-        this.prompterElement.style.fontWeight = boldText ? "bold" : "";
-    }
-    get text() {
-        return this.textInputElement.value;
-    }
-    set text(text) {
-        this.textInputElement.value = text;
+    set speed(value) {
+        this.options.speed.set(value);
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Config;
+/* harmony export (immutable) */ __webpack_exports__["a"] = ConfigManager;
 
 
 
@@ -154,52 +179,11 @@ class Config extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractConf
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class AbstractConfig {
-    generateJSON() {
-        return JSON.stringify({
-            speed: this.speed,
-            fontSize: this.fontSize,
-            fontFamily: this.fontFamily,
-            boldText: this.boldText,
-            text: this.text,
-        });
-    }
-    save() {
-        localStorage.setItem(AbstractConfig.STORAGE_KEY, this.generateJSON());
-        return this;
-    }
-    load() {
-        const storage = localStorage.getItem(AbstractConfig.STORAGE_KEY);
-        if (storage !== null) {
-            try {
-                const data = JSON.parse(storage);
-                for (const key of Object.keys(data)) {
-                    const value = data[key];
-                    this[key] = value;
-                }
-            }
-            catch (e) {
-                // invalid json, save the current one and abort
-                alert("Stored config invalid. Ignoring.");
-            }
-        }
-        return this;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractConfig;
-
-AbstractConfig.STORAGE_KEY = "EasierPrompter_Config";
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
 
 
+const SPEED_INCREMENT = 0.5;
 class Prompter extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractPrompter */] {
     constructor(config) {
         super(config);
@@ -235,10 +219,10 @@ class Prompter extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractPr
             this.hide();
         });
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", (e) => {
-            this.config.speed += Prompter.SPEED_INCREMENT;
+            this.config.speed += SPEED_INCREMENT;
         });
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", (e) => {
-            this.config.speed -= Prompter.SPEED_INCREMENT;
+            this.config.speed -= SPEED_INCREMENT;
         });
     }
     // Applies the margin style to scroll the script
@@ -296,11 +280,10 @@ class Prompter extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractPr
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Prompter;
 
-Prompter.SPEED_INCREMENT = 0.5;
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -360,8 +343,6 @@ class AbstractPrompter {
         this.scrollDistance = 0;
         this.loadScript(this.getScript());
         this.calculateTextLength();
-        this.config.save();
-        this.config.load();
     }
     // hide & stop the prompter
     // call super.hide() in implementations
@@ -384,6 +365,121 @@ class AbstractPrompter {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = AbstractPrompter;
 
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class ElementIDNotFoundError extends Error {
+    constructor(id) {
+        super(`Element with id '${id}' not found.`);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ElementIDNotFoundError;
+
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(7);
+
+class ConfigOption {
+    // constructor(def: T, el: HTMLElement, get: ConfigGetter<T>, set: ConfigSetter<T>) {
+    constructor(options) {
+        this.get = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* getterFrom */])(options.el, options.type);
+        this.set = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* setterFrom */])(options.el, options.setterOpts);
+        this.set(options.default);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ConfigOption;
+
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getterFrom;
+/* harmony export (immutable) */ __webpack_exports__["b"] = setterFrom;
+function getterFrom(el, type = "text") {
+    let getter = () => el.textContent || "";
+    if (el instanceof HTMLTextAreaElement) {
+        getter = () => el.value;
+    }
+    if (el instanceof HTMLInputElement) {
+        if (el.type === "checkbox") {
+            getter = () => el.checked;
+        }
+        else {
+            getter = () => el.value;
+        }
+    }
+    if (type === "number") {
+        return () => {
+            const val = getter().trim();
+            if (val === "") {
+                return 0;
+            }
+            else {
+                return Number(val);
+            }
+        };
+    }
+    return getter;
+}
+function setterFrom(el, opts = {}) {
+    function _getSetterFunction() {
+        if (el instanceof HTMLTextAreaElement) {
+            return (value) => el.value = value;
+        }
+        if (el instanceof HTMLInputElement) {
+            const type = el.type;
+            if (type === "text") {
+                return (value) => el.value = value;
+            }
+            else if (type === "number") {
+                return (value) => el.value = value.toString();
+            }
+            else if (type === "checkbox") {
+                return (value) => el.checked = value;
+            }
+            else {
+                console.warn(`Unsupported input type: ${type}`);
+            }
+        }
+        return (value) => el.textContent = value;
+    }
+    const setter = _getSetterFunction();
+    const stack = [];
+    if (opts.transform) {
+        stack.push(opts.transform);
+    }
+    stack.push(setter);
+    if (opts.callback) {
+        stack.push(opts.callback);
+    }
+    const functionStack = generateFunctionStack(stack);
+    if (opts.onchange) {
+        el.onchange = () => {
+            functionStack(getterFrom(el)());
+        };
+    }
+    return functionStack;
+}
+function generateFunctionStack(functions) {
+    return (value) => {
+        for (const func of functions) {
+            value = func(value);
+        }
+        return value;
+    };
+}
 
 
 /***/ })

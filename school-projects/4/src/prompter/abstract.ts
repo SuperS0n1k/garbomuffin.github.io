@@ -1,4 +1,4 @@
-import { AbstractConfig } from "../config/abstract";
+import { ConfigManager } from "../config/config";
 import { getElement } from "../utils";
 
 interface IPrompter {
@@ -16,13 +16,13 @@ export enum Direction {
 export abstract class AbstractPrompter implements IPrompter {
   private _scrollDistance: number = 0;
 
-  protected config: AbstractConfig;
+  protected config: ConfigManager;
   protected showing: boolean = false;
   protected scrolling: boolean = false;
   protected direction: Direction = Direction.Up;
   protected textLength: number = Infinity;
 
-  constructor(config: AbstractConfig) {
+  constructor(config: ConfigManager) {
     this.config = config;
 
     this.loop = this.loop.bind(this);
@@ -75,7 +75,7 @@ export abstract class AbstractPrompter implements IPrompter {
   // returns the script
   public abstract getScript(): string;
 
-  // loads a script into the DOM
+  // loads a script (not the javascript type) into the DOM
   public abstract loadScript(script: string): void;
 
   // show the prompter
@@ -86,9 +86,6 @@ export abstract class AbstractPrompter implements IPrompter {
 
     this.loadScript(this.getScript());
     this.calculateTextLength();
-
-    this.config.save();
-    this.config.load();
   }
 
   // hide & stop the prompter

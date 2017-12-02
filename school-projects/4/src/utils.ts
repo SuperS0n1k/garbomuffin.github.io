@@ -1,3 +1,9 @@
-export function getElement(id: string) {
-  return document.getElementById(id) as HTMLElement;
+import { ElementIDNotFoundError } from "./error/idnotfound";
+
+export function getElement(id: string): HTMLElement {
+  const el = document.getElementById(id);
+  if (el === null) {
+    throw new ElementIDNotFoundError(id);
+  }
+  return el;
 }
