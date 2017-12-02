@@ -90,6 +90,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_option__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__config_save__ = __webpack_require__(8);
+
 
 
 
@@ -147,6 +149,10 @@ config.options.text = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* Co
     el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("text-input"),
     type: "text",
 });
+__WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].load(config);
+__WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].save(config);
+Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("save-button").onclick = () => __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].save(config);
+Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = () => __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].promptReset(config);
 const prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Prompter */](config);
 window.config = config;
 window.prompter = prompter;
@@ -264,6 +270,8 @@ class Prompter extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractPr
             prompterLines.appendChild(listItem);
         }
     }
+    // computes how long the script is and stores it
+    // makes sure we don't scroll way too far
     calculateTextLength() {
         const styles = window.getComputedStyle(this.prompterLines);
         const height = styles.height.replace("px", "");
@@ -480,6 +488,64 @@ function generateFunctionStack(functions) {
         return value;
     };
 }
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// increase every time an incompatible change is made to the store data
+const STORE_VERSION = "0";
+// hopefully this is specific enough lol
+const STORAGE_KEY = `easierPrompter${STORE_VERSION}_configStore`;
+class Save {
+    static getOptions() {
+        const localConfig = localStorage.getItem(STORAGE_KEY);
+        if (localConfig === null) {
+            return {};
+        }
+        else {
+            return JSON.parse(localConfig);
+        }
+    }
+    static generateSaveData(config) {
+        const res = {};
+        for (const key of Object.keys(config.options)) {
+            const value = config.options[key];
+            res[key] = value.get();
+        }
+        return res;
+    }
+    static reset() {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+    }
+    static save(config) {
+        const data = Save.generateSaveData(config);
+        console.log("save:", data);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    static load(config) {
+        const options = Save.getOptions();
+        for (const key of Object.keys(options)) {
+            const value = options[key];
+            console.log("loaded from save:", key, value);
+            config.options[key].set(value);
+        }
+    }
+    static promptReset() {
+        const message = [
+            "Are yousure you want to reset the settings?",
+            "This will reset your script, the config, and reload the page",
+        ];
+        if (confirm(message.join("\n\n"))) {
+            Save.reset();
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Save;
+
 
 
 /***/ })

@@ -104,6 +104,8 @@ export class Prompter extends AbstractPrompter {
     }
   }
 
+  // computes how long the script is and stores it
+  // makes sure we don't scroll way too far
   public calculateTextLength() {
     const styles = window.getComputedStyle(this.prompterLines);
     const height = (styles.height as string).replace("px", "");

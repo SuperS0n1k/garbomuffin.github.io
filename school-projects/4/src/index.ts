@@ -2,6 +2,7 @@ import { ConfigManager } from "./config/config";
 import { Prompter } from "./prompter/prompter";
 import { getElement } from "./utils";
 import { ConfigOption } from "./config/option";
+import { Save } from "./config/save";
 
 const prompterElement = getElement("prompter-lines");
 const config = new ConfigManager();
@@ -61,6 +62,12 @@ config.options.text = new ConfigOption<string>({
   el: getElement("text-input"),
   type: "text",
 });
+
+Save.load(config);
+Save.save(config);
+
+getElement("save-button").onclick = () => Save.save(config);
+getElement("reset-button").onclick = () => Save.promptReset(config);
 
 const prompter = new Prompter(config);
 

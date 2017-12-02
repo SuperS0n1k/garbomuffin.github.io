@@ -18,6 +18,7 @@ export interface IConfigOptionOptions<T> {
 export class ConfigOption<T = any> {
   public get: ConfigGetter<T>;
   public set: ConfigSetter<T>;
+  public name: string;
 
   // constructor(def: T, el: HTMLElement, get: ConfigGetter<T>, set: ConfigSetter<T>) {
   constructor(options: IConfigOptionOptions<T>) {

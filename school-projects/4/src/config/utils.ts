@@ -1,9 +1,9 @@
 import { ConfigSetter, ConfigGetter } from "./option";
 
 export type GetterType = "number" | "text" | "checkbox";
-export function getterFrom(el: HTMLElement, type: "text"): ConfigGetter<string>;
-export function getterFrom(el: HTMLElement, type: "number"): ConfigGetter<number>;
-export function getterFrom(el: HTMLElement, type: "checkbox"): ConfigGetter<boolean>;
+export function getterFrom(el: HTMLElement, type?: "text"): ConfigGetter<string>;
+export function getterFrom(el: HTMLElement, type?: "number"): ConfigGetter<number>;
+export function getterFrom(el: HTMLElement, type?: "checkbox"): ConfigGetter<boolean>;
 export function getterFrom(el: HTMLElement, type: GetterType = "text"): ConfigGetter<string | number | boolean> {
   let getter: ConfigGetter<any> = () => el.textContent || "";
 

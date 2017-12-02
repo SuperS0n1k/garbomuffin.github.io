@@ -31,9 +31,8 @@
     <!-- Element styling -->
     <style>
       /* disable centering */
-      tr, th, td, table {
+      tr, td, table {
         vertical-align: top;
-        font-weight: normal;
         text-align: left;
       }
     </style>
@@ -91,7 +90,16 @@
     <style>
       #start-button {
         width: 100%;
-        height: 3em;
+        height: 300%;
+        font-size: 1.5em;
+      }
+
+      #save-button {
+        width: 100%;
+      }
+
+      #reset-button {
+        width: 100%;
       }
 
       #main {
@@ -166,18 +174,21 @@
       <div id="editor">
         <table>
           <tr>
-            <th id="text-input-container">
+            <td id="text-input-container">
               <textarea id="text-input"
-                        placeholder="Enter your script here..."
+                        placeholder="Enter your script here!"
                         rows="20"
                         spellcheck="true"></textarea>
-            </th>
+            </td>
 
-            <th id="editor-options-container">
+            <td id="editor-options-container">
               <div><label>Font size: <input type="number" id="options-font-size"></label></div>
               <div><label>Font family: <input type="text" id="options-font-family"></label></div>
               <div><label>Bold text: <input type="checkbox" id="options-bold-text"></label></div>
-            </th>
+
+              <button id="save-button">Save</button>
+              <button id="reset-button">Reset</button>
+            </td>
           </tr>
         </table>
 
