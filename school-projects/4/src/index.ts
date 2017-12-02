@@ -2,13 +2,12 @@ import { ConfigManager } from "./config/config";
 import { Prompter } from "./prompter/prompter";
 import { getElement } from "./utils";
 import { ConfigOption } from "./config/option";
-import { Save } from "./config/save";
+import { Keyboard } from "./keyboard/keyboard";
 
 const prompterElement = getElement("prompter-lines");
 const config = new ConfigManager();
 
 config.options.speed = new ConfigOption<number>({
-  name: "speed",
   default: 1.5,
   el: getElement("options-current-speed"),
   type: "number",
@@ -18,7 +17,6 @@ config.options.speed = new ConfigOption<number>({
 });
 
 config.options.fontSize = new ConfigOption<number>({
-  name: "fontSize",
   default: 75,
   el: getElement("options-font-size"),
   type: "number",
@@ -31,7 +29,6 @@ config.options.fontSize = new ConfigOption<number>({
 });
 
 config.options.fontFamily = new ConfigOption<string>({
-  name: "fontFamily",
   default: "sans-serif",
   el: getElement("options-font-family"),
   type: "text",
@@ -44,7 +41,6 @@ config.options.fontFamily = new ConfigOption<string>({
 });
 
 config.options.boldText = new ConfigOption<boolean>({
-  name: "fontFamily",
   default: true,
   el: getElement("options-bold-text"),
   type: "checkbox",
@@ -57,19 +53,15 @@ config.options.boldText = new ConfigOption<boolean>({
 });
 
 config.options.text = new ConfigOption<string>({
-  name: "text",
   default: "Enter your script here!",
   el: getElement("text-input"),
   type: "text",
 });
 
-Save.load(config);
-Save.save(config);
+config.load();
+config.save();
 
-getElement("save-button").onclick = () => Save.save(config);
-getElement("reset-button").onclick = () => Save.promptReset();
+getElement("save-button").onclick = () => config.save();
+getElement("reset-button").onclick = () => config.load();
 
 const prompter = new Prompter(config);
-
-(window as any).config = config;
-(window as any).prompter = prompter;

@@ -90,8 +90,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_option__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__config_save__ = __webpack_require__(8);
-
 
 
 
@@ -99,7 +97,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 var prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("prompter-lines");
 var config = new __WEBPACK_IMPORTED_MODULE_0__config_config__["a" /* ConfigManager */]();
 config.options.speed = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    name: "speed",
     default: 1.5,
     el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-current-speed"),
     type: "number",
@@ -108,7 +105,6 @@ config.options.speed = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* C
     },
 });
 config.options.fontSize = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    name: "fontSize",
     default: 75,
     el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-size"),
     type: "number",
@@ -120,7 +116,6 @@ config.options.fontSize = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /
     },
 });
 config.options.fontFamily = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    name: "fontFamily",
     default: "sans-serif",
     el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-family"),
     type: "text",
@@ -132,7 +127,6 @@ config.options.fontFamily = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a"
     },
 });
 config.options.boldText = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    name: "fontFamily",
     default: true,
     el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-bold-text"),
     type: "checkbox",
@@ -144,18 +138,15 @@ config.options.boldText = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /
     },
 });
 config.options.text = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    name: "text",
     default: "Enter your script here!",
     el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("text-input"),
     type: "text",
 });
-__WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].load(config);
-__WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].save(config);
-Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("save-button").onclick = function () { return __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].save(config); };
-Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = function () { return __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].promptReset(); };
+config.load();
+config.save();
+Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("save-button").onclick = function () { return config.save(); };
+Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = function () { return config.load(); };
 var prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Prompter */](config);
-window.config = config;
-window.prompter = prompter;
 
 
 /***/ }),
@@ -164,11 +155,14 @@ window.prompter = prompter;
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigManager; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__save__ = __webpack_require__(8);
+
 var STORAGE_KEY = "EasierPrompter_Config";
 // TODO: saving & loading
 var ConfigManager = /** @class */ (function () {
     function ConfigManager() {
         this.options = {};
+        this.configSaver = new __WEBPACK_IMPORTED_MODULE_0__save__["a" /* ConfigSaver */](this);
     }
     Object.defineProperty(ConfigManager.prototype, "speed", {
         get: function () {
@@ -180,6 +174,12 @@ var ConfigManager = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    ConfigManager.prototype.save = function () {
+        this.configSaver.save();
+    };
+    ConfigManager.prototype.load = function () {
+        this.configSaver.load();
+    };
     return ConfigManager;
 }());
 
@@ -193,6 +193,7 @@ var ConfigManager = /** @class */ (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Prompter; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__ = __webpack_require__(9);
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -205,6 +206,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 
 
+
 var SPEED_INCREMENT = 0.5;
 var Prompter = /** @class */ (function (_super) {
     __extends(Prompter, _super);
@@ -212,8 +214,50 @@ var Prompter = /** @class */ (function (_super) {
         var _this = _super.call(this, config) || this;
         _this.prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
         _this.addListeners();
+        _this.addKeyboardHandlers();
         return _this;
     }
+    ///
+    /// Methods
+    ///
+    // Makes buttons work
+    Prompter.prototype.addListeners = function () {
+        var _this = this;
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("start-button").addEventListener("click", function (e) { return _this.show(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").addEventListener("click", function (e) { return _this.toggleScrolling(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").addEventListener("click", function (e) { return _this.reverseDirection(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-exit").addEventListener("click", function (e) { return _this.hide(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", function (e) { return _this.config.speed += SPEED_INCREMENT; });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", function (e) { return _this.config.speed -= SPEED_INCREMENT; });
+    };
+    // Keyboard support
+    Prompter.prototype.addKeyboardHandlers = function () {
+        var _this = this;
+        var keyboard = new __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__["a" /* Keyboard */]();
+        this.keyboard = keyboard;
+        // 32 = space = start/stop
+        keyboard.handleKeypress(32, function () {
+            if (_this.showing) {
+                _this.toggleScrolling();
+            }
+        });
+        // 27 = esc = stop & go back to start or leave if already at start
+        keyboard.handleKeypress(27, function () {
+            if (_this.showing) {
+                if (_this.scrollDistance === 0) {
+                    _this.hide();
+                }
+                else {
+                    _this.scrollDistance = 0;
+                    _this.stop();
+                }
+            }
+        });
+    };
+    ///
+    /// Overrides
+    ///
+    // reverse direction and moving up/down button text
     Prompter.prototype.reverseDirection = function () {
         _super.prototype.reverseDirection.call(this);
         if (this.direction === __WEBPACK_IMPORTED_MODULE_0__abstract__["b" /* Direction */].Up) {
@@ -223,41 +267,15 @@ var Prompter = /** @class */ (function (_super) {
             Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").textContent = "Moving Up";
         }
     };
-    // Makes buttons work
-    Prompter.prototype.addListeners = function () {
-        var _this = this;
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("start-button").addEventListener("click", function (e) {
-            _this.show();
-        });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").addEventListener("click", function (e) {
-            if (_this.scrolling) {
-                _this.stop();
-            }
-            else {
-                _this.start();
-            }
-        });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").addEventListener("click", function (e) {
-            _this.reverseDirection();
-        });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-exit").addEventListener("click", function (e) {
-            _this.hide();
-        });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", function (e) {
-            _this.config.speed += SPEED_INCREMENT;
-        });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", function (e) {
-            _this.config.speed -= SPEED_INCREMENT;
-        });
+    // Start and update start/stop button text
+    Prompter.prototype.start = function () {
+        _super.prototype.start.call(this);
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Stop";
     };
-    // Applies the margin style to scroll the script
-    Prompter.prototype.render = function (distance) {
-        var lines = this.prompterLines;
-        lines.style.marginTop = "-" + distance + "px";
-    };
-    // Changes an element's visibility
-    Prompter.prototype.setDisplay = function (el, show) {
-        el.style.display = show ? "block" : "none";
+    // Stop and update start/stop button text
+    Prompter.prototype.stop = function () {
+        _super.prototype.stop.call(this);
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Start";
     };
     // Shows the script
     Prompter.prototype.show = function () {
@@ -271,15 +289,22 @@ var Prompter = /** @class */ (function (_super) {
         this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("main"), true);
         this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter"), false);
     };
-    Prompter.prototype.getScript = function () {
-        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input").value;
+    ///
+    /// Implementations of abstract methods
+    ///
+    // Applies the margin style to scroll the script
+    Prompter.prototype.render = function (distance) {
+        var lines = this.prompterLines;
+        lines.style.marginTop = "-" + distance + "px";
     };
-    // Removes all existing lines from the script element
-    Prompter.prototype.resetScript = function () {
-        while (this.prompterLines.firstChild) {
-            this.prompterLines.removeChild(this.prompterLines.firstChild);
-        }
+    // computes how long the script is and stores it
+    // makes sure we don't scroll way too far
+    Prompter.prototype.getTextLength = function () {
+        var styles = window.getComputedStyle(this.prompterLines);
+        var height = styles.height.replace("px", "");
+        return Number(height);
     };
+    // Insertst the script into the DOM
     Prompter.prototype.loadScript = function (script) {
         this.resetScript();
         var prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
@@ -290,20 +315,22 @@ var Prompter = /** @class */ (function (_super) {
             prompterLines.appendChild(listItem);
         }
     };
-    // computes how long the script is and stores it
-    // makes sure we don't scroll way too far
-    Prompter.prototype.calculateTextLength = function () {
-        var styles = window.getComputedStyle(this.prompterLines);
-        var height = styles.height.replace("px", "");
-        this.textLength = Number(height);
+    ///
+    /// Utils or helper methods
+    ///
+    // Changes an element's visibility
+    Prompter.prototype.setDisplay = function (el, show) {
+        el.style.display = show ? "block" : "none";
     };
-    Prompter.prototype.start = function () {
-        _super.prototype.start.call(this);
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Stop";
+    // Returns the current script
+    Prompter.prototype.getScript = function () {
+        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input").value;
     };
-    Prompter.prototype.stop = function () {
-        _super.prototype.stop.call(this);
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Start";
+    // Removes all existing lines from the script element
+    Prompter.prototype.resetScript = function () {
+        while (this.prompterLines.firstChild) {
+            this.prompterLines.removeChild(this.prompterLines.firstChild);
+        }
     };
     return Prompter;
 }(__WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractPrompter */]));
@@ -325,14 +352,17 @@ var Direction;
 var AbstractPrompter = /** @class */ (function () {
     function AbstractPrompter(config) {
         this._scrollDistance = 0;
+        this.textLength = Infinity;
         this.showing = false;
         this.scrolling = false;
         this.direction = Direction.Up;
-        this.textLength = Infinity;
         this.config = config;
         this.loop = this.loop.bind(this);
         this.loop();
     }
+    ///
+    /// Inherited from IPrompter
+    ///
     // Start the scrolling
     AbstractPrompter.prototype.start = function () {
         this.scrolling = true;
@@ -341,6 +371,23 @@ var AbstractPrompter = /** @class */ (function () {
     AbstractPrompter.prototype.stop = function () {
         this.scrolling = false;
     };
+    // show the prompter
+    // call super.show() in implementations
+    AbstractPrompter.prototype.show = function () {
+        this.showing = true;
+        this.scrollDistance = 0;
+        this.loadScript(this.getScript());
+        this.textLength = this.getTextLength();
+    };
+    // hide & stop the prompter
+    // call super.hide() in implementations
+    AbstractPrompter.prototype.hide = function () {
+        this.stop();
+        this.showing = false;
+    };
+    ///
+    /// Methods
+    ///
     // Reverse the going direction
     AbstractPrompter.prototype.reverseDirection = function () {
         if (this.direction === Direction.Up) {
@@ -365,28 +412,24 @@ var AbstractPrompter = /** @class */ (function () {
     AbstractPrompter.prototype.scroll = function () {
         this.scrollDistance += this.config.speed * this.direction;
     };
-    // show the prompter
-    // call super.show() in implementations
-    AbstractPrompter.prototype.show = function () {
-        this.showing = true;
-        this.scrollDistance = 0;
-        this.loadScript(this.getScript());
-        this.calculateTextLength();
-    };
-    // hide & stop the prompter
-    // call super.hide() in implementations
-    AbstractPrompter.prototype.hide = function () {
-        this.stop();
-        this.showing = false;
+    AbstractPrompter.prototype.toggleScrolling = function () {
+        if (this.scrolling) {
+            this.stop();
+        }
+        else {
+            this.start();
+        }
     };
     Object.defineProperty(AbstractPrompter.prototype, "scrollDistance", {
         get: function () {
             return this._scrollDistance;
         },
         set: function (distance) {
+            // Make sure we can't scroll before the script
             if (distance < 0) {
                 distance = 0;
             }
+            // Make sure we can't scroll too far past the script
             if (distance > this.textLength) {
                 distance = this.textLength;
             }
@@ -536,15 +579,16 @@ function generateFunctionStack(functions) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Save; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigSaver; });
 // increase every time an incompatible change is made to the store data
 var STORE_VERSION = "0";
 // hopefully this is specific enough lol
 var STORAGE_KEY = "easierPrompter" + STORE_VERSION + "_configStore";
-var Save = /** @class */ (function () {
-    function Save() {
+var ConfigSaver = /** @class */ (function () {
+    function ConfigSaver(config) {
+        this.config = config;
     }
-    Save.getOptions = function () {
+    ConfigSaver.prototype.getOptions = function () {
         var localConfig = localStorage.getItem(STORAGE_KEY);
         if (localConfig === null) {
             return {};
@@ -553,41 +597,89 @@ var Save = /** @class */ (function () {
             return JSON.parse(localConfig);
         }
     };
-    Save.generateSaveData = function (config) {
+    ConfigSaver.prototype.generateSaveData = function () {
         var res = {};
-        for (var _i = 0, _a = Object.keys(config.options); _i < _a.length; _i++) {
+        for (var _i = 0, _a = Object.keys(this.config.options); _i < _a.length; _i++) {
             var key = _a[_i];
-            var value = config.options[key];
+            var value = this.config.options[key];
             res[key] = value.get();
         }
         return res;
     };
-    Save.reset = function () {
+    ConfigSaver.prototype.reset = function () {
         localStorage.removeItem(STORAGE_KEY);
         location.reload();
     };
-    Save.save = function (config) {
-        var data = Save.generateSaveData(config);
+    ConfigSaver.prototype.save = function () {
+        var data = this.generateSaveData();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     };
-    Save.load = function (config) {
-        var options = Save.getOptions();
+    ConfigSaver.prototype.load = function () {
+        var options = this.getOptions();
         for (var _i = 0, _a = Object.keys(options); _i < _a.length; _i++) {
             var key = _a[_i];
             var value = options[key];
-            config.options[key].set(value);
+            this.config.options[key].set(value);
         }
     };
-    Save.promptReset = function () {
+    ConfigSaver.prototype.promptReset = function () {
         var message = [
             "Are yousure you want to reset the settings?",
             "This will reset your script, the config, and reload the page",
         ];
         if (confirm(message.join("\n\n"))) {
-            Save.reset();
+            this.reset();
         }
     };
-    return Save;
+    return ConfigSaver;
+}());
+
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Keyboard; });
+var Keyboard = /** @class */ (function () {
+    function Keyboard() {
+        var _this = this;
+        this.handlers = [];
+        document.addEventListener("keydown", function (e) {
+            var keyCode = e.keyCode;
+            var handlers = _this.handlers[keyCode];
+            if (typeof handlers === "undefined" || handlers.length === 0) {
+                // no handlers
+                return;
+            }
+            // only cancel the event if we have handlers assigned
+            e.preventDefault();
+            for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
+                var func = handlers_1[_i];
+                func();
+            }
+        });
+        document.addEventListener("keyup", function (e) { return _this.preventDefault(e); });
+        document.addEventListener("keypress", function (e) { return _this.preventDefault(e); });
+    }
+    Keyboard.prototype.preventDefault = function (e) {
+        var keyCode = e.keyCode;
+        var handlers = this.handlers[keyCode];
+        var cancel = handlers && handlers.length > 0;
+        if (cancel) {
+            e.preventDefault();
+        }
+    };
+    Keyboard.prototype.handleKeypress = function (keyCode, func) {
+        // create the array if it does not already exist
+        if (typeof this.handlers[keyCode] === "undefined") {
+            this.handlers[keyCode] = [];
+        }
+        var handlers = this.handlers[keyCode];
+        handlers.push(func);
+    };
+    return Keyboard;
 }());
 
 

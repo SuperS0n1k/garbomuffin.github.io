@@ -15,12 +15,12 @@ export enum Direction {
 
 export abstract class AbstractPrompter implements IPrompter {
   private _scrollDistance: number = 0;
+  private textLength: number = Infinity;
 
   protected config: ConfigManager;
   protected showing: boolean = false;
   protected scrolling: boolean = false;
   protected direction: Direction = Direction.Up;
-  protected textLength: number = Infinity;
 
   constructor(config: ConfigManager) {
     this.config = config;
@@ -28,6 +28,10 @@ export abstract class AbstractPrompter implements IPrompter {
     this.loop = this.loop.bind(this);
     this.loop();
   }
+
+  ///
+  /// Inherited from IPrompter
+  ///
 
   // Start the scrolling
   public start() {
@@ -39,8 +43,30 @@ export abstract class AbstractPrompter implements IPrompter {
     this.scrolling = false;
   }
 
+  // show the prompter
+  // call super.show() in implementations
+  public show() {
+    this.showing = true;
+    this.scrollDistance = 0;
+
+    this.loadScript(this.getScript());
+    this.textLength = this.getTextLength();
+  }
+
+  // hide & stop the prompter
+  // call super.hide() in implementations
+  public hide() {
+    this.stop();
+
+    this.showing = false;
+  }
+
+  ///
+  /// Methods
+  ///
+
   // Reverse the going direction
-  public reverseDirection() {
+  protected reverseDirection() {
     if (this.direction === Direction.Up) {
       this.direction = Direction.Down;
     } else {
@@ -49,7 +75,7 @@ export abstract class AbstractPrompter implements IPrompter {
   }
 
   // Main loop - renders and scrolls
-  public loop() {
+  protected loop() {
     requestAnimationFrame(this.loop);
 
     if (!this.showing) {
@@ -63,55 +89,51 @@ export abstract class AbstractPrompter implements IPrompter {
     this.render(this.scrollDistance);
   }
 
-  // Render the prompter.
-  // distance - how far the scrolling has gone (in pixels)
-  public abstract render(distance: number): void;
-
   // Move the current scroll distance according to the speed
-  public scroll() {
+  protected scroll() {
     this.scrollDistance += this.config.speed * this.direction;
   }
 
-  // returns the script
-  public abstract getScript(): string;
-
-  // loads a script (not the javascript type) into the DOM
-  public abstract loadScript(script: string): void;
-
-  // show the prompter
-  // call super.show() in implementations
-  public show() {
-    this.showing = true;
-    this.scrollDistance = 0;
-
-    this.loadScript(this.getScript());
-    this.calculateTextLength();
+  protected toggleScrolling() {
+    if (this.scrolling) {
+      this.stop();
+    } else {
+      this.start();
+    }
   }
 
-  // hide & stop the prompter
-  // call super.hide() in implementations
-  public hide() {
-    this.stop();
-
-    this.showing = false;
-  }
-
-  // sets the textLength variable to how long the text is (in pixels)
-  public abstract calculateTextLength(): void;
-
-  get scrollDistance() {
+  protected get scrollDistance() {
     return this._scrollDistance;
   }
 
-  set scrollDistance(distance) {
+  protected set scrollDistance(distance) {
+    // Make sure we can't scroll before the script
     if (distance < 0) {
       distance = 0;
     }
 
+    // Make sure we can't scroll too far past the script
     if (distance > this.textLength) {
       distance = this.textLength;
     }
 
     this._scrollDistance = distance;
   }
+
+  ///
+  /// Abstract
+  ///
+
+  // returns the script
+  protected abstract getScript(): string;
+
+  // loads a script (not the javascript type) into the DOM
+  protected abstract loadScript(script: string): void;
+
+  // Render the prompter.
+  // distance - how far the scrolling has gone (in pixels)
+  protected abstract render(distance: number): void;
+
+  // how long the text is (in pixels)
+  protected abstract getTextLength(): number;
 }

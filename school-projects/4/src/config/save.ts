@@ -7,8 +7,14 @@ const STORE_VERSION = "0";
 // hopefully this is specific enough lol
 const STORAGE_KEY = `easierPrompter${STORE_VERSION}_configStore`;
 
-export class Save {
-  private static getOptions() {
+export class ConfigSaver {
+  private config: ConfigManager;
+
+  constructor(config: ConfigManager) {
+    this.config = config;
+  }
+
+  private getOptions() {
     const localConfig = localStorage.getItem(STORAGE_KEY);
     if (localConfig === null) {
       return {};
@@ -17,42 +23,42 @@ export class Save {
     }
   }
 
-  private static generateSaveData(config: ConfigManager) {
+  private generateSaveData() {
     const res: {[s: string]: ConfigOption} = {};
 
-    for (const key of Object.keys(config.options)) {
-      const value = config.options[key];
+    for (const key of Object.keys(this.config.options)) {
+      const value = this.config.options[key];
       res[key] = value.get();
     }
 
     return res;
   }
 
-  private static reset() {
+  private reset() {
     localStorage.removeItem(STORAGE_KEY);
     location.reload();
   }
 
-  public static save(config: ConfigManager) {
-    const data = Save.generateSaveData(config);
+  public save() {
+    const data = this.generateSaveData();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
-  public static load(config: ConfigManager) {
-    const options = Save.getOptions();
+  public load() {
+    const options = this.getOptions();
     for (const key of Object.keys(options)) {
       const value = options[key];
-      config.options[key].set(value);
+      this.config.options[key].set(value);
     }
   }
 
-  public static promptReset() {
+  public promptReset() {
     const message = [
       "Are yousure you want to reset the settings?",
       "This will reset your script, the config, and reload the page",
     ];
     if (confirm(message.join("\n\n"))) {
-      Save.reset();
+      this.reset();
     }
   }
 }
