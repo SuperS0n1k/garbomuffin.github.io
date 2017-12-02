@@ -152,7 +152,7 @@ config.options.text = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* Co
 __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].load(config);
 __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].save(config);
 Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("save-button").onclick = () => __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].save(config);
-Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = () => __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].promptReset(config);
+Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = () => __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].promptReset();
 const prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Prompter */](config);
 window.config = config;
 window.prompter = prompter;
@@ -523,14 +523,12 @@ class Save {
     }
     static save(config) {
         const data = Save.generateSaveData(config);
-        console.log("save:", data);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
     static load(config) {
         const options = Save.getOptions();
         for (const key of Object.keys(options)) {
             const value = options[key];
-            console.log("loaded from save:", key, value);
             config.options[key].set(value);
         }
     }

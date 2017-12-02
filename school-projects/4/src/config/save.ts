@@ -35,7 +35,6 @@ export class Save {
 
   public static save(config: ConfigManager) {
     const data = Save.generateSaveData(config);
-    console.log("save:", data);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
@@ -43,7 +42,6 @@ export class Save {
     const options = Save.getOptions();
     for (const key of Object.keys(options)) {
       const value = options[key];
-      console.log("loaded from save:", key, value);
       config.options[key].set(value);
     }
   }
