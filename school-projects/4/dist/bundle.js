@@ -72,7 +72,7 @@
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(5);
 
 function getElement(id) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     if (el === null) {
         throw new __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__["a" /* ElementIDNotFoundError */](id);
     }
@@ -96,15 +96,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-const prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("prompter-lines");
-const config = new __WEBPACK_IMPORTED_MODULE_0__config_config__["a" /* ConfigManager */]();
+var prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("prompter-lines");
+var config = new __WEBPACK_IMPORTED_MODULE_0__config_config__["a" /* ConfigManager */]();
 config.options.speed = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
     name: "speed",
     default: 1.5,
     el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-current-speed"),
     type: "number",
     setterOpts: {
-        transform: (value) => value.toFixed(1),
+        transform: function (value) { return value.toFixed(1); },
     },
 });
 config.options.fontSize = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
@@ -114,8 +114,8 @@ config.options.fontSize = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /
     type: "number",
     setterOpts: {
         onchange: true,
-        callback: (value) => {
-            prompterElement.style.fontSize = `${value}px`;
+        callback: function (value) {
+            prompterElement.style.fontSize = value + "px";
         },
     },
 });
@@ -126,8 +126,8 @@ config.options.fontFamily = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a"
     type: "text",
     setterOpts: {
         onchange: true,
-        callback: (value) => {
-            prompterElement.style.fontFamily = `${value}, sans-serif`;
+        callback: function (value) {
+            prompterElement.style.fontFamily = value + ", sans-serif";
         },
     },
 });
@@ -138,7 +138,7 @@ config.options.boldText = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /
     type: "checkbox",
     setterOpts: {
         onchange: true,
-        callback: (value) => {
+        callback: function (value) {
             prompterElement.style.fontWeight = value ? "bold" : "normal";
         },
     },
@@ -151,9 +151,9 @@ config.options.text = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* Co
 });
 __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].load(config);
 __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].save(config);
-Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("save-button").onclick = () => __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].save(config);
-Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = () => __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].promptReset();
-const prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Prompter */](config);
+Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("save-button").onclick = function () { return __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].save(config); };
+Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = function () { return __WEBPACK_IMPORTED_MODULE_4__config_save__["a" /* Save */].promptReset(); };
+var prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Prompter */](config);
 window.config = config;
 window.prompter = prompter;
 
@@ -163,20 +163,25 @@ window.prompter = prompter;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const STORAGE_KEY = "EasierPrompter_Config";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigManager; });
+var STORAGE_KEY = "EasierPrompter_Config";
 // TODO: saving & loading
-class ConfigManager {
-    constructor() {
+var ConfigManager = /** @class */ (function () {
+    function ConfigManager() {
         this.options = {};
     }
-    get speed() {
-        return this.options.speed.get();
-    }
-    set speed(value) {
-        this.options.speed.set(value);
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ConfigManager;
+    Object.defineProperty(ConfigManager.prototype, "speed", {
+        get: function () {
+            return this.options.speed.get();
+        },
+        set: function (value) {
+            this.options.speed.set(value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return ConfigManager;
+}());
 
 
 
@@ -185,108 +190,123 @@ class ConfigManager {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Prompter; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 
 
-const SPEED_INCREMENT = 0.5;
-class Prompter extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractPrompter */] {
-    constructor(config) {
-        super(config);
-        this.prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
-        this.addListeners();
+var SPEED_INCREMENT = 0.5;
+var Prompter = /** @class */ (function (_super) {
+    __extends(Prompter, _super);
+    function Prompter(config) {
+        var _this = _super.call(this, config) || this;
+        _this.prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
+        _this.addListeners();
+        return _this;
     }
-    reverseDirection() {
-        super.reverseDirection();
+    Prompter.prototype.reverseDirection = function () {
+        _super.prototype.reverseDirection.call(this);
         if (this.direction === __WEBPACK_IMPORTED_MODULE_0__abstract__["b" /* Direction */].Up) {
             Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").textContent = "Moving Down";
         }
         else {
             Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").textContent = "Moving Up";
         }
-    }
+    };
     // Makes buttons work
-    addListeners() {
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("start-button").addEventListener("click", (e) => {
-            this.show();
+    Prompter.prototype.addListeners = function () {
+        var _this = this;
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("start-button").addEventListener("click", function (e) {
+            _this.show();
         });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").addEventListener("click", (e) => {
-            if (this.scrolling) {
-                this.stop();
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").addEventListener("click", function (e) {
+            if (_this.scrolling) {
+                _this.stop();
             }
             else {
-                this.start();
+                _this.start();
             }
         });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").addEventListener("click", (e) => {
-            this.reverseDirection();
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").addEventListener("click", function (e) {
+            _this.reverseDirection();
         });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-exit").addEventListener("click", (e) => {
-            this.hide();
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-exit").addEventListener("click", function (e) {
+            _this.hide();
         });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", (e) => {
-            this.config.speed += SPEED_INCREMENT;
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", function (e) {
+            _this.config.speed += SPEED_INCREMENT;
         });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", (e) => {
-            this.config.speed -= SPEED_INCREMENT;
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", function (e) {
+            _this.config.speed -= SPEED_INCREMENT;
         });
-    }
+    };
     // Applies the margin style to scroll the script
-    render(distance) {
-        const lines = this.prompterLines;
-        lines.style.marginTop = `-${distance}px`;
-    }
+    Prompter.prototype.render = function (distance) {
+        var lines = this.prompterLines;
+        lines.style.marginTop = "-" + distance + "px";
+    };
     // Changes an element's visibility
-    setDisplay(el, show) {
+    Prompter.prototype.setDisplay = function (el, show) {
         el.style.display = show ? "block" : "none";
-    }
+    };
     // Shows the script
-    show() {
-        super.show();
+    Prompter.prototype.show = function () {
+        _super.prototype.show.call(this);
         this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("main"), false);
         this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter"), true);
-    }
+    };
     // Hides the script
-    hide() {
-        super.hide();
+    Prompter.prototype.hide = function () {
+        _super.prototype.hide.call(this);
         this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("main"), true);
         this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter"), false);
-    }
-    getScript() {
+    };
+    Prompter.prototype.getScript = function () {
         return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input").value;
-    }
+    };
     // Removes all existing lines from the script element
-    resetScript() {
+    Prompter.prototype.resetScript = function () {
         while (this.prompterLines.firstChild) {
             this.prompterLines.removeChild(this.prompterLines.firstChild);
         }
-    }
-    loadScript(script) {
+    };
+    Prompter.prototype.loadScript = function (script) {
         this.resetScript();
-        const prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
-        for (const line of script.split("\n")) {
-            const listItem = document.createElement("li");
+        var prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
+        for (var _i = 0, _a = script.split("\n"); _i < _a.length; _i++) {
+            var line = _a[_i];
+            var listItem = document.createElement("li");
             listItem.textContent = line;
             prompterLines.appendChild(listItem);
         }
-    }
+    };
     // computes how long the script is and stores it
     // makes sure we don't scroll way too far
-    calculateTextLength() {
-        const styles = window.getComputedStyle(this.prompterLines);
-        const height = styles.height.replace("px", "");
+    Prompter.prototype.calculateTextLength = function () {
+        var styles = window.getComputedStyle(this.prompterLines);
+        var height = styles.height.replace("px", "");
         this.textLength = Number(height);
-    }
-    start() {
-        super.start();
+    };
+    Prompter.prototype.start = function () {
+        _super.prototype.start.call(this);
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Stop";
-    }
-    stop() {
-        super.stop();
+    };
+    Prompter.prototype.stop = function () {
+        _super.prototype.stop.call(this);
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Start";
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Prompter;
+    };
+    return Prompter;
+}(__WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractPrompter */]));
 
 
 
@@ -296,13 +316,14 @@ class Prompter extends __WEBPACK_IMPORTED_MODULE_0__abstract__["a" /* AbstractPr
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Direction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AbstractPrompter; });
 var Direction;
 (function (Direction) {
     Direction[Direction["Up"] = 1] = "Up";
     Direction[Direction["Down"] = -1] = "Down";
 })(Direction || (Direction = {}));
-class AbstractPrompter {
-    constructor(config) {
+var AbstractPrompter = /** @class */ (function () {
+    function AbstractPrompter(config) {
         this._scrollDistance = 0;
         this.showing = false;
         this.scrolling = false;
@@ -313,24 +334,24 @@ class AbstractPrompter {
         this.loop();
     }
     // Start the scrolling
-    start() {
+    AbstractPrompter.prototype.start = function () {
         this.scrolling = true;
-    }
+    };
     // Stop the scrolling
-    stop() {
+    AbstractPrompter.prototype.stop = function () {
         this.scrolling = false;
-    }
+    };
     // Reverse the going direction
-    reverseDirection() {
+    AbstractPrompter.prototype.reverseDirection = function () {
         if (this.direction === Direction.Up) {
             this.direction = Direction.Down;
         }
         else {
             this.direction = Direction.Up;
         }
-    }
+    };
     // Main loop - renders and scrolls
-    loop() {
+    AbstractPrompter.prototype.loop = function () {
         requestAnimationFrame(this.loop);
         if (!this.showing) {
             return;
@@ -339,39 +360,43 @@ class AbstractPrompter {
             this.scroll();
         }
         this.render(this.scrollDistance);
-    }
+    };
     // Move the current scroll distance according to the speed
-    scroll() {
+    AbstractPrompter.prototype.scroll = function () {
         this.scrollDistance += this.config.speed * this.direction;
-    }
+    };
     // show the prompter
     // call super.show() in implementations
-    show() {
+    AbstractPrompter.prototype.show = function () {
         this.showing = true;
         this.scrollDistance = 0;
         this.loadScript(this.getScript());
         this.calculateTextLength();
-    }
+    };
     // hide & stop the prompter
     // call super.hide() in implementations
-    hide() {
+    AbstractPrompter.prototype.hide = function () {
         this.stop();
         this.showing = false;
-    }
-    get scrollDistance() {
-        return this._scrollDistance;
-    }
-    set scrollDistance(distance) {
-        if (distance < 0) {
-            distance = 0;
-        }
-        if (distance > this.textLength) {
-            distance = this.textLength;
-        }
-        this._scrollDistance = distance;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractPrompter;
+    };
+    Object.defineProperty(AbstractPrompter.prototype, "scrollDistance", {
+        get: function () {
+            return this._scrollDistance;
+        },
+        set: function (distance) {
+            if (distance < 0) {
+                distance = 0;
+            }
+            if (distance > this.textLength) {
+                distance = this.textLength;
+            }
+            this._scrollDistance = distance;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return AbstractPrompter;
+}());
 
 
 
@@ -380,12 +405,24 @@ class AbstractPrompter {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class ElementIDNotFoundError extends Error {
-    constructor(id) {
-        super(`Element with id '${id}' not found.`);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ElementIDNotFoundError; });
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var ElementIDNotFoundError = /** @class */ (function (_super) {
+    __extends(ElementIDNotFoundError, _super);
+    function ElementIDNotFoundError(id) {
+        return _super.call(this, "Element with id '" + id + "' not found.") || this;
     }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ElementIDNotFoundError;
+    return ElementIDNotFoundError;
+}(Error));
 
 
 
@@ -394,17 +431,18 @@ class ElementIDNotFoundError extends Error {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigOption; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(7);
 
-class ConfigOption {
+var ConfigOption = /** @class */ (function () {
     // constructor(def: T, el: HTMLElement, get: ConfigGetter<T>, set: ConfigSetter<T>) {
-    constructor(options) {
+    function ConfigOption(options) {
         this.get = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* getterFrom */])(options.el, options.type);
         this.set = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* setterFrom */])(options.el, options.setterOpts);
         this.set(options.default);
     }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ConfigOption;
+    return ConfigOption;
+}());
 
 
 
@@ -415,22 +453,23 @@ class ConfigOption {
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getterFrom;
 /* harmony export (immutable) */ __webpack_exports__["b"] = setterFrom;
-function getterFrom(el, type = "text") {
-    let getter = () => el.textContent || "";
+function getterFrom(el, type) {
+    if (type === void 0) { type = "text"; }
+    var getter = function () { return el.textContent || ""; };
     if (el instanceof HTMLTextAreaElement) {
-        getter = () => el.value;
+        getter = function () { return el.value; };
     }
     if (el instanceof HTMLInputElement) {
         if (el.type === "checkbox") {
-            getter = () => el.checked;
+            getter = function () { return el.checked; };
         }
         else {
-            getter = () => el.value;
+            getter = function () { return el.value; };
         }
     }
     if (type === "number") {
-        return () => {
-            const val = getter().trim();
+        return function () {
+            var val = getter().trim();
             if (val === "") {
                 return 0;
             }
@@ -441,30 +480,31 @@ function getterFrom(el, type = "text") {
     }
     return getter;
 }
-function setterFrom(el, opts = {}) {
+function setterFrom(el, opts) {
+    if (opts === void 0) { opts = {}; }
     function _getSetterFunction() {
         if (el instanceof HTMLTextAreaElement) {
-            return (value) => el.value = value;
+            return function (value) { return el.value = value; };
         }
         if (el instanceof HTMLInputElement) {
-            const type = el.type;
+            var type = el.type;
             if (type === "text") {
-                return (value) => el.value = value;
+                return function (value) { return el.value = value; };
             }
             else if (type === "number") {
-                return (value) => el.value = value.toString();
+                return function (value) { return el.value = value.toString(); };
             }
             else if (type === "checkbox") {
-                return (value) => el.checked = value;
+                return function (value) { return el.checked = value; };
             }
             else {
-                console.warn(`Unsupported input type: ${type}`);
+                console.warn("Unsupported input type: " + type);
             }
         }
-        return (value) => el.textContent = value;
+        return function (value) { return el.textContent = value; };
     }
-    const setter = _getSetterFunction();
-    const stack = [];
+    var setter = _getSetterFunction();
+    var stack = [];
     if (opts.transform) {
         stack.push(opts.transform);
     }
@@ -472,17 +512,18 @@ function setterFrom(el, opts = {}) {
     if (opts.callback) {
         stack.push(opts.callback);
     }
-    const functionStack = generateFunctionStack(stack);
+    var functionStack = generateFunctionStack(stack);
     if (opts.onchange) {
-        el.onchange = () => {
+        el.onchange = function () {
             functionStack(getterFrom(el)());
         };
     }
     return functionStack;
 }
 function generateFunctionStack(functions) {
-    return (value) => {
-        for (const func of functions) {
+    return function (value) {
+        for (var _i = 0, functions_1 = functions; _i < functions_1.length; _i++) {
+            var func = functions_1[_i];
             value = func(value);
         }
         return value;
@@ -495,54 +536,59 @@ function generateFunctionStack(functions) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Save; });
 // increase every time an incompatible change is made to the store data
-const STORE_VERSION = "0";
+var STORE_VERSION = "0";
 // hopefully this is specific enough lol
-const STORAGE_KEY = `easierPrompter${STORE_VERSION}_configStore`;
-class Save {
-    static getOptions() {
-        const localConfig = localStorage.getItem(STORAGE_KEY);
+var STORAGE_KEY = "easierPrompter" + STORE_VERSION + "_configStore";
+var Save = /** @class */ (function () {
+    function Save() {
+    }
+    Save.getOptions = function () {
+        var localConfig = localStorage.getItem(STORAGE_KEY);
         if (localConfig === null) {
             return {};
         }
         else {
             return JSON.parse(localConfig);
         }
-    }
-    static generateSaveData(config) {
-        const res = {};
-        for (const key of Object.keys(config.options)) {
-            const value = config.options[key];
+    };
+    Save.generateSaveData = function (config) {
+        var res = {};
+        for (var _i = 0, _a = Object.keys(config.options); _i < _a.length; _i++) {
+            var key = _a[_i];
+            var value = config.options[key];
             res[key] = value.get();
         }
         return res;
-    }
-    static reset() {
+    };
+    Save.reset = function () {
         localStorage.removeItem(STORAGE_KEY);
         location.reload();
-    }
-    static save(config) {
-        const data = Save.generateSaveData(config);
+    };
+    Save.save = function (config) {
+        var data = Save.generateSaveData(config);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-    static load(config) {
-        const options = Save.getOptions();
-        for (const key of Object.keys(options)) {
-            const value = options[key];
+    };
+    Save.load = function (config) {
+        var options = Save.getOptions();
+        for (var _i = 0, _a = Object.keys(options); _i < _a.length; _i++) {
+            var key = _a[_i];
+            var value = options[key];
             config.options[key].set(value);
         }
-    }
-    static promptReset() {
-        const message = [
+    };
+    Save.promptReset = function () {
+        var message = [
             "Are yousure you want to reset the settings?",
             "This will reset your script, the config, and reload the page",
         ];
         if (confirm(message.join("\n\n"))) {
             Save.reset();
         }
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Save;
+    };
+    return Save;
+}());
 
 
 
