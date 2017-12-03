@@ -16,11 +16,10 @@ export enum Direction {
 export abstract class AbstractPrompter implements IPrompter {
   private _scrollDistance: number = 0;
   private textLength: number = Infinity;
-
-  protected config: ConfigManager;
-  protected showing: boolean = false;
-  protected scrolling: boolean = false;
   protected direction: Direction = Direction.Up;
+  public showing: boolean = false;
+  public scrolling: boolean = false;
+  public config: ConfigManager;
 
   constructor(config: ConfigManager) {
     this.config = config;

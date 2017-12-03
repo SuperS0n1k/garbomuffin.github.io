@@ -62,6 +62,6 @@ config.load();
 config.save();
 
 getElement("save-button").onclick = () => config.save();
-getElement("reset-button").onclick = () => config.load();
+getElement("reset-button").onclick = () => config.promptReset();
 
 const prompter = new Prompter(config);

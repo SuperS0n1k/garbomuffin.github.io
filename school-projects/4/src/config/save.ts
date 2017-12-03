@@ -34,7 +34,7 @@ export class ConfigSaver {
     return res;
   }
 
-  private reset() {
+  public reset() {
     localStorage.removeItem(STORAGE_KEY);
     location.reload();
   }
@@ -48,17 +48,12 @@ export class ConfigSaver {
     const options = this.getOptions();
     for (const key of Object.keys(options)) {
       const value = options[key];
+      const configOption = this.config.options[key];
+      if (typeof configOption === "undefined") {
+        console.warn("unknown item in save:", key, value);
+        continue;
+      }
       this.config.options[key].set(value);
-    }
-  }
-
-  public promptReset() {
-    const message = [
-      "Are yousure you want to reset the settings?",
-      "This will reset your script, the config, and reload the page",
-    ];
-    if (confirm(message.join("\n\n"))) {
-      this.reset();
     }
   }
 }

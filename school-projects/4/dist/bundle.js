@@ -69,7 +69,7 @@
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getElement;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(6);
 
 function getElement(id) {
     var el = document.getElementById(id);
@@ -87,9 +87,9 @@ function getElement(id) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_config__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_option__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_option__ = __webpack_require__(8);
 
 
 
@@ -145,7 +145,7 @@ config.options.text = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* Co
 config.load();
 config.save();
 Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("save-button").onclick = function () { return config.save(); };
-Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = function () { return config.load(); };
+Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = function () { return config.promptReset(); };
 var prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Prompter */](config);
 
 
@@ -155,7 +155,7 @@ var prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Promp
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigManager; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__save__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__save__ = __webpack_require__(3);
 
 var STORAGE_KEY = "EasierPrompter_Config";
 // TODO: saving & loading
@@ -180,6 +180,15 @@ var ConfigManager = /** @class */ (function () {
     ConfigManager.prototype.load = function () {
         this.configSaver.load();
     };
+    ConfigManager.prototype.promptReset = function () {
+        var message = [
+            "Are yousure you want to reset the settings?",
+            "This will reset your script, the config, and reload the page",
+        ];
+        if (confirm(message.join("\n\n"))) {
+            this.configSaver.reset();
+        }
+    };
     return ConfigManager;
 }());
 
@@ -190,10 +199,68 @@ var ConfigManager = /** @class */ (function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigSaver; });
+// increase every time an incompatible change is made to the store data
+var STORE_VERSION = "0";
+// hopefully this is specific enough lol
+var STORAGE_KEY = "easierPrompter" + STORE_VERSION + "_configStore";
+var ConfigSaver = /** @class */ (function () {
+    function ConfigSaver(config) {
+        this.config = config;
+    }
+    ConfigSaver.prototype.getOptions = function () {
+        var localConfig = localStorage.getItem(STORAGE_KEY);
+        if (localConfig === null) {
+            return {};
+        }
+        else {
+            return JSON.parse(localConfig);
+        }
+    };
+    ConfigSaver.prototype.generateSaveData = function () {
+        var res = {};
+        for (var _i = 0, _a = Object.keys(this.config.options); _i < _a.length; _i++) {
+            var key = _a[_i];
+            var value = this.config.options[key];
+            res[key] = value.get();
+        }
+        return res;
+    };
+    ConfigSaver.prototype.reset = function () {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+    };
+    ConfigSaver.prototype.save = function () {
+        var data = this.generateSaveData();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    };
+    ConfigSaver.prototype.load = function () {
+        var options = this.getOptions();
+        for (var _i = 0, _a = Object.keys(options); _i < _a.length; _i++) {
+            var key = _a[_i];
+            var value = options[key];
+            var configOption = this.config.options[key];
+            if (typeof configOption === "undefined") {
+                console.warn("unknown item in save:", key, value);
+                continue;
+            }
+            this.config.options[key].set(value);
+        }
+    };
+    return ConfigSaver;
+}());
+
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Prompter; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__ = __webpack_require__(7);
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -233,7 +300,7 @@ var Prompter = /** @class */ (function (_super) {
     // Keyboard support
     Prompter.prototype.addKeyboardHandlers = function () {
         var _this = this;
-        var keyboard = new __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__["a" /* Keyboard */]();
+        var keyboard = new __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__["a" /* Keyboard */](this);
         this.keyboard = keyboard;
         // 32 = space = start/stop
         keyboard.handleKeypress(32, function () {
@@ -338,7 +405,7 @@ var Prompter = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -353,9 +420,9 @@ var AbstractPrompter = /** @class */ (function () {
     function AbstractPrompter(config) {
         this._scrollDistance = 0;
         this.textLength = Infinity;
+        this.direction = Direction.Up;
         this.showing = false;
         this.scrolling = false;
-        this.direction = Direction.Up;
         this.config = config;
         this.loop = this.loop.bind(this);
         this.loop();
@@ -444,7 +511,7 @@ var AbstractPrompter = /** @class */ (function () {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -470,12 +537,67 @@ var ElementIDNotFoundError = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Keyboard; });
+var Keyboard = /** @class */ (function () {
+    function Keyboard(prompter) {
+        var _this = this;
+        this.handlers = [];
+        this.prompter = prompter;
+        document.addEventListener("keydown", function (e) {
+            if (!prompter.showing) {
+                return;
+            }
+            var keyCode = e.keyCode;
+            var handlers = _this.handlers[keyCode];
+            if (typeof handlers === "undefined" || handlers.length === 0) {
+                // no handlers
+                return;
+            }
+            // only cancel the event if we have handlers assigned
+            e.preventDefault();
+            for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
+                var func = handlers_1[_i];
+                func();
+            }
+        });
+        document.addEventListener("keyup", function (e) { return _this.preventDefault(e); });
+        document.addEventListener("keypress", function (e) { return _this.preventDefault(e); });
+    }
+    Keyboard.prototype.preventDefault = function (e) {
+        if (!this.prompter.showing) {
+            return;
+        }
+        var keyCode = e.keyCode;
+        var handlers = this.handlers[keyCode];
+        var cancel = handlers && handlers.length > 0;
+        if (cancel) {
+            e.preventDefault();
+        }
+    };
+    Keyboard.prototype.handleKeypress = function (keyCode, func) {
+        // create the array if it does not already exist
+        if (typeof this.handlers[keyCode] === "undefined") {
+            this.handlers[keyCode] = [];
+        }
+        var handlers = this.handlers[keyCode];
+        handlers.push(func);
+    };
+    return Keyboard;
+}());
+
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigOption; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(9);
 
 var ConfigOption = /** @class */ (function () {
     // constructor(def: T, el: HTMLElement, get: ConfigGetter<T>, set: ConfigSetter<T>) {
@@ -490,7 +612,7 @@ var ConfigOption = /** @class */ (function () {
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -572,116 +694,6 @@ function generateFunctionStack(functions) {
         return value;
     };
 }
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigSaver; });
-// increase every time an incompatible change is made to the store data
-var STORE_VERSION = "0";
-// hopefully this is specific enough lol
-var STORAGE_KEY = "easierPrompter" + STORE_VERSION + "_configStore";
-var ConfigSaver = /** @class */ (function () {
-    function ConfigSaver(config) {
-        this.config = config;
-    }
-    ConfigSaver.prototype.getOptions = function () {
-        var localConfig = localStorage.getItem(STORAGE_KEY);
-        if (localConfig === null) {
-            return {};
-        }
-        else {
-            return JSON.parse(localConfig);
-        }
-    };
-    ConfigSaver.prototype.generateSaveData = function () {
-        var res = {};
-        for (var _i = 0, _a = Object.keys(this.config.options); _i < _a.length; _i++) {
-            var key = _a[_i];
-            var value = this.config.options[key];
-            res[key] = value.get();
-        }
-        return res;
-    };
-    ConfigSaver.prototype.reset = function () {
-        localStorage.removeItem(STORAGE_KEY);
-        location.reload();
-    };
-    ConfigSaver.prototype.save = function () {
-        var data = this.generateSaveData();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    };
-    ConfigSaver.prototype.load = function () {
-        var options = this.getOptions();
-        for (var _i = 0, _a = Object.keys(options); _i < _a.length; _i++) {
-            var key = _a[_i];
-            var value = options[key];
-            this.config.options[key].set(value);
-        }
-    };
-    ConfigSaver.prototype.promptReset = function () {
-        var message = [
-            "Are yousure you want to reset the settings?",
-            "This will reset your script, the config, and reload the page",
-        ];
-        if (confirm(message.join("\n\n"))) {
-            this.reset();
-        }
-    };
-    return ConfigSaver;
-}());
-
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Keyboard; });
-var Keyboard = /** @class */ (function () {
-    function Keyboard() {
-        var _this = this;
-        this.handlers = [];
-        document.addEventListener("keydown", function (e) {
-            var keyCode = e.keyCode;
-            var handlers = _this.handlers[keyCode];
-            if (typeof handlers === "undefined" || handlers.length === 0) {
-                // no handlers
-                return;
-            }
-            // only cancel the event if we have handlers assigned
-            e.preventDefault();
-            for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
-                var func = handlers_1[_i];
-                func();
-            }
-        });
-        document.addEventListener("keyup", function (e) { return _this.preventDefault(e); });
-        document.addEventListener("keypress", function (e) { return _this.preventDefault(e); });
-    }
-    Keyboard.prototype.preventDefault = function (e) {
-        var keyCode = e.keyCode;
-        var handlers = this.handlers[keyCode];
-        var cancel = handlers && handlers.length > 0;
-        if (cancel) {
-            e.preventDefault();
-        }
-    };
-    Keyboard.prototype.handleKeypress = function (keyCode, func) {
-        // create the array if it does not already exist
-        if (typeof this.handlers[keyCode] === "undefined") {
-            this.handlers[keyCode] = [];
-        }
-        var handlers = this.handlers[keyCode];
-        handlers.push(func);
-    };
-    return Keyboard;
-}());
-
 
 
 /***/ })

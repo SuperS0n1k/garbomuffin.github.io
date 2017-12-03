@@ -27,4 +27,14 @@ export class ConfigManager {
   public load() {
     this.configSaver.load();
   }
+
+  public promptReset() {
+    const message = [
+      "Are yousure you want to reset the settings?",
+      "This will reset your script, the config, and reload the page",
+    ];
+    if (confirm(message.join("\n\n"))) {
+      this.configSaver.reset();
+    }
+  }
 }

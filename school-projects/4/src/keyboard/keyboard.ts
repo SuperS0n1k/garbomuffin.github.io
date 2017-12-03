@@ -1,10 +1,19 @@
+import { AbstractPrompter } from "../prompter/abstract";
+
 type Handler = () => void;
 
 export class Keyboard {
   private handlers: Handler[][] = [];
+  private prompter: AbstractPrompter;
 
-  constructor() {
+  constructor(prompter: AbstractPrompter) {
+    this.prompter = prompter;
+
     document.addEventListener("keydown", (e) => {
+      if (!prompter.showing) {
+        return;
+      }
+
       const keyCode = e.keyCode;
 
       const handlers = this.handlers[keyCode];
@@ -26,6 +35,10 @@ export class Keyboard {
   }
 
   private preventDefault(e: KeyboardEvent) {
+    if (!this.prompter.showing) {
+      return;
+    }
+
     const keyCode = e.keyCode;
     const handlers = this.handlers[keyCode];
     const cancel = handlers && handlers.length > 0;

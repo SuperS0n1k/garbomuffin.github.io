@@ -32,7 +32,7 @@ export class Prompter extends AbstractPrompter {
 
   // Keyboard support
   private addKeyboardHandlers() {
-    const keyboard = new Keyboard();
+    const keyboard = new Keyboard(this);
     this.keyboard = keyboard;
 
     // 32 = space = start/stop

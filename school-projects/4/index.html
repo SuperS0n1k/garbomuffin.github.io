@@ -22,19 +22,18 @@
       }
     </style>
 
-    <!-- Generic classes -->
-    <style>
-      .no-margin {
-        margin: 0;
-      }
-    </style>
-
     <!-- Element styling -->
     <style>
       /* disable centering */
       tr, td, table {
         vertical-align: top;
         text-align: left;
+      }
+
+      /* although this is bad for people who rely on the outline, */
+      /* why would you use a prompter with a screen reader? */
+      button {
+        outline: 0;
       }
     </style>
 
@@ -126,6 +125,18 @@
         height: 100%;
         width: 100%;
       }
+
+      #about-questions h3 {
+        margin-bottom: 0;
+      }
+
+      #about-questions div ul {
+        margin-top: 0;
+      }
+
+      #about-questions * {
+        margin-top: 0;
+      }
     </style>
 
     <!-- Inital State -->
@@ -165,6 +176,7 @@
 
       <p>
         Current focuses:
+        fixing bugs,
         code maintainability/quality,
         <b>release v1.0</b>.
       </p>
@@ -195,18 +207,30 @@
 
       <hr>
 
-      <div>
-        <h3 class="no-margin">What is this?</h3>
-        <p>This is a simple teleprompter. You enter your script above then press the start button above.</p>
+      <div id="about-questions">
+        <div>
+          <h3>What is this?</h3>
+          <p>This is a simple teleprompter. You enter your script above then press the start button above.</p>
+        </div>
 
-        <h3 class="no-margin">How is this better than any other prompter out there?</h3>
-        <ul>
-          <li>No sign in.</li>
-          <li>Written in pure javascript with no additional plugins.</li>
-          <li>All client side. I never see your scripts.</li>
-          <li>No ads.</li>
-          <li>It's really up to you. Use what best fits your needs.</li>
-        </ul>
+        <div>
+          <h3>How is this better than any other prompter out there?</h3>
+          <ul>
+            <li>No sign in.</li>
+            <li>Written in pure javascript with no additional plugins.</li>
+            <li>All client side. I never see your scripts.</li>
+            <li>No ads.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>Are there keyboard shortcuts?</h3>
+          <p>Yes. In the prompter the following shortcuts exist:</p>
+          <ul>
+            <li><kbd>Space</kbd> - start/stop</li>
+            <li><kbd>Escape</kbd> - stop and move prompter to top OR exit if already at the top</li>
+          </ul>
+        </div>
       </div>
 
     </div>
