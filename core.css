@@ -1,23 +1,16 @@
-/* Core styles shared by many of the still maintained pages here */
-/* Meant as a small alternative to bootstrap */
-/* It just sets up font, some padding stuff, some colors */
-/* Simple stuff */
-
-/* Unfinished, mobile experience may not be great */
-
 body {
+  /* sans-serif looks better than serif usually */
   font-family: sans-serif;
 }
 
-/* Sorta make things less terrible for mobile */
+/* apply basic padding */
 @media only screen and (min-width: 760px) {
   body {
-    padding-left: 10%;
-    padding-right: 10%;
+    padding: 0 10%;
   }
 }
 
-/* colors from bootstrap because they look nice */
+/* link styles - colors from bootstrap because they look nice */
 a {
   color: #337ab7;
   text-decoration: none;
