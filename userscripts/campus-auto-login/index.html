@@ -112,13 +112,13 @@
     <hr>
 
     <h3>Config</h3>
-    <p>After installing the script you can visit <a href="https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html">this site</a> to edit the config.</p>
+    <p>After installing the script you can visit <a href="https://garbomuffin.github.io/userscripts/campus-auto-login/config.html">this site</a> to edit the config.</p>
 
     <hr>
 
     <h3>Changelog</h3>
     <p class="no-margin" id="v3.5.2">
-      <b>v3.5.2</b>
+      <b>v3.5.2</b>:
       <ul class="no-margin">
         <li>Remove some code that is no longer needed due to changes by Empower.</li>
         <li>Fix some other small bugs.</li>
@@ -126,23 +126,23 @@
     </p>
 
     <p class="no-margin" id="v3.5.1">
-      <b>v3.5.1</b>
+      <b>v3.5.1</b>:
       <ul class="no-margin">
         <li>Transition to GitHub</li>
       </ul>
     </p>
 
     <p class="no-margin" id="v3.5">
-      <b>v3.5</b>
+      <b>v3.5</b>:
       <ul class="no-margin">
-        <li>Added a config page <a href="https://garbomuffin.bitbucket.io/userscripts/campus-auto-login/config.html">found here</a></li>
+        <li>Added a config page <a href="https://garbomuffin.github.io/userscripts/campus-auto-login/config.html">found here</a></li>
         <li>It no longer requires editing the source to change the config.</li>
         <li>Config changes last between updates.</li>
       </ul>
     </p>
 
     <p class="no-margin" id="v3.4">
-      <b>v3.4</b>
+      <b>v3.4</b>:
       <ul class="no-margin">
         <li>Rewrote it in a much more modular way using rollup.</li>
         <li>Removed ALWAYS_SUBMIT.</li>
@@ -151,7 +151,7 @@
     </p>
 
     <p class="no-margin" id="v3.3.1">
-      <b>v3.3.1</b>
+      <b>v3.3.1</b>:
       <ul class="no-margin">
         <li>Set the default option of ALWAYS_SUBMIT to false. Setting this to true could result it many bad things.</li>
       </ul>
@@ -222,17 +222,21 @@
     <p>By GarboMuffin - use at your own risk</p>
 
     <script>
-      function openScript(){
+      function openScript() {
         // open the new window and close it
         // tampermonkey opens its install prompt and leaves the old window as an empty tab
         var w = window.open("campus-auto-login.user.js");
-        if (w){
-          w.close();
-        }else{
+        if (w) {
+          // wait 50 ms before closing just to be sure that the install prompt had time to open
+          // probably a better way to do this
+          setTimeout(function () {
+            w.close();
+          }, 50);
+        } else {
           // some popup blockers make it fail, so provide alternative link
           alert("Couldn't open popup. Do you have them disabled?\n\nTry alternative link.");
         }
-      }
+      }      
     </script>
   </body>
 </html>
