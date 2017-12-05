@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Easier Prompter</title>
+    <link rel="stylesheet" href="/core.css">
+
+    <!-- <noscript> styles -->
+    <style>
+      #noscript {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        color: white;
+        background-color: black;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2em;
+      }
+    </style>
+
+    <!-- Element styling -->
+    <style>
+      /* disable centering */
+      tr, td, table {
+        vertical-align: top;
+        text-align: left;
+      }
+
+      /* although this is bad for people who rely on the outline, */
+      /* why would you use a prompter with a screen reader? */
+      button {
+        outline: 0;
+      }
+    </style>
+
+    <!-- Prompter styling -->
+    <style>
+      #prompter {
+        position: absolute;
+        background-color: black;
+        color: white;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        overflow-y: hidden;
+      }
+
+      #prompter-options {
+        background-color: black;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+        bottom: 0;
+        border-top: 1px white solid;
+        padding: 10px 0;
+      }
+
+      #prompter-options button {
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+
+      #prompter-lines-container {
+        font-size: 75px;
+      }
+
+      #prompter-lines {
+        list-style: none;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+      }
+
+      #prompter-lines li {
+        /* make empty lines show as empty space */
+        min-height: 1em;
+      }
+
+      #options-exit {
+        float: right;
+      }
+    </style>
+
+    <!-- Editor Styling -->
+    <style>
+      #start-button {
+        width: 100%;
+        height: 300%;
+        font-size: 1.5em;
+      }
+
+      #save-button {
+        width: 100%;
+      }
+
+      #reset-button {
+        width: 100%;
+      }
+
+      #main {
+        height: 100%;
+      }
+
+      #editor {
+        height: 50%;
+      }
+
+      #editor-options-container input[type="text"],
+      #editor-options-container input[type="number"] {
+        width: 50%;
+      }
+
+      #text-input-container {
+        width: 70%;
+      }
+
+      #text-input {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      #about-questions h3 {
+        margin-bottom: 0;
+      }
+
+      #about-questions div ul {
+        margin-top: 0;
+      }
+
+      #about-questions * {
+        margin-top: 0;
+      }
+    </style>
+
+    <!-- Inital State -->
+    <style>
+      #prompter {
+        display: none;
+      }
+      #main {
+        display: block;
+      }
+    </style>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77118590-7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-77118590-7');
+    </script>
+  </head>
+
+  <body>
+    <noscript>
+      <div id="noscript">
+        <div>
+          <h1>ENABLE JAVASCRIPT</h1>
+        </div>
+      </div>
+    </noscript>
+
+    <div id="main">
+      <h1>Easier Prompter (v0.4)</h1>
+
+      <hr>
+
+      <p>
+        Current focuses:
+        fixing bugs,
+        code maintainability/quality,
+        <b>release v1.0</b>.
+      </p>
+
+      <p><b>The URL has changed! Please adjust your bookmarks and any links to point to this page. The old URL will redirect here anyways. (for at least a while)</b></p>
+
+      <div id="editor">
+        <table>
+          <tr>
+            <td id="text-input-container">
+              <textarea id="text-input"
+                        placeholder="Enter your script here!"
+                        rows="20"
+                        spellcheck="true"></textarea>
+            </td>
+
+            <td id="editor-options-container">
+              <div><label>Font size: <input type="number" id="options-font-size"></label></div>
+              <div><label>Font family: <input type="text" id="options-font-family"></label></div>
+              <div><label>Bold text: <input type="checkbox" id="options-bold-text"></label></div>
+
+              <button id="save-button">Save</button>
+              <button id="reset-button">Reset</button>
+            </td>
+          </tr>
+        </table>
+
+        <button id="start-button">Start</button>
+      </div>
+
+      <hr>
+
+      <div id="about-questions">
+        <div>
+          <h3>What is this?</h3>
+          <p>This is a simple teleprompter. You enter your script above then press the start button above.</p>
+        </div>
+
+        <div>
+          <h3>How is this better than any other prompter out there?</h3>
+          <ul>
+            <li>No sign in.</li>
+            <li>Written in pure javascript with no additional plugins.</li>
+            <li>All client side. I never see your scripts.</li>
+            <li>No ads.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>Are there keyboard shortcuts?</h3>
+          <p>Yes. In the prompter the following shortcuts exist:</p>
+          <ul>
+            <li><kbd>Space</kbd> - start/stop</li>
+            <li><kbd>Escape</kbd> - stop and move prompter to top OR exit if already at the top</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="prompter">
+      <table id="prompter-lines-container">
+        <tr>
+          <th>
+            <p class="no-margin">&gt;</p>
+          </th>
+
+          <th>
+            <ul id="prompter-lines"></ul>
+          </th>
+        </tr>
+      </table>
+
+      <div id="prompter-options">
+        <button id="options-toggle-run">Start</button>
+
+        <button id="options-toggle-direction">Moving Down</button>
+
+        <span>Speed:</span>
+        <button id="options-speed-down">&lt;</button>
+        <span id="options-current-speed"></span>
+        <button id="options-speed-up">&gt;</button>
+
+        <button id="options-exit">Exit</button>
+      </div>
+    </div>
+
+    <script src="dist/bundle.js"></script>
+  </body>
+</html>
