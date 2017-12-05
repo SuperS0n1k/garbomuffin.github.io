@@ -1,7 +1,7 @@
 interface SpriteOptions {
   x?: number
   y?: number
-  center?: Sprite|SpriteOptions
+  center?: Sprite | SpriteOptions
   texture?: HTMLImageElement
   width?: number
   height?: number
@@ -38,21 +38,21 @@ interface BossRoutineOptions {
 /// BASE CLASSES
 
 class Sprite {
-  public constructor(options?: SpriteOptions){
+  public constructor(options?: SpriteOptions) {
     if (typeof options.solid === "boolean") this.solid = options.solid;
 
     if (options.texture instanceof HTMLImageElement) this.texture = options.texture;
 
     if (isNumber(options.width) && options.width > 0) this.width = options.width;
     else if (this.texture) this.width = this.texture.width;
-    
+
     if (isNumber(options.height) && options.height > 0) this.height = options.height;
     else if (this.texture) this.height = this.texture.height;
     if (isNumber(options.rotation)) this.rotation = options.rotation
 
-    if (options.center){
+    if (options.center) {
       this.center(options.center);
-    }else{
+    } else {
       if (isNumber(options.x)) this.x = options.x;
       if (isNumber(options.y)) this.y = options.y;
     }
@@ -71,7 +71,7 @@ class Sprite {
     y: 1,
   }
 
-  public center(sprite: Sprite|SpriteOptions){
+  public center(sprite: Sprite | SpriteOptions) {
     this.x = sprite.x + (isNumber(sprite.width) ? sprite.width / 2 : 0) - (this.width / 2);
     this.y = sprite.y + (isNumber(sprite.height) ? sprite.height / 2 : 0) - (this.height / 2);
   }
@@ -81,101 +81,101 @@ class Sprite {
       this.y < sprite.y + sprite.height + yOffset &&
       this.y + this.height + yOffset > sprite.y;
   }
-  public touchingContainer(returnBoolean = true, container: Container, requiredType = Sprite, xOffset = 0, yOffset = 0): boolean|Sprite{
-    for (var sprite of container){
+  public touchingContainer(returnBoolean = true, container: Container, requiredType = Sprite, xOffset = 0, yOffset = 0): boolean | Sprite {
+    for (var sprite of container) {
       if (this.intersects(sprite, xOffset, yOffset) && sprite instanceof requiredType) return returnBoolean ? true : sprite;
     }
     return false;
   }
-  public touchingSolidBlock(returnBoolean = true, xOffset = 0, yOffset = 0): boolean|Sprite {
-    for (var sprite of blocks){
+  public touchingSolidBlock(returnBoolean = true, xOffset = 0, yOffset = 0): boolean | Sprite {
+    for (var sprite of blocks) {
       if (sprite.solid && this.intersects(sprite, xOffset, yOffset)) return returnBoolean ? true : sprite;
     }
     return false;
   }
-  public touchingBlock(returnBoolean = true, xOffset = 0, yOffset = 0): boolean|Sprite {
-    for (var sprite of blocks){
+  public touchingBlock(returnBoolean = true, xOffset = 0, yOffset = 0): boolean | Sprite {
+    for (var sprite of blocks) {
       if (this.intersects(sprite, xOffset, yOffset)) return returnBoolean ? true : sprite;
     }
     return false;
   }
-  public touchingPlayer(){
+  public touchingPlayer() {
     return this.intersects(player);
   }
-  protected offScreen(): boolean{
+  protected offScreen(): boolean {
     return this.x + this.width < 0 || this.x > WIDTH || this.y > HEIGHT || this.y + this.height < 0
   }
 
-  public get x(){
+  public get x() {
     return this._x;
   }
-  public set x(x: number){
+  public set x(x: number) {
     if (isNumber(x)) this._x = x;
   }
-  public get y(){
+  public get y() {
     return this._y;
   }
-  public set y(y: number){
+  public set y(y: number) {
     if (isNumber(y)) this._y = y;
   }
-  public get centerX(){
+  public get centerX() {
     return this.x + (this.width / 2);
   }
-  public get centerY(){
+  public get centerY() {
     return this.y + (this.height / 2);
   }
-  public get width(){
+  public get width() {
     return this._width;
   }
-  public set width(width: number){
+  public set width(width: number) {
     if (isNumber(width) && width > 0) this._width = width;
   }
-  public get height(){
+  public get height() {
     return this._height;
   }
-  public set height(height: number){
+  public set height(height: number) {
     if (isNumber(height) && height > 0) this._height = height;
   }
-  public get rotation(){
+  public get rotation() {
     return this._rotation;
   }
-  public set rotation(rotation: number){
+  public set rotation(rotation: number) {
     if (isNumber(rotation)) this._rotation = rotation;
   }
-  public get scale(){
+  public get scale() {
     return this._scale;
   }
-  public set scale(scale){
+  public set scale(scale) {
     if (isNumber(scale.x) && isNumber(scale.y)) this._scale = scale;
   }
 
-  public get texture(){
+  public get texture() {
     return this._texture;
   }
-  public set texture(texture: HTMLImageElement){
+  public set texture(texture: HTMLImageElement) {
     if (texture instanceof HTMLImageElement) this._texture = texture;
   }
 
-  public get solid(){
+  public get solid() {
     return this._solid;
   }
-  public set solid(solid: boolean){
+  public set solid(solid: boolean) {
     if (typeof solid === "boolean") this._solid = solid;
   }
 }
 
 class RenderedSprite extends Sprite {
-  public constructor(options: RenderedSpriteOptions){
+  public constructor(options: RenderedSpriteOptions) {
     super(options);
     if (typeof options.persistent === "boolean") this.persistent = options.persistent;
     if (typeof options.visible === "boolean") this.visible = options.visible;
 
-    if (isNumber(options.zIndex)) this.zIndex = options.zIndex;    
+    if (isNumber(options.zIndex)) this.zIndex = options.zIndex;
 
-    if (typeof options.frameUpdate === "function"){
+    if (typeof options.frameUpdate === "function") {
       this.frameUpdate = options.frameUpdate.bind(this);
     }
-    if (this.frameUpdate){
+    if (this.frameUpdate) {
       updatable.push(this);
     }
 
@@ -186,46 +186,46 @@ class RenderedSprite extends Sprite {
   protected _zIndex: number = 0
   public readonly persistent: boolean = false
 
-  public render(){
+  public render() {
     if (!this.visible) return;
     var scale = this.scale.x !== 1 || this.scale.y !== 1;
     var rotation = this.rotation;
-    if (scale || rotation){
+    if (scale || rotation) {
       ctx.save();
       ctx.translate(this.x, this.y);
       ctx.translate(this.width / 2, this.height / 2);
-      if (rotation){
+      if (rotation) {
         ctx.rotate(this.rotation);
-      }else if (scale){
+      } else if (scale) {
         ctx.scale(this.scale.x, this.scale.y);
       }
       ctx.drawImage(this.texture, -this.width / 2, -this.height / 2, this.width, this.height);
       ctx.restore();
-    }else{
+    } else {
       ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
     }
   }
-  public destroy(){
-    for (let container of containers){
+  public destroy() {
+    for (let container of containers) {
       var index = container.indexOf(this);
-      if (index > -1){
+      if (index > -1) {
         container.splice(index, 1);
       }
     }
   }
   public frameUpdate?(): void
 
-  public get visible(){
+  public get visible() {
     return this._visible;
   }
-  public set visible(visible: boolean){
+  public set visible(visible: boolean) {
     if (typeof visible === "boolean") this._visible = visible;
   }
-  public get zIndex(){
+  public get zIndex() {
     return this._zIndex;
   }
-  public set zIndex(zIndex){
-    if (isNumber(zIndex)){
+  public set zIndex(zIndex) {
+    if (isNumber(zIndex)) {
       this._zIndex = zIndex;
       sprites.sort(); // some zindex changed so sort the list again to update rendering order
     }
@@ -235,7 +235,7 @@ class RenderedSprite extends Sprite {
 /// SPRITES
 
 class PlayerHitbox extends RenderedSprite {
-  public constructor(){
+  public constructor() {
     super({});
     this.reset();
   }
@@ -254,14 +254,14 @@ class PlayerHitbox extends RenderedSprite {
   public frame = 0;
   public _vulnerable = true
 
-  public frameUpdate(){
+  public frameUpdate() {
     // up
-    if (keys[38] || keys[32]){
-      if (this.touchingSolidBlock(true)){
+    if (keys[38] || keys[32]) {
+      if (this.touchingSolidBlock(true)) {
         this.yv = JUMP_HEIGHT;
       }
-    }else{
-      if (this.yv > 1){
+    } else {
+      if (this.yv > 1) {
         this.yv = 1;
       }
     }
@@ -270,29 +270,29 @@ class PlayerHitbox extends RenderedSprite {
     var left = keys[37];
 
     // right/left
-    if (right && left){
+    if (right && left) {
       this.direction = DIR_RIGHT;
-    }else{
-      if (left){
+    } else {
+      if (left) {
         this.xv -= WALK_SPEED;
-        if (this.xv < -maxSpeed){
+        if (this.xv < -maxSpeed) {
           this.xv = -maxSpeed;
         }
         this.direction = DIR_LEFT;
         this.frame++;
-      }else if (right){
+      } else if (right) {
         this.xv += WALK_SPEED;
-        if (this.xv > maxSpeed){
+        if (this.xv > maxSpeed) {
           this.xv = maxSpeed;
         }
         this.direction = DIR_RIGHT;
         this.frame++;
-      }else{
+      } else {
         this.frame = 1;
-        if (this.xv > 0){
+        if (this.xv > 0) {
           this.xv -= FRICTION;
           if (this.xv < 0) this.xv = 0;
-        }else if (this.xv < 0){
+        } else if (this.xv < 0) {
           this.xv += FRICTION;
           if (this.xv > 0) this.xv = 0;
         }
@@ -302,10 +302,10 @@ class PlayerHitbox extends RenderedSprite {
     // x physics
     this.x += this.xv;
     this.x = Math.round(this.x);
-    var block = <Sprite> this.touchingSolidBlock(false, 0, -1);
-    if (block){
+    var block = <Sprite>this.touchingSolidBlock(false, 0, -1);
+    if (block) {
       let increment = this.xv > 0 ? -1 : 1;
-      while (this.intersects(block, 0, -1)){
+      while (this.intersects(block, 0, -1)) {
         this.x += increment;
       }
       this.xv = 0;
@@ -314,68 +314,68 @@ class PlayerHitbox extends RenderedSprite {
     // y physics
     this.yv -= GRAVITY;
     this.y -= this.yv;
-    var block = <Sprite> this.touchingSolidBlock(false, 0, -1);
-    if (block){
+    var block = <Sprite>this.touchingSolidBlock(false, 0, -1);
+    if (block) {
       let increment = this.yv < 0 ? -1 : 1;
-      while (this.intersects(block, 0, -1)){
+      while (this.intersects(block, 0, -1)) {
         this.y += increment;
       }
       // dirty workarounds are the best workarounds
-      if (this.yv > 0){
+      if (this.yv > 0) {
         this.y++;
       }
       this.yv = 0;
     }
 
     // z/shoot
-    if (keys[90] && !this.lastZ && playerProjectiles() < MAX_PROJECTILES){
+    if (keys[90] && !this.lastZ && playerProjectiles() < MAX_PROJECTILES) {
       this.shoot();
     }
     this.lastZ = keys[90];
 
     // a/rapid shoot
-    if (keys[65] && Date.now() - this.lastShot > RAPID_SHOT_DELAY && playerProjectiles() < MAX_PROJECTILES){
+    if (keys[65] && Date.now() - this.lastShot > RAPID_SHOT_DELAY && playerProjectiles() < MAX_PROJECTILES) {
       this.shoot();
       this.lastShot = Date.now();
     }
 
-    if (this.x + this.width >= WIDTH){
+    if (this.x + this.width >= WIDTH) {
       nextLevel();
     }
 
-    if (this.x <= 0){
+    if (this.x <= 0) {
       this.x = 0;
     }
 
-    if (this.y > HEIGHT){
+    if (this.y > HEIGHT) {
       this.reset();
     }
   }
-  public reset(){
+  public reset() {
     this.x = PLAYER_STARTING_X;
     this.y = HEIGHT - 1;
     this.yv = 0;
     this.xv = 0;
     this.vulnerable = true;
     playerGraphic.visible = true;
-    while (this.touchingBlock()){
+    while (this.touchingBlock()) {
       this.y--;
     }
   }
-  private shoot(){
+  private shoot() {
     new PlayerProjectile({
       direction: this.direction,
       center: this,
     });
   }
-  public damage(amount){
-    if (isNumber(amount) && amount > 0 && this.vulnerable){
+  public damage(amount) {
+    if (isNumber(amount) && amount > 0 && this.vulnerable) {
       this.health -= amount;
       this.vulnerable = false;
       playerDamage();
     }
   }
-  public kill(){
+  public kill() {
     this.visible = false;
     new PlayerDeathParticle({
       x: this.x,
@@ -383,55 +383,55 @@ class PlayerHitbox extends RenderedSprite {
     });
   }
 
-  protected get yv(){
+  protected get yv() {
     return this._yv;
   }
-  protected set yv(yv){
+  protected set yv(yv) {
     if (isNumber(yv)) this._yv = yv;
   }
-  protected get xv(){
+  protected get xv() {
     return this._xv;
   }
-  protected set xv(xv){
+  protected set xv(xv) {
     if (isNumber(xv)) this._xv = xv;
   }
-  protected get direction(){
+  protected get direction() {
     return this._direction;
   }
-  protected set direction(direction){
-    if (direction === DIR_RIGHT || direction === DIR_LEFT){
+  protected set direction(direction) {
+    if (direction === DIR_RIGHT || direction === DIR_LEFT) {
       this._direction = direction;
       this.scale.x = direction;
     }
   }
-  protected get lastShot(){
+  protected get lastShot() {
     return this._lastShot;
   }
-  protected set lastShot(lastShot){
+  protected set lastShot(lastShot) {
     if (isFinite(lastShot)) this._lastShot = lastShot;
   }
-  public get health(){
+  public get health() {
     return this._health;
   }
-  public set health(health){
+  public set health(health) {
     if (isNumber(health)) this._health = health;
   }
-  public get vulnerable(){
+  public get vulnerable() {
     return this._vulnerable;
   }
-  public set vulnerable(vulnerable){
+  public set vulnerable(vulnerable) {
     if (typeof vulnerable === "boolean") this._vulnerable = vulnerable;
   }
-  private get lastZ(){
+  private get lastZ() {
     return this._lastZ;
   }
-  private set lastZ(lastZ){
+  private set lastZ(lastZ) {
     if (typeof lastZ === "boolean") this._lastZ = lastZ;
   }
 }
 
 class PlayerGraphic extends RenderedSprite {
-  public constructor(){
+  public constructor() {
     super({
       width: PLAYER_HEIGHT,
       height: PLAYER_HEIGHT,
@@ -439,31 +439,31 @@ class PlayerGraphic extends RenderedSprite {
     });
   }
 
-  public frameUpdate(){
+  public frameUpdate() {
     this.x = player.x;
-    this.y = player.y|0;
+    this.y = player.y | 0;
 
     this.rotation = player.rotation;
 
     this.scale = player.scale;
 
-    if (!player.touchingSolidBlock()){
+    if (!player.touchingSolidBlock()) {
       this.texture = loadImage("player/still.png");
       player.frame = 1;
-    }else if (!(keys[39] || keys[37])){
+    } else if (!(keys[39] || keys[37])) {
       this.texture = loadImage("player/still.png");
       this.height = 16;
       this.walkFrame = false;
-    }else{
-      if (player.frame % WALK_ANIMATION_SPEED === 0){
+    } else {
+      if (player.frame % WALK_ANIMATION_SPEED === 0) {
         player.frame = 1;
         this.walkFrame = !this.walkFrame;
       }
-      if (this.walkFrame){
+      if (this.walkFrame) {
         this.texture = loadImage("player/move.png");
         this.height = 15;
         this.y++;
-      }else{
+      } else {
         this.texture = loadImage("player/still.png");
         this.height = 16;
       }
@@ -479,15 +479,15 @@ class PlayerGraphic extends RenderedSprite {
 }
 
 class HealthTick extends RenderedSprite {
-  public constructor(options: HealthTickOptions){
+  public constructor(options: HealthTickOptions) {
     super(options);
     this.id = options.id;
   }
 
-  public frameUpdate(){
-    if (this.id < player.health){
+  public frameUpdate() {
+    if (this.id < player.health) {
       this.texture = loadImage("health/bar.png");
-    }else{
+    } else {
       this.texture = loadImage("health/empty.png");
     }
   }
@@ -501,7 +501,7 @@ class HealthTick extends RenderedSprite {
 }
 
 class HitStun extends RenderedSprite {
-  public constructor(){
+  public constructor() {
     super({
       center: player,
       width: 16,
@@ -510,17 +510,17 @@ class HitStun extends RenderedSprite {
     });
   }
 
-  public frameUpdate(){
+  public frameUpdate() {
     this.frame++;
     this.center(player);
-    if (this.frame == 3){
+    if (this.frame == 3) {
       this.visible = false;
-    }else if (this.frame == 6){
+    } else if (this.frame == 6) {
       this.frame = 0;
       this.repititions++;
       this.visible = true;
     }
-    if (this.repititions > 10){
+    if (this.repititions > 10) {
       player.vulnerable = true;
       this.destroy();
     }

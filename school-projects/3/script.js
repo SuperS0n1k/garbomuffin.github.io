@@ -1,7 +1,7 @@
 "use strict";
 
 // if ga is blocked by adblock then make it a noop just to avoid errors
-window.ga = window.ga || function(){};
+window.ga = window.ga || function () { };
 
 const input = document.getElementById("input");
 const canvas = document.getElementById("canvas");
@@ -12,11 +12,11 @@ var scale = 10;
 document.getElementById("render").onclick = onchange;
 input.onchange = onchange;
 
-function onchange(){
+function onchange() {
   const value = input.value;
   const parseResult = parse(value);
 
-  if (parseResult){
+  if (parseResult) {
     render(parseResult);
 
     localStorage.setItem("last_input", value);
@@ -27,12 +27,12 @@ function onchange(){
 /**
  * Determines which function to use to parse the input and returns it
  */
-function parse(data){
+function parse(data) {
   // houck's protocol always has parenthesis for it to be valid while david's doesn't.
-  if (data.indexOf("(") > -1){
+  if (data.indexOf("(") > -1) {
     ga("send", "event", "Parse", "use", "houck");
     return houckParse(data);
-  }else{
+  } else {
     ga("send", "event", "Parse", "use", "david");
     return davidParse(data);
   }
@@ -47,17 +47,17 @@ function parse(data){
  * Where X's are colors
  * -'s are optional for organization, they are ignored by this
  */
-function davidParse(data){
+function davidParse(data) {
   const ret = [];
 
   data = data.replace(/-/g, "");
 
   const lines = data.split("\n");
 
-  for (const line of lines){
+  for (const line of lines) {
     const lineData = [];
-    for (const c of line){
-      lineData.push({color: Number(c), amount: 1});
+    for (const c of line) {
+      lineData.push({ color: Number(c), amount: 1 });
     }
     ret.push(lineData);
   }
@@ -75,11 +75,11 @@ function davidParse(data){
  * 
  * Any spaces are ignored.
  */
-function houckParse(value){
+function houckParse(value) {
   /**
    * Prompt the user of an invalid input on the current line and stops execution
    */
-  function malformed(){
+  function malformed() {
     alert(`INVALID INPUT @ LINE ${lineNumber + 1}, ITEM ${inputNumber + 1}`);
     throw new Error("malformed input");
   }
@@ -88,17 +88,17 @@ function houckParse(value){
 
   const ret = [];
 
-  for (var lineNumber = 0; lineNumber < lines.length; lineNumber++){
+  for (var lineNumber = 0; lineNumber < lines.length; lineNumber++) {
     const row = [];
     const fullLine = lines[lineNumber];
 
     const dividedRow = fullLine.replace(/\s/g, "").split(",");
 
-    for (var inputNumber = 0; inputNumber < dividedRow.length; inputNumber++){
+    for (var inputNumber = 0; inputNumber < dividedRow.length; inputNumber++) {
 
       const i = dividedRow[inputNumber];
 
-      if (!(/^\d+\(\d+\)$/g).test(i)){
+      if (!(/^\d+\(\d+\)$/g).test(i)) {
         malformed();
       }
 
@@ -107,11 +107,11 @@ function houckParse(value){
       var amount = Number(split[0]);
       var color = Number(split[1]);
 
-      if (typeof amount === "undefined" || isNaN(color) || isNaN(amount)){
+      if (typeof amount === "undefined" || isNaN(color) || isNaN(amount)) {
         malformed();
       }
 
-      row.push({color, amount});
+      row.push({ color, amount });
     }
 
     ret.push(row);
@@ -133,10 +133,10 @@ var lastData = null;
  * opts.x is the x of the square the cursor is over
  * opts.y is the y of the square the cursor is over
  */
-function render(data = lastData, opts = {}){
+function render(data = lastData, opts = {}) {
   // the mousemove event can be called before any data has been saved (as a result lastData is null)
   // if so then just skip everything
-  if (!data){
+  if (!data) {
     return;
   }
 
@@ -147,14 +147,14 @@ function render(data = lastData, opts = {}){
   canvas.height = data.length * scale;
   canvas.width = maxWidth(data) * scale;
 
-  for (var lineIndex = 0; lineIndex < data.length; lineIndex++){
+  for (var lineIndex = 0; lineIndex < data.length; lineIndex++) {
     const line = data[lineIndex];
 
     var y = lineIndex;
     var x = 0;
 
-    for (const color of line){
-      for (var i = 0; i < color.amount; i++){
+    for (const color of line) {
+      for (var i = 0; i < color.amount; i++) {
         // set the color, if its not defined default to white
         // the parse functions have to handle 0 indexing madness
         ctx.fillStyle = colors[color.color] || "white";
@@ -163,7 +163,7 @@ function render(data = lastData, opts = {}){
         // if this box is the one the mouse is over draw an outline
         // this could be moved out of the loop and would also then support drawing rectangles where there isn't data
         // but not making the outline is useful for debugging any missing colors at the end
-        if (x === opts.x && y === opts.y){
+        if (x === opts.x && y === opts.y) {
           ctx.strokeStyle = "black";
           ctx.rect(x * scale, y * scale, scale, scale);
           ctx.stroke();
@@ -177,14 +177,14 @@ function render(data = lastData, opts = {}){
 /**
  * Takes data provided to the render function and returns the highest width of any row.
  */
-function maxWidth(data){
+function maxWidth(data) {
   var max = 0;
-  for (var row of data){
+  for (var row of data) {
     var width = 0;
-    for (var color of row){
+    for (var color of row) {
       width += Number(color.amount);
     }
-    if (width > max){
+    if (width > max) {
       max = width;
     }
   }
@@ -193,7 +193,7 @@ function maxWidth(data){
 /**
  * Clear the canvas, could probably be moved into the render() function
  */
-function clearCanvas(){
+function clearCanvas() {
   const width = canvas.width;
   const height = canvas.height;
 
@@ -202,7 +202,7 @@ function clearCanvas(){
   ctx.fillRect(0, 0, width, height);
 }
 
-window.onload = function(){
+window.onload = function () {
   input.value = localStorage.getItem("last_input") || `20 (1), 2 (8), 20 (1)
 17 (1), 4 (7), 3 (2), 18 (1)
 14 (1), 2 (6), 5 (7), 7 (2), 14 (1)
@@ -238,31 +238,31 @@ window.onload = function(){
   input.onchange();
 }
 
-document.getElementById("reilly-palette").onclick = function(){
+document.getElementById("reilly-palette").onclick = function () {
   colors = ["none", "white", "red", "orange", "yellow", "green", "blue", "indigo", "violet", "magenta"];
   onchange();
   updatePalette();
 }
 
-document.getElementById("houck-palette").onclick = function(){
+document.getElementById("houck-palette").onclick = function () {
   colors = ["none", "white", "blue", "gray", "orange", "black", "red", "green", "yellow"];
   onchange();
   updatePalette();
 }
 
-document.getElementById("david-palette").onclick = function(){
+document.getElementById("david-palette").onclick = function () {
   colors = ["white", "green", "red", "orange", "darkgray", "gray", "brown", "black", "yellow", "tan"];
   onchange();
   updatePalette();
 }
 
-document.getElementById("reset-palette").onclick = function(){
+document.getElementById("reset-palette").onclick = function () {
   colors = defaultPalette;
   onchange();
   updatePalette();
 }
 
-document.getElementById("custom-palette").onclick = function(){
+document.getElementById("custom-palette").onclick = function () {
   alert(([
     "PLEASE READ INSTRUCTIONS:",
     "Answer the questions",
@@ -271,9 +271,9 @@ document.getElementById("custom-palette").onclick = function(){
   ]).join("\n * "));
 
   const newPalette = [];
-  for (var i = 0; /* continue until empty input (logic inside) */; i++){
+  for (var i = 0; /* continue until empty input (logic inside) */; i++) {
     var colorName = prompt(`What is color #${i}?\n\nUse either a hex code (eg. #ABCDEF) or sometimes english names (eg. "white" or "red")`);
-    if (!colorName){
+    if (!colorName) {
       break;
     }
     newPalette.push(colorName);
@@ -286,11 +286,11 @@ document.getElementById("custom-palette").onclick = function(){
   updatePalette();
 };
 
-canvas.onmousemove = function(e){
+canvas.onmousemove = function (e) {
   const x = e.offsetX;
   const y = e.offsetY;
 
-  if (x < 0 || y < 0){
+  if (x < 0 || y < 0) {
     return;
   }
 
@@ -305,31 +305,31 @@ canvas.onmousemove = function(e){
   });
 };
 
-document.getElementById("scale").onclick = function(){
+document.getElementById("scale").onclick = function () {
   var newScale = prompt("Please enter the new scale.\n\nIt must be a positive whole number.");
   // TODO: maybe make sure the input is a number
   scale = newScale;
   onchange();
 };
 
-document.getElementById("reset-everything").onclick = function(){
-  if (confirm("Are you sure you would like to reset everything?")){
+document.getElementById("reset-everything").onclick = function () {
+  if (confirm("Are you sure you would like to reset everything?")) {
     localStorage.clear();
     location.reload();
   }
 }
 
-function updatePalette(){
+function updatePalette() {
   // remove all elements
   const paletteList = document.getElementById("palette");
-  while (paletteList.firstChild){
+  while (paletteList.firstChild) {
     paletteList.removeChild(paletteList.firstChild);
   }
 
-  for (var i = 0; i < colors.length; i++){
+  for (var i = 0; i < colors.length; i++) {
     const color = colors[i];
 
-    if (color === "none" || !color){
+    if (color === "none" || !color) {
       continue;
     }
 
@@ -339,7 +339,7 @@ function updatePalette(){
 
     const colorElement = document.createElement("th");
     colorElement.insertAdjacentHTML("beforeend", `<div class="palette-color" style="background-color: ${color};"></div>`);
-    
+
     const colorNameElement = document.createElement("th");
     colorNameElement.insertAdjacentHTML("beforeend", `(${color})`);
 

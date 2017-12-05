@@ -1,22 +1,22 @@
 /// SPECIAL BLOCKS
 
 class Block extends RenderedSprite {
-  public constructor(options: SpriteOptions){
+  public constructor(options: SpriteOptions) {
     super(options);
     blocks.push(this);
   }
 }
 
 class BoxTile extends Block {
-  public frameUpdate(){
-    var touching = <PlayerProjectile> this.touchingContainer(false, projectiles, PlayerProjectile);
-    if (touching){
+  public frameUpdate() {
+    var touching = <PlayerProjectile>this.touchingContainer(false, projectiles, PlayerProjectile);
+    if (touching) {
       touching.destroy();
       this.state++;
-      if (this.state > 3){
+      if (this.state > 3) {
         spawnParticle(BreakParticle, this);
         this.destroy();
-      }else{
+      } else {
         this.texture = loadImage(`tiles/box/${this.state}.png`);
       }
     }
@@ -26,7 +26,7 @@ class BoxTile extends Block {
 }
 
 class ArrowTile extends Block {
-  public constructor(options: SpriteOptions){
+  public constructor(options: SpriteOptions) {
     // oh my god
     // how does this work
     super({
@@ -45,8 +45,8 @@ class ArrowTile extends Block {
 }
 
 class UpgradeTile extends Block {
-  public frameUpdate(){
-    if (this.touchingPlayer()){
+  public frameUpdate() {
+    if (this.touchingPlayer()) {
       maxSpeed *= 1.25;
       this.destroy();
     }
@@ -54,8 +54,8 @@ class UpgradeTile extends Block {
 }
 
 class HiddenBrickTile extends Block {
-  public frameUpdate(){
-    if (remainingEnemies === 0){
+  public frameUpdate() {
+    if (remainingEnemies === 0) {
       this.solid = true;
       this.visible = true;
     }
@@ -63,5 +63,5 @@ class HiddenBrickTile extends Block {
 }
 
 class ChestTile extends Block {
-  
+
 }

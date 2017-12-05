@@ -1,4 +1,4 @@
-function loop(){
+function loop() {
   // frame++;
   stats.begin();
   if (state === null) return; // crash handling
@@ -8,22 +8,22 @@ function loop(){
   requestAnimationFrame(loop);
 }
 
-function render(){
+function render() {
   // sprites.sort()
   ctx.fillStyle = gradient;
   ctx.drawImage(gradientCanvas, 0, 0);
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
-  for (let sprite of sprites){
+  for (let sprite of sprites) {
     sprite.render();
   }
 }
 
-function reset(){
+function reset() {
   // use a really weird thing to delete sprites for reasons.
   frame = 0;
   var length = sprites.length;
   var index = 0;
-  for (let i = 0; i < length; i++){
+  for (let i = 0; i < length; i++) {
     var sprite = sprites.get(index);
     if (!sprite.persistent) sprite.destroy();
     else index++;
@@ -37,8 +37,8 @@ function reset(){
   player.reset();
 }
 
-function bosses(){
-  if (level === 9){
+function bosses() {
+  if (level === 9) {
     new TrollBoss({
       texture: loadImage("boss/troll.png"),
       width: 32,
@@ -55,14 +55,14 @@ function bosses(){
  * Sorts sprites by putting those with a higher zIndex towards the end.
  * (they will render on top)
  */
-function spriteSort(a: RenderedSprite, b: RenderedSprite){
+function spriteSort(a: RenderedSprite, b: RenderedSprite) {
   return a.zIndex - b.zIndex;
 }
 
-function createHealthBar(){
+function createHealthBar() {
   var id = 0;
   var y = 65;
-  while (id < MAX_HEALTH){
+  while (id < MAX_HEALTH) {
     id++;
     new HealthTick({
       texture: loadImage("health/bar.png"),
@@ -73,40 +73,40 @@ function createHealthBar(){
   }
 }
 
-function playerDamage(){
+function playerDamage() {
   new HitStun();
 }
 
-function nextLevel(){
+function nextLevel() {
   level++;
   reset();
 }
 
-function renderLevel(){
+function renderLevel() {
   var levelData = LEVELS[level];
   var x = 0;
   var y = HEIGHT - BLOCK_HEIGHT;
-  for (let char of levelData){
-    if (char !== "."){
+  for (let char of levelData) {
+    if (char !== ".") {
       var meta = TILES[char];
       if (!meta) console.warn(`UNRECOGNIZED CHARACTER: ${char}`)
       spawnTile(meta, meta.texture, x, y);
     }
     x += BLOCK_WIDTH;
-    if (x >= WIDTH){
+    if (x >= WIDTH) {
       x = 0;
       y -= BLOCK_HEIGHT;
     }
   }
   var texts = TEXTS[level];
-  if (texts !== undefined){
-    for (let text of texts){
+  if (texts !== undefined) {
+    for (let text of texts) {
       new TextSprite(text);
     }
   }
 }
 
-function spawnTile(meta: Tile, texture: HTMLImageElement, x: number, y: number): Sprite{
+function spawnTile(meta: Tile, texture: HTMLImageElement, x: number, y: number): Sprite {
   var options = {
     ...meta,
     texture: loadImage(texture),
@@ -116,9 +116,9 @@ function spawnTile(meta: Tile, texture: HTMLImageElement, x: number, y: number):
     height: BLOCK_HEIGHT
   };
   var sprite;
-  if (meta.type){
+  if (meta.type) {
     sprite = new options.type(options);
-  }else{
+  } else {
     sprite = new Block(options);
   }
 
@@ -128,11 +128,11 @@ function spawnTile(meta: Tile, texture: HTMLImageElement, x: number, y: number):
 /**
  * @param {Particle} particle The particle object itself, not an instance of it!
  */
-function spawnParticle(particle: any, center: Sprite){
+function spawnParticle(particle: any, center: Sprite) {
   var texture = loadImage(`particle/${particle.type}.png`);
   var count = particle.count;
   var angle = particle.angleIncrement;
-  for (let i = 1; i <= count; i++){
+  for (let i = 1; i <= count; i++) {
     new particle({
       center: center,
       texture: texture,
@@ -141,7 +141,7 @@ function spawnParticle(particle: any, center: Sprite){
   }
 }
 
-function start(){
+function start() {
   reset();
   state = play;
 
@@ -155,24 +155,24 @@ function start(){
   loop();
 }
 
-function play(){
-  for (let sprite of updatable){
+function play() {
+  for (let sprite of updatable) {
     sprite.frameUpdate();
   }
 }
 
-function isNumber(number){
+function isNumber(number) {
   return typeof number === "number" && isFinite(number);
 }
 
-function playerProjectiles(){
+function playerProjectiles() {
   var p = 0;
-  for (let sprite of projectiles){
+  for (let sprite of projectiles) {
     if (sprite instanceof PlayerProjectile) p++;
   }
   return p;
 }
 
-function getRandomInt(min, max){
+function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

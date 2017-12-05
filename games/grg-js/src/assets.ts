@@ -31,29 +31,29 @@ var loadedAssets = 0;
 var totalAssets = ASSET_LIST.length;
 var loaded = false;
 
-for (let asset of ASSET_LIST){
+for (let asset of ASSET_LIST) {
   loadImage(asset);
 }
 
-function loadImage(file:string|HTMLImageElement): HTMLImageElement{
-  if (file instanceof HTMLImageElement){
+function loadImage(file: string | HTMLImageElement): HTMLImageElement {
+  if (file instanceof HTMLImageElement) {
     return file;
   }
-  if (file.indexOf("assets/") === -1){
+  if (file.indexOf("assets/") === -1) {
     file = "assets/" + file;
   }
-  if (file.indexOf(".png") === -1){
+  if (file.indexOf(".png") === -1) {
     file += ".png";
   }
 
-  if (file in ASSETS){
+  if (file in ASSETS) {
     return ASSETS[file];
   }
 
   // console.log("Downloading: " + file);
   var asset;
   asset = new Image();
-  asset.onload = function(): void{
+  asset.onload = function (): void {
     loadedAssets++;
     // console.log("Loaded: " + asset.src);
   }

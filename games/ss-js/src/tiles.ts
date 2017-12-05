@@ -1,22 +1,22 @@
 /// <reference path="game.d.ts" />
 
-const GRASS_TILE:Tile = {texture: "tiles/grass.png"};
-const DIRT_TILE:Tile = {texture: "tiles/dirt.png"};
-const CLOUD_TILE:Tile = {texture: "tiles/cloud.png"};
-const STONE_TILE:Tile = {texture: "tiles/stone.png"};
-const DARK_STONE_TILE:Tile = {texture: "tiles/DarkStone.png"};
-const GOLD_TILE:Tile = {texture: "tiles/gold.png"};
-const IRON_TILE:Tile = {texture: "tiles/iron.png"};
-const GOLD_CARPET_TILE:Tile = {texture: "tiles/carpet.png"};
-const WHITE_IRON:Tile = {texture: "tiles/ironWhite.png"};
-const WHITE_CARPET:Tile = {texture: "tiles/carpetWhite.png"};
+const GRASS_TILE: Tile = { texture: "tiles/grass.png" };
+const DIRT_TILE: Tile = { texture: "tiles/dirt.png" };
+const CLOUD_TILE: Tile = { texture: "tiles/cloud.png" };
+const STONE_TILE: Tile = { texture: "tiles/stone.png" };
+const DARK_STONE_TILE: Tile = { texture: "tiles/DarkStone.png" };
+const GOLD_TILE: Tile = { texture: "tiles/gold.png" };
+const IRON_TILE: Tile = { texture: "tiles/iron.png" };
+const GOLD_CARPET_TILE: Tile = { texture: "tiles/carpet.png" };
+const WHITE_IRON: Tile = { texture: "tiles/ironWhite.png" };
+const WHITE_CARPET: Tile = { texture: "tiles/carpetWhite.png" };
 
-const ICE_TILE:Tile = {
+const ICE_TILE: Tile = {
   texture: "tiles/ice.png",
   tick: iceTick,
   init: iceInit,
 };
-const COIN_TILE:Tile = {
+const COIN_TILE: Tile = {
   texture: "tiles/coin/1.png",
   animation: {
     length: 5,
@@ -37,36 +37,36 @@ const COIN_TILE:Tile = {
   solid: false,
   tick: coinTick,
 };
-const FIRE_SUIT_TILE:Tile = {
+const FIRE_SUIT_TILE: Tile = {
   texture: "tiles/suits/fire.png",
   solid: false,
-  tick: function(){
+  tick: function () {
     return suitTick.call(this, FIRE_SUIT);
   }
 };
-const CLOUD_SUIT_TILE:Tile = {
+const CLOUD_SUIT_TILE: Tile = {
   texture: "tiles/suits/wind.png",
   solid: false,
-  tick: function(){
+  tick: function () {
     return suitTick.call(this, WIND_SUIT);
   },
 };
-const HAMMER_SUIT_TILE:Tile = {
+const HAMMER_SUIT_TILE: Tile = {
   texture: "tiles/suits/wind.png",
   solid: false,
-  tick: function(){
+  tick: function () {
     return suitTick.call(this, HAMMER_SUIT);
   },
 };
-const SWITCH_DISPLAY_TILE:Tile = {
+const SWITCH_DISPLAY_TILE: Tile = {
   texture: "tiles/switch.png",
   afterCreation: createSwitch,
 };
-const HAMMER_BLOCK_TILE:Tile = {
+const HAMMER_BLOCK_TILE: Tile = {
   texture: "tiles/hblock/block.png",
   init: switchToggledInit,
 };
-const HAMMER_SWITCH_TILE:Tile = {
+const HAMMER_SWITCH_TILE: Tile = {
   texture: "tiles/hswitch/B.png",
   tick: hammerSwitch,
   animation: {
@@ -75,32 +75,32 @@ const HAMMER_SWITCH_TILE:Tile = {
       "tiles/hswitch/Bs.png",
     ],
     length: 10,
-    condition: function(){
+    condition: function () {
       return !this.activated;
     }
   },
 };
-const ON_SWITCH_TILE:Tile = {
+const ON_SWITCH_TILE: Tile = {
   texture: "tiles/switch/off.png",
   tick: switchTick,
   solid: false
 };
-const UP_SPIKE_TILE:Tile = {
+const UP_SPIKE_TILE: Tile = {
   texture: "tiles/spikes/up.png",
   solid: false,
   tick: spike
 };
-const DOWN_SPIKE_TILE:Tile = {
+const DOWN_SPIKE_TILE: Tile = {
   texture: "tiles/spikes/down.png",
   solid: false,
   tick: spike
 };
-const GUARD:Tile = {
+const GUARD: Tile = {
   texture: "guard/still.png",
   tick: guard,
   destroy: guardDestroy,
 };
-const SLIDING_IRON_DOOR:Tile = {
+const SLIDING_IRON_DOOR: Tile = {
   texture: "tiles/iron.png",
   tick: slidingDoor,
 };

@@ -1,6 +1,6 @@
 /// <reference path="game.d.ts" />
 
-const ASSET_LIST:string[] = [
+const ASSET_LIST: string[] = [
   "blank.png",
   "tiles/cloud.png",
   "tiles/DarkStone.png",
@@ -84,37 +84,37 @@ const ASSET_LIST:string[] = [
 var totalAssets = ASSET_LIST.length;
 var loadedAssets = 0;
 var loaded = false;
-var progress = <HTMLProgressElement> document.getElementById("progress");
-const ASSETS:any = {};
+var progress = <HTMLProgressElement>document.getElementById("progress");
+const ASSETS: any = {};
 
-for (let asset of ASSET_LIST){
+for (let asset of ASSET_LIST) {
   loadImage(asset);
 }
 
-function loadImage(file:string|HTMLImageElement): HTMLImageElement{
-  if (file instanceof HTMLImageElement){
+function loadImage(file: string | HTMLImageElement): HTMLImageElement {
+  if (file instanceof HTMLImageElement) {
     return file;
   }
-  if (file.indexOf("assets/") === -1){
+  if (file.indexOf("assets/") === -1) {
     file = "assets/" + file;
   }
 
-  if (file in ASSETS){
+  if (file in ASSETS) {
     return ASSETS[file];
   }
 
   console.log("Downloading: " + file);
   var asset;
-  if (file.indexOf(".png") > -1){
+  if (file.indexOf(".png") > -1) {
     asset = new Image();
-    asset.onload = function(): void{
+    asset.onload = function (): void {
       loadedAssets++;
       if (!loaded) progress.value = loadedAssets / totalAssets;
       console.log("Loaded: " + asset.src);
     }
-  }else if (file.indexOf(".png")){
+  } else if (file.indexOf(".png")) {
     asset = new Audio();
-    asset.oncanplay = function(): void{
+    asset.oncanplay = function (): void {
       loadedAssets++;
       if (!loaded) progress.value = loadedAssets / totalAssets;
       console.log("Loaded: " + asset.src);
@@ -126,7 +126,7 @@ function loadImage(file:string|HTMLImageElement): HTMLImageElement{
   return asset;
 }
 
-function playSound(sound: string|HTMLAudioElement): HTMLAudioElement{
+function playSound(sound: string | HTMLAudioElement): HTMLAudioElement {
   console.warn(`Failed to play sound '${sound}': Sounds are disabled`);
   return document.createElement("audio");
 }

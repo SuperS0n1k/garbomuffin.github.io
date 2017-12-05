@@ -1,26 +1,26 @@
 /// PROJECTILES
 
 class Projectile extends RenderedSprite {
-  public constructor(options: ProjectileOptions){
+  public constructor(options: ProjectileOptions) {
     super(options);
     this.direction = options.direction;
     projectiles.push(this);
     this.y = Math.floor(this.y);
   }
 
-  public frameUpdate(){
+  public frameUpdate() {
     this.x += this.direction * PROJECTILE_SPEED;
     this.check();
     if (this.offScreen()) this.destroy();
   }
-  
-  protected check(){}
+
+  protected check() { }
 
   protected readonly direction: number
 }
 
 class PlayerProjectile extends Projectile {
-  public constructor(options: ProjectileOptions){
+  public constructor(options: ProjectileOptions) {
     super({
       ...options,
       texture: loadImage("bullet/bullet.png"),
@@ -32,19 +32,19 @@ class PlayerProjectile extends Projectile {
   protected static damage = 3;
   private destroyAfter = false;
 
-  protected check(){
-    var touching = <Enemy> this.touchingContainer(false, enemies)
-    if (touching && !this.destroyAfter){
+  protected check() {
+    var touching = <Enemy>this.touchingContainer(false, enemies)
+    if (touching && !this.destroyAfter) {
       touching.damage(1);
       this.destroyAfter = true;
-    }else if (this.destroyAfter){
+    } else if (this.destroyAfter) {
       this.destroy();
     }
   }
 }
 
 class ShootingFaceProjectile extends Projectile {
-  public constructor(options: SpriteOptions){
+  public constructor(options: SpriteOptions) {
     super({
       ...options,
       width: 8,
@@ -52,8 +52,8 @@ class ShootingFaceProjectile extends Projectile {
     });
   }
 
-  protected check(){
-    if (this.touchingPlayer()){
+  protected check() {
+    if (this.touchingPlayer()) {
       player.damage(3);
     }
   }

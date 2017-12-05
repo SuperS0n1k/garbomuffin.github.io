@@ -1,5 +1,5 @@
 // directly copy+pasted from the original
-const LEVELS:string[] = [
+const LEVELS: string[] = [
   "bbbbbbcbbbbbbbbbbbbbbbbbbcbbbbbbbbbbbbbcbbbbbbbbcbbbbbbcbbcbbcbbbbbbbbbbbbbcbbbbbbbbccbbbbbbbbaaaaaaaaaaaaaaaabbcccbbbbabbb.................cccbbbbaa.bb..................abbbcba...bb...................bbbba....bbb..................aaaa.....bbc...........................bbb...........................bbb...........................bbbb..........................bbbb..........................cbbb..........................bbbb..........................bbbbb.........................bcbbb.........................bbbbbb........................bbbbcbb.......................bbbbbbbb..b...................cbbbbbbbbbb...................aaaaaaaaaaa.................................................",
   "bbbbbbcbbbbbbbbbbbbbbbbbbcbbbbbbbbbbbbccccccccbbcbbbbbbbbbcbbcbccccccbbbbbbcccbbbbbbcbbbbbaabcbbbaaaaaaaaabcccbbbbbaaaaa..acccc.........bbbccbbba........aaaa.........abbbccbb......................dabbbccb........................abbbcc.........................aabba...........................aa.............................................................................................................................................................................................................................................................................................................................................................................................................",
   "bbbbbbbbbbbbcbbbbbbcbbbbbbbbbbbbbbbbbbbbccbbbbbccbbbbbbbbbbbbcbcbcbcbbcbbbbbcbbbbbbbbbbbbbaaaaaaaabbbbbbbbbbbbbbbccbbbbb........bbbbaaacbbbbbbcbbbbbbc.......hcccc...abbbbbbbbbbcbbb........aaaa....bbbbbbbbbbbbbb................abccbbbbbbbbbb.................abbbcbbbbcbbb..................aaaaabbbbcbb.......................abbbbbb........................aabbbb..........................bbbb..........................aaaa...........................e..................................................................................................................................................................................................................................................",
@@ -14,7 +14,7 @@ const LEVELS:string[] = [
   "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooppppppoooooooooooooooooooooooo......oooooooooooo.........q.................ooo...........................ooo.lll.lll.lll.l..l.lll.lll.looo.lll.lll.lll.l..l.lll.lll.looo.lll.lll.lll.l..l.lll.lll.looo.lll.lll.lll.l..l.lll.lll.looo.lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll..lll.lll.lll.l..l.lll.lll.lll.............................................................mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
 ];
 
-const TEXTS:TextOptions[][] = Array(LEVELS.length);
+const TEXTS: TextOptions[][] = Array(LEVELS.length);
 TEXTS[0] = [{
   text: "GROUNDROLL GRAHM",
   y: 88,

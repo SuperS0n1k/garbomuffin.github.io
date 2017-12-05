@@ -1,4 +1,4 @@
-const FRAME = 60/1000;
+const FRAME = 60 / 1000;
 const WIDTH = 480;
 const HEIGHT = 360;
 const LEVEL_LENGTH = 30;

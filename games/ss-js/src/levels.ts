@@ -1,6 +1,6 @@
 /// <reference path="game.d.ts" />
 
-const LEVELS:string[][] = [
+const LEVELS: string[][] = [
   // 1, coin
   [
     "                            AA",
@@ -15,7 +15,7 @@ const LEVELS:string[][] = [
     "B.",
   ],
   // 2, fire suit
-  [ 
+  [
     "               1",
     "AA            AAA",
     "BBA          ABBBA         II",
@@ -356,6 +356,6 @@ const LEVELS:string[][] = [
   ],
 ];
 
-for (let level of LEVELS){
+for (let level of LEVELS) {
   level.reverse();
 }

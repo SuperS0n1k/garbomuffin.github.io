@@ -1,35 +1,35 @@
 class Template {
-  constructor(text){
-    if (typeof text === "string"){
+  constructor(text) {
+    if (typeof text === "string") {
       this.text = text;
-    }else{
+    } else {
       this.text = text.textContent;
     }
   }
 
-  format(string, replace){
+  format(string, replace) {
     this.text = this.text.replace("${" + string + "}", replace);
     return this;
   }
 
-  toString(){
+  toString() {
     return this.text;
   }
 
-  toHTML(){
+  toHTML() {
     var el = document.createElement("div");
     el.innerHTML = this.toString();
     return el.children;
   }
 
-  appendTo(el){
+  appendTo(el) {
     el.insertAdjacentHTML("beforeend", this.toString());
     return this;
   }
 }
 
 class Item extends Template {
-  constructor(options){
+  constructor(options) {
     super(document.getElementById("item"));
     this.format("name", options && options.name || "")
       .format("id", options && options.id || (table.children.length + 1))
@@ -37,66 +37,66 @@ class Item extends Template {
   }
 }
 
-function calc(){
+function calc() {
   var income = document.getElementById("income").value;
   var spent = 0;
-  for (var item of table.children){
+  for (var item of table.children) {
     var cost = item.children[2].children[0].value;
     spent += Number(cost);
   }
 
   var el = document.getElementById("out");
   var out = income - spent;
-  if (out > 0){
+  if (out > 0) {
     el.innerHTML = `After this month, you will have <b>$${out}</b> of extra money.`;
     el.style.color = "green";
-  }else if (out < 0){
+  } else if (out < 0) {
     el.innerHTML = `After this month, you will be <b>$${-out}</b> in debt.`;
     el.style.color = "red";
-  }else if (out === 0){
+  } else if (out === 0) {
     el.innerHTML = `After this month, you will break even.`;
     el.style.color = "orange";
   }
 }
 
-function addItem(){
+function addItem() {
   var item = new Item();
   item.appendTo(table);
   update();
 }
 
-function removeItem(){
+function removeItem() {
   var el = this.parentNode.parentNode;
   el.parentNode.removeChild(el);
   update();
 }
 
-function update(){
-  for (var i = 0; i < table.children.length; i++){
+function update() {
+  for (var i = 0; i < table.children.length; i++) {
     var el = table.children[i];
     el.children[3].children[0].disabled = table.children.length === 1;
     el.children[0].textContent = i + 1;
   }
 }
 
-function save(){
+function save() {
   var data = [document.getElementById("income").value];
-  for (var el of table.children){
+  for (var el of table.children) {
     data.push(el.children[1].children[0].value);
     data.push(el.children[2].children[0].value);
   }
   return data;
 }
-function saveData(){
+function saveData() {
   localStorage.setItem("budgetingSaveData", JSON.stringify(save()));
 }
 
-function load(data){
+function load(data) {
   clear();
 
   document.getElementById("income").value = data[0];
 
-  for (var i = 1; i < data.length; i += 2){
+  for (var i = 1; i < data.length; i += 2) {
     new Item({
       name: data[i],
       cost: data[i + 1]
@@ -106,23 +106,23 @@ function load(data){
   update();
   calc();
 }
-function loadData(){
+function loadData() {
   var data = localStorage.getItem("budgetingSaveData");
-  if (data){
+  if (data) {
     load(JSON.parse(localStorage.getItem("budgetingSaveData")));
-  }else{
+  } else {
     addItem();
   }
 }
 
-function resetData(){
+function resetData() {
   clear();
   localStorage.setItem("budgetingSaveData", "");
   loadData();
 }
 
-function clear(){
-  while (table.firstChild){
+function clear() {
+  while (table.firstChild) {
     table.removeChild(table.firstChild);
   }
 }
@@ -143,6 +143,6 @@ var example = [
   "Food",
   200
 ];
-function loadExample(){
+function loadExample() {
   load(example);
 }

@@ -6,13 +6,13 @@ class Container {
    * 
    * @memberOf Container
    */
-  public constructor(){
+  public constructor() {
     this.children = [];
     containers.push(this);
   }
 
   protected children: Sprite[]
-  
+
   public push(...args): number {
     return this.children.push.apply(this.children, arguments);
   }
@@ -30,7 +30,7 @@ class Container {
    * 
    * @memberOf Container
    */
-  public splice(...args): number|void {
+  public splice(...args): number | void {
     return this.children.splice.apply(this.children, arguments);
   }
   /**
@@ -46,8 +46,8 @@ class Container {
   };
 
   public destroy(deleteChildren = true): void {
-    if (deleteChildren){
-      while (this.children[0]){
+    if (deleteChildren) {
+      while (this.children[0]) {
         this.children[0].destroy();
       }
     }
@@ -62,7 +62,7 @@ class Container {
   }
 
   public *[Symbol.iterator]() {
-    for (let sprite of this.children){
+    for (let sprite of this.children) {
       yield sprite;
     }
   }

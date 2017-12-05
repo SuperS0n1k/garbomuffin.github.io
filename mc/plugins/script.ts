@@ -3,7 +3,7 @@
 declare var plugins: SpigotPlugin[]
 declare function ga(...args: any[]): any;
 
-type TemplateFormat = string|string[]|Template
+type TemplateFormat = string | string[] | Template
 
 interface IPlugin {
   name: string
@@ -37,66 +37,66 @@ interface IChangeLog {
 }
 
 class Template {
-  constructor(el: HTMLElement, props?: Object){
+  constructor(el: HTMLElement, props?: Object) {
     this.el = el.innerHTML;
 
-    for (var i in props){
+    for (var i in props) {
       this.format(i, props[i]);
     }
   }
 
   el: string
 
-  format(old: string, replace: TemplateFormat){
+  format(old: string, replace: TemplateFormat) {
     // WIP
-    if (replace instanceof Array){
+    if (replace instanceof Array) {
       replace = Template.listToHTMLString(replace);
-    }else if (replace instanceof Template){
+    } else if (replace instanceof Template) {
       replace = replace.el;
     }
-    if (typeof replace === "string"){
+    if (typeof replace === "string") {
       var selector = "${" + old + "}";
-      while (this.el.indexOf(selector) > -1){
+      while (this.el.indexOf(selector) > -1) {
         this.el = this.el.replace(selector, replace);
       }
     }
     return this;
   }
 
-  append(el: string|HTMLElement|Template){
-    if (typeof el === "string"){
+  append(el: string | HTMLElement | Template) {
+    if (typeof el === "string") {
       this.el += el;
-    }else if (el instanceof HTMLElement){
+    } else if (el instanceof HTMLElement) {
       this.el += el.innerHTML;
-    }else if (el instanceof Template){
+    } else if (el instanceof Template) {
       this.el += el.el;
     }
     return this;
   }
 
-  appendTo(el: HTMLElement|Template, preserveUndefined: boolean = false){
+  appendTo(el: HTMLElement | Template, preserveUndefined: boolean = false) {
     // replace stray templates
-    if (!preserveUndefined){
+    if (!preserveUndefined) {
       this.stripUndefined();
     }
 
-    if (el instanceof HTMLElement){
+    if (el instanceof HTMLElement) {
       el.insertAdjacentHTML("beforeend", this.el);
-    }else{
+    } else {
       el.el += this.el;
     }
 
     return this;
   }
 
-  stripUndefined(){
+  stripUndefined() {
     this.el = this.el.replace(/\${.*}/g, "");
     return this;
   }
 
-  static listToHTMLString(list: any[]){
+  static listToHTMLString(list: any[]) {
     var ret = "";
-    for (var i of list){
+    for (var i of list) {
       ret += `<li>${i}</li>`
     }
     return ret;
@@ -104,10 +104,10 @@ class Template {
 }
 
 class Permission extends Template implements IPermission {
-  constructor(props: IPermission){
+  constructor(props: IPermission) {
     super(document.getElementById("entry"), props);
 
-    if (props.default){
+    if (props.default) {
       this.format("default", "(default)");
     }
 
@@ -115,7 +115,7 @@ class Permission extends Template implements IPermission {
     // this.default = typeof props.default !== "undefined" ? props.default : true;
     // this.about = props.about || "About";
     // this.children = props.children || [];
-    if (props.children.length > 0){
+    if (props.children.length > 0) {
       this.format("child",
         new Template(document.getElementById("permission-children"))
           .format("children", props.children)
@@ -132,7 +132,7 @@ class Permission extends Template implements IPermission {
 }
 
 class ChangeLog extends Template implements IChangeLog {
-  constructor(props){
+  constructor(props) {
     super(document.getElementById("entry"), props);
 
     this.format("child",
@@ -140,7 +140,7 @@ class ChangeLog extends Template implements IChangeLog {
         .format("children", props.changes)
     );
 
-    if (props.latest){
+    if (props.latest) {
       this.format("lts", "(latest)");
     }
 
@@ -151,9 +151,9 @@ class ChangeLog extends Template implements IChangeLog {
   changes: string[]
 }
 
-var SpigotPlugins:any = {};
+var SpigotPlugins: any = {};
 class SpigotPlugin extends Template {
-  constructor(props: IPlugin){
+  constructor(props: IPlugin) {
     super(document.getElementById("plugin"), props);
 
     this.props = props;
@@ -165,12 +165,12 @@ class SpigotPlugin extends Template {
 }
 
 class PluginPage extends Template {
-  constructor(plugin: SpigotPlugin){
+  constructor(plugin: SpigotPlugin) {
     super(activePage, plugin.props);
 
     // permissions
     var permissions = plugin.props.permissions;
-    if (permissions && permissions.length > 0){
+    if (permissions && permissions.length > 0) {
       var perms = new Template(document.getElementById("container")).format("text", "Permissions");
       var row = new Template(document.getElementById("row"));
 
@@ -179,10 +179,10 @@ class PluginPage extends Template {
 
     // changelog
     var changelog = plugin.props.changelog;
-    if (changelog && changelog.length > 0){
+    if (changelog && changelog.length > 0) {
       var changes = new Template(document.getElementById("container"))
-      .format("text", "Changelog")
-      .append("</div>")
+        .format("text", "Changelog")
+        .append("</div>")
 
       this.format("change", createGridLayout(changes, plugin.props.changelog, 2));
     }
@@ -190,13 +190,13 @@ class PluginPage extends Template {
 }
 
 var rowTemplate = document.getElementById("row");
-function createGridLayout(container: Template, items: Template[], rowLength = 3): Template{
+function createGridLayout(container: Template, items: Template[], rowLength = 3): Template {
   var colSize = Math.floor(12 / rowLength);;
 
   var row = new Template(rowTemplate);
   var rs = 0;
-  for (var item of items){
-    if (rs === 3){
+  for (var item of items) {
+    if (rs === 3) {
       rs = 0;
       row.append("</div>");
       container.append(row);
@@ -219,24 +219,24 @@ var displayed = false;
 var app = document.getElementById("app");
 var activePage = document.getElementById("activePage");
 
-function load(){
+function load() {
   var pluginPageRegexp = /^(#)?\/\w*$/ig;
-  if (pluginPageRegexp.test(location.hash)){
+  if (pluginPageRegexp.test(location.hash)) {
     setActive(location.hash.substr(2));
-  }else{
+  } else {
     loadPlugins();
   }
 }
 
-async function setActive(pl: string){
+async function setActive(pl: string) {
   // reset the #pluginPage element
   var pluginPage = document.getElementById("pluginPage");
-  while (pluginPage.firstChild){
+  while (pluginPage.firstChild) {
     pluginPage.removeChild(pluginPage.firstChild);
   }
 
   pluginPage.style.display = "block"; // reset some values for the next transition
-  if (displayed){
+  if (displayed) {
     document.getElementById("pluginList").style.opacity = "0"; // starts the transition
     pluginPage.style.opacity = "0";
     await sleep(300); // wait
@@ -253,12 +253,12 @@ async function setActive(pl: string){
   ga("send", "event", "Plugin", "load", pl);
 }
 
-async function sleep(ms){
+async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function loadPlugins(){
-  if (displayed){
+async function loadPlugins() {
+  if (displayed) {
     document.getElementById("pluginList").style.opacity = "0";
     document.getElementById("pluginPage").style.opacity = "0";
     await sleep(250);
@@ -275,11 +275,11 @@ async function loadPlugins(){
   loadedPlugins = true;
   displayed = true;
 
-  for (var i of plugins){
+  for (var i of plugins) {
     i.appendTo(document.getElementById("pluginList"));
   }
 }
 
-window.onhashchange = function(){
+window.onhashchange = function () {
   load();
 }

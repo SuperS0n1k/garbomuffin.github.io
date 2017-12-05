@@ -1,7 +1,7 @@
 /// PARTICLES
 
 class Particle extends RenderedSprite {
-  public frameUpdate(){
+  public frameUpdate() {
     this.frame++;
     if (this.offScreen() || this.frame > this.lifeSpan) this.destroy();
 
@@ -14,13 +14,13 @@ class Particle extends RenderedSprite {
   // protected readonly lifeSpan: number = 30;
 
   protected static count: number = 8
-  protected static angleIncrement: number = 360/Particle.count;
+  protected static angleIncrement: number = 360 / Particle.count;
   protected lifeSpan?: number = 30
   protected speed?: number = 30
 }
 
 class BreakParticle extends Particle {
-  public constructor(options: SpriteOptions){
+  public constructor(options: SpriteOptions) {
     super({
       ...options,
       height: 5,
@@ -48,7 +48,7 @@ class BreakParticle extends Particle {
 // }
 
 class PlayerDeathParticle extends Particle {
-  public frameUpdate(){
+  public frameUpdate() {
     this.y -= this.yv;
     this.yv -= GRAVITY;
     this.x += 1;

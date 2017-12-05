@@ -1,6 +1,6 @@
-interface Tile{
-  texture: HTMLImageElement|string,
-  tick?(diff?: number): boolean|void,
+interface Tile {
+  texture: HTMLImageElement | string,
+  tick?(diff?: number): boolean | void,
   // type?: string,
   init?(): void,
   destroy?(): void,
@@ -9,7 +9,7 @@ interface Tile{
   afterCreation?(): void,
 }
 
-interface SpriteOptions extends Tile{
+interface SpriteOptions extends Tile {
   x?: number,
   y?: number,
   width?: number,
@@ -19,12 +19,12 @@ interface SpriteOptions extends Tile{
   render?(): void,
 }
 
-interface AnimationOptions{
+interface AnimationOptions {
   length: number,
   frames: string[],
   condition?(): boolean,
 }
 
-interface ProjectileOptions extends SpriteOptions{
+interface ProjectileOptions extends SpriteOptions {
   dir: number
 }

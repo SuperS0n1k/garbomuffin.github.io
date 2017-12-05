@@ -5,7 +5,7 @@
  * 
  * @class Sprite
  */
-class Sprite{
+class Sprite {
   /**
    * Creates an instance of Sprite.
    * @param {SpriteOptions} options 
@@ -17,32 +17,32 @@ class Sprite{
     this.x = options.x;
     this.y = options.y;
 
-    if (typeof options.width !== "undefined"){
+    if (typeof options.width !== "undefined") {
       this.width = options.width;
-    }else{
+    } else {
       this.width = this.texture.width;
     }
-    if (typeof options.height !== "undefined"){
+    if (typeof options.height !== "undefined") {
       this.height = options.height;
-    }else{
+    } else {
       this.height = this.texture.height;
     }
 
-    if (typeof options.solid !== "undefined"){
+    if (typeof options.solid !== "undefined") {
       this.solid = options.solid;
-    }else{
+    } else {
       this.solid = true;
     }
 
-    if (options.tick){
+    if (options.tick) {
       this.tick = options.tick;
       this.tickable = true;
       tickable.push(this);
-    }else{
+    } else {
       this.tickable = false;
     }
 
-    if (options.animation){
+    if (options.animation) {
       this.animated = true;
       this.animation = options.animation;
       this.frame = 0;
@@ -51,36 +51,36 @@ class Sprite{
       //   this.animation.adjustSize = true;
       // }
       animated.push(this);
-    }else{
+    } else {
       this.animated = false;
     }
 
-    if (typeof options.visible !== "undefined"){
+    if (typeof options.visible !== "undefined") {
       this.visible = options.visible;
-    }else{
+    } else {
       this.visible = true;
     }
 
-    if (typeof options.render !== "undefined"){
+    if (typeof options.render !== "undefined") {
       this.render = options.render;
     }
 
-    if (typeof options.rotation !== "undefined"){
+    if (typeof options.rotation !== "undefined") {
       this.rotation = options.rotation;
-    }else{
+    } else {
       this.rotation = 0;
     }
 
     // some sprites need to create more sprites relative to it's position and set some variables relative to this sprite
-    if (options.afterCreation){
+    if (options.afterCreation) {
       options.afterCreation.call(this);
     }
 
-    if (options.init){
+    if (options.init) {
       options.init.call(this);
     }
 
-    if (options.destroy){
+    if (options.destroy) {
       this.afterDestroy = options.destroy;
     }
 
@@ -116,9 +116,9 @@ class Sprite{
     // if the condition exists and returns false, return
     if (this.animation.condition && !this.animation.condition.call(this)) return;
     this.frame++;
-    if (this.frame % this.animation.length === 0){
+    if (this.frame % this.animation.length === 0) {
       ++this.animationFrame;
-      if (this.animationFrame === this.animation.frames.length){
+      if (this.animationFrame === this.animation.frames.length) {
         this.animationFrame = 0;
       }
       this.setTexture(this.animation.frames[this.animationFrame]);
@@ -138,16 +138,16 @@ class Sprite{
    */
   public render(): void {
     if (this.animated) this.animate();
-    if (this.visible){
-      if (this.rotation){
-        
+    if (this.visible) {
+      if (this.rotation) {
+
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.translate(this.width / 2, this.height / 2);
         ctx.rotate(this.rotation);
         ctx.drawImage(this.texture, -this.width / 2, -this.height / 2, this.width, this.height);
         ctx.restore();
-      }else{
+      } else {
         ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
       }
     }
@@ -159,15 +159,15 @@ class Sprite{
    */
   public destroy(): void {
     sprites.splice(sprites.indexOf(this), 1);
-    if (this.animated){
+    if (this.animated) {
       animated.splice(animated.indexOf(this), 1);
     }
-    if (this.tickable){
+    if (this.tickable) {
       tickable.splice(tickable.indexOf(this), 1);
     }
-    
+
     // FIXME
-    for (let container of containers){
+    for (let container of containers) {
       let index = container.indexOf(this);
       if (index > -1) container.splice(index, 1);
     }
@@ -175,7 +175,7 @@ class Sprite{
     if (this.afterDestroy) this.afterDestroy.call(this);
   }
   public afterDestroy?(): void
-  public tick?(diff?: number): boolean|void
+  public tick?(diff?: number): boolean | void
 
   public get texture(): HTMLImageElement {
     return this._texture;
@@ -184,7 +184,7 @@ class Sprite{
     this._texture = texture;
     // TODO: Automatically set width and height from new texture
   }
-  public setTexture(texture: HTMLImageElement|string): void {
+  public setTexture(texture: HTMLImageElement | string): void {
     this.texture = loadImage(texture);
   }
 
@@ -201,8 +201,8 @@ class Sprite{
       this.y > HEIGHT;
   }
 
-  public touchingGroup(group: Container, xOffset: 0, yOffset: 0): boolean{
-    for (let sprite of group){
+  public touchingGroup(group: Container, xOffset: 0, yOffset: 0): boolean {
+    for (let sprite of group) {
       if (this.intersects(sprite, xOffset, yOffset)) return true;
     }
     return false;
@@ -211,18 +211,18 @@ class Sprite{
     return this.intersects(player, xOffset, yOffset);
   }
   public touchingGround(xOffset = 0, yOffset = 0): boolean {
-    for (let block of sprites){
+    for (let block of sprites) {
       if (block.solid && this.intersects(block, xOffset, yOffset)) return true;
     }
     return false;
   }
-  public getTouchingGround(xOffset = 0, yOffset = 0): Sprite|boolean {
-    for (let block of sprites){
+  public getTouchingGround(xOffset = 0, yOffset = 0): Sprite | boolean {
+    for (let block of sprites) {
       if (block.solid && this.intersects(block, xOffset, yOffset)) return block;
     }
     return false;
   }
-  public intersects(sprite: Sprite, xOffset = 0, yOffset = 0){
+  public intersects(sprite: Sprite, xOffset = 0, yOffset = 0) {
     return this.x + xOffset < sprite.x + sprite.width &&
       this.x + this.width + xOffset > sprite.x &&
       this.y < sprite.y + sprite.height + yOffset &&
@@ -236,34 +236,34 @@ class Sprite{
  * @class NonSolidSprite
  * @extends {Sprite}
  */
-class NonSolidSprite extends Sprite{
-  public constructor(options: SpriteOptions){
+class NonSolidSprite extends Sprite {
+  public constructor(options: SpriteOptions) {
     super(options);
   }
 
-  public readonly solid:boolean = false
+  public readonly solid: boolean = false
 }
 
-class Block extends Sprite{
-  public constructor(options: SpriteOptions){
+class Block extends Sprite {
+  public constructor(options: SpriteOptions) {
     super(options);
     blocks.push(this);
   }
 
-  public readonly width:number = BLOCK_WIDTH
-  public readonly height:number = BLOCK_HEIGHT
+  public readonly width: number = BLOCK_WIDTH
+  public readonly height: number = BLOCK_HEIGHT
 }
 
-class NonSolidBlock extends Block{
-  public constructor(options: SpriteOptions){
+class NonSolidBlock extends Block {
+  public constructor(options: SpriteOptions) {
     super(options);
   }
 
-  public readonly solid:boolean = false
+  public readonly solid: boolean = false
 }
 
-class Switch extends Block{
-  public constructor(options: SpriteOptions){
+class Switch extends Block {
+  public constructor(options: SpriteOptions) {
     super(options);
   }
 
@@ -271,8 +271,8 @@ class Switch extends Block{
   public activated: boolean = false
 }
 
-class Player extends NonSolidSprite{
-  public constructor(options: SpriteOptions){
+class Player extends NonSolidSprite {
+  public constructor(options: SpriteOptions) {
     super(options);
     var totalSwitches = LEVELS[level].join("").match(/#/g);
     if (totalSwitches) this.totalSwitches = totalSwitches.length;
@@ -280,12 +280,12 @@ class Player extends NonSolidSprite{
     if (totalGuards) this.totalGuards = totalGuards.length;
   }
 
-  public reset(){
+  public reset() {
     this.y = HEIGHT - 1;
     this.x = 0;
     this.xv = 0;
     this.yv = 0;
-    while (this.touchingGround()){
+    while (this.touchingGround()) {
       this.y--;
     }
   }
@@ -304,21 +304,21 @@ class Player extends NonSolidSprite{
   public totalSwitches: number = 0
   public activatedSwitches: number = 0
   public allSwitchesActivated: boolean = false
-  public frame:number = 0
-  public totalGuards:number
-  public killedGuards:number = 0
+  public frame: number = 0
+  public totalGuards: number
+  public killedGuards: number = 0
 }
 
-class PlayerGraphic extends NonSolidSprite{
-  public constructor(options: SpriteOptions){
+class PlayerGraphic extends NonSolidSprite {
+  public constructor(options: SpriteOptions) {
     super(options);
   }
 
   public costume: string
 }
 
-class Projectile extends NonSolidSprite{
-  public constructor(options: ProjectileOptions){
+class Projectile extends NonSolidSprite {
+  public constructor(options: ProjectileOptions) {
     super(options);
     this.dir = options.dir;
     // tickable.add(this);
@@ -327,24 +327,24 @@ class Projectile extends NonSolidSprite{
   public readonly dir: number;
 }
 
-class Fireball extends Projectile{
-  public constructor(options: ProjectileOptions){
+class Fireball extends Projectile {
+  public constructor(options: ProjectileOptions) {
     super(options);
     fireballs.add(this);
   }
 
-  public width:number = FIREBALL_WIDTH
-  public height:number = FIREBALL_HEIGHT
-  public yv:number = 0
+  public width: number = FIREBALL_WIDTH
+  public height: number = FIREBALL_HEIGHT
+  public yv: number = 0
 }
 
-class Hammer extends Projectile{
-  public constructor(options: ProjectileOptions){
+class Hammer extends Projectile {
+  public constructor(options: ProjectileOptions) {
     super(options);
     hammers.add(this);
   }
 
-  public width:number = HAMMER_WIDTH
-  public height:number = HAMMER_HEIGHT
-  public yv:number = HAMMER_VELOCITY
+  public width: number = HAMMER_WIDTH
+  public height: number = HAMMER_HEIGHT
+  public yv: number = HAMMER_VELOCITY
 }
