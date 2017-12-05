@@ -101,6 +101,11 @@ class Sprite {
                 this.animationFrame = 0;
             }
             this.setTexture(this.animation.frames[this.animationFrame]);
+            // TODO: Auto adjust sprite size
+            // if (this.animation.adjustSize){
+            //   this.width = this.texture.width;
+            //   this.height = this.texture.height;
+            // }
         }
     }
     /**

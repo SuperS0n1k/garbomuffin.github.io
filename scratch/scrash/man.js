@@ -1,11 +1,11 @@
 class ManTitleElement extends HTMLElement {
-  constructor(){
+  constructor() {
     super();
 
-    if (!this.id){
+    if (!this.id) {
       this.id = this.textContent.split(" ")[0].toLowerCase();
       var parent = this.parentElement.parentElement;
-      if (parent.tagName === "MAN-ENTRY"){
+      if (parent.tagName === "MAN-ENTRY") {
         this.id = parent.getElementsByTagName("man-title")[0].id + "-" + this.id;
       }
     }
@@ -21,10 +21,10 @@ class ManTitleElement extends HTMLElement {
 
 var overrides = ["~", "..", "."];
 class ManTitleInlineElement extends ManTitleElement {
-  constructor(){
+  constructor() {
     super();
 
-    if (overrides.indexOf(this.id) > -1){
+    if (overrides.indexOf(this.id) > -1) {
       var parent = this.parentElement.parentElement.parentElement;
       var title = parent.getElementsByTagName("man-title");
       this.id = title[0].id + "-" + this.id;
@@ -35,11 +35,11 @@ class ManTitleInlineElement extends ManTitleElement {
 }
 
 class ManBugElement extends HTMLElement {
-  constructor(){
+  constructor() {
     super();
   }
 
-  
+
 }
 
 customElements.define("man-title", ManTitleElement);
@@ -47,7 +47,7 @@ customElements.define("man-title-inline", ManTitleInlineElement);
 customElements.define("man-bug", ManBugElement);
 
 class FootNoteDefinitionElement extends HTMLElement {
-  constructor(){
+  constructor() {
     super();
 
     var regex = /\[(\d*)\]/;
@@ -62,7 +62,7 @@ class FootNoteDefinitionElement extends HTMLElement {
 }
 
 class FootNoteReferenceElement extends HTMLElement {
-  constructor(){
+  constructor() {
     super();
 
     var regex = /^\[(\d*)\]$/g;
@@ -84,31 +84,31 @@ customElements.define("footnote-reference", FootNoteReferenceElement);
 window.onhashchange = highlightHash;
 window.onload = highlightHash;
 
-function highlightHash(){
+function highlightHash() {
   var hash = location.hash;
 
-  if (hash.charAt(0) === "#"){
+  if (hash.charAt(0) === "#") {
     hash = hash.substring(1);
   }
   console.log("hash change: " + hash);
 
   var el = document.getElementById(hash);
 
-  if (el === null){
+  if (el === null) {
     console.log("unknown element: " + hash);
     return;
   }
 
-  if (el instanceof ManTitleElement){
+  if (el instanceof ManTitleElement) {
     el = el.parentElement;
-  }else if (el.id === "top"){
+  } else if (el.id === "top") {
     el = document.body;
   }
 
   highlightElement(el);
 }
 
-function highlightElement(el){
+function highlightElement(el) {
   el.classList.add("no-transition");
   el.style.backgroundColor = "yellow";
 

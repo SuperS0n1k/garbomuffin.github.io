@@ -4,8 +4,8 @@ var tsProject = ts.createProject("tsconfig.json");
 
 gulp.watch("./src/*.*", ["default"]);
 
-gulp.task("default", function(){
+gulp.task("default", function () {
   return tsProject.src()
     .pipe(tsProject())
-    .js.pipe(gulp.dest("js"));
+    .js.pipe(gulp.dest("dist"));
 });
