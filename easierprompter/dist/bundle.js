@@ -111,7 +111,7 @@ config.options.speed = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* C
     el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-current-speed"),
     type: "number",
     setterOpts: {
-        transform: function (value) { return value.toFixed(1); },
+        transform: function (value) { return value.toFixed(2); },
     },
 });
 config.options.fontSize = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
@@ -284,7 +284,7 @@ var __extends = (this && this.__extends) || (function () {
 
 
 
-var SPEED_INCREMENT = 0.5;
+var SPEED_INCREMENT = 0.25;
 var Prompter = /** @class */ (function (_super) {
     __extends(Prompter, _super);
     function Prompter(config) {

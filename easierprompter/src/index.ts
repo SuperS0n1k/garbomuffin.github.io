@@ -12,7 +12,7 @@ config.options.speed = new ConfigOption<number>({
   el: getElement("options-current-speed"),
   type: "number",
   setterOpts: {
-    transform: (value: number) => value.toFixed(1),
+    transform: (value: number) => value.toFixed(2),
   },
 });
 

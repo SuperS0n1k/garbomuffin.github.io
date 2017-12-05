@@ -3,7 +3,7 @@ import { getElement, sanitize } from "../utils";
 import { ConfigManager } from "../config/config";
 import { Keyboard } from "../keyboard/keyboard";
 
-const SPEED_INCREMENT = 0.5;
+const SPEED_INCREMENT = 0.25;
 
 export class Prompter extends AbstractPrompter {
   private prompterLines = getElement("prompter-lines") as HTMLUListElement;
