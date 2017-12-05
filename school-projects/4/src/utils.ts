@@ -7,3 +7,16 @@ export function getElement(id: string): HTMLElement {
   }
   return el;
 }
+
+export function sanitize(str: string): string {
+  str = str.replace(/&/g, "&amp;");
+
+  // several spaces in a row will look like several spaces
+  str = str.replace(/ /g, "&nbsp;");
+
+  // prevent xss
+  str = str.replace(/>/g, "&gt;");
+  str = str.replace(/</g, "&lt;");
+
+  return str;
+}
