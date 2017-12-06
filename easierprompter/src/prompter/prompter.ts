@@ -26,8 +26,8 @@ export class Prompter extends AbstractPrompter {
     getElement("options-toggle-run").addEventListener("click", (e) => this.toggleScrolling());
     getElement("options-toggle-direction").addEventListener("click", (e) => this.reverseDirection());
     getElement("options-exit").addEventListener("click", (e) => this.hide());
-    getElement("options-speed-up").addEventListener("click", (e) => this.config.speed += SPEED_INCREMENT);
-    getElement("options-speed-down").addEventListener("click", (e) => this.config.speed -= SPEED_INCREMENT);
+    getElement("options-speed-up").addEventListener("click", (e) => this.speedUp());
+    getElement("options-speed-down").addEventListener("click", (e) => this.speedUp());
   }
 
   // Keyboard support
@@ -53,6 +53,12 @@ export class Prompter extends AbstractPrompter {
         }
       }
     });
+
+    // up arrow - increase speed
+    keyboard.handleKeypress(38, () => this.speedUp());
+
+    // down arrow - decrease speed
+    keyboard.handleKeypress(40, () => this.speedDown());
   }
 
   ///
@@ -123,7 +129,7 @@ export class Prompter extends AbstractPrompter {
     const prompterLines = getElement("prompter-lines");
 
     for (const line of script.split("\n")) {
-      const listItem = document.createElement("li");
+      const listItem = document.createElement("p");
       listItem.innerHTML = line;
       prompterLines.appendChild(listItem);
     }
@@ -148,6 +154,20 @@ export class Prompter extends AbstractPrompter {
   private resetScript() {
     while (this.prompterLines.firstChild) {
       this.prompterLines.removeChild(this.prompterLines.firstChild);
+    }
+  }
+
+  // Speed Up/Down
+  private speedUp() {
+    if (this.showing) {
+      this.config.speed += SPEED_INCREMENT;
+    }
+  }
+
+  // Speed Up/Down
+  private speedDown() {
+    if (this.showing) {
+      this.config.speed -= SPEED_INCREMENT;
     }
   }
 }

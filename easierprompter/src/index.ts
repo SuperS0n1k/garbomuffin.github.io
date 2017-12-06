@@ -4,7 +4,7 @@ import { getElement } from "./utils";
 import { ConfigOption } from "./config/option";
 import { Keyboard } from "./keyboard/keyboard";
 
-const prompterElement = getElement("prompter-lines");
+const prompterElement = getElement("prompter-lines-container");
 const config = new ConfigManager();
 
 config.options.speed = new ConfigOption<number>({
@@ -12,7 +12,12 @@ config.options.speed = new ConfigOption<number>({
   el: getElement("options-current-speed"),
   type: "number",
   setterOpts: {
-    transform: (value: number) => value.toFixed(2),
+    transform: (value: number) => {
+      if (value < 0) {
+        value = 0;
+      }
+      return value.toFixed(2);
+    },
   },
 });
 

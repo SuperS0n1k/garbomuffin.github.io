@@ -71,8 +71,9 @@ export function setterFrom(el: HTMLElement, opts: ISetterFromOptions = {}): Conf
 
   const functionStack = generateFunctionStack(stack);
   if (opts.onchange) {
+    const getter = getterFrom(el);
     el.onchange = () => {
-      functionStack(getterFrom(el)());
+      getter();
     };
   }
 

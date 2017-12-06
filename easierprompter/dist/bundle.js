@@ -104,14 +104,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("prompter-lines");
+var prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("prompter-lines-container");
 var config = new __WEBPACK_IMPORTED_MODULE_0__config_config__["a" /* ConfigManager */]();
 config.options.speed = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
     default: 1.5,
     el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-current-speed"),
     type: "number",
     setterOpts: {
-        transform: function (value) { return value.toFixed(2); },
+        transform: function (value) {
+            if (value < 0) {
+                value = 0;
+            }
+            return value.toFixed(2);
+        },
     },
 });
 config.options.fontSize = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
@@ -304,8 +309,8 @@ var Prompter = /** @class */ (function (_super) {
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").addEventListener("click", function (e) { return _this.toggleScrolling(); });
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").addEventListener("click", function (e) { return _this.reverseDirection(); });
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-exit").addEventListener("click", function (e) { return _this.hide(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", function (e) { return _this.config.speed += SPEED_INCREMENT; });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", function (e) { return _this.config.speed -= SPEED_INCREMENT; });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", function (e) { return _this.speedUp(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", function (e) { return _this.speedUp(); });
     };
     // Keyboard support
     Prompter.prototype.addKeyboardHandlers = function () {
@@ -330,6 +335,10 @@ var Prompter = /** @class */ (function (_super) {
                 }
             }
         });
+        // up arrow - increase speed
+        keyboard.handleKeypress(38, function () { return _this.speedUp(); });
+        // down arrow - decrease speed
+        keyboard.handleKeypress(40, function () { return _this.speedDown(); });
     };
     ///
     /// Overrides
@@ -387,7 +396,7 @@ var Prompter = /** @class */ (function (_super) {
         var prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
         for (var _i = 0, _a = script.split("\n"); _i < _a.length; _i++) {
             var line = _a[_i];
-            var listItem = document.createElement("li");
+            var listItem = document.createElement("p");
             listItem.innerHTML = line;
             prompterLines.appendChild(listItem);
         }
@@ -408,6 +417,18 @@ var Prompter = /** @class */ (function (_super) {
     Prompter.prototype.resetScript = function () {
         while (this.prompterLines.firstChild) {
             this.prompterLines.removeChild(this.prompterLines.firstChild);
+        }
+    };
+    // Speed Up/Down
+    Prompter.prototype.speedUp = function () {
+        if (this.showing) {
+            this.config.speed += SPEED_INCREMENT;
+        }
+    };
+    // Speed Up/Down
+    Prompter.prototype.speedDown = function () {
+        if (this.showing) {
+            this.config.speed -= SPEED_INCREMENT;
         }
     };
     return Prompter;
@@ -690,8 +711,9 @@ function setterFrom(el, opts) {
     }
     var functionStack = generateFunctionStack(stack);
     if (opts.onchange) {
+        var getter_1 = getterFrom(el);
         el.onchange = function () {
-            functionStack(getterFrom(el)());
+            getter_1();
         };
     }
     return functionStack;
