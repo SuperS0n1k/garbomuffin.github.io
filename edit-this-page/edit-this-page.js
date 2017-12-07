@@ -1,8 +1,8 @@
-(function() {
+(function () {
   "use strict";
 
   // metadata
-  var VERSION = "0.2";
+  var VERSION = "0.2.1";
 
   var previouslyLoaded = !!window.__editThisPage;
   window.__editThisPage = !previouslyLoaded;
@@ -30,7 +30,7 @@
     }
 
     for (var i = 0; i < elementList.length; i++) {
-      var element = elements[i];
+      var element = elementList[i];
       if (editable) {
         element.setAttribute("contenteditable", "true");
       } else {
