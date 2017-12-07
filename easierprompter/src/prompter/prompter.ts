@@ -1,5 +1,5 @@
 import { AbstractPrompter, Direction } from "./abstract";
-import { getElement, sanitize } from "../utils";
+import { getElement } from "../utils";
 import { ConfigManager } from "../config/config";
 import { Keyboard } from "../keyboard/keyboard";
 
@@ -130,7 +130,7 @@ export class Prompter extends AbstractPrompter {
 
     for (const line of script.split("\n")) {
       const listItem = document.createElement("p");
-      listItem.innerHTML = line;
+      listItem.textContent = line;
       prompterLines.appendChild(listItem);
     }
   }
@@ -146,8 +146,7 @@ export class Prompter extends AbstractPrompter {
 
   // Returns the current script
   public getScript() {
-    const rawInput = (getElement("text-input") as HTMLTextAreaElement).value;
-    return sanitize(rawInput);
+    return (getElement("text-input") as HTMLTextAreaElement).value;
   }
 
   // Removes all existing lines from the script element

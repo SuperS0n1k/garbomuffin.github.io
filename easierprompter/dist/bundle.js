@@ -69,7 +69,6 @@
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getElement;
-/* harmony export (immutable) */ __webpack_exports__["b"] = sanitize;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(6);
 
 function getElement(id) {
@@ -78,15 +77,6 @@ function getElement(id) {
         throw new __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__["a" /* ElementIDNotFoundError */](id);
     }
     return el;
-}
-function sanitize(str) {
-    str = str.replace(/&/g, "&amp;");
-    // several spaces in a row will look like several spaces
-    str = str.replace(/ /g, "&nbsp;");
-    // prevent xss
-    str = str.replace(/>/g, "&gt;");
-    str = str.replace(/</g, "&lt;");
-    return str;
 }
 
 
@@ -397,7 +387,7 @@ var Prompter = /** @class */ (function (_super) {
         for (var _i = 0, _a = script.split("\n"); _i < _a.length; _i++) {
             var line = _a[_i];
             var listItem = document.createElement("p");
-            listItem.innerHTML = line;
+            listItem.textContent = line;
             prompterLines.appendChild(listItem);
         }
     };
@@ -410,8 +400,7 @@ var Prompter = /** @class */ (function (_super) {
     };
     // Returns the current script
     Prompter.prototype.getScript = function () {
-        var rawInput = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input").value;
-        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* sanitize */])(rawInput);
+        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input").value;
     };
     // Removes all existing lines from the script element
     Prompter.prototype.resetScript = function () {

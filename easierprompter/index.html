@@ -65,16 +65,18 @@
         font-weight: bold;
       }
 
-      #prompter-lines {
-        list-style: none;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        word-break: break-word;
+      #prompter-caret {
+        margin: 0;
       }
 
-      #prompter-lines li {
-        /* make empty lines show as empty space */
+      #prompter-lines {
+        list-style: none;
+      }
+
+      #prompter-lines p {
+        margin: 0;
         min-height: 1em;
+        /* white-space: pre; */
       }
 
       #options-exit {
@@ -166,7 +168,7 @@
     </noscript>
 
     <div id="main">
-      <h1>Easier Prompter (v0.4.1)</h1>
+      <h1>Easier Prompter (v0.4.2)</h1>
 
       <hr>
 
@@ -177,7 +179,7 @@
         <b>release v1.0</b>.
       </p>
 
-      <p><b>The URL has changed! Please adjust your bookmarks and any links to point to this page. The old URL will redirect here anyways. (for at least a while)</b></p>
+      <p><b>TEXT WRAPS PROPERLY AGAIN</b></p>
 
       <div id="editor">
         <table>
@@ -237,11 +239,11 @@
       <table id="prompter-lines-container">
         <tr>
           <th>
-            <p class="no-margin">&gt;</p>
+            <p class="no-margin" id="prompter-caret">&gt;</p>
           </th>
 
           <th>
-            <ul id="prompter-lines"></ul>
+            <div id="prompter-lines"></div>
           </th>
         </tr>
       </table>
