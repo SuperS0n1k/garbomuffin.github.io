@@ -1,8 +1,11 @@
 (function() {
   "use strict";
 
-  // load metadata
-  var VERSION = "0.1";
+  // metadata
+  var VERSION = "0.2";
+
+  var previouslyLoaded = !!window.__editThisPage;
+  window.__editThisPage = !previouslyLoaded;
 
   // utility methods
   function log() {
@@ -19,13 +22,26 @@
     console.log.apply(console, args);
   }
 
+  function main(elementList, editable) {
+    if (editable) {
+      log("making elements editable");
+    } else {
+      log("making elements uneditable");
+    }
+
+    for (var i = 0; i < elementList.length; i++) {
+      var element = elements[i];
+      if (editable) {
+        element.setAttribute("contenteditable", "true");
+      } else {
+        element.removeAttribute("contenteditable");
+      }
+    }
+  }
+
   log("loaded edit-this-page v" + VERSION);
 
-  // set the contenteditable attribute to true
   var elements = document.getElementsByTagName("*");
-  for (var i = 0; i < elements.length; i++) {
-    var element = elements[i];
-    element.setAttribute("contenteditable", "true");
-  }
+  main(elements, !previouslyLoaded);
 }());
 
