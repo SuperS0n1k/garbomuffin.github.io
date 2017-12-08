@@ -300,7 +300,7 @@ var Prompter = /** @class */ (function (_super) {
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").addEventListener("click", function (e) { return _this.reverseDirection(); });
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-exit").addEventListener("click", function (e) { return _this.hide(); });
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", function (e) { return _this.speedUp(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", function (e) { return _this.speedUp(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", function (e) { return _this.speedDown(); });
     };
     // Keyboard support
     Prompter.prototype.addKeyboardHandlers = function () {
