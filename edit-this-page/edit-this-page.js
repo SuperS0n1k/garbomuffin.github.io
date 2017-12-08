@@ -2,10 +2,13 @@
   "use strict";
 
   // metadata
-  var VERSION = "0.2.1";
+  var VERSION = "0.3";
 
-  var previouslyLoaded = !!window.__editThisPage;
-  window.__editThisPage = !previouslyLoaded;
+  var editThisPageLoaded = !!window.__editThisPageLoaded;
+  window.__editThisPageLoaded = true;
+
+  var editThisPageState = !window.__editThisPageState;
+  window.__editThisPageState = editThisPageState;
 
   // utility methods
   function log() {
@@ -22,6 +25,13 @@
     console.log.apply(console, args);
   }
 
+  function preventDefault(e) {
+    if (!!window.__editThisPageState) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+
   function main(elementList, editable) {
     if (editable) {
       log("making elements editable");
@@ -36,12 +46,18 @@
       } else {
         element.removeAttribute("contenteditable");
       }
+
+      if (!editThisPageLoaded) {
+        // element.addEventListener("keydown", preventDefault);
+        // element.addEventListener("keypress", preventDefault);
+        // element.addEventListener("keyup", preventDefault);
+      }
     }
   }
 
   log("loaded edit-this-page v" + VERSION);
 
   var elements = document.getElementsByTagName("*");
-  main(elements, !previouslyLoaded);
+  main(elements, editThisPageState);
 }());
 

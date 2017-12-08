@@ -68,7 +68,7 @@
   </head>
 
   <body>
-    <h1>Edit This Page (v0.1)</h1>
+    <h1>Edit This Page (v0.3)</h1>
     <hr>
     <p>A simple bookmark that lets you edit the text of any website!</p>
     <p>A continuation of a chrome extension that was removed from the chrome web store.</p>
@@ -92,6 +92,9 @@
       Each time you run it it will toggle between editable and not editable allowing you to make things seem legit.
     </p>
 
+    <h2>Bugs</h2>
+    <p>On sites such as YouTube typing triggers other events.</p>
+
     <div id="installation-congrats">
       <h1>Congrats!</h1>
       <p>Edit This Page is installed correctly and is working. It's really that easy.</p>
@@ -103,13 +106,13 @@
     </div>
 
     <script>
-      var dev = false;
+      var dev = true;
       var host = dev ? "http://localhost:8080" : "https://garbomuffin.github.io";
       var scriptSource = host + "/edit-this-page/edit-this-page.js";
 
       var js = [
         "var script=document.createElement('script');",
-        "script.src='" + scriptSource + "';",
+        "script.src='" + scriptSource + "?' + Math.random();",
         "document.body.appendChild(script)",
       ].join("");
 
@@ -133,7 +136,7 @@
       }
 
       var installCheckInterval = setInterval(function () {
-        if (window.__editThisPage) {
+        if (window.__editThisPageLoaded) {
           document.getElementById("installation-congrats").style.display = "block";
           clearInterval(installCheckInterval);
         }

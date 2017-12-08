@@ -7,7 +7,6 @@ const SPEED_INCREMENT = 0.25;
 
 export class Prompter extends AbstractPrompter {
   private prompterLines = getElement("prompter-lines") as HTMLUListElement;
-  private keyboard: Keyboard;
 
   constructor(config: ConfigManager) {
     super(config);
@@ -27,38 +26,36 @@ export class Prompter extends AbstractPrompter {
     getElement("options-toggle-direction").addEventListener("click", (e) => this.reverseDirection());
     getElement("options-exit").addEventListener("click", (e) => this.hide());
     getElement("options-speed-up").addEventListener("click", (e) => this.speedUp());
-    getElement("options-speed-down").addEventListener("click", (e) => this.speedUp());
+    getElement("options-speed-down").addEventListener("click", (e) => this.speedDown());
   }
 
   // Keyboard support
   private addKeyboardHandlers() {
-    const keyboard = new Keyboard(this);
-    this.keyboard = keyboard;
+    const keyboard = new Keyboard();
+
+    // only enable keyboard shortcuts if the prompter is showing
+    keyboard.require(() => this.showing);
 
     // 32 = space = start/stop
-    keyboard.handleKeypress(32, () => {
-      if (this.showing) {
-        this.toggleScrolling();
-      }
+    keyboard.onKeyDown(32, () => {
+      this.toggleScrolling();
     });
 
     // 27 = esc = stop & go back to start or leave if already at start
-    keyboard.handleKeypress(27, () => {
-      if (this.showing) {
-        if (this.scrollDistance === 0) {
-          this.hide();
-        } else {
-          this.scrollDistance = 0;
-          this.stop();
-        }
+    keyboard.onKeyDown(27, () => {
+      if (this.scrollDistance === 0) {
+        this.hide();
+      } else {
+        this.scrollDistance = 0;
+        this.stop();
       }
     });
 
     // up arrow - increase speed
-    keyboard.handleKeypress(38, () => this.speedUp());
+    keyboard.onKeyDown(38, () => this.speedUp());
 
     // down arrow - decrease speed
-    keyboard.handleKeypress(40, () => this.speedDown());
+    keyboard.onKeyDown(40, () => this.speedDown());
   }
 
   ///
@@ -66,7 +63,7 @@ export class Prompter extends AbstractPrompter {
   ///
 
   // reverse direction and moving up/down button text
-  public reverseDirection() {
+  protected reverseDirection() {
     super.reverseDirection();
 
     if (this.direction === Direction.Up) {
@@ -109,21 +106,21 @@ export class Prompter extends AbstractPrompter {
   ///
 
   // Applies the margin style to scroll the script
-  public render(distance: number) {
+  protected render(distance: number) {
     const lines = this.prompterLines as HTMLUListElement;
     lines.style.marginTop = `-${distance}px`;
   }
 
   // computes how long the script is and stores it
   // makes sure we don't scroll way too far
-  public getTextLength() {
+  protected getTextLength() {
     const styles = window.getComputedStyle(this.prompterLines);
     const height = (styles.height as string).replace("px", "");
     return Number(height);
   }
 
   // Insertst the script into the DOM
-  public loadScript(script: string) {
+  protected loadScript(script: string) {
     this.resetScript();
 
     const prompterLines = getElement("prompter-lines");
@@ -145,7 +142,7 @@ export class Prompter extends AbstractPrompter {
   }
 
   // Returns the current script
-  public getScript() {
+  protected getScript() {
     return (getElement("text-input") as HTMLTextAreaElement).value;
   }
 
@@ -156,14 +153,14 @@ export class Prompter extends AbstractPrompter {
     }
   }
 
-  // Speed Up/Down
+  // Speed Up
   private speedUp() {
     if (this.showing) {
       this.config.speed += SPEED_INCREMENT;
     }
   }
 
-  // Speed Up/Down
+  // Speed Down
   private speedDown() {
     if (this.showing) {
       this.config.speed -= SPEED_INCREMENT;

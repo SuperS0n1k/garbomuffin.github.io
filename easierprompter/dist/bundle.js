@@ -305,30 +305,27 @@ var Prompter = /** @class */ (function (_super) {
     // Keyboard support
     Prompter.prototype.addKeyboardHandlers = function () {
         var _this = this;
-        var keyboard = new __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__["a" /* Keyboard */](this);
-        this.keyboard = keyboard;
+        var keyboard = new __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__["a" /* Keyboard */]();
+        // only enable keyboard shortcuts if the prompter is showing
+        keyboard.require(function () { return _this.showing; });
         // 32 = space = start/stop
-        keyboard.handleKeypress(32, function () {
-            if (_this.showing) {
-                _this.toggleScrolling();
-            }
+        keyboard.onKeyDown(32, function () {
+            _this.toggleScrolling();
         });
         // 27 = esc = stop & go back to start or leave if already at start
-        keyboard.handleKeypress(27, function () {
-            if (_this.showing) {
-                if (_this.scrollDistance === 0) {
-                    _this.hide();
-                }
-                else {
-                    _this.scrollDistance = 0;
-                    _this.stop();
-                }
+        keyboard.onKeyDown(27, function () {
+            if (_this.scrollDistance === 0) {
+                _this.hide();
+            }
+            else {
+                _this.scrollDistance = 0;
+                _this.stop();
             }
         });
         // up arrow - increase speed
-        keyboard.handleKeypress(38, function () { return _this.speedUp(); });
+        keyboard.onKeyDown(38, function () { return _this.speedUp(); });
         // down arrow - decrease speed
-        keyboard.handleKeypress(40, function () { return _this.speedDown(); });
+        keyboard.onKeyDown(40, function () { return _this.speedDown(); });
     };
     ///
     /// Overrides
@@ -408,13 +405,13 @@ var Prompter = /** @class */ (function (_super) {
             this.prompterLines.removeChild(this.prompterLines.firstChild);
         }
     };
-    // Speed Up/Down
+    // Speed Up
     Prompter.prototype.speedUp = function () {
         if (this.showing) {
             this.config.speed += SPEED_INCREMENT;
         }
     };
-    // Speed Up/Down
+    // Speed Down
     Prompter.prototype.speedDown = function () {
         if (this.showing) {
             this.config.speed -= SPEED_INCREMENT;
@@ -564,48 +561,68 @@ var ElementIDNotFoundError = /** @class */ (function (_super) {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Keyboard; });
 var Keyboard = /** @class */ (function () {
-    function Keyboard(prompter) {
-        var _this = this;
+    function Keyboard() {
         this.handlers = [];
-        this.prompter = prompter;
-        document.addEventListener("keydown", function (e) {
-            if (!prompter.showing) {
+        this.requirements = [];
+        this.keyDownHandlers = [];
+        this.keyPressHandlers = [];
+        this.keyUpHandlers = [];
+        document.addEventListener("keydown", this._createEventHandler(this.keyDownHandlers));
+        document.addEventListener("keyup", this._createEventHandler(this.keyUpHandlers));
+        document.addEventListener("keypress", this._createEventHandler(this.keyPressHandlers));
+    }
+    Keyboard.prototype.require = function (func) {
+        this.requirements.push(func);
+    };
+    Keyboard.prototype.onKeyDown = function (keyCode, handler) {
+        this._addHandler(keyCode, handler, this.keyDownHandlers);
+    };
+    Keyboard.prototype.onKeyUp = function (keyCode, handler) {
+        this._addHandler(keyCode, handler, this.keyUpHandlers);
+    };
+    Keyboard.prototype.onKeyPress = function (keyCode, handler) {
+        this._addHandler(keyCode, handler, this.keyPressHandlers);
+    };
+    Keyboard.prototype.testRequirements = function (e) {
+        for (var _i = 0, _a = this.requirements; _i < _a.length; _i++) {
+            var func = _a[_i];
+            if (!func(e)) {
+                return false;
+            }
+        }
+        return true;
+    };
+    Keyboard.prototype._addHandler = function (keyCode, handler, eventHandlers) {
+        if (!eventHandlers[keyCode]) {
+            eventHandlers[keyCode] = [];
+        }
+        var existingHandlers = eventHandlers[keyCode];
+        existingHandlers.push(handler);
+    };
+    Keyboard.prototype._createEventHandler = function (eventHandlers) {
+        var _this = this;
+        return function (e) {
+            if (!_this.testRequirements(e)) {
                 return;
             }
             var keyCode = e.keyCode;
-            var handlers = _this.handlers[keyCode];
-            if (typeof handlers === "undefined" || handlers.length === 0) {
-                // no handlers
+            var handlers = eventHandlers[keyCode];
+            if (!handlers) {
                 return;
             }
-            // only cancel the event if we have handlers assigned
-            e.preventDefault();
+            var preventDefault = false;
             for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
-                var func = handlers_1[_i];
-                func();
+                var handler = handlers_1[_i];
+                var result = handler();
+                if (result) {
+                    preventDefault = true;
+                    break;
+                }
             }
-        });
-        document.addEventListener("keyup", function (e) { return _this.preventDefault(e); });
-        document.addEventListener("keypress", function (e) { return _this.preventDefault(e); });
-    }
-    Keyboard.prototype.preventDefault = function (e) {
-        if (!this.prompter.showing) {
-            return;
-        }
-        var keyCode = e.keyCode;
-        var handlers = this.handlers[keyCode];
-        var cancel = handlers && handlers.length > 0;
-        if (cancel) {
-            e.preventDefault();
-        }
-    };
-    Keyboard.prototype.handleKeypress = function (keyCode, func) {
-        // create the array if it does not already exist
-        if (typeof this.handlers[keyCode] === "undefined") {
-            this.handlers[keyCode] = [];
-        }
-        var handlers = this.handlers[keyCode];
-        handlers.push(func);
+            if (preventDefault) {
+                e.preventDefault();
+            }
+        };
     };
     return Keyboard;
 }());

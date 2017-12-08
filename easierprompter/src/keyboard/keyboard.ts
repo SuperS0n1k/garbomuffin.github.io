@@ -1,60 +1,82 @@
 import { AbstractPrompter } from "../prompter/abstract";
 
-type Handler = () => void;
+type Handler = () => boolean | void;
+type HandlerList = Handler[][];
+type RequireHandler = (e: KeyboardEvent) => boolean;
 
 export class Keyboard {
   private handlers: Handler[][] = [];
-  private prompter: AbstractPrompter;
 
-  constructor(prompter: AbstractPrompter) {
-    this.prompter = prompter;
+  private requirements: RequireHandler[] = [];
+  private keyDownHandlers: HandlerList = [];
+  private keyPressHandlers: HandlerList = [];
+  private keyUpHandlers: HandlerList = [];
 
-    document.addEventListener("keydown", (e) => {
-      if (!prompter.showing) {
+  constructor() {
+    document.addEventListener("keydown", this._createEventHandler(this.keyDownHandlers));
+    document.addEventListener("keyup", this._createEventHandler(this.keyUpHandlers));
+    document.addEventListener("keypress", this._createEventHandler(this.keyPressHandlers));
+  }
+
+  public require(func: RequireHandler) {
+    this.requirements.push(func);
+  }
+
+  public onKeyDown(keyCode: number, handler: Handler) {
+    this._addHandler(keyCode, handler, this.keyDownHandlers);
+  }
+
+  public onKeyUp(keyCode: number, handler: Handler) {
+    this._addHandler(keyCode, handler, this.keyUpHandlers);
+  }
+
+  public onKeyPress(keyCode: number, handler: Handler) {
+    this._addHandler(keyCode, handler, this.keyPressHandlers);
+  }
+
+  private testRequirements(e: KeyboardEvent) {
+    for (const func of this.requirements) {
+      if (!func(e)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private _addHandler(keyCode: number, handler: Handler, eventHandlers: HandlerList) {
+    if (!eventHandlers[keyCode]) {
+      eventHandlers[keyCode] = [];
+    }
+    const existingHandlers = eventHandlers[keyCode];
+
+    existingHandlers.push(handler);
+  }
+
+  private _createEventHandler(eventHandlers: HandlerList) {
+    return (e: KeyboardEvent) => {
+      if (!this.testRequirements(e)) {
         return;
       }
 
       const keyCode = e.keyCode;
+      const handlers = eventHandlers[keyCode];
 
-      const handlers = this.handlers[keyCode];
-      if (typeof handlers === "undefined" || handlers.length === 0) {
-        // no handlers
+      if (!handlers) {
         return;
       }
 
-      // only cancel the event if we have handlers assigned
-      e.preventDefault();
-
-      for (const func of handlers) {
-        func();
+      let preventDefault = false;
+      for (const handler of handlers) {
+        const result = handler();
+        if (result) {
+          preventDefault = true;
+          break;
+        }
       }
-    });
 
-    document.addEventListener("keyup", (e) => this.preventDefault(e));
-    document.addEventListener("keypress", (e) => this.preventDefault(e));
-  }
-
-  private preventDefault(e: KeyboardEvent) {
-    if (!this.prompter.showing) {
-      return;
-    }
-
-    const keyCode = e.keyCode;
-    const handlers = this.handlers[keyCode];
-    const cancel = handlers && handlers.length > 0;
-
-    if (cancel) {
-      e.preventDefault();
-    }
-  }
-
-  public handleKeypress(keyCode: number, func: () => void) {
-    // create the array if it does not already exist
-    if (typeof this.handlers[keyCode] === "undefined") {
-      this.handlers[keyCode] = [];
-    }
-
-    const handlers = this.handlers[keyCode];
-    handlers.push(func);
+      if (preventDefault) {
+        e.preventDefault();
+      }
+    };
   }
 }
