@@ -6,6 +6,7 @@
 
     <!-- <noscript> styles -->
     <style>
+      /* that's an awful lot of css for a simple enable javascript message... */
       #noscript {
         position: absolute;
         bottom: 0;
@@ -70,16 +71,28 @@
       }
 
       #prompter-lines {
-        list-style: none;
+        /* move text slightly away from caret */
+        padding-left: 0.1em;
+
+        /* wtf? */
+        width: calc(100vw - 1em);
       }
 
       #prompter-lines p {
         margin: 0;
+
+        /* empty lines should display as empty space */
         min-height: 1em;
+
+        /* preserve whitespace and also still wrap text */
         white-space: pre-wrap;
+
+        /* break long words */
+        overflow-wrap: break-word;
       }
 
       #options-exit {
+        /* move the exit button to the right TODO: find better place for it */
         float: right;
       }
     </style>
