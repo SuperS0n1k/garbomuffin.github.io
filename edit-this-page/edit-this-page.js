@@ -1,8 +1,18 @@
 (function () {
   "use strict";
 
-  // metadata
   var VERSION = "0.3";
+
+  var LATEST_LOADER_VERSION = 0;
+  var LOADER_VERSION = window.__editThisPageLoader;
+  if (LOADER_VERSION !== LATEST_LOADER_VERSION && !window.__editThisPageWarnShown) {
+    alert([
+      "The bookmarklet for edit-this-page has updated!",
+      "Visit https://garbomuffin.github.io/edit-this-page/ to update.",
+      "However this will likely continue to work."
+    ].join("\n"));
+    window.__editThisPageWarnShown = true;
+  }
 
   var editThisPageLoaded = !!window.__editThisPageLoaded;
   window.__editThisPageLoaded = true;
@@ -25,13 +35,6 @@
     console.log.apply(console, args);
   }
 
-  function preventDefault(e) {
-    if (!!window.__editThisPageState) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  }
-
   function main(elementList, editable) {
     if (editable) {
       log("making elements editable");
@@ -45,12 +48,6 @@
         element.setAttribute("contenteditable", "true");
       } else {
         element.removeAttribute("contenteditable");
-      }
-
-      if (!editThisPageLoaded) {
-        // element.addEventListener("keydown", preventDefault);
-        // element.addEventListener("keypress", preventDefault);
-        // element.addEventListener("keyup", preventDefault);
       }
     }
   }

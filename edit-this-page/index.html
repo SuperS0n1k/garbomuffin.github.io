@@ -39,36 +39,10 @@
         animation: rainbow 10s linear 0s infinite;
       }
     </style>
-
-    <style>
-      @keyframes rainbow {
-        0% {
-            color: #F00;
-        }
-        17% {
-            color: #FF0;
-        }
-        33% {
-            color: #0F0;
-        }
-        50% {
-            color: #0FF;
-        }
-        67% {
-            color: #00F;
-        }
-        84% {
-            color: #F0F;
-        }
-        100% {
-            color: #F00;
-        }
-      }
-    </style>
   </head>
 
   <body>
-    <h1>Edit This Page (v0.3)</h1>
+    <h1>Edit This Page (v0.4)</h1>
     <hr>
     <p>A simple bookmark that lets you edit the text of any website!</p>
     <p>A continuation of a chrome extension that was removed from the chrome web store.</p>
@@ -81,7 +55,7 @@
         <a onclick="return showDontClickMessage();" id="install-button">Edit This Page</a>
       </b>
     </p>
-    <p id="dont-click-message" class="rainbow">Don't click on it, drag it onto your bookmarks bar!</p>
+    <p id="dont-click-message"><b>Don't click on it, drag it onto your bookmarks bar!</b></p>
     <p>You may have to enable your bookmarks bar, that depend son the browser. It's in the settings somewhere.</p>
 
     <h2>Usage</h2>
@@ -96,7 +70,7 @@
     <p>On sites such as YouTube typing triggers other events.</p>
 
     <div id="installation-congrats">
-      <h1>Congrats!</h1>
+      <h1>Success!</h1>
       <p>Edit This Page is installed correctly and is working. It's really that easy.</p>
       <p>Try editing this text.</p>
       <p>(you won't see this message on other sites, only this one)</p>
@@ -106,14 +80,20 @@
     </div>
 
     <script>
-      var dev = true;
-      var host = dev ? "http://localhost:8080" : "https://garbomuffin.github.io";
+      var dev = false;
+      var host = dev ? "http://localhost:8080" : "//garbomuffin.github.io";
       var scriptSource = host + "/edit-this-page/edit-this-page.js";
 
       var js = [
-        "var script=document.createElement('script');",
-        "script.src='" + scriptSource + "?' + Math.random();",
-        "document.body.appendChild(script)",
+        "window.__editThisPageLoader=0;",
+        "var s=document.createElement('script');",
+        "s.src='" + scriptSource + "?'+Math.random();",
+        "s.onerror=function(){",
+        "alert('edit-this-page could not load script. Using fallback.');",
+        "var e=document.getElementsByTagName('*');",
+        "for(var i=0;i<e.length;i++)e[i].setAttribute&&e[i].setAttribute('contenteditable','true');",
+        "};",
+        "document.body.append(s)",
       ].join("");
 
       var installButton = document.getElementById("install-button");
