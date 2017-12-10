@@ -4,7 +4,6 @@ import { FRICTION, GRAVITY, PLAYER_WALK_SPEED, JUMP_VELOCITY, BLOCK_HEIGHT } fro
 import { PlayerFragmentSprite } from "./fragment";
 import { getRandomInt } from "../../utils";
 import { Vector } from "../../engine/vector";
-import { BlackBlock } from "../blocks/black";
 
 const FRAGMENT_COUNT = 5;
 const FRAGMENT_XV_RANGE = 1;
@@ -77,7 +76,11 @@ export class PlayerSprite extends ImageSprite {
     this.position.x = 40;
     this.position.y = this.runtime.canvas.height - BLOCK_HEIGHT;
 
-    while (this.intersects(this.runtime.blocks.sprites.filter((s) => s.solid || s instanceof BlackBlock))) {
+    this.xv = 0;
+    this.yv = 0;
+
+    const sprites = this.runtime.blocks.sprites.filter((s) => s.solid);
+    while (this.intersects(sprites)) {
       this.y -= BLOCK_HEIGHT;
     }
   }

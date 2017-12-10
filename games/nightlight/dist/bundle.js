@@ -924,8 +924,8 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
     // reset variabels to sane defaults
     // after starting it has to reset things
     resetVariables() {
+        // this.containers = [];
         this.sprites = new __WEBPACK_IMPORTED_MODULE_0__container__["a" /* Container */]();
-        this.containers = [];
     }
     // resets things and starts the loop
     start() {
@@ -1276,8 +1276,6 @@ const Levels = [
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fragment__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_vector__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__blocks_black__ = __webpack_require__(32);
-
 
 
 
@@ -1340,7 +1338,10 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
     reset() {
         this.position.x = 40;
         this.position.y = this.runtime.canvas.height - __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
-        while (this.intersects(this.runtime.blocks.sprites.filter((s) => s.solid || s instanceof __WEBPACK_IMPORTED_MODULE_5__blocks_black__["a" /* BlackBlock */]))) {
+        this.xv = 0;
+        this.yv = 0;
+        const sprites = this.runtime.blocks.sprites.filter((s) => s.solid);
+        while (this.intersects(sprites)) {
             this.y -= __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
         }
     }
@@ -1416,8 +1417,6 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_corner__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_tallgrass__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_coinspawner__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_black__ = __webpack_require__(32);
-
 
 
 
@@ -1433,7 +1432,7 @@ function notsolid(texture) {
     return special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__["a" /* Block */], texture);
 }
 const blockMap = {
-    a: special(__WEBPACK_IMPORTED_MODULE_6__sprites_blocks_black__["a" /* BlackBlock */], "blocks/a"),
+    a: "blocks/a",
     b: "blocks/b",
     c: "blocks/c",
     d: "blocks/d",
@@ -1661,19 +1660,6 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BackgroundStarSprite;
-
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(2);
-
-class BlackBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = BlackBlock;
 
 
 

@@ -123,8 +123,8 @@ export class GameRuntime extends TaskRunner {
   // reset variabels to sane defaults
   // after starting it has to reset things
   protected resetVariables() {
+    // this.containers = [];
     this.sprites = new Container();
-    this.containers = [];
   }
 
   // resets things and starts the loop

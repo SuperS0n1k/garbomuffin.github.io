@@ -26,7 +26,7 @@ function notsolid(texture: string) {
 }
 
 export const blockMap: IBlockMap = {
-  a: special(BlackBlock, "blocks/a"),
+  a: "blocks/a",
   b: "blocks/b",
   c: "blocks/c",
   d: "blocks/d",
