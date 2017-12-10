@@ -32,4 +32,8 @@ export class Container<T extends Sprite = Sprite> {
       return a.position.z - b.position.z;
     });
   }
+
+  get length() {
+    return this.sprites.length;
+  }
 }

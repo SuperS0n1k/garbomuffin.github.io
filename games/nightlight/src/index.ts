@@ -5,6 +5,18 @@ const game = new Nightlight();
 
 // add in all of our assets
 game.addAsset("player/idle");
+
+game.addAsset("fragments/1");
+game.addAsset("fragments/2");
+game.addAsset("fragments/3");
+game.addAsset("fragments/4");
+game.addAsset("fragments/5");
+
+game.addAsset("coin/1");
+// game.addAsset("coin/2");
+// game.addAsset("coin/3");
+// game.addAsset("coin/4");
+
 game.addAsset("blocks/a");
 game.addAsset("blocks/b");
 game.addAsset("blocks/c");
@@ -22,7 +34,7 @@ game.addAsset("blocks/n");
 game.addAsset("blocks/o");
 game.addAsset("blocks/p");
 game.addAsset("blocks/q");
-// game.addAsset("blocks/r");
+game.addAsset("blocks/r");
 // game.addAsset("blocks/s");
 // game.addAsset("blocks/t");
 // game.addAsset("blocks/u");

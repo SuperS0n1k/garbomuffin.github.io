@@ -1,6 +1,16 @@
-import { ImageSprite, IImageSpriteOptions } from "../engine/sprites/imagesprite";
-import { SolidBlock } from "./blocks/solid";
-import { FRICTION, GRAVITY, PLAYER_WALK_SPEED, JUMP_VELOCITY, BLOCK_HEIGHT } from "../config";
+import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
+import { SolidBlock } from "../blocks/solid";
+import { FRICTION, GRAVITY, PLAYER_WALK_SPEED, JUMP_VELOCITY, BLOCK_HEIGHT } from "../../config";
+import { PlayerFragmentSprite } from "./fragment";
+import { getRandomInt } from "../../utils";
+import { Vector } from "../../engine/vector";
+
+const FRAGMENT_COUNT = 5;
+const FRAGMENT_XV_RANGE = 1;
+const FRAGMENT_YV_MIN = 3;
+const FRAGMENT_YV_MAX = 5;
+const FRAGMENT_RV_RANGE = 10;
+const FRAGMENT_TEXTURES = 5;
 
 export class PlayerSprite extends ImageSprite {
   public yv: number = 0;
@@ -33,17 +43,6 @@ export class PlayerSprite extends ImageSprite {
     this._jumpMonitorLastYv = this.yv;
   }
 
-  private handleCollision(horizontal: boolean) {
-    for (const block of this.runtime.blocks) {
-      if (this.intersects(block) && block instanceof SolidBlock) {
-        block.handleIntersect(this, horizontal);
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   private handleInputs(onGround: boolean) {
     const keys = this.runtime.keyboard.keys;
     const rightDown = keys[39].isPressed;
@@ -67,41 +66,33 @@ export class PlayerSprite extends ImageSprite {
   }
 
   private run() {
-    this.x += this.xv;
-    if (this.handleCollision(true)) {
-      this.xv = 0;
-    }
-    if (this.x < 0) {
-      this.x = 0;
-      this.xv = 0;
-    }
-    if (this.x + this.width > this.runtime.canvas.width) {
-      this.x = this.runtime.canvas.width - this.width;
-      this.xv = 0;
-    }
-
-    let onGround = false;
-
-    this.y -= this.yv;
-    if (this.handleCollision(false)) {
-      if (this.yv < 0) {
-        onGround = true;
-      }
-      this.yv = 0;
-    }
-
-    this.xv *= FRICTION;
-    this.yv -= GRAVITY;
-
-    this.handleInputs(onGround);
+    const physicsResult = this.runBasicPhysics(this.xv, this.yv);
+    this.xv = physicsResult.xv;
+    this.yv = physicsResult.yv;
+    this.handleInputs(physicsResult.onGround);
   }
 
   public reset() {
     this.position.x = 40;
     this.position.y = this.runtime.canvas.height - BLOCK_HEIGHT;
 
-    while (this.intersects(this.runtime.blocks)) {
+    while (this.intersects(this.runtime.blocks.sprites.filter((s) => s instanceof SolidBlock))) {
       this.y -= BLOCK_HEIGHT;
     }
+  }
+
+  public kill() {
+    for (let i = 0; i < FRAGMENT_COUNT; i++) {
+      new PlayerFragmentSprite({
+        position: new Vector(this.position),
+        texture: this.runtime.getAsset(`fragments/${getRandomInt(1, FRAGMENT_TEXTURES)}`),
+
+        xv: getRandomInt(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
+        yv: getRandomInt(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
+        rv: getRandomInt(-FRAGMENT_RV_RANGE * 1000, FRAGMENT_RV_RANGE * 1000) / 1000,
+      });
+    }
+
+    this.reset();
   }
 }

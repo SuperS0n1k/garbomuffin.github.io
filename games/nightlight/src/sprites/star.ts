@@ -1,8 +1,9 @@
 import { AbstractSprite, ISpriteOptions } from "../engine/sprite";
 import { Task } from "../engine/task";
+import { toHex } from "../engine/utils";
 
 const UPDATE_EVERY = 6;
-const ANIMATION_LENGTH = 6;
+const ANIMATION_LENGTH = 10;
 
 export class BackgroundStarSprite extends AbstractSprite {
   private progress: number = 0;
@@ -46,7 +47,7 @@ export class BackgroundStarSprite extends AbstractSprite {
   public render(ctx: CanvasRenderingContext2D) {
     const animationProgress = this.clamp(this.progress / ANIMATION_LENGTH, 0, 1);
     const color = Math.floor(255 * animationProgress);
-    const hexCode = color.toString(16);
+    const hexCode = toHex(color);
 
     // console.log(animationProgress);
 

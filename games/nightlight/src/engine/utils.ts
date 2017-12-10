@@ -19,3 +19,11 @@ export function getOrDefault(obj: any, def: any): any {
 export function toHex(number: number) {
   return number.toString(16).toUpperCase();
 }
+
+export function radiansToDegree(rad: number) {
+  return rad * 180 / Math.PI;
+}
+
+export function degreeToRadians(deg: number) {
+  return deg * Math.PI / 180;
+}

@@ -1,6 +1,10 @@
 import { Block } from "./sprites/blocks/block";
 import { GrassBlock } from "./sprites/blocks/grass";
 import { GroundedCenteredBlock } from "./sprites/blocks/center";
+import { SpikeBlock } from "./sprites/blocks/spike";
+import { CornerBlock } from "./sprites/blocks/corner";
+import { TallGrassBlock } from "./sprites/blocks/tallgrass";
+import { LevelUpCoinSpawnerBlock } from "./sprites/blocks/coinspawner";
 
 interface IBlockMap {
   [s: string]: string | IBlockMetaData;
@@ -11,7 +15,7 @@ interface IBlockMetaData {
   type: typeof Block;
 }
 
-function meta(type: typeof Block, texture: string) {
+function special(type: typeof Block, texture: string) {
   return {
     type, texture,
   };
@@ -27,15 +31,15 @@ export const blockMap: IBlockMap = {
   g: "blocks/g",
   h: "blocks/h",
   i: "blocks/i",
-  j: meta(GrassBlock, "blocks/j"),
-  k: meta(GrassBlock, "blocks/k"),
-  l: meta(GrassBlock, "blocks/l"),
-  m: "blocks/m", // TODO: special: corner
-  n: "blocks/n", // TODO: special: next level
-  o: "blocks/o", // TODO: special: spike
-  p: meta(GroundedCenteredBlock, "blocks/p"),
-  q: meta(GroundedCenteredBlock, "blocks/q"),
-  // r: "blocks/r",
+  j: special(GrassBlock, "blocks/j"),
+  k: special(GrassBlock, "blocks/k"),
+  l: special(GrassBlock, "blocks/l"),
+  m: special(CornerBlock, "blocks/m"),
+  n: special(LevelUpCoinSpawnerBlock, "blocks/n"),
+  o: special(SpikeBlock, "blocks/o"),
+  p: special(TallGrassBlock, "blocks/p"),
+  q: special(TallGrassBlock, "blocks/q"),
+  r: "blocks/r",
   // s: "blocks/s",
   // t: "blocks/t",
   // u: "blocks/u",

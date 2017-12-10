@@ -4,6 +4,8 @@ import { Vector2D } from "./vector2d";
 import { TaskRunner } from "./task";
 import { Sprite, TGame } from "./types";
 import { getOrDefault } from "./utils";
+import { SolidBlock } from "../sprites/blocks/solid";
+import { FRICTION, GRAVITY } from "../config";
 
 export interface ISpriteOptions {
   position: Vector;
@@ -12,6 +14,9 @@ export interface ISpriteOptions {
   height?: number;
 
   scale?: Vector2D;
+
+  // Nightlight:
+  persistent?: boolean;
 }
 
 export abstract class AbstractSprite extends TaskRunner {
@@ -22,6 +27,7 @@ export abstract class AbstractSprite extends TaskRunner {
   public width: number;
   public height: number;
   public scale: Vector2D;
+  public persistent: boolean;
 
   public constructor(options: ISpriteOptions) {
     super();
@@ -32,6 +38,8 @@ export abstract class AbstractSprite extends TaskRunner {
     this.height = getOrDefault(options.height, 0);
 
     this.scale = getOrDefault(options.scale, new Vector2D(1, 1));
+
+    this.persistent = getOrDefault(options.persistent, false);
 
     this.runtime.sprites.push(this);
   }
@@ -64,7 +72,7 @@ export abstract class AbstractSprite extends TaskRunner {
       p.y < this.y + this.height;
   }
 
-  public intersects(thing: Sprite | Container) {
+  public intersects(thing: Sprite | Container | Sprite[]) {
     if (thing instanceof AbstractSprite) {
       return this.x < thing.x + thing.width &&
         this.x + this.width > thing.x &&
@@ -98,4 +106,77 @@ export abstract class AbstractSprite extends TaskRunner {
   set z(z) {
     this.position.z = z;
   }
+
+  //
+  // Nightlight related code
+  //
+
+  protected runBasicPhysics(xv: number, yv: number, options: IPhysicsOptions = {}): IPhysicsResult {
+    options.collision = getOrDefault(options.collision, true);
+    options.inAirFriction = getOrDefault(options.inAirFriction, true);
+    options.restrictValues = getOrDefault(options.restrictValues, true);
+
+    this.x += xv;
+    if (this.handleCollision(true)) {
+      xv = 0;
+    }
+    if (options.restrictValues) {
+      if (this.x < 0) {
+        this.x = 0;
+        xv = 0;
+      }
+      if (this.x + this.width > this.runtime.canvas.width) {
+        this.x = this.runtime.canvas.width - this.width;
+        xv = 0;
+      }
+    }
+
+    let onGround = false;
+
+    this.y -= yv;
+    if (this.handleCollision(false)) {
+      if (yv < 0) {
+        onGround = true;
+      }
+      yv = 0;
+    }
+
+    // TODO: nightlight uses a different friction implementation
+    if (options.inAirFriction || onGround) {
+      xv *= FRICTION;
+    }
+    yv -= GRAVITY;
+
+    return {
+      xv, yv, onGround,
+    };
+  }
+
+  private handleCollision(horizontal: boolean) {
+    for (const block of this.runtime.blocks) {
+      if (this.intersects(block) && block.solid) {
+        (block as SolidBlock).handleIntersect(this, horizontal);
+        return true;
+      }
+    }
+
+    return false;
+  }
+}
+
+interface IPhysicsResult {
+  yv: number;
+  xv: number;
+  onGround: boolean;
+}
+
+interface IPhysicsOptions {
+  // do collision checking?
+  collision?: boolean;
+
+  // apply friction while in the air?
+  inAirFriction?: boolean;
+
+  // restrict x values into 0 <= x <= CANVAS_WIDTH?
+  restrictValues?: boolean;
 }

@@ -1,8 +1,11 @@
 import { Block } from "./block";
 import { Sprite } from "../../engine/types";
+import { AbstractSprite } from "../../engine/sprite";
 
 export class SolidBlock extends Block {
-  public handleIntersect(sprite: Sprite, horizontal: boolean): void {
+  public solid: boolean = true;
+
+  public handleIntersect(sprite: AbstractSprite, horizontal: boolean): void {
     if (horizontal) {
       if (sprite.x > this.x) {
         sprite.x = this.x + sprite.width;
