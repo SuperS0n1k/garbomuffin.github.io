@@ -52,6 +52,7 @@ export class Nightlight extends GameRuntime {
         position: new Vector(x, y, -10),
         width: 2,
         height: 2,
+        persistent: true,
       });
     }
   }

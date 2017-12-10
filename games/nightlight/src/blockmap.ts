@@ -1,6 +1,5 @@
 import { Block } from "./sprites/blocks/block";
 import { GrassBlock } from "./sprites/blocks/grass";
-import { GroundedCenteredBlock } from "./sprites/blocks/center";
 import { SpikeBlock } from "./sprites/blocks/spike";
 import { CornerBlock } from "./sprites/blocks/corner";
 import { TallGrassBlock } from "./sprites/blocks/tallgrass";

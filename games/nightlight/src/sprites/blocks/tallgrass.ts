@@ -1,6 +1,5 @@
 import { Block, IBlockOptions } from "./block";
 import { GrassBlock } from "./grass";
-import { GroundedCenteredBlock } from "./center";
 import { Vector } from "../../engine/vector";
 
 export class TallGrassBlock extends Block {
