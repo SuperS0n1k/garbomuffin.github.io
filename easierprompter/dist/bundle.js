@@ -69,7 +69,7 @@
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getElement;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(4);
 
 function getElement(id) {
     var el = document.getElementById(id);
@@ -86,72 +86,18 @@ function getElement(id) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_config__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_option__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__prompter_prompter__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_prompterconfig__ = __webpack_require__(6);
 
 
 
-
-var prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("prompter-lines-container");
-var config = new __WEBPACK_IMPORTED_MODULE_0__config_config__["a" /* ConfigManager */]();
-config.options.speed = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    default: 1.5,
-    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-current-speed"),
-    type: "number",
-    setterOpts: {
-        transform: function (value) {
-            if (value < 0) {
-                value = 0;
-            }
-            return value.toFixed(2);
-        },
-    },
-});
-config.options.fontSize = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    default: 75,
-    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-size"),
-    type: "number",
-    setterOpts: {
-        onchange: true,
-        callback: function (value) {
-            prompterElement.style.fontSize = value + "px";
-        },
-    },
-});
-config.options.fontFamily = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    default: "sans-serif",
-    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-family"),
-    type: "text",
-    setterOpts: {
-        onchange: true,
-        callback: function (value) {
-            prompterElement.style.fontFamily = value + ", sans-serif";
-        },
-    },
-});
-config.options.boldText = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    default: true,
-    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-bold-text"),
-    type: "checkbox",
-    setterOpts: {
-        onchange: true,
-        callback: function (value) {
-            prompterElement.style.fontWeight = value ? "bold" : "normal";
-        },
-    },
-});
-config.options.text = new __WEBPACK_IMPORTED_MODULE_3__config_option__["a" /* ConfigOption */]({
-    default: "Enter your script here!",
-    el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("text-input"),
-    type: "text",
-});
+var config = new __WEBPACK_IMPORTED_MODULE_2__config_prompterconfig__["a" /* PrompterConfigManager */]();
 config.load();
 config.save();
-Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("save-button").onclick = function () { return config.save(); };
-Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("reset-button").onclick = function () { return config.promptReset(); };
-var prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Prompter */](config);
+Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("save-button").onclick = function () { return config.save(); };
+Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("reset-button").onclick = function () { return config.promptReset(); };
+var prompter = new __WEBPACK_IMPORTED_MODULE_0__prompter_prompter__["a" /* Prompter */](config);
 
 
 /***/ }),
@@ -159,113 +105,10 @@ var prompter = new __WEBPACK_IMPORTED_MODULE_1__prompter_prompter__["a" /* Promp
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigManager; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__save__ = __webpack_require__(3);
-
-var STORAGE_KEY = "EasierPrompter_Config";
-// TODO: saving & loading
-var ConfigManager = /** @class */ (function () {
-    function ConfigManager() {
-        this.options = {};
-        this.configSaver = new __WEBPACK_IMPORTED_MODULE_0__save__["a" /* ConfigSaver */](this);
-    }
-    Object.defineProperty(ConfigManager.prototype, "speed", {
-        get: function () {
-            return this.options.speed.get();
-        },
-        set: function (value) {
-            this.options.speed.set(value);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ConfigManager.prototype.save = function () {
-        this.configSaver.save();
-    };
-    ConfigManager.prototype.load = function () {
-        this.configSaver.load();
-    };
-    ConfigManager.prototype.promptReset = function () {
-        var message = [
-            "Are yousure you want to reset the settings?",
-            "This will reset your script, the config, and reload the page",
-        ];
-        if (confirm(message.join("\n\n"))) {
-            this.configSaver.reset();
-        }
-    };
-    return ConfigManager;
-}());
-
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigSaver; });
-// increase every time an incompatible change is made to the store data
-var STORE_VERSION = "0";
-// hopefully this is specific enough lol
-var STORAGE_KEY = "easierPrompter" + STORE_VERSION + "_configStore";
-var ConfigSaver = /** @class */ (function () {
-    function ConfigSaver(config) {
-        this.config = config;
-    }
-    ConfigSaver.prototype.getOptions = function () {
-        var localConfig = localStorage.getItem(STORAGE_KEY);
-        if (localConfig === null) {
-            return {};
-        }
-        else {
-            return JSON.parse(localConfig);
-        }
-    };
-    ConfigSaver.prototype.generateSaveData = function () {
-        var res = {};
-        for (var _i = 0, _a = Object.keys(this.config.options); _i < _a.length; _i++) {
-            var key = _a[_i];
-            var value = this.config.options[key];
-            res[key] = value.get();
-        }
-        return res;
-    };
-    ConfigSaver.prototype.reset = function () {
-        localStorage.removeItem(STORAGE_KEY);
-        location.reload();
-    };
-    ConfigSaver.prototype.save = function () {
-        var data = this.generateSaveData();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    };
-    ConfigSaver.prototype.load = function () {
-        var options = this.getOptions();
-        for (var _i = 0, _a = Object.keys(options); _i < _a.length; _i++) {
-            var key = _a[_i];
-            var value = options[key];
-            var configOption = this.config.options[key];
-            if (typeof configOption === "undefined") {
-                console.warn("unknown item in save:", key, value);
-                continue;
-            }
-            this.config.options[key].set(value);
-        }
-    };
-    return ConfigSaver;
-}());
-
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Prompter; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__abstract__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__keyboard_keyboard__ = __webpack_require__(5);
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -388,16 +231,16 @@ var Prompter = /** @class */ (function (_super) {
             prompterLines.appendChild(listItem);
         }
     };
+    // Returns the current script
+    Prompter.prototype.getScript = function () {
+        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input").value;
+    };
     ///
     /// Utils or helper methods
     ///
     // Changes an element's visibility
     Prompter.prototype.setDisplay = function (el, show) {
         el.style.display = show ? "block" : "none";
-    };
-    // Returns the current script
-    Prompter.prototype.getScript = function () {
-        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input").value;
     };
     // Removes all existing lines from the script element
     Prompter.prototype.resetScript = function () {
@@ -423,7 +266,7 @@ var Prompter = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -529,7 +372,7 @@ var AbstractPrompter = /** @class */ (function () {
 
 
 /***/ }),
-/* 6 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -555,7 +398,7 @@ var ElementIDNotFoundError = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 7 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -630,12 +473,200 @@ var Keyboard = /** @class */ (function () {
 
 
 /***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PrompterConfigManager; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__option__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(0);
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+
+
+var PrompterConfigManager = /** @class */ (function (_super) {
+    __extends(PrompterConfigManager, _super);
+    function PrompterConfigManager() {
+        var _this = _super.call(this) || this;
+        var prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("prompter-lines-container");
+        _this.options.speed = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
+            default: 1.5,
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-current-speed"),
+            type: "number",
+            setterOpts: {
+                transform: function (value) {
+                    if (value < 0) {
+                        value = 0;
+                    }
+                    return value.toFixed(2);
+                },
+            },
+        });
+        _this.options.fontSize = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
+            default: 75,
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-size"),
+            type: "number",
+            setterOpts: {
+                onchange: true,
+                callback: function (value) {
+                    prompterElement.style.fontSize = value + "px";
+                },
+            },
+        });
+        _this.options.fontFamily = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
+            default: "sans-serif",
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-family"),
+            type: "text",
+            setterOpts: {
+                onchange: true,
+                callback: function (value) {
+                    prompterElement.style.fontFamily = value + ", sans-serif";
+                },
+            },
+        });
+        _this.options.boldText = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
+            default: true,
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-bold-text"),
+            type: "checkbox",
+            setterOpts: {
+                onchange: true,
+                callback: function (value) {
+                    prompterElement.style.fontWeight = value ? "bold" : "normal";
+                },
+            },
+        });
+        _this.options.text = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
+            default: "Enter your script here!",
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("text-input"),
+            type: "text",
+        });
+        return _this;
+    }
+    return PrompterConfigManager;
+}(__WEBPACK_IMPORTED_MODULE_0__config__["a" /* ConfigManager */]));
+
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigManager; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__save__ = __webpack_require__(8);
+
+var STORAGE_KEY = "EasierPrompter_Config";
+// TODO: saving & loading
+var ConfigManager = /** @class */ (function () {
+    function ConfigManager() {
+        this.options = {};
+        this.configSaver = new __WEBPACK_IMPORTED_MODULE_0__save__["a" /* ConfigSaver */](this);
+    }
+    Object.defineProperty(ConfigManager.prototype, "speed", {
+        get: function () {
+            return this.options.speed.get();
+        },
+        set: function (value) {
+            this.options.speed.set(value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ConfigManager.prototype.save = function () {
+        this.configSaver.save();
+    };
+    ConfigManager.prototype.load = function () {
+        this.configSaver.load();
+    };
+    ConfigManager.prototype.promptReset = function () {
+        var message = [
+            "Are yousure you want to reset the settings?",
+            "This will reset your script, the config, and reload the page",
+        ];
+        if (confirm(message.join("\n\n"))) {
+            this.configSaver.reset();
+        }
+    };
+    return ConfigManager;
+}());
+
+
+
+/***/ }),
 /* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigSaver; });
+// increase every time an incompatible change is made to the store data
+var STORE_VERSION = "0";
+// hopefully this is specific enough lol
+var STORAGE_KEY = "easierPrompter" + STORE_VERSION + "_configStore";
+var ConfigSaver = /** @class */ (function () {
+    function ConfigSaver(config) {
+        this.config = config;
+    }
+    ConfigSaver.prototype.getOptions = function () {
+        var localConfig = localStorage.getItem(STORAGE_KEY);
+        if (localConfig === null) {
+            return {};
+        }
+        else {
+            return JSON.parse(localConfig);
+        }
+    };
+    ConfigSaver.prototype.generateSaveData = function () {
+        var res = {};
+        for (var _i = 0, _a = Object.keys(this.config.options); _i < _a.length; _i++) {
+            var key = _a[_i];
+            var value = this.config.options[key];
+            res[key] = value.get();
+        }
+        return res;
+    };
+    ConfigSaver.prototype.reset = function () {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+    };
+    ConfigSaver.prototype.save = function () {
+        var data = this.generateSaveData();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    };
+    ConfigSaver.prototype.load = function () {
+        var options = this.getOptions();
+        for (var _i = 0, _a = Object.keys(options); _i < _a.length; _i++) {
+            var key = _a[_i];
+            var value = options[key];
+            var configOption = this.config.options[key];
+            if (typeof configOption === "undefined") {
+                console.warn("unknown item in save:", key, value);
+                continue;
+            }
+            this.config.options[key].set(value);
+        }
+    };
+    return ConfigSaver;
+}());
+
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigOption; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(10);
 
 var ConfigOption = /** @class */ (function () {
     // constructor(def: T, el: HTMLElement, get: ConfigGetter<T>, set: ConfigSetter<T>) {
@@ -650,7 +681,7 @@ var ConfigOption = /** @class */ (function () {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -719,7 +750,7 @@ function setterFrom(el, opts) {
     if (opts.onchange) {
         var getter_1 = getterFrom(el);
         el.onchange = function () {
-            getter_1();
+            functionStack(getter_1());
         };
     }
     return functionStack;

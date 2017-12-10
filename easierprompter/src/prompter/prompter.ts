@@ -132,6 +132,11 @@ export class Prompter extends AbstractPrompter {
     }
   }
 
+  // Returns the current script
+  protected getScript() {
+    return (getElement("text-input") as HTMLTextAreaElement).value;
+  }
+
   ///
   /// Utils or helper methods
   ///
@@ -139,11 +144,6 @@ export class Prompter extends AbstractPrompter {
   // Changes an element's visibility
   private setDisplay(el: HTMLElement, show: boolean) {
     el.style.display = show ? "block" : "none";
-  }
-
-  // Returns the current script
-  protected getScript() {
-    return (getElement("text-input") as HTMLTextAreaElement).value;
   }
 
   // Removes all existing lines from the script element

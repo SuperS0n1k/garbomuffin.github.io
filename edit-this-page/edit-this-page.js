@@ -1,9 +1,13 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.3";
+  // metadata constants
+  var VERSION = "0.3.1";
 
+  // detect if the bookmark version is out of date
   var LATEST_LOADER_VERSION = 0;
+
+  // window.__editThisPageLoader is defined by the bookmark
   var LOADER_VERSION = window.__editThisPageLoader;
   if (LOADER_VERSION !== LATEST_LOADER_VERSION && !window.__editThisPageWarnShown) {
     alert([
@@ -11,16 +15,16 @@
       "Visit https://garbomuffin.github.io/edit-this-page/ to update.",
       "However this will likely continue to work."
     ].join("\n"));
+
+    // only the show update warning once per site
     window.__editThisPageWarnShown = true;
   }
 
-  var editThisPageLoaded = !!window.__editThisPageLoaded;
-  window.__editThisPageLoaded = true;
-
+  // support toggling between editable/not editable
   var editThisPageState = !window.__editThisPageState;
   window.__editThisPageState = editThisPageState;
 
-  // utility methods
+  // log into the console
   function log() {
     if (!console || !console.log) {
       return;
@@ -35,6 +39,7 @@
     console.log.apply(console, args);
   }
 
+  // the main function, sets an element's 'contenteditable' tag
   function main(elementList, editable) {
     if (editable) {
       log("making elements editable");
@@ -54,7 +59,7 @@
 
   log("loaded edit-this-page v" + VERSION);
 
+  // call the main function with all elements as targets
   var elements = document.getElementsByTagName("*");
   main(elements, editThisPageState);
 }());
-

@@ -73,7 +73,7 @@ export function setterFrom(el: HTMLElement, opts: ISetterFromOptions = {}): Conf
   if (opts.onchange) {
     const getter = getterFrom(el);
     el.onchange = () => {
-      getter();
+      functionStack(getter());
     };
   }
 

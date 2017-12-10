@@ -84,20 +84,38 @@
       var host = dev ? "http://localhost:8080" : "//garbomuffin.github.io";
       var scriptSource = host + "/edit-this-page/edit-this-page.js";
 
+      // Golfed because bookmarks function terribly with long amounts of code
       var js = [
-        "window.__editThisPageLoader=0;",
+        // define bookmark version globally
+        "__editThisPageLoader=0;",
+
+        // create a script element and try to load our script
         "var s=document.createElement('script');",
+
+        // Math.random should stop browsers from caching
         "s.src='" + scriptSource + "?'+Math.random();",
+
+        // some sites block this using the Content Security Policy script-src directive (see: github)
+        // so the bookmark uses onerror to detect loading failure and use a basic fallback
         "s.onerror=function(){",
         "alert('edit-this-page could not load script. Using fallback.');",
+        // set 'contenteditable' to 'true' for all elements
         "var e=document.getElementsByTagName('*');",
-        "for(var i=0;i<e.length;i++)e[i].setAttribute&&e[i].setAttribute('contenteditable','true');",
+
+        /*
+        for (var i = 0;i < e.length; i++) {
+          e[i].setAttribute("contenteditable", "true");
+        }
+        */
+        "for(var i=0;i<e.length;e[i++].setAttribute('contenteditable','true'));",
         "};",
+
+        // append our script to the body
         "document.body.append(s)",
       ].join("");
 
       var installButton = document.getElementById("install-button");
-      installButton.href = `javascript:(function(){${js}}());`;
+      installButton.href = "javascript:(function(){" + js + "}());";
 
       function showDontClickMessage() {
         var el = document.getElementById("dont-click-message");
