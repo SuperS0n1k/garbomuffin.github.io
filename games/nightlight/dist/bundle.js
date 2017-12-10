@@ -1410,11 +1410,13 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_blocks_grass__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_blocks_spike__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_corner__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_coinspawner__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_corner__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_tallgrass__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_coinspawner__ = __webpack_require__(29);
+
 
 
 
@@ -1425,8 +1427,11 @@ function special(type, texture) {
         type, texture,
     };
 }
+function notsolid(texture) {
+    return special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__["a" /* Block */], texture);
+}
 const blockMap = {
-    a: "blocks/a",
+    a: notsolid("blocks/a"),
     b: "blocks/b",
     c: "blocks/c",
     d: "blocks/d",
@@ -1435,14 +1440,14 @@ const blockMap = {
     g: "blocks/g",
     h: "blocks/h",
     i: "blocks/i",
-    j: special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_grass__["a" /* GrassBlock */], "blocks/j"),
-    k: special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_grass__["a" /* GrassBlock */], "blocks/k"),
-    l: special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_grass__["a" /* GrassBlock */], "blocks/l"),
-    m: special(__WEBPACK_IMPORTED_MODULE_2__sprites_blocks_corner__["a" /* CornerBlock */], "blocks/m"),
-    n: special(__WEBPACK_IMPORTED_MODULE_4__sprites_blocks_coinspawner__["a" /* LevelUpCoinSpawnerBlock */], "blocks/n"),
-    o: special(__WEBPACK_IMPORTED_MODULE_1__sprites_blocks_spike__["a" /* SpikeBlock */], "blocks/o"),
-    p: special(__WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__["a" /* TallGrassBlock */], "blocks/p"),
-    q: special(__WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__["a" /* TallGrassBlock */], "blocks/q"),
+    j: special(__WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__["a" /* GrassBlock */], "blocks/j"),
+    k: special(__WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__["a" /* GrassBlock */], "blocks/k"),
+    l: special(__WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__["a" /* GrassBlock */], "blocks/l"),
+    m: special(__WEBPACK_IMPORTED_MODULE_3__sprites_blocks_corner__["a" /* CornerBlock */], "blocks/m"),
+    n: special(__WEBPACK_IMPORTED_MODULE_5__sprites_blocks_coinspawner__["a" /* LevelUpCoinSpawnerBlock */], "blocks/n"),
+    o: special(__WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__["a" /* SpikeBlock */], "blocks/o"),
+    p: special(__WEBPACK_IMPORTED_MODULE_4__sprites_blocks_tallgrass__["a" /* TallGrassBlock */], "blocks/p"),
+    q: special(__WEBPACK_IMPORTED_MODULE_4__sprites_blocks_tallgrass__["a" /* TallGrassBlock */], "blocks/q"),
     r: "blocks/r",
 };
 /* harmony export (immutable) */ __webpack_exports__["a"] = blockMap;

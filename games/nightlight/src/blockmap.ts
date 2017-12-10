@@ -20,8 +20,12 @@ function special(type: typeof Block, texture: string) {
   };
 }
 
+function notsolid(texture: string) {
+  return special(Block, texture);
+}
+
 export const blockMap: IBlockMap = {
-  a: "blocks/a",
+  a: notsolid("blocks/a"),
   b: "blocks/b",
   c: "blocks/c",
   d: "blocks/d",
