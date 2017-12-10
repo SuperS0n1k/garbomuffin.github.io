@@ -4,6 +4,7 @@ import { SpikeBlock } from "./sprites/blocks/spike";
 import { CornerBlock } from "./sprites/blocks/corner";
 import { TallGrassBlock } from "./sprites/blocks/tallgrass";
 import { LevelUpCoinSpawnerBlock } from "./sprites/blocks/coinspawner";
+import { BlackBlock } from "./sprites/blocks/black";
 
 interface IBlockMap {
   [s: string]: string | IBlockMetaData;
@@ -25,7 +26,7 @@ function notsolid(texture: string) {
 }
 
 export const blockMap: IBlockMap = {
-  a: notsolid("blocks/a"),
+  a: special(BlackBlock, "blocks/a"),
   b: "blocks/b",
   c: "blocks/c",
   d: "blocks/d",

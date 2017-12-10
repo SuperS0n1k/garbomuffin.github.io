@@ -1272,11 +1272,11 @@ const Levels = [
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blocks_solid__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__fragment__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__engine_vector__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fragment__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_vector__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__blocks_black__ = __webpack_require__(32);
 
 
 
@@ -1319,13 +1319,13 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
         const leftDown = keys[37].isPressed;
         const upPressed = keys[38].isPressed;
         if (rightDown && !leftDown) {
-            this.xv += __WEBPACK_IMPORTED_MODULE_2__config__["h" /* PLAYER_WALK_SPEED */];
+            this.xv += __WEBPACK_IMPORTED_MODULE_1__config__["h" /* PLAYER_WALK_SPEED */];
         }
         if (leftDown && !rightDown) {
-            this.xv -= __WEBPACK_IMPORTED_MODULE_2__config__["h" /* PLAYER_WALK_SPEED */];
+            this.xv -= __WEBPACK_IMPORTED_MODULE_1__config__["h" /* PLAYER_WALK_SPEED */];
         }
         if (upPressed && onGround) {
-            this.yv = __WEBPACK_IMPORTED_MODULE_2__config__["f" /* JUMP_VELOCITY */];
+            this.yv = __WEBPACK_IMPORTED_MODULE_1__config__["f" /* JUMP_VELOCITY */];
         }
         else if (!upPressed && this.yv > 3) {
             this.yv = 3;
@@ -1339,19 +1339,19 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
     }
     reset() {
         this.position.x = 40;
-        this.position.y = this.runtime.canvas.height - __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */];
-        while (this.intersects(this.runtime.blocks.sprites.filter((s) => s instanceof __WEBPACK_IMPORTED_MODULE_1__blocks_solid__["a" /* SolidBlock */]))) {
-            this.y -= __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */];
+        this.position.y = this.runtime.canvas.height - __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
+        while (this.intersects(this.runtime.blocks.sprites.filter((s) => s.solid || s instanceof __WEBPACK_IMPORTED_MODULE_5__blocks_black__["a" /* BlackBlock */]))) {
+            this.y -= __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
         }
     }
     kill() {
         for (let i = 0; i < FRAGMENT_COUNT; i++) {
-            new __WEBPACK_IMPORTED_MODULE_3__fragment__["a" /* PlayerFragmentSprite */]({
-                position: new __WEBPACK_IMPORTED_MODULE_5__engine_vector__["a" /* Vector */](this.position),
-                texture: this.runtime.getAsset(`fragments/${Object(__WEBPACK_IMPORTED_MODULE_4__utils__["a" /* getRandomInt */])(1, FRAGMENT_TEXTURES)}`),
-                xv: Object(__WEBPACK_IMPORTED_MODULE_4__utils__["a" /* getRandomInt */])(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
-                yv: Object(__WEBPACK_IMPORTED_MODULE_4__utils__["a" /* getRandomInt */])(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
-                rv: Object(__WEBPACK_IMPORTED_MODULE_4__utils__["a" /* getRandomInt */])(-FRAGMENT_RV_RANGE * 1000, FRAGMENT_RV_RANGE * 1000) / 1000,
+            new __WEBPACK_IMPORTED_MODULE_2__fragment__["a" /* PlayerFragmentSprite */]({
+                position: new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](this.position),
+                texture: this.runtime.getAsset(`fragments/${Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* getRandomInt */])(1, FRAGMENT_TEXTURES)}`),
+                xv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* getRandomInt */])(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
+                yv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* getRandomInt */])(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
+                rv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* getRandomInt */])(-FRAGMENT_RV_RANGE * 1000, FRAGMENT_RV_RANGE * 1000) / 1000,
             });
         }
         this.reset();
@@ -1416,6 +1416,8 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_corner__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_tallgrass__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_coinspawner__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_black__ = __webpack_require__(32);
+
 
 
 
@@ -1431,7 +1433,7 @@ function notsolid(texture) {
     return special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__["a" /* Block */], texture);
 }
 const blockMap = {
-    a: notsolid("blocks/a"),
+    a: special(__WEBPACK_IMPORTED_MODULE_6__sprites_blocks_black__["a" /* BlackBlock */], "blocks/a"),
     b: "blocks/b",
     c: "blocks/c",
     d: "blocks/d",
@@ -1659,6 +1661,19 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BackgroundStarSprite;
+
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(2);
+
+class BlackBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = BlackBlock;
 
 
 
