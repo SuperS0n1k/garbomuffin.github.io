@@ -1,9 +1,8 @@
-import { SolidBlock } from "./solid";
 import { AbstractSprite } from "../../engine/sprite";
 import { PlayerSprite } from "../player/player";
 import { Task } from "../../engine/task";
 import { TEXTURE_SCALE } from "../../engine/sprites/imagesprite";
-import { IBlockOptions } from "./block";
+import { IBlockOptions, SolidBlock } from "./block";
 
 const CRUMBLE_FRAMES = 9;
 const CRUMBLE_FRAME_LENGTH = 5;

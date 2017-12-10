@@ -1,5 +1,4 @@
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
-import { SolidBlock } from "../blocks/solid";
 import { FRICTION, GRAVITY, PLAYER_WALK_SPEED, JUMP_VELOCITY, BLOCK_HEIGHT } from "../../config";
 import { PlayerFragmentSprite } from "./fragment";
 import { getRandomInt } from "../../utils";

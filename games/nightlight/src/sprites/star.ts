@@ -49,8 +49,6 @@ export class BackgroundStarSprite extends AbstractSprite {
     const color = Math.floor(255 * animationProgress);
     const hexCode = toHex(color);
 
-    // console.log(animationProgress);
-
     ctx.fillStyle = `#${hexCode}${hexCode}${hexCode}`;
     ctx.fillRect(this.x, this.y, this.width, this.height);
   }

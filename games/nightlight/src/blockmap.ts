@@ -6,6 +6,7 @@ import { TallGrassBlock } from "./sprites/blocks/tallgrass";
 import { LevelUpCoinSpawnerBlock } from "./sprites/blocks/coinspawner";
 import { CrumblingBlock } from "./sprites/blocks/crumble";
 import { FallingBlock } from "./sprites/blocks/falling";
+import { BlockSwitchSpawnerBlock } from "./sprites/blocks/blockswitchspawner";
 
 interface IBlockMap {
   [s: string]: string | IBlockMetaData;
@@ -47,7 +48,7 @@ export const blockMap: IBlockMap = {
   r: "blocks/r",
   s: "blocks/s",
   t: special(CrumblingBlock, "blocks/crumble/1"),
-  // u: "blocks/u",
+  u: special(BlockSwitchSpawnerBlock, "blocks/u"),
   v: "blocks/v",
   w: special(FallingBlock, "blocks/w"),
   // x: "blocks/x",

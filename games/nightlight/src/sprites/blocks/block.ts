@@ -48,3 +48,7 @@ export class Block extends ImageSprite {
     }
   }
 }
+
+export class SolidBlock extends Block {
+  public solid: boolean = true;
+}

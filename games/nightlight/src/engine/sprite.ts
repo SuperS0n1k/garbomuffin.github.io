@@ -4,7 +4,6 @@ import { Vector2D } from "./vector2d";
 import { TaskRunner } from "./task";
 import { Sprite, TGame } from "./types";
 import { getOrDefault } from "./utils";
-import { SolidBlock } from "../sprites/blocks/solid";
 import { FRICTION, GRAVITY } from "../config";
 
 export interface ISpriteOptions {

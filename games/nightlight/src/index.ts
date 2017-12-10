@@ -38,6 +38,7 @@ game.addAsset("blocks/r");
 // game.addAsset("blocks/t");
 game.addAsset("blocks/s");
 game.addAsset("blocks/u");
+game.addAsset("blocks/u2");
 game.addAsset("blocks/v");
 game.addAsset("blocks/w");
 // game.addAsset("blocks/x");
@@ -53,6 +54,9 @@ game.addAsset("blocks/crumble/6");
 game.addAsset("blocks/crumble/7");
 game.addAsset("blocks/crumble/8");
 game.addAsset("blocks/crumble/9");
+
+game.addAsset("blocks/button/red");
+game.addAsset("blocks/button/on");
 
 // wait for it to load then run our stuff
 game.waitForAssets().then(run);
