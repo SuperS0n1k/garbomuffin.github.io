@@ -43,8 +43,7 @@ export class Task {
   }
 
   public stop() {
-    this.runnable = () => { };
-    this.delay = 0;
+    this.delay = -1;
   }
 }
 
@@ -60,8 +59,9 @@ export class TaskRunner {
       if (task.delay <= 0) {
         task.run();
 
-        // TODO: cleaner way to do this
-        if (task.repeatEvery >= 0) {
+        if (task.delay === -1) {
+          // called task.stop();
+        } else if (task.repeatEvery >= 0) {
           task.delay = task.repeatEvery;
         } else {
           task.delay = -1;
@@ -71,7 +71,7 @@ export class TaskRunner {
       }
     }
 
-    this._tasks = this._tasks.filter((i) => i.delay !== -1);
+    this._tasks = this._tasks.filter((task) => task.delay !== -1);
   }
 
   public resetTasks() {

@@ -3,7 +3,7 @@ import { TImage } from "../types";
 import { getOrDefault, degreeToRadians } from "../utils";
 
 // NIGHTLIGHT: images are imported from scratch which has things at 2x actual res
-const TEXTURE_SCALE = 2;
+export const TEXTURE_SCALE = 2;
 
 export interface IImageSpriteOptions extends ISpriteOptions {
   texture: TImage;

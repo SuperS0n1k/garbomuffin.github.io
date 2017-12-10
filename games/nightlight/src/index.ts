@@ -13,9 +13,9 @@ game.addAsset("fragments/4");
 game.addAsset("fragments/5");
 
 game.addAsset("coin/1");
-// game.addAsset("coin/2");
-// game.addAsset("coin/3");
-// game.addAsset("coin/4");
+game.addAsset("coin/2");
+game.addAsset("coin/3");
+game.addAsset("coin/4");
 
 game.addAsset("blocks/a");
 game.addAsset("blocks/b");
@@ -35,14 +35,24 @@ game.addAsset("blocks/o");
 game.addAsset("blocks/p");
 game.addAsset("blocks/q");
 game.addAsset("blocks/r");
-// game.addAsset("blocks/s");
 // game.addAsset("blocks/t");
-// game.addAsset("blocks/u");
-// game.addAsset("blocks/v");
-// game.addAsset("blocks/w");
+game.addAsset("blocks/s");
+game.addAsset("blocks/u");
+game.addAsset("blocks/v");
+game.addAsset("blocks/w");
 // game.addAsset("blocks/x");
 // game.addAsset("blocks/y");
 // game.addAsset("blocks/z");
+
+game.addAsset("blocks/crumble/1");
+game.addAsset("blocks/crumble/2");
+game.addAsset("blocks/crumble/3");
+game.addAsset("blocks/crumble/4");
+game.addAsset("blocks/crumble/5");
+game.addAsset("blocks/crumble/6");
+game.addAsset("blocks/crumble/7");
+game.addAsset("blocks/crumble/8");
+game.addAsset("blocks/crumble/9");
 
 // wait for it to load then run our stuff
 game.waitForAssets().then(run);

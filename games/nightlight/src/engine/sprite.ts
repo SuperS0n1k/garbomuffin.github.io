@@ -117,7 +117,7 @@ export abstract class AbstractSprite extends TaskRunner {
     options.restrictValues = getOrDefault(options.restrictValues, true);
 
     this.x += xv;
-    if (this.handleCollision(true)) {
+    if (options.collision && this.handleCollision(true)) {
       xv = 0;
     }
     if (options.restrictValues) {
@@ -134,7 +134,7 @@ export abstract class AbstractSprite extends TaskRunner {
     let onGround = false;
 
     this.y -= yv;
-    if (this.handleCollision(false)) {
+    if (options.collision && this.handleCollision(false)) {
       if (yv < 0) {
         onGround = true;
       }
@@ -154,8 +154,8 @@ export abstract class AbstractSprite extends TaskRunner {
 
   private handleCollision(horizontal: boolean) {
     for (const block of this.runtime.blocks) {
-      if (this.intersects(block) && block.solid) {
-        (block as SolidBlock).handleIntersect(this, horizontal);
+      if (block.solid && this.intersects(block)) {
+        block.handleIntersect(this, horizontal);
         return true;
       }
     }

@@ -1,15 +1,13 @@
-import { Block, IBlockOptions } from "./block";
+import { IBlockOptions } from "./block";
+import { SolidBlock } from "./solid";
+import { PlayerSprite } from "../player/player";
 
-export class SpikeBlock extends Block {
-  constructor(opts: IBlockOptions) {
-    super(opts);
+export class SpikeBlock extends SolidBlock {
+  public handleIntersect(sprite: AbstractSprite, horizontal: boolean) {
+    super.handleIntersect(sprite, horizontal);
 
-    this.addTask(this.run);
-  }
-
-  private run() {
-    if (this.intersects(this.runtime.player)) {
-      this.runtime.player.kill();
+    if (sprite.y + sprite.height === this.y && sprite instanceof PlayerSprite) {
+      sprite.kill();
     }
   }
 }

@@ -1,12 +1,23 @@
 import { Block, IBlockOptions } from "./blocks/block";
+import { Task } from "../engine/task";
+import { Vector } from "../engine/vector";
+import { TEXTURE_SCALE } from "../engine/sprites/imagesprite";
 
-// Extends block rather than ImageSprite to use some more utility methods
+const FRAME_LENGTH = 3;
+const TOTAL_FRAMES = 4;
 
 export class LevelUpCoinSprite extends Block {
+  private animationFrame: number = 1;
+
   constructor(opts: IBlockOptions) {
     super(opts);
     this.centerAlign();
     this.addTask(this.run);
+    this.addTask(new Task({
+      run: this.animate,
+      repeatEvery: FRAME_LENGTH,
+      delay: FRAME_LENGTH,
+    }));
   }
 
   public run() {
@@ -14,6 +25,14 @@ export class LevelUpCoinSprite extends Block {
     if (touchingPlayer) {
       this.runtime.level++;
       this.runtime.renderLevel();
+    }
+  }
+
+  public animate() {
+    this.animationFrame++;
+
+    if (this.animationFrame > TOTAL_FRAMES) {
+      this.animationFrame = 1;
     }
   }
 }

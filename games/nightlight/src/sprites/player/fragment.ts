@@ -3,6 +3,8 @@ import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagespri
 const LIFESPAN = 300;
 const GHOST_RATE = 0.03;
 
+// TODO: Max fragments
+
 export interface IPlayerFragmentSpriteOptions extends IImageSpriteOptions {
   yv: number;
   xv: number;
@@ -44,7 +46,7 @@ export class PlayerFragmentSprite extends ImageSprite {
       this.opacity -= GHOST_RATE;
     }
 
-    if (this.opacity < 0) {
+    if (this.opacity < 0 || this.y > this.runtime.canvas.height) {
       this.destroy();
     }
   }

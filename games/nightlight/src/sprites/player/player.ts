@@ -27,6 +27,7 @@ export class PlayerSprite extends ImageSprite {
     this.addTask(this.jumpMonitor);
   }
 
+  // Monitors the length of a jump in frames to allow easier fine tuning
   private jumpMonitor() {
     if (this.yv < this._jumpMonitorLastYv && !this._jumpMonitorStarted) {
       this._jumpMonitorStarted = true;
@@ -70,6 +71,10 @@ export class PlayerSprite extends ImageSprite {
     this.xv = physicsResult.xv;
     this.yv = physicsResult.yv;
     this.handleInputs(physicsResult.onGround);
+
+    if (this.y >= this.runtime.canvas.height) {
+      this.kill();
+    }
   }
 
   public reset() {

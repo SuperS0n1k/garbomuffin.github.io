@@ -31,4 +31,20 @@ export class Block extends ImageSprite {
     this.y += (BLOCK_HEIGHT - this.height) / 2;
     this.y = Math.floor(this.y);
   }
+
+  public handleIntersect(sprite: AbstractSprite, horizontal: boolean): void {
+    if (horizontal) {
+      if (sprite.x > this.x) {
+        sprite.x = this.x + this.width;
+      } else {
+        sprite.x = this.x - sprite.width;
+      }
+    } else {
+      if (sprite.y < this.y) {
+        sprite.y = this.y - sprite.height;
+      } else {
+        sprite.y = this.y + this.height;
+      }
+    }
+  }
 }

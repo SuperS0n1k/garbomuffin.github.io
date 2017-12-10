@@ -4,7 +4,8 @@ import { SpikeBlock } from "./sprites/blocks/spike";
 import { CornerBlock } from "./sprites/blocks/corner";
 import { TallGrassBlock } from "./sprites/blocks/tallgrass";
 import { LevelUpCoinSpawnerBlock } from "./sprites/blocks/coinspawner";
-import { BlackBlock } from "./sprites/blocks/black";
+import { CrumblingBlock } from "./sprites/blocks/crumble";
+import { FallingBlock } from "./sprites/blocks/falling";
 
 interface IBlockMap {
   [s: string]: string | IBlockMetaData;
@@ -44,11 +45,11 @@ export const blockMap: IBlockMap = {
   p: special(TallGrassBlock, "blocks/p"),
   q: special(TallGrassBlock, "blocks/q"),
   r: "blocks/r",
-  // s: "blocks/s",
-  // t: "blocks/t",
+  s: "blocks/s",
+  t: special(CrumblingBlock, "blocks/crumble/1"),
   // u: "blocks/u",
-  // v: "blocks/v",
-  // w: "blocks/w",
+  v: "blocks/v",
+  w: special(FallingBlock, "blocks/w"),
   // x: "blocks/x",
   // y: "blocks/y",
   // z: "blocks/z",
