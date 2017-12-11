@@ -1,9 +1,9 @@
-import { Block, IBlockOptions } from "./block";
+import { IBlockOptions, SolidBlock } from "./block";
 import { LevelUpCoinSprite } from "../coin";
 import { BLOCK_HEIGHT } from "../../config";
 import { Vector } from "../../engine/vector";
 
-export class LevelUpCoinSpawnerBlock extends Block {
+export class LevelUpCoinSpawnerBlock extends SolidBlock {
   constructor(opts: IBlockOptions) {
     super(opts);
 

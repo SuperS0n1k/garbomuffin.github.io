@@ -132,6 +132,7 @@ export abstract class AbstractSprite extends TaskRunner {
 
     let onGround = false;
 
+    yv -= GRAVITY;
     this.y -= yv;
     if (options.collision && this.handleCollision(false)) {
       if (yv < 0) {
@@ -144,7 +145,6 @@ export abstract class AbstractSprite extends TaskRunner {
     if (options.inAirFriction || onGround) {
       xv *= FRICTION;
     }
-    yv -= GRAVITY;
 
     return {
       xv, yv, onGround,

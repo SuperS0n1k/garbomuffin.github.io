@@ -35,7 +35,7 @@ export class CornerBlock extends Block {
 
   private testCorner(offset: number, rotation: number, x: number, y: number) {
     const charAtOffset = this.runtime.levelData[this.levelIndex + offset];
-    const isAir = AIR.includes(charAtOffset);
+    const isAir = AIR.indexOf(charAtOffset) > -1;
 
     if (isAir) {
       const position = new Vector(

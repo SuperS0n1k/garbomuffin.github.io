@@ -5,6 +5,12 @@ const game = new Nightlight();
 
 // add in all of our assets
 game.addAsset("player/idle");
+game.addAsset("player/up");
+game.addAsset("player/down");
+game.addAsset("player/walk1");
+game.addAsset("player/walk2");
+game.addAsset("player/walk3");
+game.addAsset("player/walk4");
 
 game.addAsset("fragments/1");
 game.addAsset("fragments/2");

@@ -15,7 +15,7 @@ export class Keyboard extends AbstractKeyboard {
 
     document.addEventListener("keydown", (e) => {
       const keyCode = e.keyCode;
-      if (Keyboard.PREVENT.includes(keyCode)) {
+      if (Keyboard.PREVENT.indexOf(keyCode) > -1) {
         e.preventDefault();
       }
       this.keys[keyCode].isPressed = true;
@@ -23,7 +23,7 @@ export class Keyboard extends AbstractKeyboard {
 
     document.addEventListener("keyup", (e) => {
       const keyCode = e.keyCode;
-      if (Keyboard.PREVENT.includes(keyCode)) {
+      if (Keyboard.PREVENT.indexOf(keyCode) > -1) {
         e.preventDefault();
       }
       this.keys[keyCode].isPressed = false;

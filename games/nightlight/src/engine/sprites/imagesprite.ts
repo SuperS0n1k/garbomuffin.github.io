@@ -42,9 +42,15 @@ export class ImageSprite extends AbstractSprite {
       ctx.translate(-translateX, -translateY);
     }
 
-    ctx.scale(this.scale.x, this.scale.y);
-    ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
+    if (this.scale.x !== 1 || this.scale.y !== 1) {
+      const translateX = this.x + this.width / 2;
+      const translateY = this.y + this.height / 2;
+      ctx.translate(translateX, translateY);
+      ctx.scale(this.scale.x, this.scale.y);
+      ctx.translate(-translateX, -translateY);
+    }
 
+    ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
     ctx.restore();
   }
 }

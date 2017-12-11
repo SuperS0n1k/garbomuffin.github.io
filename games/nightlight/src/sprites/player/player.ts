@@ -11,9 +11,21 @@ const FRAGMENT_YV_MAX = 5;
 const FRAGMENT_RV_RANGE = 10;
 const FRAGMENT_TEXTURES = 5;
 
+const WALK_ANIMATION_FRAMES = 4;
+const WALK_ANIMATION_LENGTH = 4;
+
+enum MovementDirection {
+  Right = 1, Left = -1,
+}
+
 export class PlayerSprite extends ImageSprite {
-  public yv: number = 0;
-  public xv: number = 0;
+  private yv: number = 0;
+  private xv: number = 0;
+  private lastMovementDirection: MovementDirection = MovementDirection.Right;
+  private onGround: boolean = true;
+  private walkingAnimationProgress: number = 1;
+  private currentFrameProgress: number = 0;
+  private moving: boolean = false;
 
   private _jumpMonitorLastYv: number = 0;
   private _jumpMonitorStart: number = 0;
@@ -24,6 +36,7 @@ export class PlayerSprite extends ImageSprite {
 
     this.addTask(this.run);
     this.addTask(this.jumpMonitor);
+    this.addTask(this.updateGraphic);
   }
 
   // Monitors the length of a jump in frames to allow easier fine tuning
@@ -37,7 +50,7 @@ export class PlayerSprite extends ImageSprite {
     if (this.yv > this._jumpMonitorLastYv && this._jumpMonitorStarted) {
       this._jumpMonitorStarted = false;
       const length = this.runtime.frames - this._jumpMonitorStart;
-      console.log("jump end", length);
+      console.log("jump end length=" + length);
     }
 
     this._jumpMonitorLastYv = this.yv;
@@ -47,15 +60,19 @@ export class PlayerSprite extends ImageSprite {
     const keys = this.runtime.keyboard.keys;
     const rightDown = keys[39].isPressed;
     const leftDown = keys[37].isPressed;
-
     const upPressed = keys[38].isPressed;
+    this.moving = false;
 
     if (rightDown && !leftDown) {
       this.xv += PLAYER_WALK_SPEED;
+      this.lastMovementDirection = MovementDirection.Right;
+      this.moving = true;
     }
 
     if (leftDown && !rightDown) {
       this.xv -= PLAYER_WALK_SPEED;
+      this.lastMovementDirection = MovementDirection.Left;
+      this.moving = true;
     }
 
     if (upPressed && onGround) {
@@ -69,6 +86,7 @@ export class PlayerSprite extends ImageSprite {
     const physicsResult = this.runBasicPhysics(this.xv, this.yv);
     this.xv = physicsResult.xv;
     this.yv = physicsResult.yv;
+    this.onGround = physicsResult.onGround;
     this.handleInputs(physicsResult.onGround);
 
     if (this.y >= this.runtime.canvas.height) {
@@ -102,5 +120,35 @@ export class PlayerSprite extends ImageSprite {
     }
 
     this.reset();
+  }
+
+  private updateGraphic() {
+    this.scale.x = this.lastMovementDirection;
+    // console.log(this.yv);
+    if (this.onGround) {
+      if (this.moving) {
+        console.log("move");
+        this.currentFrameProgress++;
+        if (this.currentFrameProgress === WALK_ANIMATION_LENGTH) {
+          this.currentFrameProgress = 0;
+          this.walkingAnimationProgress++;
+        }
+        if (this.walkingAnimationProgress > WALK_ANIMATION_FRAMES) {
+          this.walkingAnimationProgress = 1;
+        }
+        this.texture = this.runtime.getAsset(`player/walk${this.walkingAnimationProgress}`);
+      } else {
+        console.log("idle");
+        this.texture = this.runtime.getAsset("player/idle");
+      }
+    } else {
+      if (this.yv < 0.1) {
+        console.log("down");
+        this.texture = this.runtime.getAsset("player/down");
+      } else {
+        console.log("up");
+        this.texture = this.runtime.getAsset("player/up");
+      }
+    }
   }
 }
