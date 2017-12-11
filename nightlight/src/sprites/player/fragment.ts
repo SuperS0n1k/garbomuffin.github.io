@@ -24,6 +24,10 @@ export class PlayerFragmentSprite extends ImageSprite {
     this.yv = opts.yv;
     this.rv = opts.rv;
 
+    if (this.y >= this.runtime.canvas.height) {
+      this.y = this.runtime.canvas.height - 1;
+    }
+
     this.addTask(this.run);
   }
 
@@ -32,6 +36,7 @@ export class PlayerFragmentSprite extends ImageSprite {
 
     const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
       inAirFriction: false,
+      midAirFriction: false,
     });
     this.xv = physicsResult.xv;
     this.yv = physicsResult.yv;

@@ -115,6 +115,7 @@ export abstract class AbstractSprite extends TaskRunner {
     options.inAirFriction = getOrDefault(options.inAirFriction, true);
     options.restrictPositionValues = getOrDefault(options.restrictPositionValues, true);
     options.friction = getOrDefault(options.friction, true);
+    options.midAirFriction = getOrDefault(options.midAirFriction, true);
 
     this.x += xv;
     if (options.collision && this.handleCollision(true)) {
@@ -124,8 +125,7 @@ export abstract class AbstractSprite extends TaskRunner {
       if (this.x < 0) {
         this.x = 0;
         xv = 0;
-      }
-      if (this.x + this.width > this.runtime.canvas.width) {
+      } else if (this.x + this.width > this.runtime.canvas.width) {
         this.x = this.runtime.canvas.width - this.width;
         xv = 0;
       }
@@ -143,7 +143,9 @@ export abstract class AbstractSprite extends TaskRunner {
     }
 
     if (options.friction) {
-      xv *= FRICTION;
+      if (onGround || options.midAirFriction) {
+        xv *= FRICTION;
+      }
     }
 
     return {
@@ -185,4 +187,7 @@ interface IPhysicsOptions {
 
   // apply friction?
   friction?: boolean;
+
+  // apply friction when in midair?
+  midAirFriction?: boolean;
 }

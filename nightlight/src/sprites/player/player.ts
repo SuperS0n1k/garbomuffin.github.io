@@ -4,7 +4,7 @@ import { PlayerFragmentSprite } from "./fragment";
 import { getRandomInt } from "../../utils";
 import { Vector } from "../../engine/vector";
 
-const PLAYER_WALK_SPEED = 0.5;
+const PLAYER_WALK_SPEED = 0.5 / 2;
 const JUMP_HEIGHT = 5.25;
 const PLAYER_MAX_SPEED = 4 / 2;
 const PLAYER_FRICTION = 0.8 / 2;

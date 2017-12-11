@@ -430,6 +430,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
         options.inAirFriction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.inAirFriction, true);
         options.restrictPositionValues = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.restrictPositionValues, true);
         options.friction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.friction, true);
+        options.midAirFriction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.midAirFriction, true);
         this.x += xv;
         if (options.collision && this.handleCollision(true)) {
             xv = 0;
@@ -439,7 +440,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
                 this.x = 0;
                 xv = 0;
             }
-            if (this.x + this.width > this.runtime.canvas.width) {
+            else if (this.x + this.width > this.runtime.canvas.width) {
                 this.x = this.runtime.canvas.width - this.width;
                 xv = 0;
             }
@@ -454,7 +455,9 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
             yv = 0;
         }
         if (options.friction) {
-            xv *= __WEBPACK_IMPORTED_MODULE_3__config__["d" /* FRICTION */];
+            if (onGround || options.midAirFriction) {
+                xv *= __WEBPACK_IMPORTED_MODULE_3__config__["d" /* FRICTION */];
+            }
         }
         return {
             xv, yv, onGround,
@@ -489,7 +492,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
 
 
 
-const PLAYER_WALK_SPEED = 0.5;
+const PLAYER_WALK_SPEED = 0.5 / 2;
 const JUMP_HEIGHT = 5.25;
 const PLAYER_MAX_SPEED = 4 / 2;
 const PLAYER_FRICTION = 0.8 / 2;
@@ -1553,12 +1556,16 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
         this.xv = opts.xv;
         this.yv = opts.yv;
         this.rv = opts.rv;
+        if (this.y >= this.runtime.canvas.height) {
+            this.y = this.runtime.canvas.height - 1;
+        }
         this.addTask(this.run);
     }
     run() {
         this.lifespan++;
         const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
             inAirFriction: false,
+            midAirFriction: false,
         });
         this.xv = physicsResult.xv;
         this.yv = physicsResult.yv;
