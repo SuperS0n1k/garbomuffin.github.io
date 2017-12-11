@@ -2,13 +2,47 @@
 <html>
   <head>
     <title>garbomuffin's things</title>
+    <link rel="stylesheet" href="/core.css">
     <style>
+      body {
+        font-family: monospace;
+        font-size: 1.1em;
+      }
+
+      hr {
+        border-color: #EEE;
+        border-style: solid;
+      }
+
       page-entry {
+        padding-left: 3em;
         display: block;
       }
+
+      page-link::before {
+        content: "/";
+      }
+      page-link::after {
+        content: "/";
+      }
+      page-link.external::before {
+        content: "https://";
+      }
+
+      page-link.external::after {
+        content: "/";
+      }
+
+      page-desc {
+        padding-left: 3em;
+        display: block;
+      }
+
+      ::selection {
+        color: white;
+        background: black;
+      }
     </style>
-    <link rel="stylesheet" href="/core.css">
-    <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
 
@@ -30,9 +64,23 @@
       <hr>
 
       <page-entry>
-        <page-link><a href="site-old/">site-old</a></page-link>
+        <page-link><a href="easierprompter/">easierprompter</a></page-link>
         <page-desc>
-          a static copy of my old site (kinda works)
+          a simple prompter that just works
+        </page-desc>
+      </page-entry>
+
+      <page-entry>
+        <page-link><a href="edit-this-page/">edit-this-page</a></page-link>
+        <page-desc>
+          edit the contents of any website
+        </page-desc>
+      </page-entry>
+
+      <page-entry>
+        <page-link><a href="nightlight/">nightlight</a></page-link>
+        <page-desc>
+          <a href="https://scratch.mit.edu/projects/150752251/">Nightlight</a> in javascript. (very early version)
         </page-desc>
       </page-entry>
 
@@ -44,16 +92,9 @@
       </page-entry>
 
       <page-entry>
-        <page-link><a href="easierprompter/">easierprompter</a></page-link>
+        <page-link><a href="site-old/">site-old</a></page-link>
         <page-desc>
-          a simple prompter that just works
-        </page-desc>
-      </page-entry>
-
-      <page-entry>
-        <page-link><a href="edit-this-page/">edit-this-page</a></page-link>
-        <page-desc>
-          edit the contents of any website
+          a static copy of my old site (kinda works)
         </page-desc>
       </page-entry>
 
@@ -89,13 +130,6 @@
 
       <!-- Games -->
       <hr>
-      <page-entry>
-        <page-link><a href="games/nightlight/">games/nightlight</a></page-link>
-        <page-desc>
-          <a href="https://scratch.mit.edu/projects/150752251/">Nightlight</a>
-        </page-desc>
-      </page-entry>
-
       <page-entry>
         <page-link><a href="games/grg-js/">games/grg-js</a></page-link>
         <page-desc>
