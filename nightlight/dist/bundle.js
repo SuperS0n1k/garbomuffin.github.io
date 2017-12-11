@@ -244,20 +244,14 @@ const LEVEL_HEIGHT = 23;
 /* unused harmony export LEVEL_HEIGHT */
 
 const LEVEL_WIDTH = 30;
-/* harmony export (immutable) */ __webpack_exports__["g"] = LEVEL_WIDTH;
+/* harmony export (immutable) */ __webpack_exports__["f"] = LEVEL_WIDTH;
 
 const GRAVITY = 0.165;
 /* harmony export (immutable) */ __webpack_exports__["e"] = GRAVITY;
 
 const FRICTION = 0.75;
 /* harmony export (immutable) */ __webpack_exports__["d"] = FRICTION;
-
-const PLAYER_WALK_SPEED = 0.5;
-/* harmony export (immutable) */ __webpack_exports__["h"] = PLAYER_WALK_SPEED;
-
-const JUMP_VELOCITY = 4.75;
-/* harmony export (immutable) */ __webpack_exports__["f"] = JUMP_VELOCITY;
-
+ // xv *= FRICTION
 
 
 /***/ }),
@@ -434,12 +428,13 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
     runBasicPhysics(xv, yv, options = {}) {
         options.collision = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.collision, true);
         options.inAirFriction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.inAirFriction, true);
-        options.restrictValues = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.restrictValues, true);
+        options.restrictPositionValues = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.restrictPositionValues, true);
+        options.friction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.friction, true);
         this.x += xv;
         if (options.collision && this.handleCollision(true)) {
             xv = 0;
         }
-        if (options.restrictValues) {
+        if (options.restrictPositionValues) {
             if (this.x < 0) {
                 this.x = 0;
                 xv = 0;
@@ -458,8 +453,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
             }
             yv = 0;
         }
-        // TODO: nightlight uses a different friction implementation
-        if (options.inAirFriction || onGround) {
+        if (options.friction) {
             xv *= __WEBPACK_IMPORTED_MODULE_3__config__["d" /* FRICTION */];
         }
         return {
@@ -495,6 +489,10 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
 
 
 
+const PLAYER_WALK_SPEED = 0.5;
+const JUMP_HEIGHT = 4.75;
+const PLAYER_MAX_SPEED = 4 / 2;
+const PLAYER_FRICTION = 0.8 / 2;
 const FRAGMENT_COUNT = 5;
 const FRAGMENT_XV_RANGE = 1;
 const FRAGMENT_YV_MIN = 3;
@@ -543,31 +541,52 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
         const keys = this.runtime.keyboard.keys;
         const rightDown = keys[39].isPressed;
         const leftDown = keys[37].isPressed;
-        const upPressed = keys[38].isPressed;
+        const upDown = keys[38].isPressed;
         this.moving = false;
         if (rightDown && !leftDown) {
-            this.xv += __WEBPACK_IMPORTED_MODULE_1__config__["h" /* PLAYER_WALK_SPEED */];
+            this.xv += PLAYER_WALK_SPEED;
             this.lastMovementDirection = MovementDirection.Right;
             this.moving = true;
         }
         if (leftDown && !rightDown) {
-            this.xv -= __WEBPACK_IMPORTED_MODULE_1__config__["h" /* PLAYER_WALK_SPEED */];
+            this.xv -= PLAYER_WALK_SPEED;
             this.lastMovementDirection = MovementDirection.Left;
             this.moving = true;
         }
-        if (upPressed && onGround) {
-            this.yv = __WEBPACK_IMPORTED_MODULE_1__config__["f" /* JUMP_VELOCITY */];
+        if (upDown && onGround) {
+            this.yv = JUMP_HEIGHT;
         }
-        else if (!upPressed && this.yv > 3) {
+        else if (!upDown && this.yv > 3) {
             this.yv = 3;
         }
+        return {
+            rightDown, leftDown, upDown,
+        };
     }
     run() {
-        const physicsResult = this.runBasicPhysics(this.xv, this.yv);
+        if (this.xv > PLAYER_MAX_SPEED) {
+            this.xv = PLAYER_MAX_SPEED;
+        }
+        else if (this.xv < -PLAYER_MAX_SPEED) {
+            this.xv = -PLAYER_MAX_SPEED;
+        }
+        const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
+            friction: false,
+        });
         this.xv = physicsResult.xv;
         this.yv = physicsResult.yv;
         this.onGround = physicsResult.onGround;
-        this.handleInputs(physicsResult.onGround);
+        const inputs = this.handleInputs(physicsResult.onGround);
+        if ((!inputs.leftDown && !inputs.rightDown) || (inputs.leftDown && inputs.rightDown)) {
+            if (this.xv > 0) {
+                this.xv -= PLAYER_FRICTION;
+                this.xv = Math.max(this.xv, 0);
+            }
+            else {
+                this.xv += PLAYER_FRICTION;
+                this.xv = Math.min(this.xv, 0);
+            }
+        }
         if (this.y >= this.runtime.canvas.height) {
             this.kill();
         }
@@ -596,10 +615,8 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
     }
     updateGraphic() {
         this.scale.x = this.lastMovementDirection;
-        // console.log(this.yv);
         if (this.onGround) {
             if (this.moving) {
-                console.log("move");
                 this.currentFrameProgress++;
                 if (this.currentFrameProgress === WALK_ANIMATION_LENGTH) {
                     this.currentFrameProgress = 0;
@@ -611,17 +628,14 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
                 this.texture = this.runtime.getAsset(`player/walk${this.walkingAnimationProgress}`);
             }
             else {
-                console.log("idle");
                 this.texture = this.runtime.getAsset("player/idle");
             }
         }
         else {
             if (this.yv < 0.1) {
-                console.log("down");
                 this.texture = this.runtime.getAsset("player/down");
             }
             else {
-                console.log("up");
                 this.texture = this.runtime.getAsset("player/up");
             }
         }
@@ -1676,10 +1690,10 @@ class CornerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] 
             texture: this.runtime.getAsset("blocks/a"),
             position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y, -1),
         });
-        this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["g" /* LEVEL_WIDTH */] - 1, -90, 0, 0);
-        this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["g" /* LEVEL_WIDTH */] + 1, 0, 1, 0);
-        this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["g" /* LEVEL_WIDTH */] - 1, 180, 0, 1);
-        this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["g" /* LEVEL_WIDTH */] + 1, 90, 1, 1);
+        this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, -90, 0, 0);
+        this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, 0, 1, 0);
+        this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, 180, 0, 1);
+        this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, 90, 1, 1);
         // the intent of a cornersprite is to create sprites
         // it itself does not do anything else so delete it
         this.destroy();

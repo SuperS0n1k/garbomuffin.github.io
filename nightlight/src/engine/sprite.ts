@@ -113,13 +113,14 @@ export abstract class AbstractSprite extends TaskRunner {
   protected runBasicPhysics(xv: number, yv: number, options: IPhysicsOptions = {}): IPhysicsResult {
     options.collision = getOrDefault(options.collision, true);
     options.inAirFriction = getOrDefault(options.inAirFriction, true);
-    options.restrictValues = getOrDefault(options.restrictValues, true);
+    options.restrictPositionValues = getOrDefault(options.restrictPositionValues, true);
+    options.friction = getOrDefault(options.friction, true);
 
     this.x += xv;
     if (options.collision && this.handleCollision(true)) {
       xv = 0;
     }
-    if (options.restrictValues) {
+    if (options.restrictPositionValues) {
       if (this.x < 0) {
         this.x = 0;
         xv = 0;
@@ -141,8 +142,7 @@ export abstract class AbstractSprite extends TaskRunner {
       yv = 0;
     }
 
-    // TODO: nightlight uses a different friction implementation
-    if (options.inAirFriction || onGround) {
+    if (options.friction) {
       xv *= FRICTION;
     }
 
@@ -163,6 +163,10 @@ export abstract class AbstractSprite extends TaskRunner {
   }
 }
 
+//
+// More Nightlight related code
+//
+
 interface IPhysicsResult {
   yv: number;
   xv: number;
@@ -177,5 +181,8 @@ interface IPhysicsOptions {
   inAirFriction?: boolean;
 
   // restrict x values into 0 <= x <= CANVAS_WIDTH?
-  restrictValues?: boolean;
+  restrictPositionValues?: boolean;
+
+  // apply friction?
+  friction?: boolean;
 }

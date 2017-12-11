@@ -1,8 +1,13 @@
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
-import { FRICTION, GRAVITY, PLAYER_WALK_SPEED, JUMP_VELOCITY, BLOCK_HEIGHT } from "../../config";
+import { FRICTION, GRAVITY, BLOCK_HEIGHT } from "../../config";
 import { PlayerFragmentSprite } from "./fragment";
 import { getRandomInt } from "../../utils";
 import { Vector } from "../../engine/vector";
+
+const PLAYER_WALK_SPEED = 0.5;
+const JUMP_HEIGHT = 4.75;
+const PLAYER_MAX_SPEED = 4 / 2;
+const PLAYER_FRICTION = 0.8 / 2;
 
 const FRAGMENT_COUNT = 5;
 const FRAGMENT_XV_RANGE = 1;
@@ -60,7 +65,7 @@ export class PlayerSprite extends ImageSprite {
     const keys = this.runtime.keyboard.keys;
     const rightDown = keys[39].isPressed;
     const leftDown = keys[37].isPressed;
-    const upPressed = keys[38].isPressed;
+    const upDown = keys[38].isPressed;
     this.moving = false;
 
     if (rightDown && !leftDown) {
@@ -75,19 +80,41 @@ export class PlayerSprite extends ImageSprite {
       this.moving = true;
     }
 
-    if (upPressed && onGround) {
-      this.yv = JUMP_VELOCITY;
-    } else if (!upPressed && this.yv > 3) {
+    if (upDown && onGround) {
+      this.yv = JUMP_HEIGHT;
+    } else if (!upDown && this.yv > 3) {
       this.yv = 3;
     }
+
+    return {
+      rightDown, leftDown, upDown,
+    };
   }
 
   private run() {
-    const physicsResult = this.runBasicPhysics(this.xv, this.yv);
+    if (this.xv > PLAYER_MAX_SPEED) {
+      this.xv = PLAYER_MAX_SPEED;
+    } else if (this.xv < -PLAYER_MAX_SPEED) {
+      this.xv = -PLAYER_MAX_SPEED;
+    }
+
+    const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
+      friction: false,
+    });
     this.xv = physicsResult.xv;
     this.yv = physicsResult.yv;
     this.onGround = physicsResult.onGround;
-    this.handleInputs(physicsResult.onGround);
+    const inputs = this.handleInputs(physicsResult.onGround);
+
+    if ((!inputs.leftDown && !inputs.rightDown) || (inputs.leftDown && inputs.rightDown)) {
+      if (this.xv > 0) {
+        this.xv -= PLAYER_FRICTION;
+        this.xv = Math.max(this.xv, 0);
+      } else {
+        this.xv += PLAYER_FRICTION;
+        this.xv = Math.min(this.xv, 0);
+      }
+    }
 
     if (this.y >= this.runtime.canvas.height) {
       this.kill();
@@ -124,10 +151,8 @@ export class PlayerSprite extends ImageSprite {
 
   private updateGraphic() {
     this.scale.x = this.lastMovementDirection;
-    // console.log(this.yv);
     if (this.onGround) {
       if (this.moving) {
-        console.log("move");
         this.currentFrameProgress++;
         if (this.currentFrameProgress === WALK_ANIMATION_LENGTH) {
           this.currentFrameProgress = 0;
@@ -138,15 +163,12 @@ export class PlayerSprite extends ImageSprite {
         }
         this.texture = this.runtime.getAsset(`player/walk${this.walkingAnimationProgress}`);
       } else {
-        console.log("idle");
         this.texture = this.runtime.getAsset("player/idle");
       }
     } else {
       if (this.yv < 0.1) {
-        console.log("down");
         this.texture = this.runtime.getAsset("player/down");
       } else {
-        console.log("up");
         this.texture = this.runtime.getAsset("player/up");
       }
     }
