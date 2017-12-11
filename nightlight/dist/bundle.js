@@ -246,7 +246,7 @@ const LEVEL_HEIGHT = 23;
 const LEVEL_WIDTH = 30;
 /* harmony export (immutable) */ __webpack_exports__["f"] = LEVEL_WIDTH;
 
-const GRAVITY = 0.165;
+const GRAVITY = 0.19;
 /* harmony export (immutable) */ __webpack_exports__["e"] = GRAVITY;
 
 const FRICTION = 0.75;
@@ -490,7 +490,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
 
 
 const PLAYER_WALK_SPEED = 0.5;
-const JUMP_HEIGHT = 4.75;
+const JUMP_HEIGHT = 5.25;
 const PLAYER_MAX_SPEED = 4 / 2;
 const PLAYER_FRICTION = 0.8 / 2;
 const FRAGMENT_COUNT = 5;
