@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
 
 
@@ -280,102 +280,7 @@ const FRICTION = 0.75;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(5);
-
-
-// NIGHTLIGHT: images are imported from scratch which has things at 2x actual res
-const TEXTURE_SCALE = 2;
-/* unused harmony export TEXTURE_SCALE */
-
-class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
-    constructor(options) {
-        super(options);
-        this.texture = options.texture;
-        this.width = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.width, this.texture.width / TEXTURE_SCALE);
-        this.height = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.height, this.texture.height / TEXTURE_SCALE);
-        this.rotation = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.rotation, 0);
-        this.opacity = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.opacity, 1);
-    }
-    render(ctx) {
-        if (!this.visible) {
-            return;
-        }
-        ctx.save();
-        ctx.globalAlpha = this.opacity;
-        if (this.rotation !== 0) {
-            // terrible code
-            // rotation is difficult
-            // https://stackoverflow.com/a/4650102
-            const translateX = this.x + this.width / 2;
-            const translateY = this.y + this.height / 2;
-            ctx.translate(translateX, translateY);
-            ctx.rotate(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* degreeToRadians */])(this.rotation));
-            ctx.translate(-translateX, -translateY);
-        }
-        if (this.scale.x !== 1 || this.scale.y !== 1) {
-            const translateX = this.x + this.width / 2;
-            const translateY = this.y + this.height / 2;
-            ctx.translate(translateX, translateY);
-            ctx.scale(this.scale.x, this.scale.y);
-            ctx.translate(-translateX, -translateY);
-        }
-        ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
-        ctx.restore();
-    }
-    updateDimensions() {
-        this.width = this.texture.width / TEXTURE_SCALE;
-        this.height = this.texture.height / TEXTURE_SCALE;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ImageSprite;
-
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["c"] = isMobile;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getOrDefault;
-/* harmony export (immutable) */ __webpack_exports__["d"] = toHex;
-/* unused harmony export radiansToDegree */
-/* harmony export (immutable) */ __webpack_exports__["a"] = degreeToRadians;
-// https://stackoverflow.com/a/3540295
-// tests if the device is probably a mobile phone
-function isMobile() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-// if obj is defined, return obj
-// else return def
-// used as less verbose option defaulting without neglecting falsy values (|| does that)
-function getOrDefault(obj, def) {
-    if (typeof obj === "undefined") {
-        return def;
-    }
-    else {
-        return obj;
-    }
-}
-// https://stackoverflow.com/a/697841
-function toHex(number) {
-    return number.toString(16).toUpperCase();
-}
-function radiansToDegree(rad) {
-    return rad * 180 / Math.PI;
-}
-function degreeToRadians(deg) {
-    return deg * Math.PI / 180;
-}
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fragment__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(11);
@@ -528,6 +433,101 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = PlayerSprite;
+
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["c"] = isMobile;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getOrDefault;
+/* harmony export (immutable) */ __webpack_exports__["d"] = toHex;
+/* unused harmony export radiansToDegree */
+/* harmony export (immutable) */ __webpack_exports__["a"] = degreeToRadians;
+// https://stackoverflow.com/a/3540295
+// tests if the device is probably a mobile phone
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+// if obj is defined, return obj
+// else return def
+// used as less verbose option defaulting without neglecting falsy values (|| does that)
+function getOrDefault(obj, def) {
+    if (typeof obj === "undefined") {
+        return def;
+    }
+    else {
+        return obj;
+    }
+}
+// https://stackoverflow.com/a/697841
+function toHex(number) {
+    return number.toString(16).toUpperCase();
+}
+function radiansToDegree(rad) {
+    return rad * 180 / Math.PI;
+}
+function degreeToRadians(deg) {
+    return deg * Math.PI / 180;
+}
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(5);
+
+
+// NIGHTLIGHT: images are imported from scratch which has things at 2x actual res
+const TEXTURE_SCALE = 2;
+/* unused harmony export TEXTURE_SCALE */
+
+class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
+    constructor(options) {
+        super(options);
+        this.texture = options.texture;
+        this.width = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.width, this.texture.width / TEXTURE_SCALE);
+        this.height = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.height, this.texture.height / TEXTURE_SCALE);
+        this.rotation = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.rotation, 0);
+        this.opacity = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.opacity, 1);
+    }
+    render(ctx) {
+        if (!this.visible) {
+            return;
+        }
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        if (this.rotation !== 0) {
+            // terrible code
+            // rotation is difficult
+            // https://stackoverflow.com/a/4650102
+            const translateX = this.x + this.width / 2;
+            const translateY = this.y + this.height / 2;
+            ctx.translate(translateX, translateY);
+            ctx.rotate(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* degreeToRadians */])(this.rotation));
+            ctx.translate(-translateX, -translateY);
+        }
+        if (this.scale.x !== 1 || this.scale.y !== 1) {
+            const translateX = this.x + this.width / 2;
+            const translateY = this.y + this.height / 2;
+            ctx.translate(translateX, translateY);
+            ctx.scale(this.scale.x, this.scale.y);
+            ctx.translate(-translateX, -translateY);
+        }
+        ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
+        ctx.restore();
+    }
+    updateDimensions() {
+        this.width = this.texture.width / TEXTURE_SCALE;
+        this.height = this.texture.height / TEXTURE_SCALE;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ImageSprite;
 
 
 
@@ -1009,16 +1009,16 @@ function run() {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_runtime__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__levels_levels__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blockmap__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__engine_container__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_star__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_star__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(39);
 
 
 
@@ -1611,7 +1611,7 @@ const Levels = [
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(6);
 
 const LIFESPAN = 300;
 const GHOST_RATE = 0.03;
@@ -1664,13 +1664,13 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_corner__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_tallgrass__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_crumble__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_crumble__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_falling__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_blockswitchspawner__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightblock__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_lightswitch__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_coinspawner__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_oneway__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_blockswitchspawner__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightblock__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_lightswitch__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_coinspawner__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_oneway__ = __webpack_require__(36);
 
 
 
@@ -1755,7 +1755,7 @@ const blockMap = {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(4);
 
 
 class SpikeBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
@@ -1814,7 +1814,7 @@ class RightSpikeBlock extends SpikeBlock {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
 
 
@@ -1896,87 +1896,7 @@ class TallGrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
-
-
-
-
-class LevelUpCoinSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
-    constructor(opts) {
-        super(opts);
-        const position = this.getCoinPosition();
-        new __WEBPACK_IMPORTED_MODULE_1__coin__["a" /* LevelUpCoinSprite */]({
-            position,
-            texture: this.runtime.getAsset("coin/1"),
-        });
-    }
-}
-class AboveLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
-    getCoinPosition() {
-        return new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y - __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */]);
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = AboveLevelUpCoinSpawnerBlock;
-
-class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
-    getCoinPosition() {
-        return new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y + __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */]);
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["b"] = BelowLevelUpCoinSpawnerBlock;
-
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
-
-
-const FRAME_LENGTH = 3;
-const TOTAL_FRAMES = 4;
-class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Block */] {
-    constructor(opts) {
-        super(opts);
-        this.animationFrame = 1;
-        this.centerAlign();
-        this.addTask(this.run);
-        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
-            run: this.animate,
-            repeatEvery: FRAME_LENGTH,
-            delay: FRAME_LENGTH,
-        }));
-    }
-    run() {
-        const touchingPlayer = this.intersects(this.runtime.player);
-        if (touchingPlayer) {
-            this.runtime.level++;
-            this.runtime.renderLevel();
-        }
-    }
-    animate() {
-        this.animationFrame++;
-        if (this.animationFrame > TOTAL_FRAMES) {
-            this.animationFrame = 1;
-        }
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = LevelUpCoinSprite;
-
-
-
-/***/ }),
-/* 31 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__player_player__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__player_player__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__block__ = __webpack_require__(0);
 
@@ -2045,12 +1965,12 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
 
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
 
@@ -2074,7 +1994,7 @@ class BlockSwitchSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /
 
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2116,7 +2036,7 @@ class BlockSwitch extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Blo
 
 
 /***/ }),
-/* 34 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2159,12 +2079,12 @@ class DisabledLightBlock extends LightBlock {
 
 
 /***/ }),
-/* 35 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(2);
 
 
@@ -2219,7 +2139,127 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
 
 
 /***/ }),
+/* 34 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
+
+
+
+
+class LevelUpCoinSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
+    constructor(opts) {
+        super(opts);
+        const position = this.getCoinPosition();
+        new __WEBPACK_IMPORTED_MODULE_1__coin__["a" /* LevelUpCoinSprite */]({
+            position,
+            texture: this.runtime.getAsset("coin/1"),
+        });
+    }
+}
+class AboveLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
+    getCoinPosition() {
+        return new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y - __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */]);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = AboveLevelUpCoinSpawnerBlock;
+
+class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
+    getCoinPosition() {
+        return new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y + __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */]);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = BelowLevelUpCoinSpawnerBlock;
+
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
+
+
+const FRAME_LENGTH = 3;
+const TOTAL_FRAMES = 4;
+class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Block */] {
+    constructor(opts) {
+        super(opts);
+        this.animationFrame = 1;
+        this.centerAlign();
+        this.addTask(this.run);
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            run: this.animate,
+            repeatEvery: FRAME_LENGTH,
+            delay: FRAME_LENGTH,
+        }));
+    }
+    run() {
+        const touchingPlayer = this.intersects(this.runtime.player);
+        if (touchingPlayer) {
+            this.runtime.level++;
+            this.runtime.renderLevel();
+        }
+    }
+    animate() {
+        this.animationFrame++;
+        if (this.animationFrame > TOTAL_FRAMES) {
+            this.animationFrame = 1;
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = LevelUpCoinSprite;
+
+
+
+/***/ }),
 /* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(4);
+
+
+// Just like in the original scratch game
+// One way blocks are terrible hacks that shouldn't work
+// I don't know how this works anymore
+class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
+    constructor(opts) {
+        super(opts);
+        this.intersectsPlayer = false;
+        // make our tasks run before others (they run in reverse z order)
+        this.z = -100;
+        this.addTask(this.run);
+    }
+    run() {
+        // ???
+        if (!this.intersects(this.runtime.player)) {
+            this.intersectsPlayer = false;
+        }
+    }
+    handleIntersect(sprite, horizontal) {
+        if (sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
+            if (sprite.yv > 0 || this.intersectsPlayer) {
+                this.intersectsPlayer = true;
+                return false;
+            }
+        }
+        return super.handleIntersect(sprite, horizontal);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = OneWayBlock;
+
+
+
+/***/ }),
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2277,48 +2317,7 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
 
 
 /***/ }),
-/* 37 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(6);
-
-
-// Just like in the original scratch game
-// One way blocks are terrible hacks that shouldn't work
-// I don't know how this works anymore
-class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
-    constructor(opts) {
-        super(opts);
-        this.intersectsPlayer = false;
-        // make our tasks run before others (they run in reverse z order)
-        this.z = -100;
-        this.addTask(this.run);
-    }
-    run() {
-        // ???
-        if (!this.intersects(this.runtime.player)) {
-            this.intersectsPlayer = false;
-        }
-    }
-    handleIntersect(sprite, horizontal) {
-        if (sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
-            if (sprite.yv > 0 || this.intersectsPlayer) {
-                this.intersectsPlayer = true;
-                return false;
-            }
-        }
-        return super.handleIntersect(sprite, horizontal);
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = OneWayBlock;
-
-
-
-/***/ }),
-/* 38 */,
-/* 39 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2401,12 +2400,12 @@ const JumpLights = [
 
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(2);
 
 
