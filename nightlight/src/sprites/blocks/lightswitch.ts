@@ -51,11 +51,12 @@ export class LightSwitchBlock extends SolidBlock {
     }));
   }
 
-  public handleIntersect(sprite: AbstractSprite, horizontal: boolean) {
-    super.handleIntersect(sprite, horizontal);
+  public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {
+    super.handleIntersect(sprite, velocity, horizontal);
 
     if (!this.activated && sprite.y + sprite.height === this.y && sprite instanceof PlayerSprite) {
       this.activate();
+      return false;
     }
   }
 }

@@ -24,14 +24,12 @@ export class JumpLight extends SolidBlock {
     }));
   }
 
-  public handleIntersect(sprite: AbstractSprite, horizontal: boolean) {
+  public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {
     if (sprite instanceof PlayerSprite) {
       if (this.visible) {
         this.activate(sprite);
       }
-      return false;
     }
-
-    return super.handleIntersect(sprite, horizontal);
+    return false;
   }
 }

@@ -77,7 +77,7 @@ export const blockMap: IBlockMap = {
   // Castle
   "^": special(PseudoSolidBlock, "blocks/^"), // not solid
   "&": "blocks/&",
-  "*": "blocks/asterik",
+  "*": "blocks/asterisk",
   "(": "blocks/(",
   ")": "blocks/)",
   "-": "blocks/-",

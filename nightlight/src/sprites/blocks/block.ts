@@ -44,18 +44,18 @@ export class Block extends ImageSprite {
     }
   }
 
-  public handleIntersect(sprite: AbstractSprite, horizontal: boolean): boolean | void {
+  public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean): boolean | void {
     if (horizontal) {
-      if (sprite.x > this.x) {
-        sprite.x = this.x + this.width;
-      } else {
+      if (velocity > 0) {
         sprite.x = this.x - sprite.width;
+      } else if (velocity < 0) {
+        sprite.x = this.x + this.width;
       }
     } else {
-      if (sprite.y < this.y) {
-        sprite.y = this.y - sprite.height;
-      } else {
+      if (velocity > 0) {
         sprite.y = this.y + this.height;
+      } else if (velocity < 0) {
+        sprite.y = this.y - sprite.height;
       }
     }
 

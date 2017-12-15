@@ -5,8 +5,8 @@ import { AbstractSprite } from "../../engine/sprite";
 abstract class SpikeBlock extends SolidBlock {
   protected abstract canKill(sprite: AbstractSprite): boolean;
 
-  public handleIntersect(sprite: AbstractSprite, horizontal: boolean) {
-    super.handleIntersect(sprite, horizontal);
+  public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {
+    super.handleIntersect(sprite, velocity, horizontal);
 
     if (this.canKill(sprite) && sprite instanceof PlayerSprite) {
       sprite.kill();

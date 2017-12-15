@@ -99,21 +99,21 @@ class Block extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a
             this.y = Math.floor(this.y);
         }
     }
-    handleIntersect(sprite, horizontal) {
+    handleIntersect(sprite, velocity, horizontal) {
         if (horizontal) {
-            if (sprite.x > this.x) {
-                sprite.x = this.x + this.width;
-            }
-            else {
+            if (velocity > 0) {
                 sprite.x = this.x - sprite.width;
+            }
+            else if (velocity < 0) {
+                sprite.x = this.x + this.width;
             }
         }
         else {
-            if (sprite.y < this.y) {
-                sprite.y = this.y - sprite.height;
-            }
-            else {
+            if (velocity > 0) {
                 sprite.y = this.y + this.height;
+            }
+            else if (velocity < 0) {
+                sprite.y = this.y - sprite.height;
             }
         }
         return true;
@@ -296,12 +296,16 @@ const PLAYER_WALK_SPEED = 0.5 / 2;
 const JUMP_HEIGHT = 5.4;
 const PLAYER_MAX_SPEED = 4 / 2;
 const PLAYER_FRICTION = 0.8 / 2;
-const FRAGMENT_COUNT = 5;
+// const FRAGMENT_COUNT = 5;
+// const FRAGMENT_TEXTURES = 5;
+const FRAGMENT_TEXTURES = [1, 2, 3, 4];
+const FRAGMENT_SMALL_PIECE_MIN = 4;
+const FRAGMENT_SMALL_PIECE_MAX = 6;
+const FRAGMENT_SMALL_PIECE_TEXTURE = 5;
 const FRAGMENT_XV_RANGE = 1;
 const FRAGMENT_YV_MIN = 3;
-const FRAGMENT_YV_MAX = 5;
+const FRAGMENT_YV_MAX = 6;
 const FRAGMENT_RV_RANGE = 10;
-const FRAGMENT_TEXTURES = 5;
 const WALK_ANIMATION_FRAMES = 4;
 const WALK_ANIMATION_LENGTH = 4;
 var MovementDirection;
@@ -393,13 +397,18 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
         }
     }
     kill() {
-        for (let i = 0; i < FRAGMENT_COUNT; i++) {
+        const fragmentTextures = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* clone */])(FRAGMENT_TEXTURES);
+        const smallPieces = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(FRAGMENT_SMALL_PIECE_MIN, FRAGMENT_SMALL_PIECE_MAX);
+        for (let i = 0; i < smallPieces; i++) {
+            fragmentTextures.push(FRAGMENT_SMALL_PIECE_TEXTURE);
+        }
+        for (const i of fragmentTextures) {
             new __WEBPACK_IMPORTED_MODULE_2__fragment__["a" /* PlayerFragmentSprite */]({
                 position: new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](this.position),
-                texture: this.runtime.getAsset(`fragments/${Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* getRandomInt */])(1, FRAGMENT_TEXTURES)}`),
-                xv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* getRandomInt */])(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
-                yv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* getRandomInt */])(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
-                rv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* getRandomInt */])(-FRAGMENT_RV_RANGE * 1000, FRAGMENT_RV_RANGE * 1000) / 1000,
+                texture: this.runtime.getAsset(`fragments/${i}`),
+                xv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
+                yv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
+                rv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(-FRAGMENT_RV_RANGE * 1000, FRAGMENT_RV_RANGE * 1000) / 1000,
             });
         }
         this.reset();
@@ -617,12 +626,12 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
     //
     runBasicPhysics(xv, yv, options = {}) {
         options.collision = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.collision, true);
-        options.inAirFriction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.inAirFriction, true);
         options.restrictPositionValues = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.restrictPositionValues, true);
         options.friction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.friction, true);
         options.midAirFriction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.midAirFriction, true);
+        options.roundValues = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.roundValues, true);
         this.x += xv;
-        if (options.collision && this.handleCollision(true)) {
+        if (options.collision && this.handleCollision(xv, true)) {
             xv = 0;
         }
         if (options.restrictPositionValues) {
@@ -638,7 +647,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
         let onGround = false;
         yv -= __WEBPACK_IMPORTED_MODULE_3__config__["e" /* GRAVITY */];
         this.y -= yv;
-        if (options.collision && this.handleCollision(false)) {
+        if (options.collision && this.handleCollision(yv, false)) {
             if (yv < 0) {
                 onGround = true;
             }
@@ -649,16 +658,17 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
                 xv *= __WEBPACK_IMPORTED_MODULE_3__config__["d" /* FRICTION */];
             }
         }
-        this.x = Math.round(this.x);
-        this.y = Math.round(this.y);
+        if (options.roundValues) {
+            this.x = Math.round(this.x);
+            this.y = Math.round(this.y);
+        }
         return {
             xv, yv, onGround,
         };
     }
-    handleCollision(horizontal) {
+    handleCollision(velocity, horizontal) {
         for (const block of this.runtime.blocks) {
-            if (block.solid && this.intersects(block) && block.handleIntersect(this, horizontal) !== false) {
-                block.handleIntersect(this, horizontal);
+            if (block.solid && this.intersects(block) && block.handleIntersect(this, velocity, horizontal) !== false) {
                 return true;
             }
         }
@@ -805,12 +815,21 @@ class Vector2D {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getRandomInt;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getRandomInt;
+/* harmony export (immutable) */ __webpack_exports__["a"] = clone;
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function clone(array) {
+    let i = array.length;
+    const result = [];
+    while (i--) {
+        result[i] = array[i];
+    }
+    return result;
 }
 
 
@@ -1057,8 +1076,8 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
     }
     createStarBackground() {
         for (let i = 0; i < 50; i++) {
-            const x = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["a" /* getRandomInt */])(0, this.canvas.width);
-            const y = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["a" /* getRandomInt */])(0, this.canvas.height);
+            const x = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["b" /* getRandomInt */])(0, this.canvas.width);
+            const y = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["b" /* getRandomInt */])(0, this.canvas.height);
             new __WEBPACK_IMPORTED_MODULE_8__sprites_star__["a" /* BackgroundStarSprite */]({
                 position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](x, y, -10),
                 width: 2,
@@ -1094,6 +1113,10 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         else {
             texture = this.getAsset(blockType.texture);
             spriteConstructor = blockType.type;
+        }
+        if (!texture) {
+            console.error(`Could not find texture for ${blockType}`);
+            return;
         }
         const opts = {
             width: texture.width / __WEBPACK_IMPORTED_MODULE_6__config__["b" /* BLOCK_SIZE_SCALE */],
@@ -1633,8 +1656,8 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
     run() {
         this.lifespan++;
         const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
-            inAirFriction: false,
             midAirFriction: false,
+            roundValues: false,
         });
         this.xv = physicsResult.xv;
         this.yv = physicsResult.yv;
@@ -1736,7 +1759,7 @@ const blockMap = {
     // Castle
     "^": special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__["b" /* PseudoSolidBlock */], "blocks/^"),
     "&": "blocks/&",
-    "*": "blocks/asterik",
+    "*": "blocks/asterisk",
     "(": "blocks/(",
     ")": "blocks/)",
     "-": "blocks/-",
@@ -1759,8 +1782,8 @@ const blockMap = {
 
 
 class SpikeBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
-    handleIntersect(sprite, horizontal) {
-        super.handleIntersect(sprite, horizontal);
+    handleIntersect(sprite, velocity, horizontal) {
+        super.handleIntersect(sprite, velocity, horizontal);
         if (this.canKill(sprite) && sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
             sprite.kill();
             return false;
@@ -1914,9 +1937,9 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
         this.startingX = this.x;
         this.startingY = this.y;
     }
-    handleIntersect(sprite, horizontal) {
-        super.handleIntersect(sprite, horizontal);
-        if (!this.crumbling && sprite.y + sprite.height === this.y && sprite instanceof __WEBPACK_IMPORTED_MODULE_0__player_player__["a" /* PlayerSprite */]) {
+    handleIntersect(sprite, velocity, horizontal) {
+        super.handleIntersect(sprite, velocity, horizontal);
+        if (!this.crumbling && !horizontal && velocity < 0 && sprite instanceof __WEBPACK_IMPORTED_MODULE_0__player_player__["a" /* PlayerSprite */]) {
             this.crumbling = true;
             this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
                 run: this.crumble,
@@ -2127,10 +2150,11 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
             delay: DESTROY_DELAY,
         }));
     }
-    handleIntersect(sprite, horizontal) {
-        super.handleIntersect(sprite, horizontal);
+    handleIntersect(sprite, velocity, horizontal) {
+        super.handleIntersect(sprite, velocity, horizontal);
         if (!this.activated && sprite.y + sprite.height === this.y && sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
             this.activate();
+            return false;
         }
     }
 }
@@ -2244,14 +2268,14 @@ class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock
             this.intersectsPlayer = false;
         }
     }
-    handleIntersect(sprite, horizontal) {
+    handleIntersect(sprite, velocity, horizontal) {
         if (sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
             if (sprite.yv > 0 || this.intersectsPlayer) {
                 this.intersectsPlayer = true;
                 return false;
             }
         }
-        return super.handleIntersect(sprite, horizontal);
+        return super.handleIntersect(sprite, velocity, horizontal);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = OneWayBlock;
@@ -2426,14 +2450,13 @@ class JumpLight extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["c" /* Solid
             delay: HIDE_DURATION,
         }));
     }
-    handleIntersect(sprite, horizontal) {
+    handleIntersect(sprite, velocity, horizontal) {
         if (sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
             if (this.visible) {
                 this.activate(sprite);
             }
-            return false;
         }
-        return super.handleIntersect(sprite, horizontal);
+        return false;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = JumpLight;

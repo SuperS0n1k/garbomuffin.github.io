@@ -1,7 +1,7 @@
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
 import { FRICTION, GRAVITY, BLOCK_HEIGHT } from "../../config";
 import { PlayerFragmentSprite } from "./fragment";
-import { getRandomInt } from "../../utils";
+import { getRandomInt, clone } from "../../utils";
 import { Vector } from "../../engine/vector";
 import { PseudoSolidBlock } from "../blocks/block";
 
@@ -10,12 +10,16 @@ const JUMP_HEIGHT = 5.4;
 const PLAYER_MAX_SPEED = 4 / 2;
 const PLAYER_FRICTION = 0.8 / 2;
 
-const FRAGMENT_COUNT = 5;
+// const FRAGMENT_COUNT = 5;
+// const FRAGMENT_TEXTURES = 5;
+const FRAGMENT_TEXTURES = [1, 2, 3, 4];
+const FRAGMENT_SMALL_PIECE_MIN = 4;
+const FRAGMENT_SMALL_PIECE_MAX = 6;
+const FRAGMENT_SMALL_PIECE_TEXTURE = 5;
 const FRAGMENT_XV_RANGE = 1;
 const FRAGMENT_YV_MIN = 3;
-const FRAGMENT_YV_MAX = 5;
+const FRAGMENT_YV_MAX = 6;
 const FRAGMENT_RV_RANGE = 10;
-const FRAGMENT_TEXTURES = 5;
 
 const WALK_ANIMATION_FRAMES = 4;
 const WALK_ANIMATION_LENGTH = 4;
@@ -121,10 +125,16 @@ export class PlayerSprite extends ImageSprite {
   }
 
   public kill() {
-    for (let i = 0; i < FRAGMENT_COUNT; i++) {
+    const fragmentTextures = clone(FRAGMENT_TEXTURES);
+    const smallPieces = getRandomInt(FRAGMENT_SMALL_PIECE_MIN, FRAGMENT_SMALL_PIECE_MAX);
+    for (let i = 0; i < smallPieces; i++) {
+      fragmentTextures.push(FRAGMENT_SMALL_PIECE_TEXTURE);
+    }
+
+    for (const i of fragmentTextures) {
       new PlayerFragmentSprite({
         position: new Vector(this.position),
-        texture: this.runtime.getAsset(`fragments/${getRandomInt(1, FRAGMENT_TEXTURES)}`),
+        texture: this.runtime.getAsset(`fragments/${i}`),
 
         xv: getRandomInt(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
         yv: getRandomInt(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,

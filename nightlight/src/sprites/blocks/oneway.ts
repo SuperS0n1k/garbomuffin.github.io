@@ -26,7 +26,7 @@ export class OneWayBlock extends SolidBlock {
     }
   }
 
-  public handleIntersect(sprite: AbstractSprite, horizontal: boolean) {
+  public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {
     if (sprite instanceof PlayerSprite) {
       if (sprite.yv > 0 || this.intersectsPlayer) {
         this.intersectsPlayer = true;
@@ -34,6 +34,6 @@ export class OneWayBlock extends SolidBlock {
       }
     }
 
-    return super.handleIntersect(sprite, horizontal);
+    return super.handleIntersect(sprite, velocity, horizontal);
   }
 }

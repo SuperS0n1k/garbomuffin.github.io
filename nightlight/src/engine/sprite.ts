@@ -113,13 +113,13 @@ export abstract class AbstractSprite extends TaskRunner {
 
   protected runBasicPhysics(xv: number, yv: number, options: IPhysicsOptions = {}): IPhysicsResult {
     options.collision = getOrDefault(options.collision, true);
-    options.inAirFriction = getOrDefault(options.inAirFriction, true);
     options.restrictPositionValues = getOrDefault(options.restrictPositionValues, true);
     options.friction = getOrDefault(options.friction, true);
     options.midAirFriction = getOrDefault(options.midAirFriction, true);
+    options.roundValues = getOrDefault(options.roundValues, true);
 
     this.x += xv;
-    if (options.collision && this.handleCollision(true)) {
+    if (options.collision && this.handleCollision(xv, true)) {
       xv = 0;
     }
     if (options.restrictPositionValues) {
@@ -136,7 +136,7 @@ export abstract class AbstractSprite extends TaskRunner {
 
     yv -= GRAVITY;
     this.y -= yv;
-    if (options.collision && this.handleCollision(false)) {
+    if (options.collision && this.handleCollision(yv, false)) {
       if (yv < 0) {
         onGround = true;
       }
@@ -149,18 +149,19 @@ export abstract class AbstractSprite extends TaskRunner {
       }
     }
 
-    this.x = Math.round(this.x);
-    this.y = Math.round(this.y);
+    if (options.roundValues) {
+      this.x = Math.round(this.x);
+      this.y = Math.round(this.y);
+    }
 
     return {
       xv, yv, onGround,
     };
   }
 
-  private handleCollision(horizontal: boolean) {
+  private handleCollision(velocity: number, horizontal: boolean) {
     for (const block of this.runtime.blocks) {
-      if (block.solid && this.intersects(block) && block.handleIntersect(this, horizontal) !== false) {
-        block.handleIntersect(this, horizontal);
+      if (block.solid && this.intersects(block) && block.handleIntersect(this, velocity, horizontal) !== false) {
         return true;
       }
     }
@@ -183,9 +184,6 @@ interface IPhysicsOptions {
   // do collision checking?
   collision?: boolean;
 
-  // apply friction while in the air?
-  inAirFriction?: boolean;
-
   // restrict x values into 0 <= x <= CANVAS_WIDTH?
   restrictPositionValues?: boolean;
 
@@ -194,4 +192,7 @@ interface IPhysicsOptions {
 
   // apply friction when in midair?
   midAirFriction?: boolean;
+
+  // round coordinates?
+  roundValues?: boolean;
 }

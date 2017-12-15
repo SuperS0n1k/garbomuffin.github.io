@@ -88,6 +88,11 @@ export class Nightlight extends GameRuntime {
       spriteConstructor = blockType.type;
     }
 
+    if (!texture) {
+      console.error(`Could not find texture for ${blockType}`);
+      return;
+    }
+
     const opts: IBlockOptions = {
       width: texture.width / config.BLOCK_SIZE_SCALE,
       height: texture.height / config.BLOCK_SIZE_SCALE,

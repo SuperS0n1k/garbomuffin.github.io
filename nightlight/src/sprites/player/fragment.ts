@@ -35,8 +35,8 @@ export class PlayerFragmentSprite extends ImageSprite {
     this.lifespan++;
 
     const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
-      inAirFriction: false,
       midAirFriction: false,
+      roundValues: false,
     });
     this.xv = physicsResult.xv;
     this.yv = physicsResult.yv;

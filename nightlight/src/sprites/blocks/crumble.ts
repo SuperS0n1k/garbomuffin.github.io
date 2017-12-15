@@ -22,10 +22,10 @@ export class CrumblingBlock extends SolidBlock {
     this.startingY = this.y;
   }
 
-  public handleIntersect(sprite: AbstractSprite, horizontal: boolean) {
-    super.handleIntersect(sprite, horizontal);
+  public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {
+    super.handleIntersect(sprite, velocity, horizontal);
 
-    if (!this.crumbling && sprite.y + sprite.height === this.y && sprite instanceof PlayerSprite) {
+    if (!this.crumbling && !horizontal && velocity < 0 && sprite instanceof PlayerSprite) {
       this.crumbling = true;
 
       this.addTask(new Task({
