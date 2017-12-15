@@ -991,7 +991,7 @@ game.addAsset("blocks/asterisk"); // IT WOULDN'T LET ME SAVE IT OTHERWISE
 game.addAsset("blocks/(");
 game.addAsset("blocks/)");
 game.addAsset("blocks/-");
-game.addAsset("blocks/_");
+game.addAsset("blocks/underscore");
 game.addAsset("blocks/=");
 game.addAsset("blocks/+");
 game.addAsset("blocks/`");
@@ -1740,7 +1740,7 @@ const blockMap = {
     "(": "blocks/(",
     ")": "blocks/)",
     "-": "blocks/-",
-    "_": "blocks/_",
+    "_": "blocks/underscore",
     "=": "blocks/=",
     "+": "blocks/+",
     "`": "blocks/`",

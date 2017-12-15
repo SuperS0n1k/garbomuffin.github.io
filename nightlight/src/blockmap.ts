@@ -81,7 +81,7 @@ export const blockMap: IBlockMap = {
   "(": "blocks/(",
   ")": "blocks/)",
   "-": "blocks/-",
-  "_": "blocks/_",
+  "_": "blocks/underscore",
   "=": "blocks/=",
   "+": "blocks/+",
   "`": "blocks/`",
