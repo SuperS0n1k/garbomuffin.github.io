@@ -42,7 +42,7 @@
   </head>
 
   <body>
-    <h1>Edit This Page (v0.4)</h1>
+    <h1>Edit This Page (v0.5)</h1>
     <hr>
     <p>A simple bookmark that lets you edit the text of any website!</p>
     <p>A continuation of a chrome extension that was removed from the chrome web store.</p>
@@ -69,6 +69,20 @@
     <h2>Bugs</h2>
     <p>On sites such as YouTube typing triggers other events.</p>
 
+    <h2>Changelog</h2>
+    <h3>v0.5</h3>
+    <ul>
+      <li><code>&lt;iframe&gt;</code> support</li>
+    </ul>
+    <h3>v0.4</h3>
+    <ul>
+      <li>Support for sites that block loading off site scripts (eg. github)</li>
+    </ul>
+    <h3>v0.2</h3>
+    <ul>
+      <li>Toggle editable/uneditable.</li>
+    </ul>
+
     <div id="installation-congrats">
       <h1>Success!</h1>
       <p>Edit This Page is installed correctly and is working. It's really that easy.</p>
@@ -77,10 +91,8 @@
       <button onclick="hideInstallMessage();">Hide This Message</button>
     </div>
 
-    </div>
-
     <script>
-      var dev = false;
+      var dev = true;
       var host = dev ? "http://localhost:8080" : "//garbomuffin.github.io";
       var scriptSource = host + "/edit-this-page/edit-this-page.js";
 
@@ -134,7 +146,7 @@
       }
 
       var installCheckInterval = setInterval(function () {
-        if (window.__editThisPageLoaded) {
+        if (window.__editThisPageAlreadyLoaded) {
           document.getElementById("installation-congrats").style.display = "block";
           clearInterval(installCheckInterval);
         }

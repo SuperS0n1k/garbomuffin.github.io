@@ -2,7 +2,7 @@
   "use strict";
 
   // metadata constants
-  var VERSION = "0.3.1";
+  var VERSION = "0.5";
 
   // detect if the bookmark version is out of date
   var LATEST_LOADER_VERSION = 0;
@@ -19,6 +19,9 @@
     // only the show update warning once per site
     window.__editThisPageWarnShown = true;
   }
+
+  var editThisPageAlreadyLoaded = !window.__editThisPageAlreadyLoaded;
+  window.__editThisPageAlreadyLoaded = true;
 
   // support toggling between editable/not editable
   var editThisPageState = !window.__editThisPageState;
@@ -41,14 +44,18 @@
 
   // the main function, sets an element's 'contenteditable' tag
   function main(elementList, editable) {
-    if (editable) {
-      log("making elements editable");
-    } else {
-      log("making elements uneditable");
-    }
-
     for (var i = 0; i < elementList.length; i++) {
       var element = elementList[i];
+
+      // recursively run on iframes
+      if (element.tagName === "IFRAME") {
+        try {
+          main(element.contentDocument.body.getElementsByTagName("*"), editable);
+        } catch (e) {
+          // sometimes things could break, idk
+        }
+      }
+
       if (editable) {
         element.setAttribute("contenteditable", "true");
       } else {
