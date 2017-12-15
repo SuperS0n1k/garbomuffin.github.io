@@ -10,19 +10,23 @@ import * as config from "./config";
 import { Container } from "./engine/container";
 import { BackgroundStarSprite } from "./sprites/star";
 import { getRandomInt } from "./utils";
+import { LightBlock } from "./sprites/blocks/lightblock";
+import { JumpLights } from "./levels/jumplights";
+import { JumpLight } from "./sprites/jumplight";
 
 export class Nightlight extends GameRuntime {
   public level: number = 0;
   public levelData: string;
   public player: PlayerSprite;
-  public blocks: Container<Block>;
+
+  // containers
+  public blocks: Container<Block> = new Container();
+  public lightBlocks: Container<LightBlock> = new Container();
 
   protected backgroundColor = "black";
 
   constructor() {
     super(document.getElementById("canvas") as HTMLCanvasElement);
-
-    this.blocks = new Container();
   }
 
   public start() {
@@ -68,48 +72,52 @@ export class Nightlight extends GameRuntime {
     }
   }
 
+  private createBlock(position: Vector, char: string, index: number) {
+    const blockType = blockMap[char];
+    let spriteConstructor: typeof Block;
+    let texture: TImage;
+
+    if (typeof blockType === "undefined") {
+      console.warn("skipping block", char);
+      return;
+    } else if (typeof blockType === "string") {
+      texture = this.getAsset(blockType);
+      spriteConstructor = SolidBlock;
+    } else {
+      texture = this.getAsset(blockType.texture);
+      spriteConstructor = blockType.type;
+    }
+
+    const opts: IBlockOptions = {
+      width: texture.width / config.BLOCK_SIZE_SCALE,
+      height: texture.height / config.BLOCK_SIZE_SCALE,
+      position,
+      texture,
+      levelIndex: index,
+    };
+
+    new spriteConstructor(opts);
+  }
+
   public renderLevel(level: number = this.level) {
     this.destroyLevel();
 
     const levelData = Levels[level];
+    if (!levelData) {
+      alert("That's the end of the game for now. Thanks for playing.");
+    }
+
     this.levelData = levelData;
 
     let x = 0;
     let y = this.canvas.height - config.BLOCK_HEIGHT;
-
-    const createBlock = (position: Vector, char: string, index: number) => {
-      const blockType = blockMap[char];
-      let spriteConstructor: typeof Block;
-      let texture: TImage;
-
-      if (typeof blockType === "undefined") {
-        console.warn("skipping block", char);
-        return;
-      } else if (typeof blockType === "string") {
-        texture = this.getAsset(blockType);
-        spriteConstructor = SolidBlock;
-      } else {
-        texture = this.getAsset(blockType.texture);
-        spriteConstructor = blockType.type;
-      }
-
-      const opts: IBlockOptions = {
-        width: texture.width / config.BLOCK_SIZE_SCALE,
-        height: texture.height / config.BLOCK_SIZE_SCALE,
-        position,
-        texture,
-        levelIndex: index,
-      };
-
-      new spriteConstructor(opts);
-    };
 
     for (let i = 0; i < levelData.length; i++) {
       const char = levelData[i];
 
       if (char !== ".") {
         const position = new Vector(x, y);
-        createBlock(position, char, i);
+        this.createBlock(position, char, i);
       }
 
       x += config.BLOCK_WIDTH;
@@ -119,6 +127,23 @@ export class Nightlight extends GameRuntime {
       }
     }
 
+    this.spawnJumpLights();
+
     this.player.reset();
+  }
+
+  private spawnJumpLights() {
+    const jumpLights = JumpLights[this.level];
+    if (!jumpLights) {
+      return;
+    }
+    const texture = this.getAsset("jumplight");
+
+    for (const position of jumpLights) {
+      new JumpLight({
+        texture,
+        position,
+      });
+    }
   }
 }

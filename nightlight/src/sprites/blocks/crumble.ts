@@ -1,7 +1,6 @@
 import { AbstractSprite } from "../../engine/sprite";
 import { PlayerSprite } from "../player/player";
 import { Task } from "../../engine/task";
-import { TEXTURE_SCALE } from "../../engine/sprites/imagesprite";
 import { IBlockOptions, SolidBlock } from "./block";
 
 const CRUMBLE_FRAMES = 9;
@@ -38,7 +37,7 @@ export class CrumblingBlock extends SolidBlock {
 
   private updateVisual() {
     this.texture = this.runtime.getAsset(`blocks/crumble/${this.crumbleProgress}`);
-    this.height = this.texture.height / TEXTURE_SCALE;
+    this.updateDimensions();
   }
 
   private respawn() {

@@ -25,7 +25,7 @@
   </head>
 
   <body>
-    <h1>Nightlight in JS (v0.0.1.2)</h1>
+    <h1>Nightlight in JS (v0.0.2)</h1>
 
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a></p>
     <p><a href="https://scratch.mit.edu/projects/167502369/">Also play my remix which contains some of the features I plan to add here.</a></p>
@@ -34,9 +34,13 @@
       Assets are used with permission.
     </p>
 
-    <p><b>INCREDIBLY EARLY PROTOTYPE.</b> Physics are terrible, many visual problems, not many levels. Still being updated.</p>
+    <p><b>INCREDIBLY EARLY PROTOTYPE.</b> Skipping bosses until I figure out a better way to do collision testing. Castle is very unfinished.</p>
 
     <canvas id="canvas"></canvas>
+
+    <button onclick="runtime.level++;runtime.renderLevel();">Skip Level</button>
+
+    <p><a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/nightlight">Source code</a></p>
 
     <script src="dist/bundle.js"></script>
   </body>

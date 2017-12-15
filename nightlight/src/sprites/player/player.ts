@@ -3,9 +3,10 @@ import { FRICTION, GRAVITY, BLOCK_HEIGHT } from "../../config";
 import { PlayerFragmentSprite } from "./fragment";
 import { getRandomInt } from "../../utils";
 import { Vector } from "../../engine/vector";
+import { PseudoSolidBlock } from "../blocks/block";
 
 const PLAYER_WALK_SPEED = 0.5 / 2;
-const JUMP_HEIGHT = 5.25;
+const JUMP_HEIGHT = 5.4;
 const PLAYER_MAX_SPEED = 4 / 2;
 const PLAYER_FRICTION = 0.8 / 2;
 
@@ -24,41 +25,20 @@ enum MovementDirection {
 }
 
 export class PlayerSprite extends ImageSprite {
-  private yv: number = 0;
-  private xv: number = 0;
+  public yv: number = 0;
+  public xv: number = 0;
   private lastMovementDirection: MovementDirection = MovementDirection.Right;
   private onGround: boolean = true;
   private walkingAnimationProgress: number = 1;
   private currentFrameProgress: number = 0;
   private moving: boolean = false;
-
-  private _jumpMonitorLastYv: number = 0;
-  private _jumpMonitorStart: number = 0;
-  private _jumpMonitorStarted: boolean = false;
+  public hasJumpLight: boolean = false;
 
   constructor(opts: IImageSpriteOptions) {
     super(opts);
 
     this.addTask(this.run);
-    this.addTask(this.jumpMonitor);
     this.addTask(this.updateGraphic);
-  }
-
-  // Monitors the length of a jump in frames to allow easier fine tuning
-  private jumpMonitor() {
-    if (this.yv < this._jumpMonitorLastYv && !this._jumpMonitorStarted) {
-      this._jumpMonitorStarted = true;
-      this._jumpMonitorStart = this.runtime.frames;
-      console.log("jump start");
-    }
-
-    if (this.yv > this._jumpMonitorLastYv && this._jumpMonitorStarted) {
-      this._jumpMonitorStarted = false;
-      const length = this.runtime.frames - this._jumpMonitorStart;
-      console.log("jump end length=" + length);
-    }
-
-    this._jumpMonitorLastYv = this.yv;
   }
 
   private handleInputs(onGround: boolean) {
@@ -66,6 +46,7 @@ export class PlayerSprite extends ImageSprite {
     const rightDown = keys[39].isPressed;
     const leftDown = keys[37].isPressed;
     const upDown = keys[38].isPressed;
+    const upJustPressed = keys[38].justPressed;
     this.moving = false;
 
     if (rightDown && !leftDown) {
@@ -80,7 +61,8 @@ export class PlayerSprite extends ImageSprite {
       this.moving = true;
     }
 
-    if (upDown && onGround) {
+    if ((upDown && onGround) || (upJustPressed && this.hasJumpLight)) {
+      this.hasJumpLight = false;
       this.yv = JUMP_HEIGHT;
     } else if (!upDown && this.yv > 3) {
       this.yv = 3;
@@ -104,6 +86,10 @@ export class PlayerSprite extends ImageSprite {
     this.xv = physicsResult.xv;
     this.yv = physicsResult.yv;
     this.onGround = physicsResult.onGround;
+
+    if (this.onGround) {
+      this.hasJumpLight = false;
+    }
     const inputs = this.handleInputs(physicsResult.onGround);
 
     if ((!inputs.leftDown && !inputs.rightDown) || (inputs.leftDown && inputs.rightDown)) {
@@ -128,7 +114,7 @@ export class PlayerSprite extends ImageSprite {
     this.xv = 0;
     this.yv = 0;
 
-    const sprites = this.runtime.blocks.sprites.filter((s) => s.solid);
+    const sprites = this.runtime.blocks.sprites.filter((s) => s.solid || s instanceof PseudoSolidBlock);
     while (this.intersects(sprites)) {
       this.y -= BLOCK_HEIGHT;
     }

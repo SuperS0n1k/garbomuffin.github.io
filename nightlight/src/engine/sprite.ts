@@ -13,6 +13,7 @@ export interface ISpriteOptions {
   height?: number;
 
   scale?: Vector2D;
+  visible?: boolean;
 
   // Nightlight:
   persistent?: boolean;
@@ -27,6 +28,7 @@ export abstract class AbstractSprite extends TaskRunner {
   public height: number;
   public scale: Vector2D;
   public persistent: boolean;
+  public visible: boolean;
 
   public constructor(options: ISpriteOptions) {
     super();
@@ -35,10 +37,9 @@ export abstract class AbstractSprite extends TaskRunner {
 
     this.width = getOrDefault(options.width, 0);
     this.height = getOrDefault(options.height, 0);
-
     this.scale = getOrDefault(options.scale, new Vector2D(1, 1));
-
     this.persistent = getOrDefault(options.persistent, false);
+    this.visible = getOrDefault(options.visible, true);
 
     this.runtime.sprites.push(this);
   }
@@ -148,6 +149,9 @@ export abstract class AbstractSprite extends TaskRunner {
       }
     }
 
+    this.x = Math.round(this.x);
+    this.y = Math.round(this.y);
+
     return {
       xv, yv, onGround,
     };
@@ -155,7 +159,7 @@ export abstract class AbstractSprite extends TaskRunner {
 
   private handleCollision(horizontal: boolean) {
     for (const block of this.runtime.blocks) {
-      if (block.solid && this.intersects(block)) {
+      if (block.solid && this.intersects(block) && block.handleIntersect(this, horizontal) !== false) {
         block.handleIntersect(this, horizontal);
         return true;
       }

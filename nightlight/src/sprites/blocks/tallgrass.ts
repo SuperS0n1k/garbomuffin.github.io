@@ -11,6 +11,6 @@ export class TallGrassBlock extends Block {
       texture: this.runtime.getAsset("blocks/k"),
     });
 
-    this.groundedCenterAlign();
+    this.floorAlign();
   }
 }

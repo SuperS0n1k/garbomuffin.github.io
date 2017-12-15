@@ -1,4 +1,7 @@
-// https://gist.github.com/fsufitch/18bb4692d5f46b649890f8fd58765fbc
+// https://gist.github.com/fsufitch/18bb4692d5f46b649890f8fd58765fbc with minor style changes
+
+// javascript's Array.prototype.sort is "not necessarily stable"
+// https://www.ecma-international.org/ecma-262/6.0/#sec-array.prototype.sort
 
 type Comparator<T> = (a: T, b: T) => number;
 
@@ -7,18 +10,11 @@ interface Array<T> {
 }
 
 let defaultCmp: Comparator<any> = (a, b) => {
-  if (a < b) {
-    return -1;
-  } else if (a > b) {
-    return 1;
-  } else {
-    return 0;
-  }
+  return a - b;
 };
 
-Array.prototype.stableSort = function<T>(cmp: Comparator<T> = defaultCmp): T[] {
-  const self: T[] = this; // for typing
-  const stabilized = self.map((el, index) => (([el, index]) as [T, number]));
+Array.prototype.stableSort = function<T>(this: T[], cmp: Comparator<T> = defaultCmp): T[] {
+  const stabilized = this.map((el, index) => (([el, index]) as [T, number]));
 
   const stableCmp: Comparator<[T, number]> = (a, b) => {
     const order = cmp(a[0], b[0]);
@@ -29,9 +25,9 @@ Array.prototype.stableSort = function<T>(cmp: Comparator<T> = defaultCmp): T[] {
   };
 
   stabilized.sort(stableCmp);
-  for (let i = 0; i < self.length; i++) {
-    self[i] = stabilized[i][0];
+  for (let i = 0; i < this.length; i++) {
+    this[i] = stabilized[i][0];
   }
 
-  return self;
+  return this;
 };

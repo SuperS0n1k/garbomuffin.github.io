@@ -28,6 +28,10 @@ export class ImageSprite extends AbstractSprite {
   }
 
   public render(ctx: CanvasRenderingContext2D) {
+    if (!this.visible) {
+      return;
+    }
+
     ctx.save();
     ctx.globalAlpha = this.opacity;
 
@@ -52,5 +56,10 @@ export class ImageSprite extends AbstractSprite {
 
     ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
     ctx.restore();
+  }
+
+  public updateDimensions() {
+    this.width = this.texture.width / TEXTURE_SCALE;
+    this.height = this.texture.height / TEXTURE_SCALE;
   }
 }

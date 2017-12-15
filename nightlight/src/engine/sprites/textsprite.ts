@@ -31,6 +31,10 @@ export class TextSprite extends AbstractSprite implements ITextSpriteOptions {
   }
 
   public render(ctx: CanvasRenderingContext2D) {
+    if (!this.visible) {
+      return;
+    }
+
     ctx.font = this.font;
     ctx.fillStyle = this.color.toString();
     ctx.fillText(this.text, this.x, this.y);

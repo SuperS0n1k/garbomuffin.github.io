@@ -3,14 +3,28 @@ import { LevelUpCoinSprite } from "../coin";
 import { BLOCK_HEIGHT } from "../../config";
 import { Vector } from "../../engine/vector";
 
-export class LevelUpCoinSpawnerBlock extends SolidBlock {
+abstract class LevelUpCoinSpawnerBlock extends SolidBlock {
   constructor(opts: IBlockOptions) {
     super(opts);
 
-    const position = new Vector(this.x, this.y - BLOCK_HEIGHT);
+    const position = this.getCoinPosition();
     new LevelUpCoinSprite({
       position,
       texture: this.runtime.getAsset("coin/1"),
     });
+  }
+
+  protected abstract getCoinPosition(): Vector;
+}
+
+export class AboveLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
+  protected getCoinPosition() {
+    return new Vector(this.x, this.y - BLOCK_HEIGHT);
+  }
+}
+
+export class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
+  protected getCoinPosition() {
+    return new Vector(this.x, this.y + BLOCK_HEIGHT);
   }
 }

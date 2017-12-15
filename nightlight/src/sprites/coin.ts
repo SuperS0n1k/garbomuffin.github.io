@@ -1,7 +1,6 @@
 import { Block, IBlockOptions } from "./blocks/block";
 import { Task } from "../engine/task";
 import { Vector } from "../engine/vector";
-import { TEXTURE_SCALE } from "../engine/sprites/imagesprite";
 
 const FRAME_LENGTH = 3;
 const TOTAL_FRAMES = 4;

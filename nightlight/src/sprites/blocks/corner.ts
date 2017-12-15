@@ -23,10 +23,17 @@ export class CornerBlock extends Block {
       position: new Vector(this.x, this.y, -1), // any corners placed on this should go on top
     });
 
-    this.testCorner(LEVEL_WIDTH - 1, -90, 0, 0);
-    this.testCorner(LEVEL_WIDTH + 1, 0, 1, 0);
-    this.testCorner(-LEVEL_WIDTH - 1, 180, 0, 1);
-    this.testCorner(-LEVEL_WIDTH + 1, 90, 1, 1);
+    // if spawned on far left edge then don't check for things that will wrap around to other side of screen
+    if (this.levelIndex % LEVEL_WIDTH !== 0) {
+      this.testCorner(LEVEL_WIDTH - 1, -90, 0, 0);
+      this.testCorner(-LEVEL_WIDTH - 1, 180, 0, 1);
+    }
+    // if spawned on far right edge then don't check for things that will wrap around to other side of screen
+    // untested but should work
+    if (this.levelIndex % LEVEL_WIDTH !== LEVEL_WIDTH - 1) {
+      this.testCorner(LEVEL_WIDTH + 1, 0, 1, 0);
+      this.testCorner(-LEVEL_WIDTH + 1, 90, 1, 1);
+    }
 
     // the intent of a cornersprite is to create sprites
     // it itself does not do anything else so delete it

@@ -82,15 +82,16 @@ export class TaskRunner {
   // can either be a task or a function
   // if it is a task it is added as you would expect
   // if it is a function it will repeat every frame
-  public addTask(task: Task | TaskRunnable): void {
+  public addTask(task: Task | TaskRunnable): Task {
     if (typeof task === "function") {
-      this.addTask(new Task({
+      return this.addTask(new Task({
         run: task as TaskRunnable,
         repeatEvery: 0,
       }));
     } else {
       task.runnable = task.runnable.bind(this);
       this._tasks.push(task);
+      return task;
     }
   }
 }

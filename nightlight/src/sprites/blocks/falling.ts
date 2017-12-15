@@ -34,7 +34,6 @@ export class FallingBlock extends SolidBlock {
       const fromBottom = this.runtime.canvas.height - this.y;
       task.stop();
       this.position = this.startingPosition;
-      this.solid = false;
       this.addTask(new Task({
         run: this.fall,
         delay: fromBottom * FALL_DELAY_PER_Y,
@@ -48,6 +47,8 @@ export class FallingBlock extends SolidBlock {
   }
 
   private fall(task: Task) {
+    this.solid = false;
+
     const physicsResult = this.runBasicPhysics(0, this.yv, {
       collision: false,
     });

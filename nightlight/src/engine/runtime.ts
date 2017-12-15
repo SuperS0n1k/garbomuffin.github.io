@@ -78,7 +78,7 @@ export class GameRuntime extends TaskRunner {
     const originalSrc = src;
 
     // add the extension and folder
-    src = `${window._SRC_PREFIX}assets/${src}.png`;
+    src = `assets/${src}.png`;
 
     console.log("adding asset", src);
 
