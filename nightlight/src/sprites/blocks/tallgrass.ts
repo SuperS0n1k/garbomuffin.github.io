@@ -8,7 +8,7 @@ export class TallGrassBlock extends Block {
 
     new GrassBlock({
       position: new Vector(opts.position),
-      texture: this.runtime.getAsset("blocks/k"),
+      texture: this.runtime.getImage("blocks/k"),
     });
 
     this.floorAlign();

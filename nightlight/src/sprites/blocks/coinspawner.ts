@@ -10,7 +10,7 @@ abstract class LevelUpCoinSpawnerBlock extends SolidBlock {
     const position = this.getCoinPosition();
     new LevelUpCoinSprite({
       position,
-      texture: this.runtime.getAsset("coin/1"),
+      texture: this.runtime.getImage("coin/1"),
     });
   }
 

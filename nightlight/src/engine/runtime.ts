@@ -6,12 +6,13 @@ import { TouchscreenMouse } from "./drivers/mouse/touchscreen";
 import { ExitError } from "./errors/exit";
 import { AbstractSprite } from "./sprite";
 import { TaskRunner } from "./task";
-import { TImage, TBackground } from "./types";
+import { TImage, TBackground, TSound } from "./types";
 import { isMobile } from "./utils";
 
 const CANVAS_WIDTH = 480;
 const CANVAS_HEIGHT = 360;
 const IMAGE_FORMAT = "png";
+const SOUND_FORMAT = "mp3";
 
 // this is the main game runtime object
 // rendering is done here
@@ -19,7 +20,8 @@ const IMAGE_FORMAT = "png";
 
 export class GameRuntime extends TaskRunner {
   // see resetVariables()
-  public readonly assets: Map<string, TImage> = new Map();
+  public readonly images: Map<string, TImage> = new Map();
+  public readonly sounds: Map<string, TSound> = new Map();
   public sprites: Container;
   public containers: Container[] = [];
   public mouse: Mouse;
@@ -73,7 +75,7 @@ export class GameRuntime extends TaskRunner {
   ///
 
   // add an asset and start loading it
-  public addAsset(src: string) {
+  public addImage(src: string) {
     // uses the original src for storage
     // TODO: consider using the new src and adding that into getAsset?
     const originalSrc = src;
@@ -84,40 +86,92 @@ export class GameRuntime extends TaskRunner {
       src += "." + IMAGE_FORMAT;
     }
 
-    console.log("adding asset", src);
+    console.log("adding image", src);
 
-    // create a promise that will resolve when onload is called or
-    // reject when onerror is called
-    const promise = new Promise<TImage>((resolve: any, reject: any) => {
+    const promise = new Promise<TImage>((resolve, reject) => {
       const image = document.createElement("img");
       image.src = src;
-      image.onload = () => {
-        resolve();
-      };
+      image.onload = () => resolve();
+      image.onerror = () => reject();
+      this.images.set(originalSrc, image);
+    });
+    this._assetPromises.push(promise);
+    return promise;
+  }
 
-      image.onerror = () => {
-        reject();
-      };
+  // see: addImage()
+  public addSound(src: string) {
+    const originalSrc = src;
 
-      this.assets.set(originalSrc, image);
+    // add the extension and folder
+    src = `assets/sounds/${src}`;
+    if (src.indexOf(".") === -1) {
+      src += "." + SOUND_FORMAT;
+    }
+
+    console.log("adding sound", src);
+
+    const promise = new Promise<TImage>((resolve: any, reject: any) => {
+      const sound = document.createElement("audio");
+      sound.src = src;
+      sound.oncanplaythrough = () => resolve();
+      sound.onerror = () => reject();
+      sound.preload = "auto";
+      this.sounds.set(originalSrc, sound);
     });
 
     this._assetPromises.push(promise);
-
     return promise;
   }
 
   // wait for all assets to load
-  public waitForAssets() {
-    // Promise.all will fail on an error and that is probably preferred behavior
+  public waitForAssets(handler: (num: number) => void = () => {}) {
+    // progress reporting
+    const total = this._assetPromises.length;
+    let current = 0;
+    for (const promise of this._assetPromises) {
+      promise.then(() => {
+        current++;
+        handler(current / total);
+      });
+    }
+
+    // the actual loading stuff
     return Promise.all(this._assetPromises)
-      .then(() => console.log("loaded assets"))
-      .then(() => this._assetPromises = []);
+      .then(() => {
+        console.log("loaded assets");
+        this._assetPromises = [];
+      });
   }
 
   // get an asset with a name
-  public getAsset(src: string) {
-    return this.assets.get(src) as TImage;
+  public getImage(src: string): TImage {
+    return this.images.get(src) as TImage;
+  }
+
+  // get a sound with a name
+  public getSound(src: string): TSound {
+    return this.sounds.get(src) as TSound;
+  }
+
+  // plays a sound and resets its currentTime to 0
+  public playSound(src: string | TSound) {
+    if (typeof src === "string") {
+      src = this.getSound(src);
+    }
+    src.currentTime = 0;
+    src.play();
+    return src;
+  }
+
+  // stops a sound and resets its currentTime to 0
+  public stopSound(src: string | TSound) {
+    if (typeof src === "string") {
+      src = this.getSound(src);
+    }
+    src.currentTime = 0;
+    src.pause();
+    return src;
   }
 
   ///

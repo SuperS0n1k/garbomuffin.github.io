@@ -279,7 +279,7 @@ const FRICTION = 0.75;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fragment__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fragment__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_vector__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__blocks_block__ = __webpack_require__(0);
@@ -402,7 +402,7 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
         for (const i of fragmentTextures) {
             new __WEBPACK_IMPORTED_MODULE_2__fragment__["a" /* PlayerFragmentSprite */]({
                 position: new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](this.position),
-                texture: this.runtime.getAsset(`fragments/${i}`),
+                texture: this.runtime.getImage(`fragments/${i}`),
                 xv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
                 yv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
                 rv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(-FRAGMENT_RV_RANGE * 1000, FRAGMENT_RV_RANGE * 1000) / 1000,
@@ -422,18 +422,18 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
                 if (this.walkingAnimationProgress > WALK_ANIMATION_FRAMES) {
                     this.walkingAnimationProgress = 1;
                 }
-                this.texture = this.runtime.getAsset(`player/walk${this.walkingAnimationProgress}`);
+                this.texture = this.runtime.getImage(`player/walk${this.walkingAnimationProgress}`);
             }
             else {
-                this.texture = this.runtime.getAsset("player/idle");
+                this.texture = this.runtime.getImage("player/idle");
             }
         }
         else {
             if (this.yv < 0.1) {
-                this.texture = this.runtime.getAsset("player/down");
+                this.texture = this.runtime.getImage("player/down");
             }
             else {
-                this.texture = this.runtime.getAsset("player/up");
+                this.texture = this.runtime.getImage("player/up");
             }
         }
     }
@@ -495,32 +495,13 @@ class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractS
         this.texture = options.texture;
         this.width = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.width, this.texture.width);
         this.height = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.height, this.texture.height);
-        this.rotation = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.rotation, 0);
-        this.opacity = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.opacity, 1);
     }
     render(ctx) {
         if (!this.visible) {
             return;
         }
         ctx.save();
-        ctx.globalAlpha = this.opacity;
-        if (this.rotation !== 0) {
-            // terrible code
-            // rotation is difficult
-            // https://stackoverflow.com/a/4650102
-            const translateX = this.x + this.width / 2;
-            const translateY = this.y + this.height / 2;
-            ctx.translate(translateX, translateY);
-            ctx.rotate(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* degreeToRadians */])(this.rotation));
-            ctx.translate(-translateX, -translateY);
-        }
-        if (this.scale.x !== 1 || this.scale.y !== 1) {
-            const translateX = this.x + this.width / 2;
-            const translateY = this.y + this.height / 2;
-            ctx.translate(translateX, translateY);
-            ctx.scale(this.scale.x, this.scale.y);
-            ctx.translate(-translateX, -translateY);
-        }
+        this._setRenderValues(ctx);
         const x = Math.floor(this.x);
         const y = Math.floor(this.y);
         ctx.drawImage(this.texture, x, y, this.width, this.height);
@@ -558,6 +539,8 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
         this.scale = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.scale, new __WEBPACK_IMPORTED_MODULE_0__vector2d__["a" /* Vector2D */](1, 1));
         this.persistent = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.persistent, false);
         this.visible = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.visible, true);
+        this.rotation = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.rotation, 0);
+        this.opacity = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.opacity, 1);
         this.runtime.sprites.push(this);
     }
     update() {
@@ -576,12 +559,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
             container.sprites.splice(index, 1);
         }
     }
-    containsPoint(p) {
-        return p.x > this.x &&
-            p.x < this.x + this.width &&
-            p.y > this.y &&
-            p.y < this.y + this.height;
-    }
+    // TODO: rotation
     intersects(thing) {
         if (thing instanceof AbstractSprite) {
             return this.x < thing.x + thing.width &&
@@ -596,6 +574,55 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
                 }
             }
             return false;
+        }
+    }
+    // Test for intersections by literally rendering the sprites and looking for spots where they both exist
+    // This needs some MASSIVE speed ups
+    complexIntersects(thing) {
+        // some inspiration from:
+        // https://github.com/nathan/phosphorus/blob/master/phosphorus.js#L1663
+        const createCanvas = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = this.runtime.canvas.width;
+            canvas.height = this.runtime.canvas.height;
+            return canvas;
+        };
+        const canvasA = createCanvas();
+        const canvasB = createCanvas();
+        const ctxA = canvasA.getContext("2d");
+        const ctxB = canvasB.getContext("2d");
+        this.render(ctxA);
+        thing.render(ctxB);
+        const width = canvasA.width;
+        const height = canvasA.height;
+        const dataA = ctxA.getImageData(0, 0, width, height).data;
+        const dataB = ctxB.getImageData(0, 0, width, height).data;
+        const length = dataA.length;
+        for (let i = 0; i < length; i += 4) {
+            if (dataA[i + 3] && dataB[i + 3]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    _setRenderValues(ctx) {
+        ctx.globalAlpha = this.opacity;
+        if (this.rotation !== 0) {
+            // terrible code
+            // rotation is difficult
+            // https://stackoverflow.com/a/4650102
+            const translateX = this.x + this.width / 2;
+            const translateY = this.y + this.height / 2;
+            ctx.translate(translateX, translateY);
+            ctx.rotate(Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* degreeToRadians */])(this.rotation));
+            ctx.translate(-translateX, -translateY);
+        }
+        if (this.scale.x !== 1 || this.scale.y !== 1) {
+            const translateX = this.x + this.width / 2;
+            const translateY = this.y + this.height / 2;
+            ctx.translate(translateX, translateY);
+            ctx.scale(this.scale.x, this.scale.y);
+            ctx.translate(-translateX, -translateY);
         }
     }
     get x() {
@@ -922,99 +949,118 @@ const game = new __WEBPACK_IMPORTED_MODULE_0__game__["a" /* Nightlight */]();
 //
 // Pre sword and core
 //
-game.addAsset("player/idle");
-game.addAsset("player/up");
-game.addAsset("player/down");
-game.addAsset("player/walk1");
-game.addAsset("player/walk2");
-game.addAsset("player/walk3");
-game.addAsset("player/walk4");
-game.addAsset("fragments/1");
-game.addAsset("fragments/2");
-game.addAsset("fragments/3");
-game.addAsset("fragments/4");
-game.addAsset("fragments/5");
-game.addAsset("coin/1");
-game.addAsset("coin/2");
-game.addAsset("coin/3");
-game.addAsset("coin/4");
-game.addAsset("blocks/a");
-game.addAsset("blocks/b");
-game.addAsset("blocks/c");
-game.addAsset("blocks/d");
-game.addAsset("blocks/e");
-game.addAsset("blocks/f");
-game.addAsset("blocks/g");
-game.addAsset("blocks/h");
-game.addAsset("blocks/i");
-game.addAsset("blocks/j");
-game.addAsset("blocks/k");
-game.addAsset("blocks/l");
-game.addAsset("blocks/m");
-game.addAsset("blocks/n");
-game.addAsset("blocks/p");
-game.addAsset("blocks/q");
-game.addAsset("blocks/r");
-game.addAsset("blocks/s");
-game.addAsset("blocks/u");
-game.addAsset("blocks/u2");
-game.addAsset("blocks/v");
-game.addAsset("blocks/w");
-game.addAsset("blocks/y");
-game.addAsset("blocks/z");
-game.addAsset("blocks/crumble/1");
-game.addAsset("blocks/crumble/2");
-game.addAsset("blocks/crumble/3");
-game.addAsset("blocks/crumble/4");
-game.addAsset("blocks/crumble/5");
-game.addAsset("blocks/crumble/6");
-game.addAsset("blocks/crumble/7");
-game.addAsset("blocks/crumble/8");
-game.addAsset("blocks/crumble/9");
-game.addAsset("blocks/button/red");
-game.addAsset("blocks/button/on");
-game.addAsset("blocks/spikes/up");
-game.addAsset("blocks/spikes/down");
-game.addAsset("blocks/spikes/left");
-game.addAsset("blocks/spikes/right");
+game.addImage("player/idle");
+game.addImage("player/up");
+game.addImage("player/down");
+game.addImage("player/walk1");
+game.addImage("player/walk2");
+game.addImage("player/walk3");
+game.addImage("player/walk4");
+game.addImage("fragments/1");
+game.addImage("fragments/2");
+game.addImage("fragments/3");
+game.addImage("fragments/4");
+game.addImage("fragments/5");
+game.addImage("coin/1");
+game.addImage("coin/2");
+game.addImage("coin/3");
+game.addImage("coin/4");
+game.addImage("blocks/a");
+game.addImage("blocks/b");
+game.addImage("blocks/c");
+game.addImage("blocks/d");
+game.addImage("blocks/e");
+game.addImage("blocks/f");
+game.addImage("blocks/g");
+game.addImage("blocks/h");
+game.addImage("blocks/i");
+game.addImage("blocks/j");
+game.addImage("blocks/k");
+game.addImage("blocks/l");
+game.addImage("blocks/m");
+game.addImage("blocks/n");
+game.addImage("blocks/p");
+game.addImage("blocks/q");
+game.addImage("blocks/r");
+game.addImage("blocks/s");
+game.addImage("blocks/u");
+game.addImage("blocks/u2");
+game.addImage("blocks/v");
+game.addImage("blocks/w");
+game.addImage("blocks/y");
+game.addImage("blocks/z");
+game.addImage("blocks/crumble/1");
+game.addImage("blocks/crumble/2");
+game.addImage("blocks/crumble/3");
+game.addImage("blocks/crumble/4");
+game.addImage("blocks/crumble/5");
+game.addImage("blocks/crumble/6");
+game.addImage("blocks/crumble/7");
+game.addImage("blocks/crumble/8");
+game.addImage("blocks/crumble/9");
+game.addImage("blocks/button/red");
+game.addImage("blocks/button/on");
+game.addImage("blocks/spikes/up");
+game.addImage("blocks/spikes/down");
+game.addImage("blocks/spikes/left");
+game.addImage("blocks/spikes/right");
+game.addImage("boss/sword/sword");
+game.addImage("boss/sword/open");
+game.addImage("boss/sword/heal");
+game.addImage("boss/sword/hurt");
 //
 // Post sword
 //
-game.addAsset("blocks/1");
-game.addAsset("blocks/2");
-game.addAsset("blocks/3");
-game.addAsset("blocks/4");
-game.addAsset("blocks/5");
-game.addAsset("blocks/6");
-game.addAsset("blocks/7");
-game.addAsset("blocks/8");
-game.addAsset("blocks/9");
-game.addAsset("blocks/!");
-game.addAsset("blocks/lightbutton/1");
-game.addAsset("blocks/lightbutton/2");
-game.addAsset("blocks/lightbutton/down");
-game.addAsset("jumplight");
+game.addImage("blocks/1");
+game.addImage("blocks/2");
+game.addImage("blocks/3");
+game.addImage("blocks/4");
+game.addImage("blocks/5");
+game.addImage("blocks/6");
+game.addImage("blocks/7");
+game.addImage("blocks/8");
+game.addImage("blocks/9");
+game.addImage("blocks/!");
+game.addImage("blocks/lightbutton/1");
+game.addImage("blocks/lightbutton/2");
+game.addImage("blocks/lightbutton/down");
+game.addImage("jumplight");
 //
 // Post second boss / Castle
 //
-game.addAsset("brick");
-game.addAsset("blocks/caret");
-game.addAsset("blocks/ampersand");
-game.addAsset("blocks/asterisk"); // IT WOULDN'T LET ME SAVE IT OTHERWISE
-game.addAsset("blocks/(");
-game.addAsset("blocks/)");
-game.addAsset("blocks/-");
-game.addAsset("blocks/underscore");
-game.addAsset("blocks/=");
-game.addAsset("blocks/+");
-game.addAsset("blocks/grave");
-game.addAsset("blocks/castlecorner/topright");
-game.addAsset("blocks/castlecorner/topleft");
-game.addAsset("blocks/castlecorner/bottomright");
-game.addAsset("blocks/castlecorner/bottomleft");
+game.addImage("brick");
+game.addImage("blocks/caret");
+game.addImage("blocks/ampersand");
+game.addImage("blocks/asterisk"); // IT WOULDN'T LET ME SAVE IT OTHERWISE
+game.addImage("blocks/(");
+game.addImage("blocks/)");
+game.addImage("blocks/-");
+game.addImage("blocks/underscore");
+game.addImage("blocks/=");
+game.addImage("blocks/+");
+game.addImage("blocks/grave");
+game.addImage("blocks/castlecorner/topright");
+game.addImage("blocks/castlecorner/topleft");
+game.addImage("blocks/castlecorner/bottomright");
+game.addImage("blocks/castlecorner/bottomleft");
+//
+// Sounds
+//
+game.addSound("music/exploration");
+game.addSound("music/netherslament");
+game.addSound("music/boss/1");
+game.addSound("music/boss/2");
+game.addSound("music/blackroad/1");
+game.addSound("music/blackroad/2");
+game.addSound("music/finalboss/1");
+game.addSound("music/finalboss/2");
 // wait for it to load then run our stuff
-game.waitForAssets().then(run);
+const progressElement = document.getElementById("progress");
+game.waitForAssets((progress) => {
+    progressElement.value = progress;
+}).then(run);
 function run() {
+    progressElement.style.display = "none";
     game.start();
 }
 
@@ -1028,14 +1074,14 @@ function run() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__levels_levels__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blockmap__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blockmap__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__engine_container__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_star__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_star__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(40);
 
 
 
@@ -1052,6 +1098,8 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
     constructor() {
         super(document.getElementById("canvas"));
         this.level = 0;
+        this.background = "black";
+        this.backgroundMusic = [];
         // containers
         this.blocks = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
         this.lightBlocks = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
@@ -1066,7 +1114,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
     }
     createPlayer() {
         this.player = new __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__["a" /* PlayerSprite */]({
-            texture: this.getAsset("player/idle"),
+            texture: this.getImage("player/idle"),
             position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](0, 0, 10),
             width: __WEBPACK_IMPORTED_MODULE_6__config__["b" /* BLOCK_WIDTH */],
             height: __WEBPACK_IMPORTED_MODULE_6__config__["a" /* BLOCK_HEIGHT */],
@@ -1106,11 +1154,11 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
             return;
         }
         else if (typeof blockType === "string") {
-            texture = this.getAsset(blockType);
+            texture = this.getImage(blockType);
             spriteConstructor = __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_block__["c" /* SolidBlock */];
         }
         else {
-            texture = this.getAsset(blockType.texture);
+            texture = this.getImage(blockType.texture);
             spriteConstructor = blockType.type;
         }
         if (!texture) {
@@ -1151,6 +1199,9 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         if (level.newBackground) {
             this.background = level.newBackground;
         }
+        if (level.newBackgroundMusic) {
+            this.setBackgroundMusic(level.newBackgroundMusic);
+        }
         if (level.handlers) {
             for (const handler of level.handlers) {
                 handler(this);
@@ -1164,13 +1215,31 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         if (!jumpLights) {
             return;
         }
-        const texture = this.getAsset("jumplight");
+        const texture = this.getImage("jumplight");
         for (const position of jumpLights) {
             new __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__["a" /* JumpLight */]({
                 texture,
                 position,
             });
         }
+    }
+    setBackgroundMusic(music) {
+        for (const sound of this.backgroundMusic) {
+            this.stopSound(sound);
+            sound.loop = false;
+            sound.onended = () => { };
+        }
+        for (const sound of music) {
+            sound.onended = () => this.nextBackgroundMusic();
+        }
+        this.backgroundMusic = music;
+        this.playSound(music[0]);
+    }
+    nextBackgroundMusic() {
+        if (this.backgroundMusic.length > 1) {
+            this.backgroundMusic.shift();
+        }
+        this.playSound(this.backgroundMusic[0]);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Nightlight;
@@ -1201,6 +1270,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
 const CANVAS_WIDTH = 480;
 const CANVAS_HEIGHT = 360;
 const IMAGE_FORMAT = "png";
+const SOUND_FORMAT = "mp3";
 // this is the main game runtime object
 // rendering is done here
 // a lot of stuff is done here
@@ -1208,7 +1278,8 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
     constructor(canvas) {
         super();
         // see resetVariables()
-        this.assets = new Map();
+        this.images = new Map();
+        this.sounds = new Map();
         this.containers = [];
         this.frames = 0;
         this.background = "white";
@@ -1244,7 +1315,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
     /// ASSETS
     ///
     // add an asset and start loading it
-    addAsset(src) {
+    addImage(src) {
         // uses the original src for storage
         // TODO: consider using the new src and adding that into getAsset?
         const originalSrc = src;
@@ -1253,33 +1324,80 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         if (src.indexOf(".") === -1) {
             src += "." + IMAGE_FORMAT;
         }
-        console.log("adding asset", src);
-        // create a promise that will resolve when onload is called or
-        // reject when onerror is called
+        console.log("adding image", src);
         const promise = new Promise((resolve, reject) => {
             const image = document.createElement("img");
             image.src = src;
-            image.onload = () => {
-                resolve();
-            };
-            image.onerror = () => {
-                reject();
-            };
-            this.assets.set(originalSrc, image);
+            image.onload = () => resolve();
+            image.onerror = () => reject();
+            this.images.set(originalSrc, image);
+        });
+        this._assetPromises.push(promise);
+        return promise;
+    }
+    // see: addImage()
+    addSound(src) {
+        const originalSrc = src;
+        // add the extension and folder
+        src = `assets/sounds/${src}`;
+        if (src.indexOf(".") === -1) {
+            src += "." + SOUND_FORMAT;
+        }
+        console.log("adding sound", src);
+        const promise = new Promise((resolve, reject) => {
+            const sound = document.createElement("audio");
+            sound.src = src;
+            sound.oncanplaythrough = () => resolve();
+            sound.onerror = () => reject();
+            sound.preload = "auto";
+            this.sounds.set(originalSrc, sound);
         });
         this._assetPromises.push(promise);
         return promise;
     }
     // wait for all assets to load
-    waitForAssets() {
-        // Promise.all will fail on an error and that is probably preferred behavior
+    waitForAssets(handler = () => { }) {
+        // progress reporting
+        const total = this._assetPromises.length;
+        let current = 0;
+        for (const promise of this._assetPromises) {
+            promise.then(() => {
+                current++;
+                handler(current / total);
+            });
+        }
+        // the actual loading stuff
         return Promise.all(this._assetPromises)
-            .then(() => console.log("loaded assets"))
-            .then(() => this._assetPromises = []);
+            .then(() => {
+            console.log("loaded assets");
+            this._assetPromises = [];
+        });
     }
     // get an asset with a name
-    getAsset(src) {
-        return this.assets.get(src);
+    getImage(src) {
+        return this.images.get(src);
+    }
+    // get a sound with a name
+    getSound(src) {
+        return this.sounds.get(src);
+    }
+    // plays a sound and resets its currentTime to 0
+    playSound(src) {
+        if (typeof src === "string") {
+            src = this.getSound(src);
+        }
+        src.currentTime = 0;
+        src.play();
+        return src;
+    }
+    // stops a sound and resets its currentTime to 0
+    stopSound(src) {
+        if (typeof src === "string") {
+            src = this.getSound(src);
+        }
+        src.currentTime = 0;
+        src.pause();
+        return src;
     }
     ///
     /// CORE
@@ -1613,6 +1731,8 @@ class ExitError extends Error {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getLevels;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_vector__ = __webpack_require__(1);
+
 function deleteBackgroundStars(game) {
     // the sprites are removed from the list as we iterate over it
     // so a normal for loop would skip half the items
@@ -1621,12 +1741,21 @@ function deleteBackgroundStars(game) {
         game.backgroundStars.sprites[0].destroy();
     }
 }
+function bossSpawner(Boss, texture) {
+    return () => {
+        new Boss({
+            position: new __WEBPACK_IMPORTED_MODULE_0__engine_vector__["a" /* Vector */](0, 0, 0),
+            texture,
+        });
+    };
+}
 function getLevels(game) {
     return [
         // 0
         {
             levelData: "eaaaaaaaaafeaaaafeaaaaaaaaaaaaeaaaaaaaaafbccccdeaaaaaaaaaaaaeaaaaaaaaafooooooeaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaabcccccccccd......bcccmaaaaaaaajkpppkkpqkl......jkqpeaaaaaaaa.....................eaaaaaaaa.....................eamccccnc.....................bcdkpkq.k.....................qpl..............................................................................................................................................................................................................................................................................................................................................................................",
             newBackground: "black",
+            newBackgroundMusic: [game.getSound("music/exploration")],
         },
         // 1
         {
@@ -1647,10 +1776,13 @@ function getLevels(game) {
         // 5
         {
             levelData: "aaaaaaaaaaafbccccdeaaaaaaaaaaaaaaaaaaaaaafooooooeaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaacccccccccccd......bccccccccccckkpppkkqpkkl......jkqkqkkpqqpp....................................................................................................................................................................................................................................................................................................................................................................................................................................",
+            // handlers: [bossSpawner(SwordBoss, game.getImage("boss/sword/sword"))],
+            newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
         },
         // 6
         {
             levelData: "aaaaaa5...................4aaaaaaaaa5...........y.......4aaaaaaaaa5...................4aaaaaaaaa5.....y.zzz.........1222aaaaaa5............zzz......x.aaaaaa5.......................2222223..zzz..............................................................................................................y..........................................................................................................................y678...........................4a5..........67778............123...t......4aaa5......68..............t..12n23......13....................................................................................................................................................",
+            newBackgroundMusic: [game.getSound("music/blackroad/1"), game.getSound("music/blackroad/2")],
         },
         // 7
         {
@@ -1675,12 +1807,14 @@ function getLevels(game) {
         // 12
         {
             levelData: "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
+            newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
         },
         // 13
         {
             levelData: "^^^-..........................^^^-..........................***(...t...................................t.............................................................................................t.....................................................................................t.......t................t..............................................................................u.......................................t.....%%%..........................%_=+%........................#_`^`+$.......................#)^^^-$.......................#&*n*($........%%%..............w.w.........._=+..............www..........)^-...........................)^-...........................)^-.",
-            newBackground: game.ctx.createPattern(game.getAsset("brick"), "repeat"),
+            newBackground: game.ctx.createPattern(game.getImage("brick"), "repeat"),
             handlers: [deleteBackgroundStars],
+            newBackgroundMusic: [game.getSound("music/netherslament")],
         },
         // 14
         {
@@ -1705,20 +1839,15 @@ function getLevels(game) {
         // 19
         {
             levelData: "..)^^^^^^^^^^^^^^^^^^^^^^^^-....)^^^^^^^^^^^^^^^^^^^^^^^^-....&************************(..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
-        },
-        // ???
-        {
-            levelData: "  ",
-        },
-        {
-            levelData: "eaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf..gi..eaaaaf..gi..eaaaafeaaaaf..bd..eaaaaf..bd..eaaaafemcncd..jl..eaaaaf..jl..bcncmfef..........eaaaaf..........efef..........bccccd..........efef..........jkkkkl..........efbd..........................bdnl..........................jn...................................ghhi............ghhi..........eaaf............eaaf..........bccd............bccd.............................................................................ghhhhi........................jkkkkl......................................................................................................",
+            newBackgroundMusic: [game.getSound("music/finalboss/1"), game.getSound("music/finalboss/2")],
         },
     ];
 }
 
 
 /***/ }),
-/* 24 */
+/* 24 */,
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1766,22 +1895,22 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_crumble__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_crumble__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_falling__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_blockswitchspawner__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_lightblock__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightswitch__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_blockswitchspawner__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_lightblock__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightswitch__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__ = __webpack_require__(37);
 
 
 
@@ -1861,7 +1990,7 @@ const blockMap = {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1919,7 +2048,7 @@ class RightSpikeBlock extends SpikeBlock {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1934,7 +2063,7 @@ class TallGrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block *
         super(opts);
         new __WEBPACK_IMPORTED_MODULE_1__grass__["a" /* GrassBlock */]({
             position: new __WEBPACK_IMPORTED_MODULE_2__engine_vector__["a" /* Vector */](opts.position),
-            texture: this.runtime.getAsset("blocks/k"),
+            texture: this.runtime.getImage("blocks/k"),
         });
         this.floorAlign();
     }
@@ -1944,7 +2073,7 @@ class TallGrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block *
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1977,7 +2106,7 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
         }
     }
     updateVisual() {
-        this.texture = this.runtime.getAsset(`blocks/crumble/${this.crumbleProgress}`);
+        this.texture = this.runtime.getImage(`blocks/crumble/${this.crumbleProgress}`);
         this.updateDimensions();
     }
     respawn() {
@@ -2017,12 +2146,12 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
 
@@ -2035,7 +2164,7 @@ class BlockSwitchSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /
         const position = new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.position);
         position.y -= __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */];
         new __WEBPACK_IMPORTED_MODULE_1__blockswitch__["a" /* BlockSwitch */]({
-            texture: this.runtime.getAsset("blocks/button/red"),
+            texture: this.runtime.getImage("blocks/button/red"),
             position,
             spawner: this,
         });
@@ -2046,7 +2175,7 @@ class BlockSwitchSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2070,8 +2199,8 @@ class BlockSwitch extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Blo
         for (const sprite of fallingBlocks) {
             sprite.trigger();
         }
-        this.spawner.texture = this.runtime.getAsset("blocks/u2");
-        this.texture = this.runtime.getAsset("blocks/button/on");
+        this.spawner.texture = this.runtime.getImage("blocks/u2");
+        this.texture = this.runtime.getImage("blocks/button/on");
         this.updateDimensions();
         this.position = this.startingPosition;
         this.floorAlign();
@@ -2088,7 +2217,7 @@ class BlockSwitch extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Blo
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2103,10 +2232,10 @@ class LightBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
     toggleSolid() {
         this.solid = !this.solid;
         if (this.solid) {
-            this.texture = this.runtime.getAsset("blocks/z");
+            this.texture = this.runtime.getImage("blocks/z");
         }
         else {
-            this.texture = this.runtime.getAsset("blocks/y");
+            this.texture = this.runtime.getImage("blocks/y");
         }
     }
 }
@@ -2131,7 +2260,7 @@ class DisabledLightBlock extends LightBlock {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2163,7 +2292,7 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
         if (this.animationProgress > ANIMATION_FRAMES) {
             this.animationProgress = 1;
         }
-        this.texture = this.runtime.getAsset(`blocks/lightbutton/${this.animationProgress}`);
+        this.texture = this.runtime.getImage(`blocks/lightbutton/${this.animationProgress}`);
     }
     activate() {
         this.activated = true;
@@ -2171,7 +2300,7 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
         for (const block of lightBlocks) {
             block.toggleSolid();
         }
-        this.texture = this.runtime.getAsset("blocks/lightbutton/down");
+        this.texture = this.runtime.getImage("blocks/lightbutton/down");
         this.updateDimensions();
         this.floorAlign();
         this.addTask(new __WEBPACK_IMPORTED_MODULE_2__engine_task__["a" /* Task */]({
@@ -2192,12 +2321,12 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
 
@@ -2210,7 +2339,7 @@ class LevelUpCoinSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /
         const position = this.getCoinPosition();
         new __WEBPACK_IMPORTED_MODULE_1__coin__["a" /* LevelUpCoinSprite */]({
             position,
-            texture: this.runtime.getAsset("coin/1"),
+            texture: this.runtime.getImage("coin/1"),
         });
     }
 }
@@ -2231,7 +2360,7 @@ class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2272,7 +2401,7 @@ class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" 
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2312,7 +2441,7 @@ class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2355,7 +2484,7 @@ class RotatedCornerBlock extends CornerBlock {
         super(opts);
         // black background
         new __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */]({
-            texture: this.runtime.getAsset("blocks/a"),
+            texture: this.runtime.getImage("blocks/a"),
             position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y, -1),
         });
         const offset = this.width === __WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] ? 0 : 1;
@@ -2378,12 +2507,12 @@ class CastleCornerBlock extends CornerBlock {
     constructor(opts) {
         super(opts);
         if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] !== 0) {
-            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1, this.runtime.getAsset("blocks/castlecorner/topleft"), 0, 0, 0);
-            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1, this.runtime.getAsset("blocks/castlecorner/bottomleft"), 0, 0, 0);
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1, this.runtime.getImage("blocks/castlecorner/topleft"), 0, 0, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1, this.runtime.getImage("blocks/castlecorner/bottomleft"), 0, 0, 0);
         }
         if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] !== __WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1) {
-            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] + 1, this.runtime.getAsset("blocks/castlecorner/topright"), 0, 0, 0);
-            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] + 1, this.runtime.getAsset("blocks/castlecorner/bottomright"), 0, 0, 0);
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] + 1, this.runtime.getImage("blocks/castlecorner/topright"), 0, 0, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] + 1, this.runtime.getImage("blocks/castlecorner/bottomright"), 0, 0, 0);
         }
     }
 }
@@ -2392,7 +2521,7 @@ class CastleCornerBlock extends CornerBlock {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2451,7 +2580,7 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2534,7 +2663,7 @@ const JumpLights = [
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

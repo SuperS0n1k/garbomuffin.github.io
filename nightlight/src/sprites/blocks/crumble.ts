@@ -36,7 +36,7 @@ export class CrumblingBlock extends SolidBlock {
   }
 
   private updateVisual() {
-    this.texture = this.runtime.getAsset(`blocks/crumble/${this.crumbleProgress}`);
+    this.texture = this.runtime.getImage(`blocks/crumble/${this.crumbleProgress}`);
     this.updateDimensions();
   }
 

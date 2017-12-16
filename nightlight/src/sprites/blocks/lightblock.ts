@@ -13,9 +13,9 @@ export abstract class LightBlock extends Block {
     this.solid = !this.solid;
 
     if (this.solid) {
-      this.texture = this.runtime.getAsset("blocks/z");
+      this.texture = this.runtime.getImage("blocks/z");
     } else {
-      this.texture = this.runtime.getAsset("blocks/y");
+      this.texture = this.runtime.getImage("blocks/y");
     }
   }
 }

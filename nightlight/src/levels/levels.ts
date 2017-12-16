@@ -1,11 +1,15 @@
-import { TBackground } from "../engine/types";
+import { TBackground, TImage, TSound } from "../engine/types";
 import { Nightlight } from "../game";
+import { SwordBoss } from "../sprites/bosses/sword";
+import { Vector } from "../engine/vector";
+import { ImageSprite } from "../engine/sprites/imagesprite";
 
 export type THandler = (game: Nightlight) => void;
 
 export interface Level {
   levelData: string;
   newBackground?: TBackground;
+  newBackgroundMusic?: TSound[];
   handlers?: THandler[];
 }
 
@@ -18,12 +22,22 @@ function deleteBackgroundStars(game: Nightlight) {
   }
 }
 
+function bossSpawner(Boss: typeof ImageSprite, texture: TImage) {
+  return () => {
+    new Boss({
+      position: new Vector(0, 0, 0),
+      texture,
+    });
+  };
+}
+
 export function getLevels(game: Nightlight): Level[] {
   return [
     // 0
     {
       levelData: "eaaaaaaaaafeaaaafeaaaaaaaaaaaaeaaaaaaaaafbccccdeaaaaaaaaaaaaeaaaaaaaaafooooooeaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaabcccccccccd......bcccmaaaaaaaajkpppkkpqkl......jkqpeaaaaaaaa.....................eaaaaaaaa.....................eamccccnc.....................bcdkpkq.k.....................qpl..............................................................................................................................................................................................................................................................................................................................................................................",
       newBackground: "black",
+      newBackgroundMusic: [game.getSound("music/exploration")],
     },
     // 1
     {
@@ -44,10 +58,13 @@ export function getLevels(game: Nightlight): Level[] {
     // 5
     {
       levelData: "aaaaaaaaaaafbccccdeaaaaaaaaaaaaaaaaaaaaaafooooooeaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaacccccccccccd......bccccccccccckkpppkkqpkkl......jkqkqkkpqqpp....................................................................................................................................................................................................................................................................................................................................................................................................................................",
+      // handlers: [bossSpawner(SwordBoss, game.getImage("boss/sword/sword"))],
+      newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
     },
     // 6
     {
       levelData: "aaaaaa5...................4aaaaaaaaa5...........y.......4aaaaaaaaa5...................4aaaaaaaaa5.....y.zzz.........1222aaaaaa5............zzz......x.aaaaaa5.......................2222223..zzz..............................................................................................................y..........................................................................................................................y678...........................4a5..........67778............123...t......4aaa5......68..............t..12n23......13....................................................................................................................................................",
+      newBackgroundMusic: [game.getSound("music/blackroad/1"), game.getSound("music/blackroad/2")],
     },
     // 7
     {
@@ -72,12 +89,14 @@ export function getLevels(game: Nightlight): Level[] {
     // 12
     {
       levelData: "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
+      newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
     },
     // 13
     {
       levelData: "^^^-..........................^^^-..........................***(...t...................................t.............................................................................................t.....................................................................................t.......t................t..............................................................................u.......................................t.....%%%..........................%_=+%........................#_`^`+$.......................#)^^^-$.......................#&*n*($........%%%..............w.w.........._=+..............www..........)^-...........................)^-...........................)^-.",
-      newBackground: game.ctx.createPattern(game.getAsset("brick"), "repeat"),
+      newBackground: game.ctx.createPattern(game.getImage("brick"), "repeat"),
       handlers: [deleteBackgroundStars],
+      newBackgroundMusic: [game.getSound("music/netherslament")],
     },
     // 14
     {
@@ -102,14 +121,7 @@ export function getLevels(game: Nightlight): Level[] {
     // 19
     {
       levelData: "..)^^^^^^^^^^^^^^^^^^^^^^^^-....)^^^^^^^^^^^^^^^^^^^^^^^^-....&************************(..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
-    },
-
-    // ???
-    {
-      levelData: "  ",
-    },
-    {
-      levelData: "eaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf..gi..eaaaaf..gi..eaaaafeaaaaf..bd..eaaaaf..bd..eaaaafemcncd..jl..eaaaaf..jl..bcncmfef..........eaaaaf..........efef..........bccccd..........efef..........jkkkkl..........efbd..........................bdnl..........................jn...................................ghhi............ghhi..........eaaf............eaaf..........bccd............bccd.............................................................................ghhhhi........................jkkkkl......................................................................................................",
+      newBackgroundMusic: [game.getSound("music/finalboss/1"), game.getSound("music/finalboss/2")],
     },
   ];
 }

@@ -47,7 +47,7 @@ export class RotatedCornerBlock extends CornerBlock {
 
     // black background
     new Block({
-      texture: this.runtime.getAsset("blocks/a"),
+      texture: this.runtime.getImage("blocks/a"),
       position: new Vector(this.x, this.y, -1), // any corners placed on this should go on top
     });
 
@@ -72,12 +72,12 @@ export class CastleCornerBlock extends CornerBlock {
     super(opts);
 
     if (this.levelIndex % LEVEL_WIDTH !== 0) {
-      this.testCorner(LEVEL_WIDTH - 1, this.runtime.getAsset("blocks/castlecorner/topleft"), 0, 0, 0);
-      this.testCorner(-LEVEL_WIDTH - 1, this.runtime.getAsset("blocks/castlecorner/bottomleft"), 0, 0, 0);
+      this.testCorner(LEVEL_WIDTH - 1, this.runtime.getImage("blocks/castlecorner/topleft"), 0, 0, 0);
+      this.testCorner(-LEVEL_WIDTH - 1, this.runtime.getImage("blocks/castlecorner/bottomleft"), 0, 0, 0);
     }
     if (this.levelIndex % LEVEL_WIDTH !== LEVEL_WIDTH - 1) {
-      this.testCorner(LEVEL_WIDTH + 1, this.runtime.getAsset("blocks/castlecorner/topright"), 0, 0, 0);
-      this.testCorner(-LEVEL_WIDTH + 1, this.runtime.getAsset("blocks/castlecorner/bottomright"), 0, 0, 0);
+      this.testCorner(LEVEL_WIDTH + 1, this.runtime.getImage("blocks/castlecorner/topright"), 0, 0, 0);
+      this.testCorner(-LEVEL_WIDTH + 1, this.runtime.getImage("blocks/castlecorner/bottomright"), 0, 0, 0);
     }
   }
 }

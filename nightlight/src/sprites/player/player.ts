@@ -134,7 +134,7 @@ export class PlayerSprite extends ImageSprite {
     for (const i of fragmentTextures) {
       new PlayerFragmentSprite({
         position: new Vector(this.position),
-        texture: this.runtime.getAsset(`fragments/${i}`),
+        texture: this.runtime.getImage(`fragments/${i}`),
 
         xv: getRandomInt(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
         yv: getRandomInt(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
@@ -157,15 +157,15 @@ export class PlayerSprite extends ImageSprite {
         if (this.walkingAnimationProgress > WALK_ANIMATION_FRAMES) {
           this.walkingAnimationProgress = 1;
         }
-        this.texture = this.runtime.getAsset(`player/walk${this.walkingAnimationProgress}`);
+        this.texture = this.runtime.getImage(`player/walk${this.walkingAnimationProgress}`);
       } else {
-        this.texture = this.runtime.getAsset("player/idle");
+        this.texture = this.runtime.getImage("player/idle");
       }
     } else {
       if (this.yv < 0.1) {
-        this.texture = this.runtime.getAsset("player/down");
+        this.texture = this.runtime.getImage("player/down");
       } else {
-        this.texture = this.runtime.getAsset("player/up");
+        this.texture = this.runtime.getImage("player/up");
       }
     }
   }

@@ -1,6 +1,7 @@
 import { AbstractSprite, ISpriteOptions } from "../sprite";
 import { TImage } from "../types";
 import { getOrDefault, degreeToRadians } from "../utils";
+import { Vector } from "../vector";
 
 export interface IImageSpriteOptions extends ISpriteOptions {
   texture: TImage;
@@ -19,9 +20,6 @@ export class ImageSprite extends AbstractSprite {
     this.texture = options.texture;
     this.width = getOrDefault(options.width, this.texture.width) as number;
     this.height = getOrDefault(options.height, this.texture.height) as number;
-
-    this.rotation = getOrDefault(options.rotation, 0);
-    this.opacity = getOrDefault(options.opacity, 1);
   }
 
   public render(ctx: CanvasRenderingContext2D) {
@@ -30,26 +28,8 @@ export class ImageSprite extends AbstractSprite {
     }
 
     ctx.save();
-    ctx.globalAlpha = this.opacity;
 
-    if (this.rotation !== 0) {
-      // terrible code
-      // rotation is difficult
-      // https://stackoverflow.com/a/4650102
-      const translateX = this.x + this.width / 2;
-      const translateY = this.y + this.height / 2;
-      ctx.translate(translateX, translateY);
-      ctx.rotate(degreeToRadians(this.rotation));
-      ctx.translate(-translateX, -translateY);
-    }
-
-    if (this.scale.x !== 1 || this.scale.y !== 1) {
-      const translateX = this.x + this.width / 2;
-      const translateY = this.y + this.height / 2;
-      ctx.translate(translateX, translateY);
-      ctx.scale(this.scale.x, this.scale.y);
-      ctx.translate(-translateX, -translateY);
-    }
+    this._setRenderValues(ctx);
 
     const x = Math.floor(this.x);
     const y = Math.floor(this.y);

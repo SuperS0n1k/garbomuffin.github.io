@@ -94,11 +94,6 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/windows,code,node,git
 
-# audio files
-*.ogg
-*.mp3
-*.wav
-
 # build files i guess?
 userscripts/campus-auto-login/src/campus-auto-login.user.js
 

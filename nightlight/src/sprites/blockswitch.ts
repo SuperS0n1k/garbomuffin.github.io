@@ -27,8 +27,8 @@ export class BlockSwitch extends Block {
       sprite.trigger();
     }
 
-    this.spawner.texture = this.runtime.getAsset("blocks/u2");
-    this.texture = this.runtime.getAsset("blocks/button/on");
+    this.spawner.texture = this.runtime.getImage("blocks/u2");
+    this.texture = this.runtime.getImage("blocks/button/on");
     this.updateDimensions();
     this.position = this.startingPosition;
     this.floorAlign();

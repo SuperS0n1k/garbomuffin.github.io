@@ -3,8 +3,10 @@ import { Vector } from "./vector";
 import { Vector2D } from "./vector2d";
 import { TaskRunner } from "./task";
 import { Sprite, TGame } from "./types";
-import { getOrDefault } from "./utils";
+import { getOrDefault, degreeToRadians } from "./utils";
 import { FRICTION, GRAVITY } from "../config";
+import { Bounds } from "./bounds";
+import { ImageSprite } from "./sprites/imagesprite";
 
 export interface ISpriteOptions {
   position: Vector;
@@ -14,6 +16,8 @@ export interface ISpriteOptions {
 
   scale?: Vector2D;
   visible?: boolean;
+  rotation?: number;
+  opacity?: number;
 
   // Nightlight:
   persistent?: boolean;
@@ -27,6 +31,8 @@ export abstract class AbstractSprite extends TaskRunner {
   public width: number;
   public height: number;
   public scale: Vector2D;
+  public rotation: number;
+  public opacity: number;
   public persistent: boolean;
   public visible: boolean;
 
@@ -40,6 +46,8 @@ export abstract class AbstractSprite extends TaskRunner {
     this.scale = getOrDefault(options.scale, new Vector2D(1, 1));
     this.persistent = getOrDefault(options.persistent, false);
     this.visible = getOrDefault(options.visible, true);
+    this.rotation = getOrDefault(options.rotation, 0);
+    this.opacity = getOrDefault(options.opacity, 1);
 
     this.runtime.sprites.push(this);
   }
@@ -65,14 +73,8 @@ export abstract class AbstractSprite extends TaskRunner {
     }
   }
 
-  public containsPoint(p: Vector) {
-    return p.x > this.x &&
-      p.x < this.x + this.width &&
-      p.y > this.y &&
-      p.y < this.y + this.height;
-  }
-
-  public intersects(thing: Sprite | Container | Sprite[]) {
+  // TODO: rotation
+  public intersects(thing: Sprite | Container | Sprite[]): boolean {
     if (thing instanceof AbstractSprite) {
       return this.x < thing.x + thing.width &&
         this.x + this.width > thing.x &&
@@ -85,6 +87,66 @@ export abstract class AbstractSprite extends TaskRunner {
         }
       }
       return false;
+    }
+  }
+
+  // Test for intersections by literally rendering the sprites and looking for spots where they both exist
+  // This needs some MASSIVE speed ups
+  public complexIntersects(thing: Sprite): boolean {
+    // some inspiration from:
+    // https://github.com/nathan/phosphorus/blob/master/phosphorus.js#L1663
+
+    const createCanvas = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = this.runtime.canvas.width;
+      canvas.height = this.runtime.canvas.height;
+      return canvas;
+    };
+
+    const canvasA = createCanvas();
+    const canvasB = createCanvas();
+
+    const ctxA = canvasA.getContext("2d") as CanvasRenderingContext2D;
+    const ctxB = canvasB.getContext("2d") as CanvasRenderingContext2D;
+
+    this.render(ctxA);
+    thing.render(ctxB);
+
+    const width = canvasA.width;
+    const height = canvasA.height;
+    const dataA = ctxA.getImageData(0, 0, width, height).data;
+    const dataB = ctxB.getImageData(0, 0, width, height).data;
+
+    const length = dataA.length;
+    for (let i = 0; i < length; i += 4) {
+      if (dataA[i + 3] && dataB[i + 3]) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  protected _setRenderValues(ctx: CanvasRenderingContext2D) {
+    ctx.globalAlpha = this.opacity;
+
+    if (this.rotation !== 0) {
+      // terrible code
+      // rotation is difficult
+      // https://stackoverflow.com/a/4650102
+      const translateX = this.x + this.width / 2;
+      const translateY = this.y + this.height / 2;
+      ctx.translate(translateX, translateY);
+      ctx.rotate(degreeToRadians(this.rotation));
+      ctx.translate(-translateX, -translateY);
+    }
+
+    if (this.scale.x !== 1 || this.scale.y !== 1) {
+      const translateX = this.x + this.width / 2;
+      const translateY = this.y + this.height / 2;
+      ctx.translate(translateX, translateY);
+      ctx.scale(this.scale.x, this.scale.y);
+      ctx.translate(-translateX, -translateY);
     }
   }
 

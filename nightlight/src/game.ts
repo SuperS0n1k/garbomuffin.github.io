@@ -4,7 +4,7 @@ import { PlayerSprite } from "./sprites/player/player";
 import { Vector } from "./engine/vector";
 import { blockMap } from "./blockmap";
 import { AbstractSprite } from "./engine/sprite";
-import { TImage } from "./engine/types";
+import { TImage, TBackground, TSound } from "./engine/types";
 import { Block, IBlockOptions, SolidBlock } from "./sprites/blocks/block";
 import * as config from "./config";
 import { Container } from "./engine/container";
@@ -19,6 +19,8 @@ export class Nightlight extends GameRuntime {
   public levelData: string;
   public levels: Level[];
   public player: PlayerSprite;
+  public background: TBackground = "black";
+  public backgroundMusic: TSound[] = [];
 
   // containers
   public blocks: Container<Block> = new Container();
@@ -41,7 +43,7 @@ export class Nightlight extends GameRuntime {
 
   private createPlayer() {
     this.player = new PlayerSprite({
-      texture: this.getAsset("player/idle"),
+      texture: this.getImage("player/idle"),
       position: new Vector(0, 0, 10),
       width: config.BLOCK_WIDTH,
       height: config.BLOCK_HEIGHT,
@@ -83,10 +85,10 @@ export class Nightlight extends GameRuntime {
       console.warn("skipping block", char);
       return;
     } else if (typeof blockType === "string") {
-      texture = this.getAsset(blockType);
+      texture = this.getImage(blockType);
       spriteConstructor = SolidBlock;
     } else {
-      texture = this.getAsset(blockType.texture);
+      texture = this.getImage(blockType.texture);
       spriteConstructor = blockType.type;
     }
 
@@ -139,6 +141,10 @@ export class Nightlight extends GameRuntime {
       this.background = level.newBackground;
     }
 
+    if (level.newBackgroundMusic) {
+      this.setBackgroundMusic(level.newBackgroundMusic);
+    }
+
     if (level.handlers) {
       for (const handler of level.handlers) {
         handler(this);
@@ -155,7 +161,7 @@ export class Nightlight extends GameRuntime {
     if (!jumpLights) {
       return;
     }
-    const texture = this.getAsset("jumplight");
+    const texture = this.getImage("jumplight");
 
     for (const position of jumpLights) {
       new JumpLight({
@@ -163,5 +169,27 @@ export class Nightlight extends GameRuntime {
         position,
       });
     }
+  }
+
+  public setBackgroundMusic(music: TSound[]) {
+    for (const sound of this.backgroundMusic) {
+      this.stopSound(sound);
+      sound.loop = false;
+      sound.onended = () => {};
+    }
+
+    for (const sound of music) {
+      sound.onended = () => this.nextBackgroundMusic();
+    }
+
+    this.backgroundMusic = music;
+    this.playSound(music[0]);
+  }
+
+  private nextBackgroundMusic() {
+    if (this.backgroundMusic.length > 1) {
+      this.backgroundMusic.shift();
+    }
+    this.playSound(this.backgroundMusic[0]);
   }
 }

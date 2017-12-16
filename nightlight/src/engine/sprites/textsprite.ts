@@ -35,8 +35,14 @@ export class TextSprite extends AbstractSprite implements ITextSpriteOptions {
       return;
     }
 
+    ctx.save();
+
+    this._setRenderValues(ctx);
+
     ctx.font = this.font;
     ctx.fillStyle = this.color.toString();
     ctx.fillText(this.text, this.x, this.y);
+
+    ctx.restore();
   }
 }

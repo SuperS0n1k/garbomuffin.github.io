@@ -10,7 +10,7 @@ export class BlockSwitchSpawnerBlock extends SolidBlock {
     const position = new Vector(this.position);
     position.y -= BLOCK_HEIGHT;
     new BlockSwitch({
-      texture: this.runtime.getAsset("blocks/button/red"),
+      texture: this.runtime.getImage("blocks/button/red"),
       position,
       spawner: this,
     });

@@ -30,7 +30,7 @@ export class LightSwitchBlock extends SolidBlock {
     if (this.animationProgress > ANIMATION_FRAMES) {
       this.animationProgress = 1;
     }
-    this.texture = this.runtime.getAsset(`blocks/lightbutton/${this.animationProgress}`);
+    this.texture = this.runtime.getImage(`blocks/lightbutton/${this.animationProgress}`);
   }
 
   private activate() {
@@ -41,7 +41,7 @@ export class LightSwitchBlock extends SolidBlock {
       block.toggleSolid();
     }
 
-    this.texture = this.runtime.getAsset("blocks/lightbutton/down");
+    this.texture = this.runtime.getImage("blocks/lightbutton/down");
     this.updateDimensions();
     this.floorAlign();
 

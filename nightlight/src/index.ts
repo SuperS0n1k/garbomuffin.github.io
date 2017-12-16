@@ -8,112 +8,134 @@ const game = new Nightlight();
 //
 // Pre sword and core
 //
-game.addAsset("player/idle");
-game.addAsset("player/up");
-game.addAsset("player/down");
-game.addAsset("player/walk1");
-game.addAsset("player/walk2");
-game.addAsset("player/walk3");
-game.addAsset("player/walk4");
+game.addImage("player/idle");
+game.addImage("player/up");
+game.addImage("player/down");
+game.addImage("player/walk1");
+game.addImage("player/walk2");
+game.addImage("player/walk3");
+game.addImage("player/walk4");
 
-game.addAsset("fragments/1");
-game.addAsset("fragments/2");
-game.addAsset("fragments/3");
-game.addAsset("fragments/4");
-game.addAsset("fragments/5");
+game.addImage("fragments/1");
+game.addImage("fragments/2");
+game.addImage("fragments/3");
+game.addImage("fragments/4");
+game.addImage("fragments/5");
 
-game.addAsset("coin/1");
-game.addAsset("coin/2");
-game.addAsset("coin/3");
-game.addAsset("coin/4");
+game.addImage("coin/1");
+game.addImage("coin/2");
+game.addImage("coin/3");
+game.addImage("coin/4");
 
-game.addAsset("blocks/a");
-game.addAsset("blocks/b");
-game.addAsset("blocks/c");
-game.addAsset("blocks/d");
-game.addAsset("blocks/e");
-game.addAsset("blocks/f");
-game.addAsset("blocks/g");
-game.addAsset("blocks/h");
-game.addAsset("blocks/i");
-game.addAsset("blocks/j");
-game.addAsset("blocks/k");
-game.addAsset("blocks/l");
-game.addAsset("blocks/m");
-game.addAsset("blocks/n");
-game.addAsset("blocks/p");
-game.addAsset("blocks/q");
-game.addAsset("blocks/r");
-game.addAsset("blocks/s");
-game.addAsset("blocks/u");
-game.addAsset("blocks/u2");
-game.addAsset("blocks/v");
-game.addAsset("blocks/w");
-game.addAsset("blocks/y");
-game.addAsset("blocks/z");
+game.addImage("blocks/a");
+game.addImage("blocks/b");
+game.addImage("blocks/c");
+game.addImage("blocks/d");
+game.addImage("blocks/e");
+game.addImage("blocks/f");
+game.addImage("blocks/g");
+game.addImage("blocks/h");
+game.addImage("blocks/i");
+game.addImage("blocks/j");
+game.addImage("blocks/k");
+game.addImage("blocks/l");
+game.addImage("blocks/m");
+game.addImage("blocks/n");
+game.addImage("blocks/p");
+game.addImage("blocks/q");
+game.addImage("blocks/r");
+game.addImage("blocks/s");
+game.addImage("blocks/u");
+game.addImage("blocks/u2");
+game.addImage("blocks/v");
+game.addImage("blocks/w");
+game.addImage("blocks/y");
+game.addImage("blocks/z");
 
-game.addAsset("blocks/crumble/1");
-game.addAsset("blocks/crumble/2");
-game.addAsset("blocks/crumble/3");
-game.addAsset("blocks/crumble/4");
-game.addAsset("blocks/crumble/5");
-game.addAsset("blocks/crumble/6");
-game.addAsset("blocks/crumble/7");
-game.addAsset("blocks/crumble/8");
-game.addAsset("blocks/crumble/9");
+game.addImage("blocks/crumble/1");
+game.addImage("blocks/crumble/2");
+game.addImage("blocks/crumble/3");
+game.addImage("blocks/crumble/4");
+game.addImage("blocks/crumble/5");
+game.addImage("blocks/crumble/6");
+game.addImage("blocks/crumble/7");
+game.addImage("blocks/crumble/8");
+game.addImage("blocks/crumble/9");
 
-game.addAsset("blocks/button/red");
-game.addAsset("blocks/button/on");
+game.addImage("blocks/button/red");
+game.addImage("blocks/button/on");
 
-game.addAsset("blocks/spikes/up");
-game.addAsset("blocks/spikes/down");
-game.addAsset("blocks/spikes/left");
-game.addAsset("blocks/spikes/right");
+game.addImage("blocks/spikes/up");
+game.addImage("blocks/spikes/down");
+game.addImage("blocks/spikes/left");
+game.addImage("blocks/spikes/right");
+
+game.addImage("boss/sword/sword");
+game.addImage("boss/sword/open");
+game.addImage("boss/sword/heal");
+game.addImage("boss/sword/hurt");
 
 //
 // Post sword
 //
-game.addAsset("blocks/1");
-game.addAsset("blocks/2");
-game.addAsset("blocks/3");
-game.addAsset("blocks/4");
-game.addAsset("blocks/5");
-game.addAsset("blocks/6");
-game.addAsset("blocks/7");
-game.addAsset("blocks/8");
-game.addAsset("blocks/9");
-game.addAsset("blocks/!");
+game.addImage("blocks/1");
+game.addImage("blocks/2");
+game.addImage("blocks/3");
+game.addImage("blocks/4");
+game.addImage("blocks/5");
+game.addImage("blocks/6");
+game.addImage("blocks/7");
+game.addImage("blocks/8");
+game.addImage("blocks/9");
+game.addImage("blocks/!");
 
-game.addAsset("blocks/lightbutton/1");
-game.addAsset("blocks/lightbutton/2");
-game.addAsset("blocks/lightbutton/down");
+game.addImage("blocks/lightbutton/1");
+game.addImage("blocks/lightbutton/2");
+game.addImage("blocks/lightbutton/down");
 
-game.addAsset("jumplight");
+game.addImage("jumplight");
 
 //
 // Post second boss / Castle
 //
 
-game.addAsset("brick");
-game.addAsset("blocks/caret");
-game.addAsset("blocks/ampersand");
-game.addAsset("blocks/asterisk"); // IT WOULDN'T LET ME SAVE IT OTHERWISE
-game.addAsset("blocks/(");
-game.addAsset("blocks/)");
-game.addAsset("blocks/-");
-game.addAsset("blocks/underscore");
-game.addAsset("blocks/=");
-game.addAsset("blocks/+");
-game.addAsset("blocks/grave");
+game.addImage("brick");
+game.addImage("blocks/caret");
+game.addImage("blocks/ampersand");
+game.addImage("blocks/asterisk"); // IT WOULDN'T LET ME SAVE IT OTHERWISE
+game.addImage("blocks/(");
+game.addImage("blocks/)");
+game.addImage("blocks/-");
+game.addImage("blocks/underscore");
+game.addImage("blocks/=");
+game.addImage("blocks/+");
+game.addImage("blocks/grave");
 
-game.addAsset("blocks/castlecorner/topright");
-game.addAsset("blocks/castlecorner/topleft");
-game.addAsset("blocks/castlecorner/bottomright");
-game.addAsset("blocks/castlecorner/bottomleft");
+game.addImage("blocks/castlecorner/topright");
+game.addImage("blocks/castlecorner/topleft");
+game.addImage("blocks/castlecorner/bottomright");
+game.addImage("blocks/castlecorner/bottomleft");
+
+//
+// Sounds
+//
+
+game.addSound("music/exploration");
+game.addSound("music/netherslament");
+game.addSound("music/boss/1");
+game.addSound("music/boss/2");
+game.addSound("music/blackroad/1");
+game.addSound("music/blackroad/2");
+game.addSound("music/finalboss/1");
+game.addSound("music/finalboss/2");
 
 // wait for it to load then run our stuff
-game.waitForAssets().then(run);
+const progressElement = document.getElementById("progress") as HTMLProgressElement;
+game.waitForAssets((progress) => {
+  progressElement.value = progress;
+}).then(run);
 
 function run() {
+  progressElement.style.display = "none";
   game.start();
 }
