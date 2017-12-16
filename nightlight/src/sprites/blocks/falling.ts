@@ -34,16 +34,25 @@ export class FallingBlock extends SolidBlock {
       const fromBottom = this.runtime.canvas.height - this.y;
       task.stop();
       this.position = this.startingPosition;
+      const delay = fromBottom * FALL_DELAY_PER_Y;
       this.addTask(new Task({
         run: this.fall,
-        delay: fromBottom * FALL_DELAY_PER_Y,
+        delay,
         repeatEvery: 0,
+      }));
+      this.addTask(new Task({
+        run: this.playSound,
+        delay,
       }));
     } else if (this.vibrateProgress % 2 === 0) {
       this.x -= VIBRATE_RANGE;
     } else {
       this.x += VIBRATE_RANGE;
     }
+  }
+
+  private playSound() {
+    this.runtime.playSound("blocks/smash");
   }
 
   private fall(task: Task) {

@@ -28,6 +28,7 @@ export class CrumblingBlock extends SolidBlock {
     if (!this.crumbling && !horizontal && velocity < 0 && sprite instanceof PlayerSprite) {
       this.crumbling = true;
 
+      this.runtime.playSound("blocks/fall");
       this.addTask(new Task({
         run: this.crumble,
         repeatEvery: CRUMBLE_FRAME_LENGTH,
@@ -53,6 +54,8 @@ export class CrumblingBlock extends SolidBlock {
   private crumble(task: Task) {
     this.crumbleProgress++;
     this.updateVisual();
+
+    this.runtime.playSound("blocks/break");
 
     if (this.crumbleProgress === CRUMBLE_FRAMES) {
       task.stop();

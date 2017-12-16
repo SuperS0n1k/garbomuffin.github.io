@@ -120,6 +120,19 @@ game.addImage("blocks/castlecorner/bottomleft");
 // Sounds
 //
 
+game.addSound("blocks/coin");
+game.addSound("blocks/break");
+game.addSound("blocks/fall");
+game.addSound("blocks/smash");
+game.addSound("blocks/button");
+game.addSound("blocks/fds");
+
+game.addSound("player/death");
+game.addSound("player/ding");
+game.addSound("player/jump1");
+game.addSound("player/jump2");
+
+// background music
 game.addSound("music/exploration");
 game.addSound("music/netherslament");
 game.addSound("music/boss/1");

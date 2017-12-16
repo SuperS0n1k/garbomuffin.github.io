@@ -22,6 +22,7 @@ export class LevelUpCoinSprite extends Block {
   public run() {
     const touchingPlayer = this.intersects(this.runtime.player);
     if (touchingPlayer) {
+      this.runtime.playSound("blocks/coin");
       this.runtime.level++;
       this.runtime.renderLevel();
     }

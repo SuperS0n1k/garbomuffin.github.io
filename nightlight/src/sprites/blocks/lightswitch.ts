@@ -49,6 +49,8 @@ export class LightSwitchBlock extends SolidBlock {
       run: this.destroy,
       delay: DESTROY_DELAY,
     }));
+
+    this.runtime.playSound("blocks/fds");
   }
 
   public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {

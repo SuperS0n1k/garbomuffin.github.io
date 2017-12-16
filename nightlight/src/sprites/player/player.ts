@@ -66,6 +66,8 @@ export class PlayerSprite extends ImageSprite {
     }
 
     if ((upDown && onGround) || (upJustPressed && this.hasJumpLight)) {
+      const quiet = this.texture === this.runtime.getImage("player/idle");
+      this.runtime.playSound(`player/jump${quiet ? 2 : 1}`);
       this.hasJumpLight = false;
       this.yv = JUMP_HEIGHT;
     } else if (!upDown && this.yv > 3) {
@@ -84,12 +86,19 @@ export class PlayerSprite extends ImageSprite {
       this.xv = -PLAYER_MAX_SPEED;
     }
 
+    const prevXv = this.xv;
+    const prevYv = this.yv;
+
     const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
       friction: false,
     });
     this.xv = physicsResult.xv;
     this.yv = physicsResult.yv;
     this.onGround = physicsResult.onGround;
+
+    if (this.onGround && prevYv < -1.6) {
+      this.runtime.playSound("player/ding");
+    }
 
     if (this.onGround) {
       this.hasJumpLight = false;
@@ -143,6 +152,7 @@ export class PlayerSprite extends ImageSprite {
     }
 
     this.reset();
+    this.runtime.playSound("player/death");
   }
 
   private updateGraphic() {

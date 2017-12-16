@@ -279,7 +279,7 @@ const FRICTION = 0.75;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fragment__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fragment__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_vector__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__blocks_block__ = __webpack_require__(0);
@@ -342,6 +342,8 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
             this.moving = true;
         }
         if ((upDown && onGround) || (upJustPressed && this.hasJumpLight)) {
+            const quiet = this.texture === this.runtime.getImage("player/idle");
+            this.runtime.playSound(`player/jump${quiet ? 2 : 1}`);
             this.hasJumpLight = false;
             this.yv = JUMP_HEIGHT;
         }
@@ -359,12 +361,17 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
         else if (this.xv < -PLAYER_MAX_SPEED) {
             this.xv = -PLAYER_MAX_SPEED;
         }
+        const prevXv = this.xv;
+        const prevYv = this.yv;
         const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
             friction: false,
         });
         this.xv = physicsResult.xv;
         this.yv = physicsResult.yv;
         this.onGround = physicsResult.onGround;
+        if (this.onGround && prevYv < -1.6) {
+            this.runtime.playSound("player/ding");
+        }
         if (this.onGround) {
             this.hasJumpLight = false;
         }
@@ -409,6 +416,7 @@ class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
             });
         }
         this.reset();
+        this.runtime.playSound("player/death");
     }
     updateGraphic() {
         this.scale.x = this.lastMovementDirection;
@@ -908,10 +916,15 @@ class FallingBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBloc
             const fromBottom = this.runtime.canvas.height - this.y;
             task.stop();
             this.position = this.startingPosition;
+            const delay = fromBottom * FALL_DELAY_PER_Y;
             this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
                 run: this.fall,
-                delay: fromBottom * FALL_DELAY_PER_Y,
+                delay,
                 repeatEvery: 0,
+            }));
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+                run: this.playSound,
+                delay,
             }));
         }
         else if (this.vibrateProgress % 2 === 0) {
@@ -920,6 +933,9 @@ class FallingBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBloc
         else {
             this.x += VIBRATE_RANGE;
         }
+    }
+    playSound() {
+        this.runtime.playSound("blocks/smash");
     }
     fall(task) {
         this.solid = false;
@@ -1046,6 +1062,17 @@ game.addImage("blocks/castlecorner/bottomleft");
 //
 // Sounds
 //
+game.addSound("blocks/coin");
+game.addSound("blocks/break");
+game.addSound("blocks/fall");
+game.addSound("blocks/smash");
+game.addSound("blocks/button");
+game.addSound("blocks/fds");
+game.addSound("player/death");
+game.addSound("player/ding");
+game.addSound("player/jump1");
+game.addSound("player/jump2");
+// background music
 game.addSound("music/exploration");
 game.addSound("music/netherslament");
 game.addSound("music/boss/1");
@@ -1074,14 +1101,14 @@ function run() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__levels_levels__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blockmap__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blockmap__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__engine_container__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_star__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_star__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(39);
 
 
 
@@ -1846,8 +1873,7 @@ function getLevels(game) {
 
 
 /***/ }),
-/* 24 */,
-/* 25 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1895,22 +1921,22 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_crumble__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_crumble__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_falling__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_blockswitchspawner__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_lightblock__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightswitch__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_blockswitchspawner__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_lightblock__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightswitch__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__ = __webpack_require__(36);
 
 
 
@@ -1990,7 +2016,7 @@ const blockMap = {
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2048,7 +2074,7 @@ class RightSpikeBlock extends SpikeBlock {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2073,7 +2099,7 @@ class TallGrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block *
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2099,6 +2125,7 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
         super.handleIntersect(sprite, velocity, horizontal);
         if (!this.crumbling && !horizontal && velocity < 0 && sprite instanceof __WEBPACK_IMPORTED_MODULE_0__player_player__["a" /* PlayerSprite */]) {
             this.crumbling = true;
+            this.runtime.playSound("blocks/fall");
             this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
                 run: this.crumble,
                 repeatEvery: CRUMBLE_FRAME_LENGTH,
@@ -2121,6 +2148,7 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
     crumble(task) {
         this.crumbleProgress++;
         this.updateVisual();
+        this.runtime.playSound("blocks/break");
         if (this.crumbleProgress === CRUMBLE_FRAMES) {
             task.stop();
             this.solid = false;
@@ -2146,12 +2174,12 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
 
@@ -2175,7 +2203,7 @@ class BlockSwitchSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2204,6 +2232,7 @@ class BlockSwitch extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Blo
         this.updateDimensions();
         this.position = this.startingPosition;
         this.floorAlign();
+        this.runtime.playSound("blocks/button");
     }
     run(task) {
         if (this.intersects(this.runtime.player)) {
@@ -2217,7 +2246,7 @@ class BlockSwitch extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Blo
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2260,7 +2289,7 @@ class DisabledLightBlock extends LightBlock {
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2307,6 +2336,7 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
             run: this.destroy,
             delay: DESTROY_DELAY,
         }));
+        this.runtime.playSound("blocks/fds");
     }
     handleIntersect(sprite, velocity, horizontal) {
         super.handleIntersect(sprite, velocity, horizontal);
@@ -2321,12 +2351,12 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
 
@@ -2360,7 +2390,7 @@ class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
 
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2385,6 +2415,7 @@ class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" 
     run() {
         const touchingPlayer = this.intersects(this.runtime.player);
         if (touchingPlayer) {
+            this.runtime.playSound("blocks/coin");
             this.runtime.level++;
             this.runtime.renderLevel();
         }
@@ -2401,7 +2432,7 @@ class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" 
 
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2441,7 +2472,7 @@ class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock
 
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2521,7 +2552,7 @@ class CastleCornerBlock extends CornerBlock {
 
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2580,7 +2611,7 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
 
 
 /***/ }),
-/* 39 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2663,7 +2694,7 @@ const JumpLights = [
 
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

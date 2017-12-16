@@ -32,6 +32,8 @@ export class BlockSwitch extends Block {
     this.updateDimensions();
     this.position = this.startingPosition;
     this.floorAlign();
+
+    this.runtime.playSound("blocks/button");
   }
 
   private run(task: Task) {
