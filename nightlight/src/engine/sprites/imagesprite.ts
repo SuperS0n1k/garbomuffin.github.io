@@ -2,9 +2,6 @@ import { AbstractSprite, ISpriteOptions } from "../sprite";
 import { TImage } from "../types";
 import { getOrDefault, degreeToRadians } from "../utils";
 
-// NIGHTLIGHT: images are imported from scratch which has things at 2x actual res
-export const TEXTURE_SCALE = 2;
-
 export interface IImageSpriteOptions extends ISpriteOptions {
   texture: TImage;
   rotation?: number;
@@ -20,8 +17,8 @@ export class ImageSprite extends AbstractSprite {
     super(options);
 
     this.texture = options.texture;
-    this.width = getOrDefault(options.width, this.texture.width / TEXTURE_SCALE) as number;
-    this.height = getOrDefault(options.height, this.texture.height / TEXTURE_SCALE) as number;
+    this.width = getOrDefault(options.width, this.texture.width) as number;
+    this.height = getOrDefault(options.height, this.texture.height) as number;
 
     this.rotation = getOrDefault(options.rotation, 0);
     this.opacity = getOrDefault(options.opacity, 1);
@@ -62,7 +59,7 @@ export class ImageSprite extends AbstractSprite {
   }
 
   public updateDimensions() {
-    this.width = this.texture.width / TEXTURE_SCALE;
-    this.height = this.texture.height / TEXTURE_SCALE;
+    this.width = this.texture.width;
+    this.height = this.texture.height;
   }
 }

@@ -86,12 +86,12 @@ class Block extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a
     }
     leftAlign() {
         this.centerAlign(false, true);
-        this.x += __WEBPACK_IMPORTED_MODULE_1__config__["c" /* BLOCK_WIDTH */] - this.width;
+        this.x += __WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] - this.width;
         this.x = Math.floor(this.x);
     }
     centerAlign(centerX = true, centerY = true) {
         if (centerX) {
-            this.x += (__WEBPACK_IMPORTED_MODULE_1__config__["c" /* BLOCK_WIDTH */] - this.width) / 2;
+            this.x += (__WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] - this.width) / 2;
             this.x = Math.floor(this.x);
         }
         if (centerY) {
@@ -256,22 +256,19 @@ const BLOCK_HEIGHT = 16;
 /* harmony export (immutable) */ __webpack_exports__["a"] = BLOCK_HEIGHT;
 
 const BLOCK_WIDTH = 16;
-/* harmony export (immutable) */ __webpack_exports__["c"] = BLOCK_WIDTH;
-
-const BLOCK_SIZE_SCALE = 2;
-/* harmony export (immutable) */ __webpack_exports__["b"] = BLOCK_SIZE_SCALE;
+/* harmony export (immutable) */ __webpack_exports__["b"] = BLOCK_WIDTH;
 
 const LEVEL_HEIGHT = 23;
 /* unused harmony export LEVEL_HEIGHT */
 
 const LEVEL_WIDTH = 30;
-/* harmony export (immutable) */ __webpack_exports__["f"] = LEVEL_WIDTH;
+/* harmony export (immutable) */ __webpack_exports__["e"] = LEVEL_WIDTH;
 
 const GRAVITY = 0.195;
-/* harmony export (immutable) */ __webpack_exports__["e"] = GRAVITY;
+/* harmony export (immutable) */ __webpack_exports__["d"] = GRAVITY;
 
 const FRICTION = 0.75;
-/* harmony export (immutable) */ __webpack_exports__["d"] = FRICTION;
+/* harmony export (immutable) */ __webpack_exports__["c"] = FRICTION;
  // xv *= FRICTION
 
 
@@ -492,16 +489,12 @@ function degreeToRadians(deg) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(5);
 
 
-// NIGHTLIGHT: images are imported from scratch which has things at 2x actual res
-const TEXTURE_SCALE = 2;
-/* unused harmony export TEXTURE_SCALE */
-
 class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
     constructor(options) {
         super(options);
         this.texture = options.texture;
-        this.width = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.width, this.texture.width / TEXTURE_SCALE);
-        this.height = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.height, this.texture.height / TEXTURE_SCALE);
+        this.width = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.width, this.texture.width);
+        this.height = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.height, this.texture.height);
         this.rotation = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.rotation, 0);
         this.opacity = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.opacity, 1);
     }
@@ -534,8 +527,8 @@ class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractS
         ctx.restore();
     }
     updateDimensions() {
-        this.width = this.texture.width / TEXTURE_SCALE;
-        this.height = this.texture.height / TEXTURE_SCALE;
+        this.width = this.texture.width;
+        this.height = this.texture.height;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ImageSprite;
@@ -647,7 +640,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
             }
         }
         let onGround = false;
-        yv -= __WEBPACK_IMPORTED_MODULE_3__config__["e" /* GRAVITY */];
+        yv -= __WEBPACK_IMPORTED_MODULE_3__config__["d" /* GRAVITY */];
         this.y -= yv;
         if (options.collision && this.handleCollision(yv, false)) {
             if (yv < 0) {
@@ -657,7 +650,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
         }
         if (options.friction) {
             if (onGround || options.midAirFriction) {
-                xv *= __WEBPACK_IMPORTED_MODULE_3__config__["d" /* FRICTION */];
+                xv *= __WEBPACK_IMPORTED_MODULE_3__config__["c" /* FRICTION */];
             }
         }
         if (options.roundValues) {
@@ -1075,7 +1068,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         this.player = new __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__["a" /* PlayerSprite */]({
             texture: this.getAsset("player/idle"),
             position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](0, 0, 10),
-            width: __WEBPACK_IMPORTED_MODULE_6__config__["c" /* BLOCK_WIDTH */],
+            width: __WEBPACK_IMPORTED_MODULE_6__config__["b" /* BLOCK_WIDTH */],
             height: __WEBPACK_IMPORTED_MODULE_6__config__["a" /* BLOCK_HEIGHT */],
             persistent: true,
         });
@@ -1125,8 +1118,8 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
             return;
         }
         const opts = {
-            width: texture.width / __WEBPACK_IMPORTED_MODULE_6__config__["b" /* BLOCK_SIZE_SCALE */],
-            height: texture.height / __WEBPACK_IMPORTED_MODULE_6__config__["b" /* BLOCK_SIZE_SCALE */],
+            width: texture.width,
+            height: texture.height,
             position,
             texture,
             levelIndex: index,
@@ -1149,7 +1142,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
                 const position = new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](x, y);
                 this.createBlock(position, char, i);
             }
-            x += __WEBPACK_IMPORTED_MODULE_6__config__["c" /* BLOCK_WIDTH */];
+            x += __WEBPACK_IMPORTED_MODULE_6__config__["b" /* BLOCK_WIDTH */];
             if (x >= this.canvas.width) {
                 x = 0;
                 y -= __WEBPACK_IMPORTED_MODULE_6__config__["a" /* BLOCK_HEIGHT */];
@@ -1207,6 +1200,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
 
 const CANVAS_WIDTH = 480;
 const CANVAS_HEIGHT = 360;
+const IMAGE_FORMAT = "png";
 // this is the main game runtime object
 // rendering is done here
 // a lot of stuff is done here
@@ -1255,7 +1249,10 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         // TODO: consider using the new src and adding that into getAsset?
         const originalSrc = src;
         // add the extension and folder
-        src = `assets/${src}.png`;
+        src = `assets/${src}`;
+        if (src.indexOf(".") === -1) {
+            src += "." + IMAGE_FORMAT;
+        }
         console.log("adding asset", src);
         // create a promise that will resolve when onload is called or
         // reject when onerror is called
@@ -2344,7 +2341,7 @@ class CornerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] 
         const charAtOffset = this.runtime.levelData[this.levelIndex + offset];
         const isAir = AIR.indexOf(charAtOffset) > -1;
         if (isAir) {
-            const position = new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x + x * (__WEBPACK_IMPORTED_MODULE_1__config__["c" /* BLOCK_WIDTH */] / 2), this.y + y * (__WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */] / 2));
+            const position = new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x + x * (__WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] / 2), this.y + y * (__WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */] / 2));
             const sprite = new __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__["a" /* ImageSprite */]({
                 position,
                 texture,
@@ -2361,17 +2358,17 @@ class RotatedCornerBlock extends CornerBlock {
             texture: this.runtime.getAsset("blocks/a"),
             position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y, -1),
         });
-        const offset = this.width === __WEBPACK_IMPORTED_MODULE_1__config__["c" /* BLOCK_WIDTH */] ? 0 : 1;
+        const offset = this.width === __WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] ? 0 : 1;
         // if spawned on far left edge then don't check for things that will wrap around to other side of screen
-        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== 0) {
-            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, this.texture, -90, 0, 0);
-            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, this.texture, 180, 0, offset);
+        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] !== 0) {
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1, this.texture, -90, 0, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1, this.texture, 180, 0, offset);
         }
         // if spawned on far right edge then don't check for things that will wrap around to other side of screen
         // untested but should work
-        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1) {
-            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, this.texture, 0, offset, 0);
-            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, this.texture, 90, offset, offset);
+        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] !== __WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1) {
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] + 1, this.texture, 0, offset, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] + 1, this.texture, 90, offset, offset);
         }
     }
 }
@@ -2380,13 +2377,13 @@ class RotatedCornerBlock extends CornerBlock {
 class CastleCornerBlock extends CornerBlock {
     constructor(opts) {
         super(opts);
-        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== 0) {
-            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, this.runtime.getAsset("blocks/castlecorner/topleft"), 0, 0, 0);
-            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, this.runtime.getAsset("blocks/castlecorner/bottomleft"), 0, 0, 0);
+        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] !== 0) {
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1, this.runtime.getAsset("blocks/castlecorner/topleft"), 0, 0, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1, this.runtime.getAsset("blocks/castlecorner/bottomleft"), 0, 0, 0);
         }
-        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1) {
-            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, this.runtime.getAsset("blocks/castlecorner/topright"), 0, 0, 0);
-            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, this.runtime.getAsset("blocks/castlecorner/bottomright"), 0, 0, 0);
+        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] !== __WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] - 1) {
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] + 1, this.runtime.getAsset("blocks/castlecorner/topright"), 0, 0, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["e" /* LEVEL_WIDTH */] + 1, this.runtime.getAsset("blocks/castlecorner/bottomright"), 0, 0, 0);
         }
     }
 }

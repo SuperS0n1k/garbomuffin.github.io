@@ -1,6 +1,5 @@
 import { TBackground } from "../engine/types";
 import { Nightlight } from "../game";
-import { TEXTURE_SCALE } from "../engine/sprites/imagesprite";
 
 export type THandler = (game: Nightlight) => void;
 
@@ -112,5 +111,5 @@ export function getLevels(game: Nightlight): Level[] {
     {
       levelData: "eaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf..gi..eaaaaf..gi..eaaaafeaaaaf..bd..eaaaaf..bd..eaaaafemcncd..jl..eaaaaf..jl..bcncmfef..........eaaaaf..........efef..........bccccd..........efef..........jkkkkl..........efbd..........................bdnl..........................jn...................................ghhi............ghhi..........eaaf............eaaf..........bccd............bccd.............................................................................ghhhhi........................jkkkkl......................................................................................................",
     },
-  ]
+  ];
 }

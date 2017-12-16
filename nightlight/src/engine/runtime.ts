@@ -11,6 +11,7 @@ import { isMobile } from "./utils";
 
 const CANVAS_WIDTH = 480;
 const CANVAS_HEIGHT = 360;
+const IMAGE_FORMAT = "png";
 
 // this is the main game runtime object
 // rendering is done here
@@ -78,7 +79,10 @@ export class GameRuntime extends TaskRunner {
     const originalSrc = src;
 
     // add the extension and folder
-    src = `assets/${src}.png`;
+    src = `assets/${src}`;
+    if (src.indexOf(".") === -1) {
+      src += "." + IMAGE_FORMAT;
+    }
 
     console.log("adding asset", src);
 

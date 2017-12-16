@@ -96,8 +96,8 @@ export class Nightlight extends GameRuntime {
     }
 
     const opts: IBlockOptions = {
-      width: texture.width / config.BLOCK_SIZE_SCALE,
-      height: texture.height / config.BLOCK_SIZE_SCALE,
+      width: texture.width,
+      height: texture.height,
       position,
       texture,
       levelIndex: index,
