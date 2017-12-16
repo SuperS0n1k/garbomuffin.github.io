@@ -1,7 +1,5 @@
 // a container contains sprites
 // isn't that earth shattering or what?
-// these were used more heavily in my older games
-// currently only one of these are used: the sprites list
 
 import { GameRuntime } from "./runtime";
 import { Sprite, TGame } from "./types";

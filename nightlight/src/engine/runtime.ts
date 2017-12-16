@@ -6,7 +6,7 @@ import { TouchscreenMouse } from "./drivers/mouse/touchscreen";
 import { ExitError } from "./errors/exit";
 import { AbstractSprite } from "./sprite";
 import { TaskRunner } from "./task";
-import { TImage } from "./types";
+import { TImage, TBackground } from "./types";
 import { isMobile } from "./utils";
 
 const CANVAS_WIDTH = 480;
@@ -27,7 +27,7 @@ export class GameRuntime extends TaskRunner {
   public ctx: CanvasRenderingContext2D;
   public frames: number = 0;
 
-  protected backgroundColor: string = "white";
+  public background: TBackground = "white";
   private _assetPromises: Array<Promise<TImage>> = [];
 
   constructor(canvas: HTMLCanvasElement) {
@@ -198,7 +198,7 @@ export class GameRuntime extends TaskRunner {
   // clears the canvas and replaces it with a blank white background
   protected resetCanvas() {
     this.ctx.scale(1, 1);
-    this.ctx.fillStyle = this.backgroundColor;
+    this.ctx.fillStyle = this.background;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 

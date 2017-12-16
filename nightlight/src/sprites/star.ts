@@ -18,6 +18,8 @@ export class BackgroundStarSprite extends AbstractSprite {
       repeatEvery: UPDATE_EVERY,
       run: this.animate,
     }));
+
+    this.runtime.backgroundStars.push(this);
   }
 
   private animate() {

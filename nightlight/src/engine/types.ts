@@ -12,3 +12,5 @@ export type TaskRunnable = (task: Task) => void;
 export type TGame = Nightlight;
 
 export type Sprite = AbstractSprite;
+
+export type TBackground = string | CanvasGradient | CanvasPattern;

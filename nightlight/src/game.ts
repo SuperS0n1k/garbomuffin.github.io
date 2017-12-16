@@ -1,5 +1,5 @@
 import { GameRuntime } from "./engine/runtime";
-import { Levels } from "./levels/levels";
+import { getLevels, Level } from "./levels/levels";
 import { PlayerSprite } from "./sprites/player/player";
 import { Vector } from "./engine/vector";
 import { blockMap } from "./blockmap";
@@ -17,13 +17,13 @@ import { JumpLight } from "./sprites/jumplight";
 export class Nightlight extends GameRuntime {
   public level: number = 0;
   public levelData: string;
+  public levels: Level[];
   public player: PlayerSprite;
 
   // containers
   public blocks: Container<Block> = new Container();
   public lightBlocks: Container<LightBlock> = new Container();
-
-  protected backgroundColor = "black";
+  public backgroundStars: Container<BackgroundStarSprite> = new Container();
 
   constructor() {
     super(document.getElementById("canvas") as HTMLCanvasElement);
@@ -31,6 +31,8 @@ export class Nightlight extends GameRuntime {
 
   public start() {
     super.start();
+
+    this.levels = getLevels(this);
 
     this.createPlayer();
     this.createStarBackground();
@@ -104,13 +106,14 @@ export class Nightlight extends GameRuntime {
     new spriteConstructor(opts);
   }
 
-  public renderLevel(level: number = this.level) {
+  public renderLevel(num: number = this.level) {
     this.destroyLevel();
 
-    const levelData = Levels[level];
-    if (!levelData) {
+    const level = this.levels[num];
+    if (!level) {
       alert("That's the end of the game for now. Thanks for playing.");
     }
+    const levelData = level.levelData;
 
     this.levelData = levelData;
 
@@ -129,6 +132,16 @@ export class Nightlight extends GameRuntime {
       if (x >= this.canvas.width) {
         x = 0;
         y -= config.BLOCK_HEIGHT;
+      }
+    }
+
+    if (level.newBackground) {
+      this.background = level.newBackground;
+    }
+
+    if (level.handlers) {
+      for (const handler of level.handlers) {
+        handler(this);
       }
     }
 

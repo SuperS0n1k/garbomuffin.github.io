@@ -1,7 +1,6 @@
 import { Block, PseudoSolidBlock } from "./sprites/blocks/block";
 import { GrassBlock } from "./sprites/blocks/grass";
 import { UpSpikeBlock, LeftSpikeBlock, RightSpikeBlock, DownSpikeBlock } from "./sprites/blocks/spike";
-import { CornerBlock } from "./sprites/blocks/corner";
 import { TallGrassBlock } from "./sprites/blocks/tallgrass";
 import { CrumblingBlock } from "./sprites/blocks/crumble";
 import { FallingBlock } from "./sprites/blocks/falling";
@@ -10,6 +9,7 @@ import { DisabledLightBlock, EnabledLightBlock } from "./sprites/blocks/lightblo
 import { LightSwitchBlock } from "./sprites/blocks/lightswitch";
 import { AboveLevelUpCoinSpawnerBlock, BelowLevelUpCoinSpawnerBlock } from "./sprites/blocks/coinspawner";
 import { OneWayBlock } from "./sprites/blocks/oneway";
+import { RotatedCornerBlock, CastleCornerBlock } from "./sprites/blocks/corner";
 
 interface IBlockMap {
   [s: string]: string | IBlockMetaData;
@@ -43,7 +43,7 @@ export const blockMap: IBlockMap = {
   "j": special(GrassBlock, "blocks/j"),
   "k": special(GrassBlock, "blocks/k"),
   "l": special(GrassBlock, "blocks/l"),
-  "m": special(CornerBlock, "blocks/m"),
+  "m": special(RotatedCornerBlock, "blocks/m"),
   "n": special(AboveLevelUpCoinSpawnerBlock, "blocks/n"),
   "o": special(UpSpikeBlock, "blocks/spikes/up"),
   "p": special(TallGrassBlock, "blocks/p"),
@@ -67,7 +67,7 @@ export const blockMap: IBlockMap = {
   "6": "blocks/6",
   "7": "blocks/7",
   "8": "blocks/8",
-  "9": special(CornerBlock, "blocks/9"),
+  "9": special(RotatedCornerBlock, "blocks/9"),
   "@": special(BelowLevelUpCoinSpawnerBlock, "blocks/n"),
   "!": special(OneWayBlock, "blocks/!"),
   "#": special(LeftSpikeBlock, "blocks/spikes/left"),
@@ -75,14 +75,14 @@ export const blockMap: IBlockMap = {
   "%": special(DownSpikeBlock, "blocks/spikes/down"),
 
   // Castle
-  "^": special(PseudoSolidBlock, "blocks/^"), // not solid
+  "^": special(PseudoSolidBlock, "blocks/^"),
   "&": "blocks/&",
-  "*": "blocks/asterisk",
+  "*": "blocks/asterisk", // scratch why
   "(": "blocks/(",
   ")": "blocks/)",
   "-": "blocks/-",
-  "_": "blocks/underscore",
+  "_": "blocks/underscore", // github why
   "=": "blocks/=",
   "+": "blocks/+",
-  "`": "blocks/`",
+  "`": special(CastleCornerBlock, "blocks/`"),
 };

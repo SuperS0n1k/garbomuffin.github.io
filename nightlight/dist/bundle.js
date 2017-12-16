@@ -528,7 +528,9 @@ class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractS
             ctx.scale(this.scale.x, this.scale.y);
             ctx.translate(-translateX, -translateY);
         }
-        ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
+        const x = Math.floor(this.x);
+        const y = Math.floor(this.y);
+        ctx.drawImage(this.texture, x, y, this.width, this.height);
         ctx.restore();
     }
     updateDimensions() {
@@ -688,8 +690,6 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__);
 // a container contains sprites
 // isn't that earth shattering or what?
-// these were used more heavily in my older games
-// currently only one of these are used: the sprites list
 
 class Container {
     constructor() {
@@ -1004,6 +1004,7 @@ game.addAsset("jumplight");
 //
 // Post second boss / Castle
 //
+game.addAsset("brick");
 game.addAsset("blocks/^");
 game.addAsset("blocks/&");
 game.addAsset("blocks/asterisk"); // IT WOULDN'T LET ME SAVE IT OTHERWISE
@@ -1014,6 +1015,10 @@ game.addAsset("blocks/underscore");
 game.addAsset("blocks/=");
 game.addAsset("blocks/+");
 game.addAsset("blocks/`");
+game.addAsset("blocks/castlecorner/topright");
+game.addAsset("blocks/castlecorner/topleft");
+game.addAsset("blocks/castlecorner/bottomright");
+game.addAsset("blocks/castlecorner/bottomleft");
 // wait for it to load then run our stuff
 game.waitForAssets().then(run);
 function run() {
@@ -1057,10 +1062,11 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         // containers
         this.blocks = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
         this.lightBlocks = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
-        this.backgroundColor = "black";
+        this.backgroundStars = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
     }
     start() {
         super.start();
+        this.levels = Object(__WEBPACK_IMPORTED_MODULE_1__levels_levels__["a" /* getLevels */])(this);
         this.createPlayer();
         this.createStarBackground();
         this.renderLevel();
@@ -1127,12 +1133,13 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         };
         new spriteConstructor(opts);
     }
-    renderLevel(level = this.level) {
+    renderLevel(num = this.level) {
         this.destroyLevel();
-        const levelData = __WEBPACK_IMPORTED_MODULE_1__levels_levels__["a" /* Levels */][level];
-        if (!levelData) {
+        const level = this.levels[num];
+        if (!level) {
             alert("That's the end of the game for now. Thanks for playing.");
         }
+        const levelData = level.levelData;
         this.levelData = levelData;
         let x = 0;
         let y = this.canvas.height - __WEBPACK_IMPORTED_MODULE_6__config__["a" /* BLOCK_HEIGHT */];
@@ -1146,6 +1153,14 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
             if (x >= this.canvas.width) {
                 x = 0;
                 y -= __WEBPACK_IMPORTED_MODULE_6__config__["a" /* BLOCK_HEIGHT */];
+            }
+        }
+        if (level.newBackground) {
+            this.background = level.newBackground;
+        }
+        if (level.handlers) {
+            for (const handler of level.handlers) {
+                handler(this);
             }
         }
         this.spawnJumpLights();
@@ -1202,7 +1217,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         this.assets = new Map();
         this.containers = [];
         this.frames = 0;
-        this.backgroundColor = "white";
+        this.background = "white";
         this._assetPromises = [];
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
@@ -1339,7 +1354,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
     // clears the canvas and replaces it with a blank white background
     resetCanvas() {
         this.ctx.scale(1, 1);
-        this.ctx.fillStyle = this.backgroundColor;
+        this.ctx.fillStyle = this.background;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
     // small function that calls the mouse driver's update funciton
@@ -1600,33 +1615,109 @@ class ExitError extends Error {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const Levels = [
-    "eaaaaaaaaafeaaaafeaaaaaaaaaaaaeaaaaaaaaafbccccdeaaaaaaaaaaaaeaaaaaaaaafooooooeaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaabcccccccccd......bcccmaaaaaaaajkpppkkpqkl......jkqpeaaaaaaaa.....................eaaaaaaaa.....................eamccccnc.....................bcdkpkq.k.....................qpl..............................................................................................................................................................................................................................................................................................................................................................................",
-    "aaaaaaaaaafr.r.r.r.r.r.eaaaaaaaaaaaaaaaafo.o.o.o.o.o.eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf.gi.........eaaaaaaaaaaaaaaaaf.jl.........eaaaaaaaaaaaaaaaaf.......gi...eaaaaaaccccccccccd.......jl...eaaaaaaqkkpkpqqkkl...........gmaaaaaa.....................gmaaaaaaa.....................bcmaaaaaa.....................kqeaaaaaa............ghhhhi.....eaaaaaa............jpqqkl.....eaaaaaa......ghi..............eaaaaaa......qkp..............eaaaaaa.......................eaaaaaa.............ghhhhi....bccnccc.............jqkkpl....pkq.kqk..........................................................................................",
-    "aaaaaaf..............srrrrrrrraaaaaaf..............srrrrrrrraaaaaaf..............srrrrrrrraaaaaaf..............sssssrrrraaaaaaf..................srrrraaaaaaf..t....t..........srrrraaaaaaf..................srrrraaaaaaf..................ssnssaaaaaaf.......................ccccccd.......................kpkqqkl....gi............................ef.........ghhhhhhh...........ef.......ghmaaaaaaa...........ef......gmaaaaaaaaa...........emhhhhhhmaaaaaaaaaa...........eaaaaaaaaaaaaaaaaaa.........ghmaaaaaaaaaaaaaaaaaa.......ghmaaaaaaaaaaaaaaaaaaaa.....ghmaaaaaaaaaaaaaaaaaaaaaa...ghmaaaaaaaaaaaaaaaaaaaaaaaa..gmaaaaaaaaaaaaaaaaaaaaaaaaaa.gmaaaaaaaaaaaaaaaaaaaaaaaaaaa.eaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "rrrrrs...................srrrrrrrrrs...................srrrrrrrrrs...................srrrrrrrrrs...................srrrrrrssss...................ssnssrrs......t...t................rrs...........................sss..............t...................................................gi............................emhi.................hi......gmaaf.................amhi...gmaaami...............gaaamhhhmaaaaamhi...........ghmaaaaaaaaaaaaaaamhhi.....ghhmaaaaaaaaaaaaaaaaaaaamhhhhhmaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "aaaaaf.............t....eaaaaaaaaaaf...t..............bcmaaaaaaaaf........t...........bmaaaaamcd.....................bcmmccd.........................ef...........................gmf.....ghhhvvvvvvhhhi.......gmami...gmmcdoo..oobccmhhi....peafp..gmaf...........bcmmhhi..eaf...qeaf.............bmafp..eami...emmi.............emd...eaami..efpp..ghhhi......ef...gmaafq..ef....pqncmi....gmd...eaaaf...bmi.......ef....bd....eaaaf....ef.......ef....w....gmaaami...ef.ghhhhhmmi...w....eaaaaami..emhmccuccmamhi.w..ghmaaaaaaf..bccd.....bmaamhhhhmaaaaaaaaf............eaaaaaaaaaaaaaaaami..........gmaaaaaaaaaaaaaaaaami.......ghmaaaaaaaaaaaaaaaaaaamhhhhhhhmaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "aaaaaaaaaaafbccccdeaaaaaaaaaaaaaaaaaaaaaafooooooeaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaacccccccccccd......bccccccccccckkpppkkqpkkl......jkqkqkkpqqpp....................................................................................................................................................................................................................................................................................................................................................................................................................................",
-    "aaaaaa5...................4aaaaaaaaa5...........y.......4aaaaaaaaa5...................4aaaaaaaaa5.....y.zzz.........1222aaaaaa5............zzz......x.aaaaaa5.......................2222223..zzz..............................................................................................................y..........................................................................................................................y678...........................4a5..........67778............123...t......4aaa5......68..............t..12n23......13....................................................................................................................................................",
-    "aaaaaaaaaaaaaaaa5..!!!!!4aa5..aaaaaaaaaaaaaaaa5.....x.4aa98.aaaaaaaaaaaaaaaa5.......4aaa5.a9222222222229aa5.......4aaa98a5...w..w....4aa5..!!!!!122223a5...w.......4aa5.......aaaa..a5...w.......4aa5.......aaaa..a5.........!!4aa5!!!!!!!6778!.a5...........4aa5ooooooo4aa5..a978.........1223.......1223..aaa978........................aaaaa98.......................aaaaaa98......................aaaaaaa9778!!!!!..............229a9222223....................z1u3z.........................z...z......68ww68.............z...z......45!!45.............zzzzz......45..45........................45..45........................45..45........................497@95........................4aaaa5............",
-    "aaaa5...ooo45.45..45..soo4aaaaaaaa5......13.13..13..s..4aaaaaaaa5....s............s..4aaaa22223....s..#s$.......s..12222.........s..#ssss%s...s.......8........s..#ssssss!!!s.......978.....ss..#ss.......s.......aa98.....s...s$.sssssss@s.....aaa98....s...s$.s.......s.....aaaa98...s$..s$!s.......s.....aaaa93...s$..s$.s.......s.....aaaa5....s$..s$.s.......s.....aaaa5....s$..s$.s.......s.....aaaa5....s...s$!s.......s.....aaaa5...ss...s$.s.......s.....aaaa5....s..#s$.s!!!!!!!s.....aaaa5....s..#s$.sooooooos.....aaaa5....s..#s$!s......!s.....aaaa5.......#s$...............aaaa5.......ss$...............aaaa97778...ss$...............aaaaaaaa97778.................aaaaaaaaaaaa5.................",
-    "aaaaaaaaa5oooooooo4aa5......4aaaaaaaaaa5........4aa5......4aaaaaaaaaa5........1223......4a22222229a5..................4a.......4a5..................4a.......4a5..................4a.......4a5.............%....4a8ss....4a5.............o....4a5oo....4a5..................4a5......4a5..................4a5......4a5..................4a5......4a5...678............4a5....ss4a5...4a5.......%....4a5....oo4a5...4a5.......o....4a5......4a5...4a5............4a5......4a5...4a5............4a5......4a5...4a5............4a5s.....4a5...4a5............4a5o.....123...4a5.......%....4a5............4a5.......o....1n5............4a5..............5............4a5..............5............4a5..............",
-    "4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............1n2122222222222223............w........y....................w........y.............zzz....w..$..#ss$.#s..........z.z....w..$...#s$.#s..........z.z....w..$....s$.#s....%.....zzz....w..s$...s$.#s...#s$...........w..ss$..s$.#s...#s$...........w..sss!!s$.#s...#s$...........w..sx...s$.#s...#s$...........w..s....s$.#s...#s$...........w.......su!ss...#s$...........w.......s...s...#s$...........w.......s...s...#s$...........w.......s...s...#s$...........w.......s!!!s...#s$..........#s$..............#s$..........#s$..............#s$..........#s$..............#s$..........#s$.",
-    "aaaaaa5....................4aaaaa92n3....................4aaaaa5......................69aaaaa5.....................6aaaaaaa9778..................129aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aa2222223wwwwwwwwwwwwwwwwwwww1u2..............................................................................................................................................................................................................................................................................",
-    "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
-    "^^^-..........................^^^-..........................***(...t...................................t.............................................................................................t.....................................................................................t.......t................t..............................................................................u.......................................t.....%%%..........................%_=+%........................#_`^`+$.......................#)^^^-$.......................#&*n*($........%%%..............w.w.........._=+..............www..........)^-...........................)^-...........................)^-.",
-    "^^^^-......................)^^^^^^-......................)^^****(...t...t...t...t..t..t)^^...........................)^^...........................)^^...........................&**....._==================+..........)`*****************(....._====`-oooooooooooooooooo.....&*****(..t...t...t...t...t.....................................................................t.............................._=======================......&*******************`^^^......oooooooooooooooooooo)^^^......t....t....t....t....&*n*........................................................................................................................==============================^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-    "^^^^-....................)^^^^^^^^-....................)^^^^****(....................&*u**.....................................................................................................................................................................................................................................................................................................................................%%%%%====+...................._====^^^^-....................)^^^^****(....................&*n**..x......................zw.wz.........................zwwwz.........................zzzzz..........................................................................................",
-    "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`****************************`-...........................#)-...........................#)-...........................#)-!!_+......y.....zww..._+z..#)-..)-..................)-...#)-..)-..................)-...#)-%.)-..................)-...#)-sz)-......y.......zww.)-z..#)-..)-..................)-...#)-..)-..................)-...#)-.%)-..................)-...#)-zs)-......y.....wwz...)-z..#)-..)-..................)-...#)-..)-..................)-...#)-%.)-......s........._=`-s..#)-uz&(......x.........&n`-x..#)-....................w.)-...#)-....................w.)-...#)`======================``====`^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-    "^^^^^^^^^^^^-....)^^^^^^^-....^^^^^^^^^^^^-....)^^^^^^^-....************(....&*******(................................................................................................yyy......................t.................................................................y..........ss............................x..............t.................................w............................w.w..........................._@+....................t......)^-................t..........&u(...t...t...t.................................................................................................................................................................................................",
-    "^^^^^^^^-oooooooooooo)^^^^^^^^^^^^^^^^-............)^^^^^^^^^^^^^^^^-............)^^^^^^^^********(............&********................................................................................................................................................................................................................................................==================+$..........^^^^^^^^^^^^^^^^^^-$..........`*****************($..........-.............................-.............................-.............................-.............................-.............................-.............................`=@=======+...................^^^^^^^^^^-...................",
-    "..)^^^^^^^^^^^^^^^^^^^^^^^^-....)^^^^^^^^^^^^^^^^^^^^^^^^-....&************************(..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
-    // ???
-    "  ",
-    "eaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf..gi..eaaaaf..gi..eaaaafeaaaaf..bd..eaaaaf..bd..eaaaafemcncd..jl..eaaaaf..jl..bcncmfef..........eaaaaf..........efef..........bccccd..........efef..........jkkkkl..........efbd..........................bdnl..........................jn...................................ghhi............ghhi..........eaaf............eaaf..........bccd............bccd.............................................................................ghhhhi........................jkkkkl......................................................................................................",
-];
-/* harmony export (immutable) */ __webpack_exports__["a"] = Levels;
-
+/* harmony export (immutable) */ __webpack_exports__["a"] = getLevels;
+function deleteBackgroundStars(game) {
+    // the sprites are removed from the list as we iterate over it
+    // so a normal for loop would skip half the items
+    const length = game.backgroundStars.length;
+    for (let i = 0; i < length; i++) {
+        game.backgroundStars.sprites[0].destroy();
+    }
+}
+function getLevels(game) {
+    return [
+        // 0
+        {
+            levelData: "eaaaaaaaaafeaaaafeaaaaaaaaaaaaeaaaaaaaaafbccccdeaaaaaaaaaaaaeaaaaaaaaafooooooeaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaabcccccccccd......bcccmaaaaaaaajkpppkkpqkl......jkqpeaaaaaaaa.....................eaaaaaaaa.....................eamccccnc.....................bcdkpkq.k.....................qpl..............................................................................................................................................................................................................................................................................................................................................................................",
+            newBackground: "black",
+        },
+        // 1
+        {
+            levelData: "aaaaaaaaaafr.r.r.r.r.r.eaaaaaaaaaaaaaaaafo.o.o.o.o.o.eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf.gi.........eaaaaaaaaaaaaaaaaf.jl.........eaaaaaaaaaaaaaaaaf.......gi...eaaaaaaccccccccccd.......jl...eaaaaaaqkkpkpqqkkl...........gmaaaaaa.....................gmaaaaaaa.....................bcmaaaaaa.....................kqeaaaaaa............ghhhhi.....eaaaaaa............jpqqkl.....eaaaaaa......ghi..............eaaaaaa......qkp..............eaaaaaa.......................eaaaaaa.............ghhhhi....bccnccc.............jqkkpl....pkq.kqk..........................................................................................",
+        },
+        // 2
+        {
+            levelData: "aaaaaaf..............srrrrrrrraaaaaaf..............srrrrrrrraaaaaaf..............srrrrrrrraaaaaaf..............sssssrrrraaaaaaf..................srrrraaaaaaf..t....t..........srrrraaaaaaf..................srrrraaaaaaf..................ssnssaaaaaaf.......................ccccccd.......................kpkqqkl....gi............................ef.........ghhhhhhh...........ef.......ghmaaaaaaa...........ef......gmaaaaaaaaa...........emhhhhhhmaaaaaaaaaa...........eaaaaaaaaaaaaaaaaaa.........ghmaaaaaaaaaaaaaaaaaa.......ghmaaaaaaaaaaaaaaaaaaaa.....ghmaaaaaaaaaaaaaaaaaaaaaa...ghmaaaaaaaaaaaaaaaaaaaaaaaa..gmaaaaaaaaaaaaaaaaaaaaaaaaaa.gmaaaaaaaaaaaaaaaaaaaaaaaaaaa.eaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        },
+        // 3
+        {
+            levelData: "rrrrrs...................srrrrrrrrrs...................srrrrrrrrrs...................srrrrrrrrrs...................srrrrrrssss...................ssnssrrs......t...t................rrs...........................sss..............t...................................................gi............................emhi.................hi......gmaaf.................amhi...gmaaami...............gaaamhhhmaaaaamhi...........ghmaaaaaaaaaaaaaaamhhi.....ghhmaaaaaaaaaaaaaaaaaaaamhhhhhmaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        },
+        // 4
+        {
+            levelData: "aaaaaf.............t....eaaaaaaaaaaf...t..............bcmaaaaaaaaf........t...........bmaaaaamcd.....................bcmmccd.........................ef...........................gmf.....ghhhvvvvvvhhhi.......gmami...gmmcdoo..oobccmhhi....peafp..gmaf...........bcmmhhi..eaf...qeaf.............bmafp..eami...emmi.............emd...eaami..efpp..ghhhi......ef...gmaafq..ef....pqncmi....gmd...eaaaf...bmi.......ef....bd....eaaaf....ef.......ef....w....gmaaami...ef.ghhhhhmmi...w....eaaaaami..emhmccuccmamhi.w..ghmaaaaaaf..bccd.....bmaamhhhhmaaaaaaaaf............eaaaaaaaaaaaaaaaami..........gmaaaaaaaaaaaaaaaaami.......ghmaaaaaaaaaaaaaaaaaaamhhhhhhhmaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        },
+        // 5
+        {
+            levelData: "aaaaaaaaaaafbccccdeaaaaaaaaaaaaaaaaaaaaaafooooooeaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaacccccccccccd......bccccccccccckkpppkkqpkkl......jkqkqkkpqqpp....................................................................................................................................................................................................................................................................................................................................................................................................................................",
+        },
+        // 6
+        {
+            levelData: "aaaaaa5...................4aaaaaaaaa5...........y.......4aaaaaaaaa5...................4aaaaaaaaa5.....y.zzz.........1222aaaaaa5............zzz......x.aaaaaa5.......................2222223..zzz..............................................................................................................y..........................................................................................................................y678...........................4a5..........67778............123...t......4aaa5......68..............t..12n23......13....................................................................................................................................................",
+        },
+        // 7
+        {
+            levelData: "aaaaaaaaaaaaaaaa5..!!!!!4aa5..aaaaaaaaaaaaaaaa5.....x.4aa98.aaaaaaaaaaaaaaaa5.......4aaa5.a9222222222229aa5.......4aaa98a5...w..w....4aa5..!!!!!122223a5...w.......4aa5.......aaaa..a5...w.......4aa5.......aaaa..a5.........!!4aa5!!!!!!!6778!.a5...........4aa5ooooooo4aa5..a978.........1223.......1223..aaa978........................aaaaa98.......................aaaaaa98......................aaaaaaa9778!!!!!..............229a9222223....................z1u3z.........................z...z......68ww68.............z...z......45!!45.............zzzzz......45..45........................45..45........................45..45........................497@95........................4aaaa5............",
+        },
+        // 8
+        {
+            levelData: "aaaa5...ooo45.45..45..soo4aaaaaaaa5......13.13..13..s..4aaaaaaaa5....s............s..4aaaa22223....s..#s$.......s..12222.........s..#ssss%s...s.......8........s..#ssssss!!!s.......978.....ss..#ss.......s.......aa98.....s...s$.sssssss@s.....aaa98....s...s$.s.......s.....aaaa98...s$..s$!s.......s.....aaaa93...s$..s$.s.......s.....aaaa5....s$..s$.s.......s.....aaaa5....s$..s$.s.......s.....aaaa5....s...s$!s.......s.....aaaa5...ss...s$.s.......s.....aaaa5....s..#s$.s!!!!!!!s.....aaaa5....s..#s$.sooooooos.....aaaa5....s..#s$!s......!s.....aaaa5.......#s$...............aaaa5.......ss$...............aaaa97778...ss$...............aaaaaaaa97778.................aaaaaaaaaaaa5.................",
+        },
+        // 9
+        {
+            levelData: "aaaaaaaaa5oooooooo4aa5......4aaaaaaaaaa5........4aa5......4aaaaaaaaaa5........1223......4a22222229a5..................4a.......4a5..................4a.......4a5..................4a.......4a5.............%....4a8ss....4a5.............o....4a5oo....4a5..................4a5......4a5..................4a5......4a5..................4a5......4a5...678............4a5....ss4a5...4a5.......%....4a5....oo4a5...4a5.......o....4a5......4a5...4a5............4a5......4a5...4a5............4a5......4a5...4a5............4a5s.....4a5...4a5............4a5o.....123...4a5.......%....4a5............4a5.......o....1n5............4a5..............5............4a5..............5............4a5..............",
+        },
+        // 10
+        {
+            levelData: "4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............1n2122222222222223............w........y....................w........y.............zzz....w..$..#ss$.#s..........z.z....w..$...#s$.#s..........z.z....w..$....s$.#s....%.....zzz....w..s$...s$.#s...#s$...........w..ss$..s$.#s...#s$...........w..sss!!s$.#s...#s$...........w..sx...s$.#s...#s$...........w..s....s$.#s...#s$...........w.......su!ss...#s$...........w.......s...s...#s$...........w.......s...s...#s$...........w.......s...s...#s$...........w.......s!!!s...#s$..........#s$..............#s$..........#s$..............#s$..........#s$..............#s$..........#s$.",
+        },
+        // 11
+        {
+            levelData: "aaaaaa5....................4aaaaa92n3....................4aaaaa5......................69aaaaa5.....................6aaaaaaa9778..................129aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aa2222223wwwwwwwwwwwwwwwwwwww1u2..............................................................................................................................................................................................................................................................................",
+        },
+        // 12
+        {
+            levelData: "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
+        },
+        // 13
+        {
+            levelData: "^^^-..........................^^^-..........................***(...t...................................t.............................................................................................t.....................................................................................t.......t................t..............................................................................u.......................................t.....%%%..........................%_=+%........................#_`^`+$.......................#)^^^-$.......................#&*n*($........%%%..............w.w.........._=+..............www..........)^-...........................)^-...........................)^-.",
+            newBackground: game.ctx.createPattern(game.getAsset("brick"), "repeat"),
+            handlers: [deleteBackgroundStars],
+        },
+        // 14
+        {
+            levelData: "^^^^-......................)^^^^^^-......................)^^****(...t...t...t...t..t..t)^^...........................)^^...........................)^^...........................&**....._==================+..........)`*****************(....._====`-oooooooooooooooooo.....&*****(..t...t...t...t...t.....................................................................t.............................._=======================......&*******************`^^^......oooooooooooooooooooo)^^^......t....t....t....t....&*n*........................................................................................................................==============================^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        },
+        // 15
+        {
+            levelData: "^^^^-....................)^^^^^^^^-....................)^^^^****(....................&*u**.....................................................................................................................................................................................................................................................................................................................................%%%%%====+...................._====^^^^-....................)^^^^****(....................&*n**..x......................zw.wz.........................zwwwz.........................zzzzz..........................................................................................",
+        },
+        // 16
+        {
+            levelData: "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`****************************`-...........................#)-...........................#)-...........................#)-!!_+......y.....zww..._+z..#)-..)-..................)-...#)-..)-..................)-...#)-%.)-..................)-...#)-sz)-......y.......zww.)-z..#)-..)-..................)-...#)-..)-..................)-...#)-.%)-..................)-...#)-zs)-......y.....wwz...)-z..#)-..)-..................)-...#)-..)-..................)-...#)-%.)-......s........._=`-s..#)-uz&(......x.........&n`-x..#)-....................w.)-...#)-....................w.)-...#)`======================``====`^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        },
+        // 17
+        {
+            levelData: "^^^^^^^^^^^^-....)^^^^^^^-....^^^^^^^^^^^^-....)^^^^^^^-....************(....&*******(................................................................................................yyy......................t.................................................................y..........ss............................x..............t.................................w............................w.w..........................._@+....................t......)^-................t..........&u(...t...t...t.................................................................................................................................................................................................",
+        },
+        // 18
+        {
+            levelData: "^^^^^^^^-oooooooooooo)^^^^^^^^^^^^^^^^-............)^^^^^^^^^^^^^^^^-............)^^^^^^^^********(............&********................................................................................................................................................................................................................................................==================+$..........^^^^^^^^^^^^^^^^^^-$..........`*****************($..........-.............................-.............................-.............................-.............................-.............................-.............................`=@=======+...................^^^^^^^^^^-...................",
+        },
+        // 19
+        {
+            levelData: "..)^^^^^^^^^^^^^^^^^^^^^^^^-....)^^^^^^^^^^^^^^^^^^^^^^^^-....&************************(..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
+        },
+        // ???
+        {
+            levelData: "  ",
+        },
+        {
+            levelData: "eaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf......eaaaaf......eaaaafeaaaaf..gi..eaaaaf..gi..eaaaafeaaaaf..bd..eaaaaf..bd..eaaaafemcncd..jl..eaaaaf..jl..bcncmfef..........eaaaaf..........efef..........bccccd..........efef..........jkkkkl..........efbd..........................bdnl..........................jn...................................ghhi............ghhi..........eaaf............eaaf..........bccd............bccd.............................................................................ghhhhi........................jkkkkl......................................................................................................",
+        },
+    ];
+}
 
 
 /***/ }),
@@ -1685,15 +1776,15 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_corner__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_tallgrass__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_crumble__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_falling__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_blockswitchspawner__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightblock__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_lightswitch__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_coinspawner__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_oneway__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_crumble__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_falling__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_blockswitchspawner__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_lightblock__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightswitch__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__ = __webpack_require__(36);
 
 
 
@@ -1727,20 +1818,20 @@ const blockMap = {
     "j": special(__WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__["a" /* GrassBlock */], "blocks/j"),
     "k": special(__WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__["a" /* GrassBlock */], "blocks/k"),
     "l": special(__WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__["a" /* GrassBlock */], "blocks/l"),
-    "m": special(__WEBPACK_IMPORTED_MODULE_3__sprites_blocks_corner__["a" /* CornerBlock */], "blocks/m"),
-    "n": special(__WEBPACK_IMPORTED_MODULE_10__sprites_blocks_coinspawner__["a" /* AboveLevelUpCoinSpawnerBlock */], "blocks/n"),
+    "m": special(__WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__["b" /* RotatedCornerBlock */], "blocks/m"),
+    "n": special(__WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__["a" /* AboveLevelUpCoinSpawnerBlock */], "blocks/n"),
     "o": special(__WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__["d" /* UpSpikeBlock */], "blocks/spikes/up"),
-    "p": special(__WEBPACK_IMPORTED_MODULE_4__sprites_blocks_tallgrass__["a" /* TallGrassBlock */], "blocks/p"),
-    "q": special(__WEBPACK_IMPORTED_MODULE_4__sprites_blocks_tallgrass__["a" /* TallGrassBlock */], "blocks/q"),
+    "p": special(__WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__["a" /* TallGrassBlock */], "blocks/p"),
+    "q": special(__WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__["a" /* TallGrassBlock */], "blocks/q"),
     "r": "blocks/r",
     "s": "blocks/s",
-    "t": special(__WEBPACK_IMPORTED_MODULE_5__sprites_blocks_crumble__["a" /* CrumblingBlock */], "blocks/crumble/1"),
-    "u": special(__WEBPACK_IMPORTED_MODULE_7__sprites_blocks_blockswitchspawner__["a" /* BlockSwitchSpawnerBlock */], "blocks/u"),
+    "t": special(__WEBPACK_IMPORTED_MODULE_4__sprites_blocks_crumble__["a" /* CrumblingBlock */], "blocks/crumble/1"),
+    "u": special(__WEBPACK_IMPORTED_MODULE_6__sprites_blocks_blockswitchspawner__["a" /* BlockSwitchSpawnerBlock */], "blocks/u"),
     "v": "blocks/v",
-    "w": special(__WEBPACK_IMPORTED_MODULE_6__sprites_blocks_falling__["a" /* FallingBlock */], "blocks/w"),
-    "x": special(__WEBPACK_IMPORTED_MODULE_9__sprites_blocks_lightswitch__["a" /* LightSwitchBlock */], "blocks/lightbutton/1"),
-    "y": special(__WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightblock__["a" /* DisabledLightBlock */], "blocks/y"),
-    "z": special(__WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightblock__["b" /* EnabledLightBlock */], "blocks/z"),
+    "w": special(__WEBPACK_IMPORTED_MODULE_5__sprites_blocks_falling__["a" /* FallingBlock */], "blocks/w"),
+    "x": special(__WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightswitch__["a" /* LightSwitchBlock */], "blocks/lightbutton/1"),
+    "y": special(__WEBPACK_IMPORTED_MODULE_7__sprites_blocks_lightblock__["a" /* DisabledLightBlock */], "blocks/y"),
+    "z": special(__WEBPACK_IMPORTED_MODULE_7__sprites_blocks_lightblock__["b" /* EnabledLightBlock */], "blocks/z"),
     // Post sword
     "1": "blocks/1",
     "2": "blocks/2",
@@ -1750,9 +1841,9 @@ const blockMap = {
     "6": "blocks/6",
     "7": "blocks/7",
     "8": "blocks/8",
-    "9": special(__WEBPACK_IMPORTED_MODULE_3__sprites_blocks_corner__["a" /* CornerBlock */], "blocks/9"),
-    "@": special(__WEBPACK_IMPORTED_MODULE_10__sprites_blocks_coinspawner__["b" /* BelowLevelUpCoinSpawnerBlock */], "blocks/n"),
-    "!": special(__WEBPACK_IMPORTED_MODULE_11__sprites_blocks_oneway__["a" /* OneWayBlock */], "blocks/!"),
+    "9": special(__WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__["b" /* RotatedCornerBlock */], "blocks/9"),
+    "@": special(__WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__["b" /* BelowLevelUpCoinSpawnerBlock */], "blocks/n"),
+    "!": special(__WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__["a" /* OneWayBlock */], "blocks/!"),
     "#": special(__WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__["b" /* LeftSpikeBlock */], "blocks/spikes/left"),
     "$": special(__WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__["c" /* RightSpikeBlock */], "blocks/spikes/right"),
     "%": special(__WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__["a" /* DownSpikeBlock */], "blocks/spikes/down"),
@@ -1766,7 +1857,7 @@ const blockMap = {
     "_": "blocks/underscore",
     "=": "blocks/=",
     "+": "blocks/+",
-    "`": "blocks/`",
+    "`": special(__WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__["a" /* CastleCornerBlock */], "blocks/`"),
 };
 /* harmony export (immutable) */ __webpack_exports__["a"] = blockMap;
 
@@ -1836,65 +1927,6 @@ class RightSpikeBlock extends SpikeBlock {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
-
-
-
-
-const AIR = [
-    ".",
-    "l", "k", "j",
-    "p", "q",
-];
-class CornerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
-    constructor(opts) {
-        super(opts);
-        this.levelIndex = opts.levelIndex || 0;
-        // black background
-        new __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */]({
-            texture: this.runtime.getAsset("blocks/a"),
-            position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y, -1),
-        });
-        // if spawned on far left edge then don't check for things that will wrap around to other side of screen
-        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== 0) {
-            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, -90, 0, 0);
-            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, 180, 0, 1);
-        }
-        // if spawned on far right edge then don't check for things that will wrap around to other side of screen
-        // untested but should work
-        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1) {
-            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, 0, 1, 0);
-            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, 90, 1, 1);
-        }
-        // the intent of a cornersprite is to create sprites
-        // it itself does not do anything else so delete it
-        this.destroy();
-    }
-    testCorner(offset, rotation, x, y) {
-        const charAtOffset = this.runtime.levelData[this.levelIndex + offset];
-        const isAir = AIR.indexOf(charAtOffset) > -1;
-        if (isAir) {
-            const position = new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x + x * (__WEBPACK_IMPORTED_MODULE_1__config__["c" /* BLOCK_WIDTH */] / 2), this.y + y * (__WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */] / 2));
-            new __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__["a" /* ImageSprite */]({
-                position,
-                texture: this.texture,
-                rotation,
-            });
-        }
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = CornerBlock;
-
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__grass__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
 
@@ -1915,7 +1947,7 @@ class TallGrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block *
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1988,12 +2020,12 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
 
@@ -2017,7 +2049,7 @@ class BlockSwitchSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2059,7 +2091,7 @@ class BlockSwitch extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Blo
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2102,7 +2134,7 @@ class DisabledLightBlock extends LightBlock {
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2163,12 +2195,12 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
 
@@ -2202,7 +2234,7 @@ class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
 
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2243,7 +2275,7 @@ class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" 
 
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2283,6 +2315,86 @@ class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock
 
 
 /***/ }),
+/* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
+
+
+
+
+const AIR = [
+    ".",
+    "l", "k", "j",
+    "p", "q",
+    "%", "#", "$", "o",
+];
+class CornerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
+    constructor(opts) {
+        super(opts);
+        this.levelIndex = opts.levelIndex || 0;
+        // queue deletion
+        this.destroy();
+    }
+    testCorner(offset, texture, rotation, x, y) {
+        const charAtOffset = this.runtime.levelData[this.levelIndex + offset];
+        const isAir = AIR.indexOf(charAtOffset) > -1;
+        if (isAir) {
+            const position = new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x + x * (__WEBPACK_IMPORTED_MODULE_1__config__["c" /* BLOCK_WIDTH */] / 2), this.y + y * (__WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */] / 2));
+            const sprite = new __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__["a" /* ImageSprite */]({
+                position,
+                texture,
+                rotation,
+            });
+        }
+    }
+}
+class RotatedCornerBlock extends CornerBlock {
+    constructor(opts) {
+        super(opts);
+        // black background
+        new __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */]({
+            texture: this.runtime.getAsset("blocks/a"),
+            position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y, -1),
+        });
+        const offset = this.width === __WEBPACK_IMPORTED_MODULE_1__config__["c" /* BLOCK_WIDTH */] ? 0 : 1;
+        // if spawned on far left edge then don't check for things that will wrap around to other side of screen
+        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== 0) {
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, this.texture, -90, 0, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, this.texture, 180, 0, offset);
+        }
+        // if spawned on far right edge then don't check for things that will wrap around to other side of screen
+        // untested but should work
+        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1) {
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, this.texture, 0, offset, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, this.texture, 90, offset, offset);
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = RotatedCornerBlock;
+
+class CastleCornerBlock extends CornerBlock {
+    constructor(opts) {
+        super(opts);
+        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== 0) {
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, this.runtime.getAsset("blocks/castlecorner/topleft"), 0, 0, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1, this.runtime.getAsset("blocks/castlecorner/bottomleft"), 0, 0, 0);
+        }
+        if (this.levelIndex % __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] !== __WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] - 1) {
+            this.testCorner(__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, this.runtime.getAsset("blocks/castlecorner/topright"), 0, 0, 0);
+            this.testCorner(-__WEBPACK_IMPORTED_MODULE_1__config__["f" /* LEVEL_WIDTH */] + 1, this.runtime.getAsset("blocks/castlecorner/bottomright"), 0, 0, 0);
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CastleCornerBlock;
+
+
+
+/***/ }),
 /* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2305,6 +2417,7 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
             repeatEvery: UPDATE_EVERY,
             run: this.animate,
         }));
+        this.runtime.backgroundStars.push(this);
     }
     animate() {
         this.progress += this.direction;
@@ -2349,10 +2462,10 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
 
 // This is how the original defines jump lights
 // It does not use the level code
-// (although I believe it at one point did due to the image name being "^.png", as if it were the ^ character)
+// (although I believe it at one point did due to the image name being "^.png", as if it were the ^ character in level codes)
 // Converts Scratch coordinates to coordinates this game will understand
-// Hardcodes values are bad but just ignore that
-function coordinate(x, y) {
+// Hardcoded values are bad but just ignore that
+function scratchCoordinate(x, y) {
     return new __WEBPACK_IMPORTED_MODULE_0__engine_vector__["a" /* Vector */](x + 236, (360 - y) - 184);
 }
 const JumpLights = [
@@ -2367,55 +2480,55 @@ const JumpLights = [
     [],
     // in scratch: 10
     [
-        coordinate(-168, -60),
-        coordinate(-184, 20),
-        coordinate(-168, 100),
-        coordinate(-56, 36),
-        coordinate(136, -132),
-        coordinate(184, -76),
-        coordinate(136, -20),
-        coordinate(88, 20),
-        coordinate(136, 76),
-        coordinate(184, 116),
+        scratchCoordinate(-168, -60),
+        scratchCoordinate(-184, 20),
+        scratchCoordinate(-168, 100),
+        scratchCoordinate(-56, 36),
+        scratchCoordinate(136, -132),
+        scratchCoordinate(184, -76),
+        scratchCoordinate(136, -20),
+        scratchCoordinate(88, 20),
+        scratchCoordinate(136, 76),
+        scratchCoordinate(184, 116),
     ],
     // in scratch: 11
     [
-        coordinate(-200, 116),
-        coordinate(104, -52),
-        coordinate(-120, -44),
-        coordinate(-120, 36),
-        coordinate(-200, -28),
+        scratchCoordinate(-200, 116),
+        scratchCoordinate(104, -52),
+        scratchCoordinate(-120, -44),
+        scratchCoordinate(-120, 36),
+        scratchCoordinate(-200, -28),
     ],
     // in scratch: 12
     [
-        coordinate(104, -28),
-        coordinate(-80, -116),
+        scratchCoordinate(104, -28),
+        scratchCoordinate(-80, -116),
     ],
     // in scratch: 13
     [
-        coordinate(0, -44),
-        coordinate(0, 20),
-        coordinate(0, 84),
+        scratchCoordinate(0, -44),
+        scratchCoordinate(0, 20),
+        scratchCoordinate(0, 84),
     ],
     [],
     [],
     // in scratch: 16
     [
-        coordinate(-144, -60),
-        coordinate(-144, 0),
-        coordinate(-144, 60),
-        coordinate(0, -44),
-        coordinate(144, -60),
-        coordinate(144, 0),
-        coordinate(144, 60),
+        scratchCoordinate(-144, -60),
+        scratchCoordinate(-144, 0),
+        scratchCoordinate(-144, 60),
+        scratchCoordinate(0, -44),
+        scratchCoordinate(144, -60),
+        scratchCoordinate(144, 0),
+        scratchCoordinate(144, 60),
     ],
     [],
     [],
     // in scratch: 19
     [
-        coordinate(0, -52),
-        coordinate(104, 20),
-        coordinate(176, -35),
+        scratchCoordinate(0, -52),
+        scratchCoordinate(104, 20),
+        scratchCoordinate(176, -35),
     ]
     // none past this level
 ];
