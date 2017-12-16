@@ -95,8 +95,8 @@ game.addAsset("jumplight");
 //
 
 game.addAsset("brick");
-game.addAsset("blocks/^");
-game.addAsset("blocks/&");
+game.addAsset("blocks/caret");
+game.addAsset("blocks/ampersand");
 game.addAsset("blocks/asterisk"); // IT WOULDN'T LET ME SAVE IT OTHERWISE
 game.addAsset("blocks/(");
 game.addAsset("blocks/)");
@@ -104,7 +104,7 @@ game.addAsset("blocks/-");
 game.addAsset("blocks/underscore");
 game.addAsset("blocks/=");
 game.addAsset("blocks/+");
-game.addAsset("blocks/`");
+game.addAsset("blocks/grave");
 
 game.addAsset("blocks/castlecorner/topright");
 game.addAsset("blocks/castlecorner/topleft");

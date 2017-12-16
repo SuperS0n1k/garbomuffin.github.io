@@ -998,8 +998,8 @@ game.addAsset("jumplight");
 // Post second boss / Castle
 //
 game.addAsset("brick");
-game.addAsset("blocks/^");
-game.addAsset("blocks/&");
+game.addAsset("blocks/caret");
+game.addAsset("blocks/ampersand");
 game.addAsset("blocks/asterisk"); // IT WOULDN'T LET ME SAVE IT OTHERWISE
 game.addAsset("blocks/(");
 game.addAsset("blocks/)");
@@ -1007,7 +1007,7 @@ game.addAsset("blocks/-");
 game.addAsset("blocks/underscore");
 game.addAsset("blocks/=");
 game.addAsset("blocks/+");
-game.addAsset("blocks/`");
+game.addAsset("blocks/grave");
 game.addAsset("blocks/castlecorner/topright");
 game.addAsset("blocks/castlecorner/topleft");
 game.addAsset("blocks/castlecorner/bottomright");
@@ -1845,8 +1845,8 @@ const blockMap = {
     "$": special(__WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__["c" /* RightSpikeBlock */], "blocks/spikes/right"),
     "%": special(__WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__["a" /* DownSpikeBlock */], "blocks/spikes/down"),
     // Castle
-    "^": special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__["b" /* PseudoSolidBlock */], "blocks/^"),
-    "&": "blocks/&",
+    "^": special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__["b" /* PseudoSolidBlock */], "blocks/caret"),
+    "&": "blocks/ampersand",
     "*": "blocks/asterisk",
     "(": "blocks/(",
     ")": "blocks/)",
@@ -1854,7 +1854,7 @@ const blockMap = {
     "_": "blocks/underscore",
     "=": "blocks/=",
     "+": "blocks/+",
-    "`": special(__WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__["a" /* CastleCornerBlock */], "blocks/`"),
+    "`": special(__WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__["a" /* CastleCornerBlock */], "blocks/grave"),
 };
 /* harmony export (immutable) */ __webpack_exports__["a"] = blockMap;
 

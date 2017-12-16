@@ -75,14 +75,14 @@ export const blockMap: IBlockMap = {
   "%": special(DownSpikeBlock, "blocks/spikes/down"),
 
   // Castle
-  "^": special(PseudoSolidBlock, "blocks/^"),
-  "&": "blocks/&",
-  "*": "blocks/asterisk", // scratch why
+  "^": special(PseudoSolidBlock, "blocks/caret"),
+  "&": "blocks/ampersand",
+  "*": "blocks/asterisk",
   "(": "blocks/(",
   ")": "blocks/)",
   "-": "blocks/-",
-  "_": "blocks/underscore", // github why
+  "_": "blocks/underscore",
   "=": "blocks/=",
   "+": "blocks/+",
-  "`": special(CastleCornerBlock, "blocks/`"),
+  "`": special(CastleCornerBlock, "blocks/grave"),
 };
