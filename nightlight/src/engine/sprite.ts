@@ -17,6 +17,7 @@ export interface ISpriteOptions {
   scale?: Vector2D;
   visible?: boolean;
   rotation?: number;
+  rotationPoint?: Vector2D;
   opacity?: number;
 
   // Nightlight:
@@ -32,6 +33,7 @@ export abstract class AbstractSprite extends TaskRunner {
   public height: number;
   public scale: Vector2D;
   public rotation: number;
+  public rotationPoint: Vector2D;
   public opacity: number;
   public persistent: boolean;
   public visible: boolean;
@@ -48,6 +50,7 @@ export abstract class AbstractSprite extends TaskRunner {
     this.visible = getOrDefault(options.visible, true);
     this.rotation = getOrDefault(options.rotation, 0);
     this.opacity = getOrDefault(options.opacity, 1);
+    this.rotationPoint = getOrDefault(options.rotationPoint, new Vector2D(0.5, 0.5));
 
     this.runtime.sprites.push(this);
   }
@@ -134,8 +137,8 @@ export abstract class AbstractSprite extends TaskRunner {
       // terrible code
       // rotation is difficult
       // https://stackoverflow.com/a/4650102
-      const translateX = this.x + this.width / 2;
-      const translateY = this.y + this.height / 2;
+      const translateX = this.x + this.width * this.rotationPoint.x;
+      const translateY = this.y + this.height * this.rotationPoint.y;
       ctx.translate(translateX, translateY);
       ctx.rotate(degreeToRadians(this.rotation));
       ctx.translate(-translateX, -translateY);

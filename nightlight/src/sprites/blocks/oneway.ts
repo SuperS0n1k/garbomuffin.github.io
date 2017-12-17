@@ -1,6 +1,7 @@
 import { SolidBlock, IBlockOptions } from "./block";
 import { AbstractSprite } from "../../engine/sprite";
 import { PlayerSprite } from "../player/player";
+import { ZIndexes } from "../zindex";
 
 // Just like in the original scratch game
 // One way blocks are terrible hacks that shouldn't work
@@ -14,7 +15,7 @@ export class OneWayBlock extends SolidBlock {
     super(opts);
 
     // make our tasks run before others (they run in reverse z order)
-    this.z = -100;
+    this.z = ZIndexes.TaskPriority;
 
     this.addTask(this.run);
   }

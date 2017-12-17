@@ -1,4 +1,5 @@
 {
+  "extends": "../../tslint.json",
   "rules": {
     "max-line-length": false
   }

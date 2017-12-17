@@ -14,6 +14,7 @@ export interface ITaskOptions {
 
 export interface IRepeatingTaskOptions extends ITaskOptions {
   repeatEvery: number;
+  repeatMax?: number;
 }
 
 export type TaskOptions = ITaskOptions | IRepeatingTaskOptions;
@@ -23,18 +24,22 @@ export class Task {
   public runnable: TaskRunnable;
   public delay: number;
   public repeatEvery: number;
+  public repeatCount: number = 0;
+  public repeatMax: number;
   public readonly originalOptions: ITaskOptions;
 
   constructor(options: TaskOptions) {
     const runnable = options.run;
     const delay = getOrDefault(options.delay, 0);
     const repeatEvery = getOrDefault((options as IRepeatingTaskOptions).repeatEvery, -1);
+    const repeatMax = getOrDefault((options as IRepeatingTaskOptions).repeatMax, Infinity);
 
     this.originalOptions = options;
 
     this.runnable = runnable;
     this.delay = delay;
     this.repeatEvery = repeatEvery;
+    this.repeatMax = repeatMax;
   }
 
   public run() {
@@ -58,10 +63,11 @@ export class TaskRunner {
     for (const task of this._tasks) {
       if (task.delay <= 0) {
         task.run();
+        task.repeatCount++;
 
         if (task.delay === -1) {
           // called task.stop();
-        } else if (task.repeatEvery >= 0) {
+        } else if (task.repeatEvery >= 0 && task.repeatCount < task.repeatMax) {
           task.delay = task.repeatEvery;
         } else {
           task.delay = -1;

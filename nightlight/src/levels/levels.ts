@@ -22,9 +22,11 @@ function deleteBackgroundStars(game: Nightlight) {
   }
 }
 
-function bossSpawner(Boss: typeof ImageSprite, texture: TImage) {
+function bossSpawner(bossType: typeof ImageSprite, texture: TImage) {
+  // Spawn the boss with the texture at 0,0
+  // The sprite should correct any values such as position
   return () => {
-    new Boss({
+    new bossType({
       position: new Vector(0, 0, 0),
       texture,
     });
@@ -58,7 +60,7 @@ export function getLevels(game: Nightlight): Level[] {
     // 5
     {
       levelData: "aaaaaaaaaaafbccccdeaaaaaaaaaaaaaaaaaaaaaafooooooeaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaacccccccccccd......bccccccccccckkpppkkqpkkl......jkqkqkkpqqpp....................................................................................................................................................................................................................................................................................................................................................................................................................................",
-      // handlers: [bossSpawner(SwordBoss, game.getImage("boss/sword/sword"))],
+      handlers: [bossSpawner(SwordBoss, game.getImage("boss/sword/sword"))],
       newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
     },
     // 6

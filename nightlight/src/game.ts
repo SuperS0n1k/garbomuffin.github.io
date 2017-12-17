@@ -13,6 +13,7 @@ import { getRandomInt } from "./utils";
 import { LightBlock } from "./sprites/blocks/lightblock";
 import { JumpLights } from "./levels/jumplights";
 import { JumpLight } from "./sprites/jumplight";
+import { ZIndexes } from "./sprites/zindex";
 
 export class Nightlight extends GameRuntime {
   public level: number = 0;
@@ -44,7 +45,7 @@ export class Nightlight extends GameRuntime {
   private createPlayer() {
     this.player = new PlayerSprite({
       texture: this.getImage("player/idle"),
-      position: new Vector(0, 0, 10),
+      position: new Vector(0, 0, ZIndexes.Player),
       width: config.BLOCK_WIDTH,
       height: config.BLOCK_HEIGHT,
       persistent: true,

@@ -75,6 +75,10 @@ game.addImage("boss/sword/open");
 game.addImage("boss/sword/heal");
 game.addImage("boss/sword/hurt");
 
+game.addImage("hit/-1");
+game.addImage("hit/+1");
+game.addImage("hit/+0");
+
 //
 // Post sword
 //

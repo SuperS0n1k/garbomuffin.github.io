@@ -3,7 +3,10 @@ import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagespri
 const LIFESPAN = 300;
 const GHOST_RATE = 0.03;
 
-// TODO: Max fragments
+// create a high limit to prevent constant death from crashing everything
+// but that also will be hard to find during normal play
+const MAX_FRAGMENTS = 50;
+let existingFragments = 0;
 
 export interface IPlayerFragmentSpriteOptions extends IImageSpriteOptions {
   yv: number;
@@ -19,6 +22,12 @@ export class PlayerFragmentSprite extends ImageSprite {
 
   constructor(opts: IPlayerFragmentSpriteOptions) {
     super(opts);
+
+    existingFragments++;
+    if (existingFragments > MAX_FRAGMENTS) {
+      this.destroy();
+      return;
+    }
 
     this.xv = opts.xv;
     this.yv = opts.yv;
@@ -54,5 +63,11 @@ export class PlayerFragmentSprite extends ImageSprite {
     if (this.opacity < 0 || this.y > this.runtime.canvas.height) {
       this.destroy();
     }
+  }
+
+  public destroy() {
+    super.destroy();
+
+    existingFragments--;
   }
 }
