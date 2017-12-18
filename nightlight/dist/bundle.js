@@ -662,7 +662,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
     runBasicPhysics(xv, yv, options = {}) {
         options.collision = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.collision, true);
         options.restrictPositionValues = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.restrictPositionValues, true);
-        options.friction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.friction, true);
+        options.friction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.friction, __WEBPACK_IMPORTED_MODULE_3__config__["c" /* FRICTION */]);
         options.midAirFriction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.midAirFriction, true);
         options.roundValues = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.roundValues, true);
         this.x += xv;
@@ -688,9 +688,9 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
             }
             yv = 0;
         }
-        if (options.friction) {
+        if (options.friction !== false) {
             if (onGround || options.midAirFriction) {
-                xv *= __WEBPACK_IMPORTED_MODULE_3__config__["c" /* FRICTION */];
+                xv *= options.friction;
             }
         }
         if (options.roundValues) {
@@ -1141,6 +1141,20 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         this.blocks = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
         this.lightBlocks = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
         this.backgroundStars = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
+        if (location.hash) {
+            this.setLevelToHash();
+        }
+        window.onhashchange = () => this.setLevelToHash();
+    }
+    setLevelToHash() {
+        console.log("set hash", location.hash);
+        const hash = location.hash.substr(1);
+        if (!isNaN(parseInt(hash, 10))) {
+            this.level = parseInt(hash, 10);
+            if (this.started) {
+                this.renderLevel();
+            }
+        }
     }
     start() {
         super.start();
@@ -1209,7 +1223,8 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
             texture,
             levelIndex: index,
         };
-        new spriteConstructor(opts);
+        const block = new spriteConstructor(opts);
+        return block;
     }
     renderLevel(num = this.level) {
         this.destroyLevel();
@@ -1319,6 +1334,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         this.sounds = new Map();
         this.containers = [];
         this.frames = 0;
+        this.started = false;
         this.background = "white";
         this._assetPromises = [];
         canvas.width = CANVAS_WIDTH;
@@ -1363,7 +1379,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         }
         console.log("adding image", src);
         const promise = new Promise((resolve, reject) => {
-            const image = document.createElement("img");
+            const image = new Image();
             image.src = src;
             image.onload = () => resolve();
             image.onerror = () => reject();
@@ -1382,8 +1398,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         }
         console.log("adding sound", src);
         const promise = new Promise((resolve, reject) => {
-            const sound = document.createElement("audio");
-            sound.src = src;
+            const sound = new Audio(src);
             sound.oncanplaythrough = () => resolve();
             sound.onerror = () => reject();
             sound.preload = "auto";
@@ -1450,6 +1465,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         console.log("starting loop");
         this.resetVariables();
         this.loop();
+        this.started = true;
     }
     // the main loop - calls all tasks in all sprites
     loop() {
@@ -1485,7 +1501,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
     }
     render() {
         // clear the canvas
-        this.resetCanvas();
+        this.resetCanvas(this.ctx, this.background);
         // sort sprites by z TODO: find a better for to do this
         this.sortSprites();
         // render all sprites onto our canvas
@@ -1504,10 +1520,10 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         throw new __WEBPACK_IMPORTED_MODULE_4__errors_exit__["a" /* ExitError */]();
     }
     // clears the canvas and replaces it with a blank white background
-    resetCanvas() {
-        this.ctx.scale(1, 1);
-        this.ctx.fillStyle = this.background;
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    resetCanvas(ctx, background = "white") {
+        ctx.scale(1, 1);
+        ctx.fillStyle = background;
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     }
     // small function that calls the mouse driver's update funciton
     updateMouse() {
@@ -1515,7 +1531,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
     }
     // called when exiting
     onexit() {
-        console.warn("empty onexit()");
+        this.started = false;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = GameRuntime;
@@ -1895,6 +1911,7 @@ function getLevels(game) {
 
 const LIFESPAN = 300;
 const GHOST_RATE = 0.03;
+const ROTATION_FRICTION = 0.5;
 // create a high limit to prevent constant death from crashing everything
 // but that also will be hard to find during normal play
 const MAX_FRAGMENTS = 50;
@@ -1928,7 +1945,7 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
         this.xv = physicsResult.xv;
         this.yv = physicsResult.yv;
         if (physicsResult.onGround) {
-            this.rv *= 0.5;
+            this.rv *= ROTATION_FRICTION;
         }
         this.rotation += this.rv;
         if (this.lifespan >= LIFESPAN) {
@@ -2464,36 +2481,26 @@ class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" 
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__zindex__ = __webpack_require__(41);
 
-
-
-// Just like in the original scratch game
-// One way blocks are terrible hacks that shouldn't work
-// I don't know how this works anymore
+// This is so much cleaner
 class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
-    constructor(opts) {
-        super(opts);
+    constructor() {
+        super(...arguments);
         this.intersectsPlayer = false;
-        // make our tasks run before others (they run in reverse z order)
-        this.z = __WEBPACK_IMPORTED_MODULE_2__zindex__["a" /* ZIndexes */].TaskPriority;
-        this.addTask(this.run);
-    }
-    run() {
-        // ???
-        if (!this.intersects(this.runtime.player)) {
-            this.intersectsPlayer = false;
-        }
     }
     handleIntersect(sprite, velocity, horizontal) {
-        if (sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
-            if (sprite.yv > 0 || this.intersectsPlayer) {
-                this.intersectsPlayer = true;
+        if (horizontal) {
+            return false;
+        }
+        else {
+            const previousY = sprite.y + velocity;
+            if (previousY + sprite.height > this.y) {
                 return false;
             }
+            else {
+                return super.handleIntersect(sprite, velocity, horizontal);
+            }
         }
-        return super.handleIntersect(sprite, velocity, horizontal);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = OneWayBlock;
@@ -3140,7 +3147,6 @@ var ZIndexes;
 (function (ZIndexes) {
     ZIndexes[ZIndexes["Player"] = 10] = "Player";
     ZIndexes[ZIndexes["Block"] = 0] = "Block";
-    ZIndexes[ZIndexes["TaskPriority"] = -100] = "TaskPriority";
 })(ZIndexes || (ZIndexes = {}));
 
 

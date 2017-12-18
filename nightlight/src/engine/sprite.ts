@@ -179,7 +179,7 @@ export abstract class AbstractSprite extends TaskRunner {
   protected runBasicPhysics(xv: number, yv: number, options: IPhysicsOptions = {}): IPhysicsResult {
     options.collision = getOrDefault(options.collision, true);
     options.restrictPositionValues = getOrDefault(options.restrictPositionValues, true);
-    options.friction = getOrDefault(options.friction, true);
+    options.friction = getOrDefault(options.friction, FRICTION);
     options.midAirFriction = getOrDefault(options.midAirFriction, true);
     options.roundValues = getOrDefault(options.roundValues, true);
 
@@ -208,9 +208,9 @@ export abstract class AbstractSprite extends TaskRunner {
       yv = 0;
     }
 
-    if (options.friction) {
+    if (options.friction !== false) {
       if (onGround || options.midAirFriction) {
-        xv *= FRICTION;
+        xv *= (options.friction as number);
       }
     }
 
@@ -252,8 +252,9 @@ interface IPhysicsOptions {
   // restrict x values into 0 <= x <= CANVAS_WIDTH?
   restrictPositionValues?: boolean;
 
-  // apply friction?
-  friction?: boolean;
+  // false: don't apply friction
+  // number: will be used as friction value instead of FRICTION in /config.ts
+  friction?: false | number;
 
   // apply friction when in midair?
   midAirFriction?: boolean;

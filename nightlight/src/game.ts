@@ -30,6 +30,23 @@ export class Nightlight extends GameRuntime {
 
   constructor() {
     super(document.getElementById("canvas") as HTMLCanvasElement);
+
+    if (location.hash) {
+      this.setLevelToHash();
+    }
+
+    window.onhashchange = () => this.setLevelToHash();
+  }
+
+  public setLevelToHash() {
+    console.log("set hash", location.hash);
+    const hash = location.hash.substr(1);
+    if (!isNaN(parseInt(hash, 10))) {
+      this.level = parseInt(hash, 10);
+      if (this.started) {
+        this.renderLevel();
+      }
+    }
   }
 
   public start() {
@@ -106,7 +123,8 @@ export class Nightlight extends GameRuntime {
       levelIndex: index,
     };
 
-    new spriteConstructor(opts);
+    const block = new spriteConstructor(opts);
+    return block;
   }
 
   public renderLevel(num: number = this.level) {

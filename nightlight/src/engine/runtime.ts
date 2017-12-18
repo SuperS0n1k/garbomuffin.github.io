@@ -29,6 +29,7 @@ export class GameRuntime extends TaskRunner {
   public canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
   public frames: number = 0;
+  public started: boolean = false;
 
   public background: TBackground = "white";
   private _assetPromises: Array<Promise<TImage>> = [];
@@ -89,7 +90,7 @@ export class GameRuntime extends TaskRunner {
     console.log("adding image", src);
 
     const promise = new Promise<TImage>((resolve, reject) => {
-      const image = document.createElement("img");
+      const image = new Image();
       image.src = src;
       image.onload = () => resolve();
       image.onerror = () => reject();
@@ -112,8 +113,7 @@ export class GameRuntime extends TaskRunner {
     console.log("adding sound", src);
 
     const promise = new Promise<TImage>((resolve: any, reject: any) => {
-      const sound = document.createElement("audio");
-      sound.src = src;
+      const sound = new Audio(src);
       sound.oncanplaythrough = () => resolve();
       sound.onerror = () => reject();
       sound.preload = "auto";
@@ -190,6 +190,8 @@ export class GameRuntime extends TaskRunner {
     console.log("starting loop");
     this.resetVariables();
     this.loop();
+
+    this.started = true;
   }
 
   // the main loop - calls all tasks in all sprites
@@ -229,7 +231,7 @@ export class GameRuntime extends TaskRunner {
 
   public render() {
     // clear the canvas
-    this.resetCanvas();
+    this.resetCanvas(this.ctx, this.background);
 
     // sort sprites by z TODO: find a better for to do this
     this.sortSprites();
@@ -240,7 +242,7 @@ export class GameRuntime extends TaskRunner {
     }
   }
 
-  private sortSprites() {
+  protected sortSprites() {
     this.sprites.sort();
   }
 
@@ -254,10 +256,10 @@ export class GameRuntime extends TaskRunner {
   }
 
   // clears the canvas and replaces it with a blank white background
-  protected resetCanvas() {
-    this.ctx.scale(1, 1);
-    this.ctx.fillStyle = this.background;
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  protected resetCanvas(ctx: CanvasRenderingContext2D, background: TBackground = "white") {
+    ctx.scale(1, 1);
+    ctx.fillStyle = background;
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   }
 
   // small function that calls the mouse driver's update funciton
@@ -267,6 +269,6 @@ export class GameRuntime extends TaskRunner {
 
   // called when exiting
   public onexit() {
-    console.warn("empty onexit()");
+    this.started = false;
   }
 }

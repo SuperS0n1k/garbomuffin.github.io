@@ -1,7 +1,9 @@
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
+import { FRICTION } from "../../config";
 
 const LIFESPAN = 300;
 const GHOST_RATE = 0.03;
+const ROTATION_FRICTION = 0.5;
 
 // create a high limit to prevent constant death from crashing everything
 // but that also will be hard to find during normal play
@@ -51,7 +53,7 @@ export class PlayerFragmentSprite extends ImageSprite {
     this.yv = physicsResult.yv;
 
     if (physicsResult.onGround) {
-      this.rv *= 0.5;
+      this.rv *= ROTATION_FRICTION;
     }
 
     this.rotation += this.rv;
