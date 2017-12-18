@@ -1,3 +1,11 @@
+/*
+ * Spawns the level up coin
+ * The level up coin itself is not part of the level code,
+ * only the spawner.
+ *
+ * Different types becasue that's how the level codes are. (and I really don't want to touch those)
+ */
+
 import { IBlockOptions, SolidBlock } from "./block";
 import { LevelUpCoinSprite } from "../coin";
 import { BLOCK_HEIGHT } from "../../config";
@@ -17,12 +25,14 @@ abstract class LevelUpCoinSpawnerBlock extends SolidBlock {
   protected abstract getCoinPosition(): Vector;
 }
 
+// Spawns the coin above the block
 export class AboveLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
   protected getCoinPosition() {
     return new Vector(this.x, this.y - BLOCK_HEIGHT);
   }
 }
 
+// Spawns the coin below the block
 export class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
   protected getCoinPosition() {
     return new Vector(this.x, this.y + BLOCK_HEIGHT);

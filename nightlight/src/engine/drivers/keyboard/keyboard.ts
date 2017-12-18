@@ -1,3 +1,7 @@
+/*
+ * The keyboard driver for computers
+ */
+
 import { GameRuntime } from "../../runtime";
 import { AbstractKeyboard } from "./base";
 

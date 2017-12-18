@@ -1,10 +1,20 @@
+/*
+ * A block that crumbles beneath you as you stand on it
+ * Will reappear after a few seconds
+ */
+
 import { AbstractSprite } from "../../engine/sprite";
 import { PlayerSprite } from "../player/player";
 import { Task } from "../../engine/task";
 import { IBlockOptions, SolidBlock } from "./block";
 
+// The amount of frames in the crumbling animation
 const CRUMBLE_FRAMES = 9;
+
+// The length of each frame in the crumbling animation
 const CRUMBLE_FRAME_LENGTH = 5;
+
+// How long before the block will reappear
 const CRUMBLE_RESPAWN = 60 * 3;
 
 export class CrumblingBlock extends SolidBlock {

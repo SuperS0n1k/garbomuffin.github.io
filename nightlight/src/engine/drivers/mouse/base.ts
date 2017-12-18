@@ -1,3 +1,7 @@
+/*
+ * A few shared classes and things to extend for mouse/touch drivers
+ */
+
 import { GameRuntime } from "../../runtime";
 import { Vector } from "../../vector";
 import { TaskRunner } from "../../task";

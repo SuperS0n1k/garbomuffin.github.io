@@ -1,3 +1,11 @@
+/*
+ * It's a player.
+ *
+ * For now there doesn't seem to be any problems with having the player also be the graphic
+ * And until there are problems they will be staying as one
+ * (in some other games the size of the player textures chagne and that ruins physics)
+ */
+
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
 import { FRICTION, GRAVITY, BLOCK_HEIGHT } from "../../config";
 import { PlayerFragmentSprite } from "./fragment";
@@ -5,23 +13,39 @@ import { getRandomInt, clone } from "../../utils";
 import { Vector } from "../../engine/vector";
 import { PseudoSolidBlock } from "../blocks/block";
 
+// How fast the player walks
 const PLAYER_WALK_SPEED = 0.5 / 2;
+
+// The velocity gained when jumping
 const JUMP_HEIGHT = 5.4;
+
+// Maximum speed the player is allowed to move at
 const PLAYER_MAX_SPEED = 4 / 2;
+
+// The player uses a custom friction
+// This is the value used in that friction
 const PLAYER_FRICTION = 0.8 / 2;
 
-// const FRAGMENT_COUNT = 5;
-// const FRAGMENT_TEXTURES = 5;
+// Fragment textures that will always be present when dying
 const FRAGMENT_TEXTURES = [1, 2, 3, 4];
+// The minimum amount of small pieces to create
 const FRAGMENT_SMALL_PIECE_MIN = 4;
+// The maxiumum amount of small pieces to create
 const FRAGMENT_SMALL_PIECE_MAX = 6;
+// The texture associated with small pieces
 const FRAGMENT_SMALL_PIECE_TEXTURE = 5;
+// The range of xv values that pieces will have
 const FRAGMENT_XV_RANGE = 1;
+// The minimum yv that pieces will have
 const FRAGMENT_YV_MIN = 3;
+// The maxiumum yv that pieces will have
 const FRAGMENT_YV_MAX = 6;
+// The range of rotation change that pieces will have
 const FRAGMENT_RV_RANGE = 10;
 
+// Frames in the walk animation
 const WALK_ANIMATION_FRAMES = 4;
+// Length of each frame
 const WALK_ANIMATION_LENGTH = 4;
 
 enum MovementDirection {

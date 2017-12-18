@@ -1,10 +1,24 @@
+/*
+ * A block that falls when you hit the switch.
+ *
+ * Will vibrate for a bit before disappearing.
+ */
+
 import { SolidBlock, IBlockOptions } from "./block";
 import { Task } from "../../engine/task";
 import { Vector } from "../../engine/vector";
 
+// Time between each vibration before falling
 const VIBRATE_EVERY = 3;
+
+// The distance to move when vibrating
 const VIBRATE_RANGE = 2;
+
+// How many times to vibrate
 const VIBRATE_TIMES = 20;
+
+// Delay before block will fall after vibrating
+// Makes blocks from the bottom fall before the ones on the top, which looks nice
 const FALL_DELAY_PER_Y = 0.25;
 
 export class FallingBlock extends SolidBlock {

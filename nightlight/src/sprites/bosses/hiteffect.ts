@@ -1,3 +1,9 @@
+/*
+ * Health events for bosses
+ *
+ * +0, +1, -1
+ */
+
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
 
 const LIFESPAN = 60;

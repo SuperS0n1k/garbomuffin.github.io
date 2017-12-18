@@ -1,7 +1,13 @@
+/*
+ * It's a spike. It kills the player.
+ */
+
 import { IBlockOptions, SolidBlock } from "./block";
 import { PlayerSprite } from "../player/player";
 import { AbstractSprite } from "../../engine/sprite";
 
+// Spikes share pretty much all of their code
+// So an abstract class is made and extended
 abstract class SpikeBlock extends SolidBlock {
   protected abstract canKill(sprite: AbstractSprite): boolean;
 

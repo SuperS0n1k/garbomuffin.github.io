@@ -1,3 +1,9 @@
+/*
+ * The first boss: A Sword
+ *
+ * This code is terrible. Please do not try to maintain it. Rewrite it from the ground up.
+ */
+
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
 import { Task } from "../../engine/task";
 import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";

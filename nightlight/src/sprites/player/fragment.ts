@@ -1,8 +1,18 @@
+/*
+ * Fragments of the player that will fly everywhere you when the player dies
+ */
+
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
 import { FRICTION } from "../../config";
 
+// How long before they will start to go away (opacity up)
 const LIFESPAN = 300;
+
+// The rate at which the opacity will go up each frame after the life span is reached
 const GHOST_RATE = 0.03;
+
+// The friction value for rotation when on the ground
+// Multiplied by rotation so higher is less, 1 is 0
 const ROTATION_FRICTION = 0.5;
 
 // create a high limit to prevent constant death from crashing everything

@@ -1,3 +1,9 @@
+/*
+ * A 2D Vector: (x, y)
+ *
+ * Used for scale and other only 2D stuff
+ */
+
 export class Vector2D {
   public x: number;
   public y: number;

@@ -5,7 +5,6 @@ import { TaskRunner } from "./task";
 import { Sprite, TGame } from "./types";
 import { getOrDefault, degreeToRadians } from "./utils";
 import { FRICTION, GRAVITY } from "../config";
-import { Bounds } from "./bounds";
 import { ImageSprite } from "./sprites/imagesprite";
 
 export interface ISpriteOptions {

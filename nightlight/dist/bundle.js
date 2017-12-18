@@ -79,16 +79,19 @@ class Block extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a
         this.runtime.blocks.push(this);
     }
     // Ugly duplication but it works
+    // Align the sprite to the floor and centered horizontally
     floorAlign() {
         this.centerAlign(true, false);
         this.y += __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */] - this.height;
         this.y = Math.floor(this.y);
     }
+    // Align the sprite to the left and centered vertically
     leftAlign() {
         this.centerAlign(false, true);
         this.x += __WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] - this.width;
         this.x = Math.floor(this.x);
     }
+    // Center the sprite
     centerAlign(centerX = true, centerY = true) {
         if (centerX) {
             this.x += (__WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] - this.width) / 2;
@@ -99,6 +102,12 @@ class Block extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a
             this.y = Math.floor(this.y);
         }
     }
+    /**
+     * Moves the sprite off of this block
+     * Return values:
+     * true or undefined - collision handled
+     * false - collision was not handled, this is used by other blocks that replace this method
+     */
     handleIntersect(sprite, velocity, horizontal) {
         if (horizontal) {
             if (velocity > 0) {
@@ -122,6 +131,8 @@ class Block extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a
 /* harmony export (immutable) */ __webpack_exports__["a"] = Block;
 
 // Block with solid = true by default
+// Note that just because solid = true does not actually mean it is solid, just likely that it is solid
+// Some blocks extend this then in handleIntersect have special behavior
 class SolidBlock extends Block {
     constructor() {
         super(...arguments);
@@ -147,6 +158,11 @@ class PseudoSolidBlock extends SolidBlock {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector2d__ = __webpack_require__(10);
+/*
+ * A 3D Vector: (x, y, z)
+ *
+ * z is optional when creating Vectors
+ */
 
 // a simple position class that removes some verbosity from code
 // can make for some nicer code sometimes
@@ -171,7 +187,11 @@ class Vector extends __WEBPACK_IMPORTED_MODULE_0__vector2d__["a" /* Vector2D */]
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(5);
-// Tasks and TaskRunners
+/*
+ * Tasks and TaskRunners are a very core part of the engine
+ *
+ * Handles what to run, when to run it, to repeat it, and removal.
+ */
 
 // a task is something to be run at a certain time, maybe repeating
 class Task {
@@ -256,6 +276,10 @@ class TaskRunner {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/*
+ * Config values that are global to the whole game
+ * Options to one specific thing are in its file
+ */
 const BLOCK_HEIGHT = 16;
 /* harmony export (immutable) */ __webpack_exports__["a"] = BLOCK_HEIGHT;
 
@@ -273,7 +297,7 @@ const GRAVITY = 0.195;
 
 const FRICTION = 0.75;
 /* harmony export (immutable) */ __webpack_exports__["c"] = FRICTION;
- // xv *= FRICTION
+
 
 
 /***/ }),
@@ -287,27 +311,47 @@ const FRICTION = 0.75;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_vector__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__blocks_block__ = __webpack_require__(0);
+/*
+ * It's a player.
+ *
+ * For now there doesn't seem to be any problems with having the player also be the graphic
+ * And until there are problems they will be staying as one
+ * (in some other games the size of the player textures chagne and that ruins physics)
+ */
 
 
 
 
 
 
+// How fast the player walks
 const PLAYER_WALK_SPEED = 0.5 / 2;
+// The velocity gained when jumping
 const JUMP_HEIGHT = 5.4;
+// Maximum speed the player is allowed to move at
 const PLAYER_MAX_SPEED = 4 / 2;
+// The player uses a custom friction
+// This is the value used in that friction
 const PLAYER_FRICTION = 0.8 / 2;
-// const FRAGMENT_COUNT = 5;
-// const FRAGMENT_TEXTURES = 5;
+// Fragment textures that will always be present when dying
 const FRAGMENT_TEXTURES = [1, 2, 3, 4];
+// The minimum amount of small pieces to create
 const FRAGMENT_SMALL_PIECE_MIN = 4;
+// The maxiumum amount of small pieces to create
 const FRAGMENT_SMALL_PIECE_MAX = 6;
+// The texture associated with small pieces
 const FRAGMENT_SMALL_PIECE_TEXTURE = 5;
+// The range of xv values that pieces will have
 const FRAGMENT_XV_RANGE = 1;
+// The minimum yv that pieces will have
 const FRAGMENT_YV_MIN = 3;
+// The maxiumum yv that pieces will have
 const FRAGMENT_YV_MAX = 6;
+// The range of rotation change that pieces will have
 const FRAGMENT_RV_RANGE = 10;
+// Frames in the walk animation
 const WALK_ANIMATION_FRAMES = 4;
+// Length of each frame
 const WALK_ANIMATION_LENGTH = 4;
 var MovementDirection;
 (function (MovementDirection) {
@@ -499,6 +543,9 @@ function degreeToRadians(deg) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(5);
+/*
+ * A sprite that has an image as a texture.
+ */
 
 
 class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
@@ -721,8 +768,11 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__);
-// a container contains sprites
-// isn't that earth shattering or what?
+/*
+ * A container holds sprites
+ *
+ * Has a few utilty methods that a normal array does not and allows more flexibility
+ */
 
 class Container {
     constructor() {
@@ -758,6 +808,9 @@ class Container {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(2);
+/*
+ * A few shared classes and things to extend for mouse/touch drivers
+ */
 
 
 class BaseMouse extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunner */] {
@@ -827,6 +880,11 @@ class EmptyMouseButton {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/*
+ * A 2D Vector: (x, y)
+ *
+ * Used for scale and other only 2D stuff
+ */
 class Vector2D {
     constructor(x = 0, y = 0) {
         if (typeof x === "object") {
@@ -856,6 +914,9 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+// Clones an array
+// Allows you to use inplace methods on an array without changing the actual array
+// (eg. sort)
 function clone(array) {
     let i = array.length;
     const result = [];
@@ -873,11 +934,17 @@ function clone(array) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
+/*
+ * It's a grass block.
+ *
+ * It is spawned on top of the regular blocks and moves itself down onto the block below.
+ */
 
 
 class GrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
     constructor(opts) {
         super(opts);
+        // Move ourselves down
         this.y += __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
     }
 }
@@ -893,12 +960,22 @@ class GrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
+/*
+ * A block that falls when you hit the switch.
+ *
+ * Will vibrate for a bit before disappearing.
+ */
 
 
 
+// Time between each vibration before falling
 const VIBRATE_EVERY = 3;
+// The distance to move when vibrating
 const VIBRATE_RANGE = 2;
+// How many times to vibrate
 const VIBRATE_TIMES = 20;
+// Delay before block will fall after vibrating
+// Makes blocks from the bottom fall before the ones on the top, which looks nice
 const FALL_DELAY_PER_Y = 0.25;
 class FallingBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
     constructor(opts) {
@@ -964,6 +1041,11 @@ class FallingBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBloc
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(15);
+/*
+ * The loader.
+ *
+ * It creates the game object, adds in assets, and starts the game.
+ */
 
 const game = new __WEBPACK_IMPORTED_MODULE_0__game__["a" /* Nightlight */]();
 // add in all of our assets
@@ -1092,6 +1174,8 @@ game.addSound("music/finalboss/2");
 // wait for it to load then run our stuff
 const progressElement = document.getElementById("progress");
 game.waitForAssets((progress) => {
+    // show a progress bar
+    // with the addition of sounds it can take a long time to download stuff and it was inevitable
     progressElement.value = progress;
 }).then(run);
 function run() {
@@ -1146,6 +1230,27 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         }
         window.onhashchange = () => this.setLevelToHash();
     }
+    //
+    // Utilities and Init
+    //
+    setBackgroundMusic(music) {
+        for (const sound of this.backgroundMusic) {
+            this.stopSound(sound);
+            sound.loop = false;
+            sound.onended = () => { };
+        }
+        for (const sound of music) {
+            sound.onended = () => this.nextBackgroundMusic();
+        }
+        this.backgroundMusic = music;
+        this.playSound(music[0]);
+    }
+    nextBackgroundMusic() {
+        if (this.backgroundMusic.length > 1) {
+            this.backgroundMusic.shift();
+        }
+        this.playSound(this.backgroundMusic[0]);
+    }
     setLevelToHash() {
         console.log("set hash", location.hash);
         const hash = location.hash.substr(1);
@@ -1156,12 +1261,11 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
             }
         }
     }
-    start() {
-        super.start();
-        this.levels = Object(__WEBPACK_IMPORTED_MODULE_1__levels_levels__["a" /* getLevels */])(this);
-        this.createPlayer();
-        this.createStarBackground();
-        this.renderLevel();
+    createCanvas() {
+        const canvas = document.createElement("canvas");
+        canvas.height = this.canvas.height;
+        canvas.width = this.canvas.width;
+        return canvas;
     }
     createPlayer() {
         this.player = new __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__["a" /* PlayerSprite */]({
@@ -1184,6 +1288,19 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
             });
         }
     }
+    //
+    // Overrides
+    //
+    start() {
+        super.start();
+        this.levels = Object(__WEBPACK_IMPORTED_MODULE_1__levels_levels__["a" /* getLevels */])(this);
+        this.createPlayer();
+        this.createStarBackground();
+        this.renderLevel();
+    }
+    //
+    // Levels
+    //
     destroyLevel() {
         // a normal for loop won't work because we are modifying the list mid loop
         for (let i = 0; i < this.sprites.length;) {
@@ -1275,24 +1392,6 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
             });
         }
     }
-    setBackgroundMusic(music) {
-        for (const sound of this.backgroundMusic) {
-            this.stopSound(sound);
-            sound.loop = false;
-            sound.onended = () => { };
-        }
-        for (const sound of music) {
-            sound.onended = () => this.nextBackgroundMusic();
-        }
-        this.backgroundMusic = music;
-        this.playSound(music[0]);
-    }
-    nextBackgroundMusic() {
-        if (this.backgroundMusic.length > 1) {
-            this.backgroundMusic.shift();
-        }
-        this.playSound(this.backgroundMusic[0]);
-    }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Nightlight;
 
@@ -1311,6 +1410,9 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprite__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__task__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils__ = __webpack_require__(5);
+/*
+ * The main game runtime object
+ */
 
 
 
@@ -1319,13 +1421,15 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
 
 
 
+// Dimensions of the canvas
 const CANVAS_WIDTH = 480;
 const CANVAS_HEIGHT = 360;
+// Format of images
+// .jpg might work but don't, just don't
 const IMAGE_FORMAT = "png";
+// Format of sounds
+// mp3 has very wide browser support: https://caniuse.com/#feat=mp3
 const SOUND_FORMAT = "mp3";
-// this is the main game runtime object
-// rendering is done here
-// a lot of stuff is done here
 class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner */] {
     constructor(canvas) {
         super();
@@ -1571,6 +1675,9 @@ Array.prototype.stableSort = function (cmp = defaultCmp) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(19);
+/*
+ * The keyboard driver for computers
+ */
 
 class Keyboard extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* AbstractKeyboard */] {
     constructor(runtime) {
@@ -1608,6 +1715,11 @@ Keyboard.PREVENT = [
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__task__ = __webpack_require__(2);
+/*
+ * A few base classes and things to extend for keyboard drivers
+ *
+ * Currently there's only one driver for computers but I want to add one for mobile.
+ */
 
 class AbstractKeyboard extends __WEBPACK_IMPORTED_MODULE_0__task__["b" /* TaskRunner */] {
     constructor(runtime) {
@@ -1653,11 +1765,10 @@ class Key {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(9);
+/*
+ * A mouse driver for computers
+ */
 
-// handles mouse events
-// a simple "driver" for the mouse
-// TODO: touchscreen support
-// probably will use another "driver" that is compatible
 var Button;
 (function (Button) {
     Button[Button["left"] = 0] = "left";
@@ -1706,12 +1817,13 @@ class Mouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__vector__ = __webpack_require__(1);
+/*
+ * A mouse driver for touchscreens
+ *
+ * A little buggy but it does get the job done
+ */
 
 
-// handles mouse events
-// a simple "driver" for the mouse
-// TODO: touchscreen support
-// probably will use another "driver" that is compatible
 class TouchscreenButton extends __WEBPACK_IMPORTED_MODULE_0__base__["b" /* BaseMouseButton */] {
     constructor(mouse) {
         super(mouse); // It's a bird! It's a plane! No it's Supermouse!
@@ -1767,8 +1879,10 @@ class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMo
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-// error is handled more gracefully by the engine
-// than a regular error
+/*
+ * When calling runtime.exit() this error is thrown
+ * It is handled by the game better and calls onexit()
+ */
 class ExitError extends Error {
     constructor() {
         super("Stopping game execution");
@@ -1786,6 +1900,14 @@ class ExitError extends Error {
 /* harmony export (immutable) */ __webpack_exports__["a"] = getLevels;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_bosses_sword__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(1);
+/*
+ * It's level data
+ *
+ * Levels can define:
+ *  - new backgrounds
+ *  - new music
+ *  - functions to be called (to spawn things like bosses)
+ */
 
 
 function deleteBackgroundStars(game) {
@@ -1908,9 +2030,16 @@ function getLevels(game) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(6);
+/*
+ * Fragments of the player that will fly everywhere you when the player dies
+ */
 
+// How long before they will start to go away (opacity up)
 const LIFESPAN = 300;
+// The rate at which the opacity will go up each frame after the life span is reached
 const GHOST_RATE = 0.03;
+// The friction value for rotation when on the ground
+// Multiplied by rotation so higher is less, 1 is 0
 const ROTATION_FRICTION = 0.5;
 // create a high limit to prevent constant death from crashing everything
 // but that also will be hard to find during normal play
@@ -1981,6 +2110,10 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__ = __webpack_require__(36);
+/*
+ * A map of characters and the texture and class
+ * they correspond to
+ */
 
 
 
@@ -2066,8 +2199,13 @@ const blockMap = {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(4);
+/*
+ * It's a spike. It kills the player.
+ */
 
 
+// Spikes share pretty much all of their code
+// So an abstract class is made and extended
 class SpikeBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
     handleIntersect(sprite, velocity, horizontal) {
         super.handleIntersect(sprite, velocity, horizontal);
@@ -2125,6 +2263,12 @@ class RightSpikeBlock extends SpikeBlock {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__grass__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
+/*
+ * It's a tall grass block.
+ *
+ * It is spawned like normal grass blocks but also shows a taller grass on top of the block
+ * It creates a normal grass to go below it
+ */
 
 
 
@@ -2150,11 +2294,18 @@ class TallGrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block *
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__player_player__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__block__ = __webpack_require__(0);
+/*
+ * A block that crumbles beneath you as you stand on it
+ * Will reappear after a few seconds
+ */
 
 
 
+// The amount of frames in the crumbling animation
 const CRUMBLE_FRAMES = 9;
+// The length of each frame in the crumbling animation
 const CRUMBLE_FRAME_LENGTH = 5;
+// How long before the block will reappear
 const CRUMBLE_RESPAWN = 60 * 3;
 class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBlock */] {
     constructor(opts) {
@@ -2230,6 +2381,7 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
 
 
 
+// Block that spawns a switch
 class BlockSwitchSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
     constructor(opts) {
         super(opts);
@@ -2254,6 +2406,11 @@ class BlockSwitchSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blocks_falling__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
+/*
+ * The switch that makes the FallingBlocks fall
+ *
+ * Spawned by a BlockSwitchSpawnerBlock as this is not actually part of the level code, only the spawner
+ */
 
 
 
@@ -2295,8 +2452,10 @@ class BlockSwitch extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Blo
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
+/*
+ * A block that is toggled solid/not solid when a switch is hit.
+ */
 
-// Idk what to name this
 class LightBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
     constructor(opts) {
         super(opts);
@@ -2340,11 +2499,17 @@ class DisabledLightBlock extends LightBlock {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(2);
+/*
+ * A block that toggles the solidity of LightBlocks
+ */
 
 
 
+// The total frames in the animation
 const ANIMATION_FRAMES = 2;
+// The length per frame
 const ANIMATION_FRAME_LENGTH = 5;
+// How long the switch will remaing as pressed before deleting itself
 const DESTROY_DELAY = 30;
 class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
     constructor(opts) {
@@ -2403,6 +2568,13 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
+/*
+ * Spawns the level up coin
+ * The level up coin itself is not part of the level code,
+ * only the spawner.
+ *
+ * Different types becasue that's how the level codes are. (and I really don't want to touch those)
+ */
 
 
 
@@ -2417,6 +2589,7 @@ class LevelUpCoinSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /
         });
     }
 }
+// Spawns the coin above the block
 class AboveLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
     getCoinPosition() {
         return new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y - __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */]);
@@ -2424,6 +2597,7 @@ class AboveLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = AboveLevelUpCoinSpawnerBlock;
 
+// Spawns the coin below the block
 class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
     getCoinPosition() {
         return new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x, this.y + __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */]);
@@ -2440,14 +2614,23 @@ class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
+/*
+ * The coin that levels you up
+ */
 
 
-const FRAME_LENGTH = 3;
+
+// Length of an animation frame
+const FRAME_LENGTH = 4;
+// The total frames in the animation
 const TOTAL_FRAMES = 4;
 class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Block */] {
     constructor(opts) {
         super(opts);
         this.animationFrame = 1;
+        // In order to stay centered after changing position it will recenter using the startingPosition
+        this.startingPosition = new __WEBPACK_IMPORTED_MODULE_2__engine_vector__["a" /* Vector */](this.position);
         this.centerAlign();
         this.addTask(this.run);
         this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
@@ -2469,6 +2652,10 @@ class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" 
         if (this.animationFrame > TOTAL_FRAMES) {
             this.animationFrame = 1;
         }
+        this.texture = this.runtime.getImage(`coin/${this.animationFrame}`);
+        this.updateDimensions();
+        this.position = new __WEBPACK_IMPORTED_MODULE_2__engine_vector__["a" /* Vector */](this.startingPosition);
+        this.centerAlign();
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = LevelUpCoinSprite;
@@ -2481,19 +2668,24 @@ class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" 
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
+/*
+ * A block that allows things to go up but not down.
+ */
 
-// This is so much cleaner
 class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
     constructor() {
         super(...arguments);
         this.intersectsPlayer = false;
     }
     handleIntersect(sprite, velocity, horizontal) {
+        // Horizontally these have no collision
         if (horizontal) {
             return false;
         }
         else {
             const previousY = sprite.y + velocity;
+            // If below then not solid
+            // Otherwise use normal behavior when above
             if (previousY + sprite.height > this.y) {
                 return false;
             }
@@ -2516,6 +2708,9 @@ class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
+/*
+ * A block that is in the corner
+ */
 
 
 
@@ -2533,6 +2728,10 @@ class CornerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] 
         // queue deletion
         this.destroy();
     }
+    /**
+     * If the block that is X distance from this one is air,
+     * then create a new sprite with the texture, rotation, x offset, and y offset as provided
+     */
     testCorner(offset, texture, rotation, x, y) {
         const charAtOffset = this.runtime.levelData[this.levelIndex + offset];
         const isAir = AIR.indexOf(charAtOffset) > -1;
@@ -2546,6 +2745,8 @@ class CornerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] 
         }
     }
 }
+// A normal corner block that spawns rotations of itself
+// Used in all zones but castle
 class RotatedCornerBlock extends CornerBlock {
     constructor(opts) {
         super(opts);
@@ -2570,6 +2771,8 @@ class RotatedCornerBlock extends CornerBlock {
 }
 /* harmony export (immutable) */ __webpack_exports__["b"] = RotatedCornerBlock;
 
+// The corner blocks in the castle are special
+// I believe this block actually only shows up like once in the whole game
 class CastleCornerBlock extends CornerBlock {
     constructor(opts) {
         super(opts);
@@ -2595,10 +2798,20 @@ class CastleCornerBlock extends CornerBlock {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprite__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_utils__ = __webpack_require__(5);
+/*
+ * The stars in the background.
+ *
+ * Spawned randomly when the game starts and are deleted when you enter the castle.
+ */
 
 
 
+// How often to update opacity
+// The original did it every 0.1 seconds and this takes a lot of inspiration from the original
+// (even in cases where changing it is completely possible)
 const UPDATE_EVERY = 6;
+// How many times will it update in each cycle
+// One cycle is Dark -> Bright or Bright -> Dark, not both
 const ANIMATION_LENGTH = 10;
 class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__["a" /* AbstractSprite */] {
     constructor(opts) {
@@ -2634,6 +2847,7 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
             return x;
         }
     }
+    // Implement render as this extends AbstractSprite
     render(ctx) {
         const animationProgress = this.clamp(this.progress / ANIMATION_LENGTH, 0, 1);
         const color = Math.floor(255 * animationProgress);
@@ -2737,14 +2951,14 @@ const JumpLights = [
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(2);
+/*
+ * A light that will allow the player to jump again once while in the air.
+ */
 
 
 
 const HIDE_DURATION = 60 * 3;
 class JumpLight extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["c" /* SolidBlock */] {
-    constructor(opts) {
-        super(opts);
-    }
     show() {
         this.visible = true;
     }
@@ -2757,11 +2971,13 @@ class JumpLight extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["c" /* Solid
         }));
     }
     handleIntersect(sprite, velocity, horizontal) {
+        // Only do things for players
         if (sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
             if (this.visible) {
                 this.activate(sprite);
             }
         }
+        // Never solid
         return false;
     }
 }
@@ -2781,6 +2997,11 @@ class JumpLight extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["c" /* Solid
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__hiteffect__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__engine_vector__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__coin__ = __webpack_require__(34);
+/*
+ * The first boss: A Sword
+ *
+ * This code is terrible. Please do not try to maintain it. Rewrite it from the ground up.
+ */
 
 
 
@@ -3143,6 +3364,8 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ZIndexes; });
+// To avoid using magic values and 99999999 to put things on top
+// All z indexes are defined here
 var ZIndexes;
 (function (ZIndexes) {
     ZIndexes[ZIndexes["Player"] = 10] = "Player";
@@ -3156,6 +3379,11 @@ var ZIndexes;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(6);
+/*
+ * Health events for bosses
+ *
+ * +0, +1, -1
+ */
 
 const LIFESPAN = 60;
 const OPACITY_PER_FRAME = 1 / LIFESPAN;

@@ -1,3 +1,9 @@
+/*
+ * The loader.
+ *
+ * It creates the game object, adds in assets, and starts the game.
+ */
+
 import { Nightlight } from "./game";
 import { Task } from "./engine/task";
 
@@ -149,6 +155,8 @@ game.addSound("music/finalboss/2");
 // wait for it to load then run our stuff
 const progressElement = document.getElementById("progress") as HTMLProgressElement;
 game.waitForAssets((progress) => {
+  // show a progress bar
+  // with the addition of sounds it can take a long time to download stuff and it was inevitable
   progressElement.value = progress;
 }).then(run);
 

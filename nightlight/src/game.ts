@@ -10,10 +10,10 @@ import * as config from "./config";
 import { Container } from "./engine/container";
 import { BackgroundStarSprite } from "./sprites/star";
 import { getRandomInt } from "./utils";
-import { LightBlock } from "./sprites/blocks/lightblock";
 import { JumpLights } from "./levels/jumplights";
 import { JumpLight } from "./sprites/jumplight";
 import { ZIndexes } from "./sprites/zindex";
+import { LightBlock } from "./sprites/blocks/lightblock";
 
 export class Nightlight extends GameRuntime {
   public level: number = 0;
@@ -38,6 +38,32 @@ export class Nightlight extends GameRuntime {
     window.onhashchange = () => this.setLevelToHash();
   }
 
+  //
+  // Utilities and Init
+  //
+
+  public setBackgroundMusic(music: TSound[]) {
+    for (const sound of this.backgroundMusic) {
+      this.stopSound(sound);
+      sound.loop = false;
+      sound.onended = () => {};
+    }
+
+    for (const sound of music) {
+      sound.onended = () => this.nextBackgroundMusic();
+    }
+
+    this.backgroundMusic = music;
+    this.playSound(music[0]);
+  }
+
+  private nextBackgroundMusic() {
+    if (this.backgroundMusic.length > 1) {
+      this.backgroundMusic.shift();
+    }
+    this.playSound(this.backgroundMusic[0]);
+  }
+
   public setLevelToHash() {
     console.log("set hash", location.hash);
     const hash = location.hash.substr(1);
@@ -49,14 +75,11 @@ export class Nightlight extends GameRuntime {
     }
   }
 
-  public start() {
-    super.start();
-
-    this.levels = getLevels(this);
-
-    this.createPlayer();
-    this.createStarBackground();
-    this.renderLevel();
+  public createCanvas() {
+    const canvas = document.createElement("canvas");
+    canvas.height = this.canvas.height;
+    canvas.width = this.canvas.width;
+    return canvas;
   }
 
   private createPlayer() {
@@ -81,6 +104,24 @@ export class Nightlight extends GameRuntime {
       });
     }
   }
+
+  //
+  // Overrides
+  //
+
+  public start() {
+    super.start();
+
+    this.levels = getLevels(this);
+
+    this.createPlayer();
+    this.createStarBackground();
+    this.renderLevel();
+  }
+
+  //
+  // Levels
+  //
 
   private destroyLevel() {
     // a normal for loop won't work because we are modifying the list mid loop
@@ -188,27 +229,5 @@ export class Nightlight extends GameRuntime {
         position,
       });
     }
-  }
-
-  public setBackgroundMusic(music: TSound[]) {
-    for (const sound of this.backgroundMusic) {
-      this.stopSound(sound);
-      sound.loop = false;
-      sound.onended = () => {};
-    }
-
-    for (const sound of music) {
-      sound.onended = () => this.nextBackgroundMusic();
-    }
-
-    this.backgroundMusic = music;
-    this.playSound(music[0]);
-  }
-
-  private nextBackgroundMusic() {
-    if (this.backgroundMusic.length > 1) {
-      this.backgroundMusic.shift();
-    }
-    this.playSound(this.backgroundMusic[0]);
   }
 }

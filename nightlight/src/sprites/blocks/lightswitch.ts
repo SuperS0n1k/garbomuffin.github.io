@@ -1,10 +1,19 @@
+/*
+ * A block that toggles the solidity of LightBlocks
+ */
+
 import { SolidBlock, IBlockOptions } from "./block";
 import { AbstractSprite } from "../../engine/sprite";
 import { PlayerSprite } from "../player/player";
 import { Task } from "../../engine/task";
 
+// The total frames in the animation
 const ANIMATION_FRAMES = 2;
+
+// The length per frame
 const ANIMATION_FRAME_LENGTH = 5;
+
+// How long the switch will remaing as pressed before deleting itself
 const DESTROY_DELAY = 30;
 
 export class LightSwitchBlock extends SolidBlock {

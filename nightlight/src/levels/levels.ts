@@ -1,3 +1,12 @@
+/*
+ * It's level data
+ *
+ * Levels can define:
+ *  - new backgrounds
+ *  - new music
+ *  - functions to be called (to spawn things like bosses)
+ */
+
 import { TBackground, TImage, TSound } from "../engine/types";
 import { Nightlight } from "../game";
 import { SwordBoss } from "../sprites/bosses/sword";

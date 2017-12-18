@@ -3,6 +3,7 @@ import { BlockSwitch } from "../blockswitch";
 import { BLOCK_HEIGHT } from "../../config";
 import { Vector } from "../../engine/vector";
 
+// Block that spawns a switch
 export class BlockSwitchSpawnerBlock extends SolidBlock {
   constructor(opts: IBlockOptions) {
     super(opts);

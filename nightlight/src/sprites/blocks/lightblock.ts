@@ -1,6 +1,8 @@
-import { IBlockOptions, Block } from "./block";
+/*
+ * A block that is toggled solid/not solid when a switch is hit.
+ */
 
-// Idk what to name this
+import { IBlockOptions, Block } from "./block";
 
 export abstract class LightBlock extends Block {
   constructor(opts: IBlockOptions) {

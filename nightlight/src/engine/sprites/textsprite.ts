@@ -1,3 +1,7 @@
+/*
+ * A sprite that is text
+ */
+
 import { AbstractSprite, ISpriteOptions } from "../sprite";
 import { TImage } from "../types";
 import { getOrDefault } from "../utils";

@@ -1,12 +1,12 @@
+/*
+ * A mouse driver for touchscreens
+ *
+ * A little buggy but it does get the job done
+ */
+
 import { GameRuntime } from "../../runtime";
 import { BaseMouse, BaseMouseButton, EmptyMouseButton, IMouse, IMouseButton } from "./base";
 import { Vector } from "../../vector";
-
-// handles mouse events
-// a simple "driver" for the mouse
-
-// TODO: touchscreen support
-// probably will use another "driver" that is compatible
 
 class TouchscreenButton extends BaseMouseButton implements IMouseButton {
   constructor(mouse: TouchscreenMouse) {

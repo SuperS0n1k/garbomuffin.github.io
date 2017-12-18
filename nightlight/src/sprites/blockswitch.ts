@@ -1,3 +1,9 @@
+/*
+ * The switch that makes the FallingBlocks fall
+ *
+ * Spawned by a BlockSwitchSpawnerBlock as this is not actually part of the level code, only the spawner
+ */
+
 import { IBlockOptions, Block } from "./blocks/block";
 import { Task } from "../engine/task";
 import { FallingBlock } from "./blocks/falling";

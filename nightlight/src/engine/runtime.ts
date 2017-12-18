@@ -1,3 +1,7 @@
+/*
+ * The main game runtime object
+ */
+
 import { Container } from "./container";
 import { AbstractKeyboard } from "./drivers/keyboard/base";
 import { Keyboard } from "./drivers/keyboard/keyboard";
@@ -9,14 +13,17 @@ import { TaskRunner } from "./task";
 import { TImage, TBackground, TSound } from "./types";
 import { isMobile } from "./utils";
 
+// Dimensions of the canvas
 const CANVAS_WIDTH = 480;
 const CANVAS_HEIGHT = 360;
-const IMAGE_FORMAT = "png";
-const SOUND_FORMAT = "mp3";
 
-// this is the main game runtime object
-// rendering is done here
-// a lot of stuff is done here
+// Format of images
+// .jpg might work but don't, just don't
+const IMAGE_FORMAT = "png";
+
+// Format of sounds
+// mp3 has very wide browser support: https://caniuse.com/#feat=mp3
+const SOUND_FORMAT = "mp3";
 
 export class GameRuntime extends TaskRunner {
   // see resetVariables()

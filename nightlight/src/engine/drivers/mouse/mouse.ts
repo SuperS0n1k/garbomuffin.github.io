@@ -1,11 +1,9 @@
+/*
+ * A mouse driver for computers
+ */
+
 import { GameRuntime } from "../../runtime";
 import { BaseMouse, BaseMouseButton, IMouse, IMouseButton } from "./base";
-
-// handles mouse events
-// a simple "driver" for the mouse
-
-// TODO: touchscreen support
-// probably will use another "driver" that is compatible
 
 enum Button {
   left = 0,

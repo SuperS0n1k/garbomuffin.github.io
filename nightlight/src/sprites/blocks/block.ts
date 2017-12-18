@@ -18,6 +18,7 @@ export class Block extends ImageSprite {
 
   // Ugly duplication but it works
 
+  // Align the sprite to the floor and centered horizontally
   public floorAlign() {
     this.centerAlign(true, false);
 
@@ -25,6 +26,7 @@ export class Block extends ImageSprite {
     this.y = Math.floor(this.y);
   }
 
+  // Align the sprite to the left and centered vertically
   public leftAlign() {
     this.centerAlign(false, true);
 
@@ -32,6 +34,7 @@ export class Block extends ImageSprite {
     this.x = Math.floor(this.x);
   }
 
+  // Center the sprite
   public centerAlign(centerX: boolean = true, centerY: boolean = true) {
     if (centerX) {
       this.x += (BLOCK_WIDTH - this.width) / 2;
@@ -44,6 +47,12 @@ export class Block extends ImageSprite {
     }
   }
 
+  /**
+   * Moves the sprite off of this block
+   * Return values:
+   * true or undefined - collision handled
+   * false - collision was not handled, this is used by other blocks that replace this method
+   */
   public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean): boolean | void {
     if (horizontal) {
       if (velocity > 0) {
@@ -64,6 +73,8 @@ export class Block extends ImageSprite {
 }
 
 // Block with solid = true by default
+// Note that just because solid = true does not actually mean it is solid, just likely that it is solid
+// Some blocks extend this then in handleIntersect have special behavior
 export class SolidBlock extends Block {
   public solid: boolean = true;
 }

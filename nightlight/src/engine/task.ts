@@ -1,4 +1,8 @@
-// Tasks and TaskRunners
+/*
+ * Tasks and TaskRunners are a very core part of the engine
+ *
+ * Handles what to run, when to run it, to repeat it, and removal.
+ */
 
 import { Runnable, TaskRunnable } from "./types";
 import { getOrDefault } from "./utils";

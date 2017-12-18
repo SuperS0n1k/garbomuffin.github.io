@@ -1,3 +1,8 @@
+/*
+ * A map of characters and the texture and class
+ * they correspond to
+ */
+
 import { Block, PseudoSolidBlock } from "./sprites/blocks/block";
 import { GrassBlock } from "./sprites/blocks/grass";
 import { UpSpikeBlock, LeftSpikeBlock, RightSpikeBlock, DownSpikeBlock } from "./sprites/blocks/spike";

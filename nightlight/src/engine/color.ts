@@ -1,9 +1,10 @@
-import { toHex } from "./utils";
+/*
+ * Colors
+ *
+ * WIP and unfinished
+ */
 
-// TODO: implement
-// should support inputting individual r, g, b colors
-// inputting a hex code like #ABCDEF
-// inputting a color name like black
+import { toHex } from "./utils";
 
 export abstract class Color {
   public abstract toString(): string;

@@ -1,3 +1,7 @@
+/*
+ * A block that is in the corner
+ */
+
 import { Block, IBlockOptions } from "./block";
 import { LEVEL_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
 import { ImageSprite } from "../../engine/sprites/imagesprite";
@@ -23,6 +27,10 @@ abstract class CornerBlock extends Block {
     this.destroy();
   }
 
+  /**
+   * If the block that is X distance from this one is air,
+   * then create a new sprite with the texture, rotation, x offset, and y offset as provided
+   */
   protected testCorner(offset: number, texture: TImage, rotation: number, x: number, y: number) {
     const charAtOffset = this.runtime.levelData[this.levelIndex + offset];
     const isAir = AIR.indexOf(charAtOffset) > -1;
@@ -41,6 +49,8 @@ abstract class CornerBlock extends Block {
   }
 }
 
+// A normal corner block that spawns rotations of itself
+// Used in all zones but castle
 export class RotatedCornerBlock extends CornerBlock {
   constructor(opts: IBlockOptions) {
     super(opts);
@@ -67,6 +77,8 @@ export class RotatedCornerBlock extends CornerBlock {
   }
 }
 
+// The corner blocks in the castle are special
+// I believe this block actually only shows up like once in the whole game
 export class CastleCornerBlock extends CornerBlock {
   constructor(opts: IBlockOptions) {
     super(opts);

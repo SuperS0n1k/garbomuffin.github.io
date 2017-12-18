@@ -1,5 +1,6 @@
-// defines a few reusable types
-// removes duplication
+/*
+ * A few reusable types
+ */
 
 import { Nightlight } from "../game";
 import { AbstractSprite } from "./sprite";

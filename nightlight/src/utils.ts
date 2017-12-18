@@ -5,6 +5,9 @@ export function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// Clones an array
+// Allows you to use inplace methods on an array without changing the actual array
+// (eg. sort)
 export function clone<T>(array: T[]): T[] {
   let i = array.length;
   const result = [];

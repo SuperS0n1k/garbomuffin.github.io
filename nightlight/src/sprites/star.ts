@@ -1,8 +1,20 @@
+/*
+ * The stars in the background.
+ *
+ * Spawned randomly when the game starts and are deleted when you enter the castle.
+ */
+
 import { AbstractSprite, ISpriteOptions } from "../engine/sprite";
 import { Task } from "../engine/task";
 import { toHex } from "../engine/utils";
 
+// How often to update opacity
+// The original did it every 0.1 seconds and this takes a lot of inspiration from the original
+// (even in cases where changing it is completely possible)
 const UPDATE_EVERY = 6;
+
+// How many times will it update in each cycle
+// One cycle is Dark -> Bright or Bright -> Dark, not both
 const ANIMATION_LENGTH = 10;
 
 export class BackgroundStarSprite extends AbstractSprite {
@@ -46,6 +58,7 @@ export class BackgroundStarSprite extends AbstractSprite {
     }
   }
 
+  // Implement render as this extends AbstractSprite
   public render(ctx: CanvasRenderingContext2D) {
     const animationProgress = this.clamp(this.progress / ANIMATION_LENGTH, 0, 1);
     const color = Math.floor(255 * animationProgress);

@@ -1,3 +1,9 @@
+/*
+ * A few base classes and things to extend for keyboard drivers
+ *
+ * Currently there's only one driver for computers but I want to add one for mobile.
+ */
+
 import { GameRuntime } from "../../runtime";
 import { TaskRunner } from "../../task";
 
