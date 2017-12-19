@@ -131,7 +131,7 @@ export class SwordBoss extends ImageSprite {
   //
 
   private beginSpinAttack() {
-    this.spinDirection = this.multiplier;
+    this.spinDirection = -this.multiplier;
     this.phaseDelay = SWIPE_BASE_DELAY;
     this.hitPlayer = false;
 

@@ -4,7 +4,6 @@
  * Has a few utilty methods that a normal array does not and allows more flexibility
  */
 
-
 import { GameRuntime } from "./runtime";
 import { Sprite, TGame } from "./types";
 
