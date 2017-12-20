@@ -154,6 +154,9 @@ var Prompter = /** @class */ (function (_super) {
         // 32 = space = start/stop
         keyboard.onKeyDown(32, function () {
             _this.toggleScrolling();
+            // disable browser from using space as a way to press buttons
+            // you can still use enter as an alternative
+            return true;
         });
         // 27 = esc = stop & go back to start or leave if already at start
         keyboard.onKeyDown(27, function () {
