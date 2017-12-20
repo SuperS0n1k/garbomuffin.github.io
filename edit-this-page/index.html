@@ -34,15 +34,11 @@
 
         display: none;
       }
-
-      .rainbow {
-        animation: rainbow 10s linear 0s infinite;
-      }
     </style>
   </head>
 
   <body>
-    <h1>Edit This Page (v0.5)</h1>
+    <h1>Edit This Page (v0.6)</h1>
     <hr>
     <p>A simple bookmark that lets you edit the text of any website!</p>
     <p>A continuation of a chrome extension that was removed from the chrome web store.</p>
@@ -57,6 +53,7 @@
     </p>
     <p id="dont-click-message"><b>Don't click on it, drag it onto your bookmarks bar!</b></p>
     <p>You may have to enable your bookmarks bar, that depend son the browser. It's in the settings somewhere.</p>
+    <p>For Chrome press Ctrl+Shift+B.</p>
 
     <h2>Usage</h2>
     <p>
@@ -66,10 +63,11 @@
       Each time you run it it will toggle between editable and not editable allowing you to make things seem legit.
     </p>
 
-    <h2>Bugs</h2>
-    <p>On sites such as YouTube typing triggers other events.</p>
-
     <h2>Changelog</h2>
+    <h3>v0.6</h3>
+    <ul>
+      <li>Pressing keys no longer triggers other actions (like fullscreen on YouTube)</li>
+    </ul>
     <h3>v0.5</h3>
     <ul>
       <li><code>&lt;iframe&gt;</code> support</li>
@@ -92,7 +90,7 @@
     </div>
 
     <script>
-      var dev = false;
+      var dev = location.href === "http://localhost:8080/edit-this-page/";
       var host = dev ? "http://localhost:8080" : "//garbomuffin.github.io";
       var scriptSource = host + "/edit-this-page/edit-this-page.js";
 
