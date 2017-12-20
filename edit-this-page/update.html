@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit This Page</title>
+    <link rel="stylesheet" href="/core.css">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77118590-7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-77118590-7');
+    </script>
+
+    <style>
+      body {
+        background-color: #CCCCCC;
+      }
+
+      .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        background-color: #EEEEEE;
+        border-radius: 50px;
+        padding: 100px;
+        text-align: center;
+        width: 50%;
+      }
+
+      .bottom {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100%);
+        text-align: center;
+      }
+
+      a {
+        cursor: pointer;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      li {
+        list-style-type:none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="center">
+      <h1>The Edit This Page Bookmark Has Updated!</h1>
+      <h2>Please replace the existing bookmark with this new one!</h2>
+
+      <h1 onclick="return false;" id="install-button"><a>Edit This Page</a></h1>
+      <p>(Remember to <b>DRAG</b> it onto your bookmarks bar!)</p>
+
+      <div id="changes">
+        <hr>
+        <h3>Changes since your last version:</h3>
+        <ul id="change-list">
+          <noscript><li>Enable Javascript</li></noscript>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <p>I try to keep these updates to a minimum because I know they're annoying.</p>
+    </div>
+
+    <script src="bookmarklet.js"></script>
+    <script>
+      // https://stackoverflow.com/a/901144 with style changes
+      function getParameterByName(name, url) {
+        if (!url) {
+          url = window.location.href;
+        }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+        var results = regex.exec(url);
+        if (!results) {
+          return null;
+        }
+        if (!results[2]) {
+          return "";
+        }
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        showChanges();
+      });
+
+      var changeLog = [
+        [
+          "Improved support for sites that must use the bookmark's fallback. (like <a href='https://github.com'>GitHub</a>)",
+          "Toggles between editable and uneditable",
+          "Only shows update message once (as long as you don't refresh)"
+        ],
+      ];
+
+      function invalidVersion() {
+        document.getElementById("changes").style.display = "none";
+      }
+
+      function showChanges() {
+        var container = document.getElementById("changes");
+        var version = parseInt(getParameterByName("version"), 10);
+
+        if (isNaN(version)) {
+          invalidVersion();
+          return;
+        }
+
+        var changes = changeLog[version];
+        if (version === -1) {
+          changes = [
+            "You're special."
+          ];
+        }
+
+        if (typeof changes !== "undefined") {
+          var listEl = document.getElementById("change-list");
+
+          for (var i = 0; i < changes.length; i++) {
+            var el = document.createElement("li");
+            el.innerHTML = changes[i];
+            listEl.appendChild(el);
+          }
+        } else {
+          invalidVersion();
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -18,6 +18,7 @@
       #dont-click-message {
         display: none;
       }
+
       #installation-congrats {
         position: absolute;
 
@@ -38,7 +39,7 @@
   </head>
 
   <body>
-    <h1>Edit This Page (v0.6)</h1>
+    <h1>Edit This Page (v0.7)</h1>
     <hr>
     <p>A simple bookmark that lets you edit the text of any website!</p>
     <p>A continuation of a chrome extension that was removed from the chrome web store.</p>
@@ -64,6 +65,10 @@
     </p>
 
     <h2>Changelog</h2>
+    <h3>v0.7</h3>
+    <ul>
+      <li>Updated bookmark and updater</li>
+    </ul>
     <h3>v0.6</h3>
     <ul>
       <li>Pressing keys no longer triggers other actions (like fullscreen on YouTube)</li>
@@ -89,44 +94,9 @@
       <button onclick="hideInstallMessage();">Hide This Message</button>
     </div>
 
+    <script src="bookmarklet.js"></script>
     <script>
-      var dev = location.href === "http://localhost:8080/edit-this-page/";
-      var host = dev ? "http://localhost:8080" : "//garbomuffin.github.io";
-      var scriptSource = host + "/edit-this-page/edit-this-page.js";
-
-      // Golfed because bookmarks function terribly with long amounts of code
-      var js = [
-        // define bookmark version globally
-        "__editThisPageLoader=0;",
-
-        // create a script element and try to load our script
-        "var s=document.createElement('script');",
-
-        // Math.random should stop browsers from caching
-        "s.src='" + scriptSource + "?'+Math.random();",
-
-        // some sites block this using the Content Security Policy script-src directive (see: github)
-        // so the bookmark uses onerror to detect loading failure and use a basic fallback
-        "s.onerror=function(){",
-        "alert('edit-this-page could not load script. Using fallback.');",
-        // set 'contenteditable' to 'true' for all elements
-        "var e=document.getElementsByTagName('*');",
-
-        /*
-        for (var i = 0;i < e.length; i++) {
-          e[i].setAttribute("contenteditable", "true");
-        }
-        */
-        "for(var i=0;i<e.length;e[i++].setAttribute('contenteditable','true'));",
-        "};",
-
-        // append our script to the body
-        "document.body.append(s)",
-      ].join("");
-
-      var installButton = document.getElementById("install-button");
-      installButton.href = "javascript:(function(){" + js + "}());";
-
+      // Remind the user to DRAG THE THING TO YOUR BOOKMARKS BAR and not click it
       function showDontClickMessage() {
         var el = document.getElementById("dont-click-message");
         if (el.style.display === "") {
