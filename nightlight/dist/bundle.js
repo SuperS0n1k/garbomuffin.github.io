@@ -2789,7 +2789,6 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
         super.handleIntersect(sprite, velocity, horizontal);
         if (!this.crumbling && !horizontal && velocity < 0 && sprite instanceof __WEBPACK_IMPORTED_MODULE_0__player_player__["a" /* PlayerSprite */]) {
             this.crumbling = true;
-            this.runtime.playSound("blocks/fall");
             this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
                 run: this.crumble,
                 repeatEvery: CRUMBLE_FRAME_LENGTH,
@@ -2816,6 +2815,7 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
         if (this.crumbleProgress === CRUMBLE_FRAMES) {
             task.stop();
             this.solid = false;
+            this.runtime.playSound("blocks/fall");
             this.addTask(this.fall);
         }
     }
