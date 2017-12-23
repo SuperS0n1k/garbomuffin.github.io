@@ -1,46 +1,49 @@
-/*
- * See this in action: https://scratch.mit.edu/search/projects?q=meme or just visit top loved
- * 
- * You're welcome.
- * 
- * Accounts:
- * https://scratch.mit.edu/users/GarboMuffin/ <--- random garbage
- * https://scratch.mit.edu/users/GarboMarvin/ <--- this one is mostly ACTUAL memes
- */
-
-// ==UserScript==
-// @name         NO MORE FURRIES
-// @version      2.0
-// @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
-// @description  FURRIES AREN'T MEMES
-// @author       GarboMuffin
-// @match        https://scratch.mit.edu/*
-// @run-at       document-end
-// @downloadURL  https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
-// @updateURL    https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
-// ==/UserScript==
+// Changes in v2.1:
+//  * Improved support for the home page
+//    Sliding things no longer break
+//  * Filter updates
+// ============================================================================
+// See this in action: https://scratch.mit.edu/search/projects?q=meme
+// Or just take a long trip through the home page
+// ============================================================================
+// Accounts:
+// https://scratch.mit.edu/users/GarboMuffin/ -- random garbage
+// https://scratch.mit.edu/users/GarboMarvin/ -- ACTUAL memes
+// ============================================================================
+// Below this section is code.
+// You really shouldn't edit it unless you know what you're doing.
+// ============================================================================
 
 // List of users that have a history of making furries and are blocked globally
 // Links above user are relavent scratch projects
 const BLOCKED_CREATORS: string[] = [
+  // https://scratch.mit.edu/projects/123751084/
   // https://scratch.mit.edu/projects/124715889/
   "flirtinq",
 
+  // https://scratch.mit.edu/projects/115257363/
   // https://scratch.mit.edu/projects/115337538/
   "Chewzers",
 
+  // https://scratch.mit.edu/projects/180038821/
   // https://scratch.mit.edu/projects/71920034/
   "BIazeheart",
 
+  // https://scratch.mit.edu/projects/165584967/
   // https://scratch.mit.edu/projects/122208737/
   "PennyQuest",
 
+  // https://scratch.mit.edu/projects/130220150/
   // https://scratch.mit.edu/projects/118638398/
   "Kloudheart",
 
+  // https://scratch.mit.edu/projects/119359869/
+  // https://scratch.mit.edu/projects/118638398/
   // https://scratch.mit.edu/projects/110440079/
   "Pika-Girl03",
 
+  // https://scratch.mit.edu/projects/137517193/
+  // https://scratch.mit.edu/projects/134604937/
   // https://scratch.mit.edu/projects/126145469/
   "MapIekit_the_WC",
 
@@ -49,77 +52,82 @@ const BLOCKED_CREATORS: string[] = [
   "Rebeat",
 
   // https://scratch.mit.edu/projects/131194980/
+  // https://scratch.mit.edu/projects/158152366/
   "FalconsandFare",
 
+  // https://scratch.mit.edu/projects/103551967/
   // https://scratch.mit.edu/projects/115725045/
   "kitkatkittycat",
 
   // https://scratch.mit.edu/projects/92782806/
+  // https://scratch.mit.edu/projects/116272599/
   "Moonpaw12345",
 
   // https://scratch.mit.edu/projects/176146975/
+  // https://scratch.mit.edu/projects/176146975/
   "ApplePiie",
 
+  // https://scratch.mit.edu/projects/123599441/
   // https://scratch.mit.edu/projects/117843402/
   "pixieblossom",
 
   // https://scratch.mit.edu/projects/193695254/
+  // https://scratch.mit.edu/projects/190966062/
   "MistCat",
 
-  // https://scratch.mit.edu/projects/155260989/
-  "Xena_NightFury",
-
+  // https://scratch.mit.edu/projects/185796792/
   // https://scratch.mit.edu/projects/131468328/
   "LunaShadow",
 
+  // https://scratch.mit.edu/projects/163830835/
   // https://scratch.mit.edu/projects/141548517/
   "PetalCrest",
 
-  // https://scratch.mit.edu/projects/127028614/
-  "maplepancakes",
-
   // https://scratch.mit.edu/projects/72372280/
+  // https://scratch.mit.edu/projects/75380290/
+  // https://scratch.mit.edu/projects/86009406/
   "Gumdropp",
 
   // https://scratch.mit.edu/projects/116137203/
+  // https://scratch.mit.edu/projects/168240828/
+  // https://scratch.mit.edu/projects/167364214/
   "-Silverpaw-",
-
-  // https://scratch.mit.edu/projects/172237166/
-  "cupcakenoah",
 
   // https://scratch.mit.edu/projects/65973392/
   // https://scratch.mit.edu/projects/67035184/
   // https://scratch.mit.edu/projects/66074444/
   "Jaycat111",
 
+  // https://scratch.mit.edu/projects/73121790/
   // https://scratch.mit.edu/projects/56691174/
   "Echostrike",
 
-  // https://scratch.mit.edu/projects/165684909/
-  "-Silverpaw-",
-
+  // https://scratch.mit.edu/projects/145564077/
   // https://scratch.mit.edu/projects/123927840/
   "IcoQuest",
 
+  // https://scratch.mit.edu/projects/190375395/
   // https://scratch.mit.edu/projects/185404494/
   "_MistyLight_",
 
+  // https://scratch.mit.edu/projects/83219622/
   // https://scratch.mit.edu/projects/89430668/
   "SkySplash",
 
-  // https://scratch.mit.edu/projects/84528338/
-  "Gumdropp",
-
+  // https://scratch.mit.edu/projects/166847248/
   // https://scratch.mit.edu/projects/132763343/
   "SharkyPup",
 
+  // https://scratch.mit.edu/projects/77757920/
   // https://scratch.mit.edu/projects/34537852/
   "SkyleCrossi13",
 
+  // https://scratch.mit.edu/projects/95758146/
   // https://scratch.mit.edu/projects/95172636/
   "XxPaintstarxX",
 
   // https://scratch.mit.edu/projects/117848122/
+  // https://scratch.mit.edu/projects/171321556/
   "Inside-Out-And-Back",
 
   // https://scratch.mit.edu/projects/127536498/
@@ -131,10 +139,6 @@ const BLOCKED_CREATORS: string[] = [
   // https://scratch.mit.edu/projects/151723841/
   "CyberPunch",
 
-  // https://scratch.mit.edu/projects/169635562/
-  // https://scratch.mit.edu/projects/165684909/
-  "-Silverpaw-",
-
   // https://scratch.mit.edu/projects/69807534/
   // https://scratch.mit.edu/projects/69511280/
   "-SkyStar-",
@@ -145,11 +149,10 @@ const BLOCKED_CREATORS: string[] = [
   "yunnie2005",
 
   // https://scratch.mit.edu/projects/158581475/
+  // https://scratch.mit.edu/projects/144550080/
+  // https://scratch.mit.edu/projects/124835894/
+  // https://scratch.mit.edu/projects/123262948/
   "Ask_LightningStar",
-
-  // https://scratch.mit.edu/projects/194883205/
-  // https://scratch.mit.edu/projects/193695254/
-  "MistCat",
 
   // https://scratch.mit.edu/projects/127196087/
   // https://scratch.mit.edu/projects/131833833/
@@ -217,10 +220,6 @@ const BLOCKED_CREATORS: string[] = [
   // https://scratch.mit.edu/projects/174807403/
   "Xena_NightFury",
 
-  // https://scratch.mit.edu/projects/171513484/
-  // https://scratch.mit.edu/projects/165584967/
-  "PennyQuest",
-
   // https://scratch.mit.edu/projects/158033983/
   // https://scratch.mit.edu/projects/150241619/
   "BK33",
@@ -262,9 +261,44 @@ const BLOCKED_CREATORS: string[] = [
   // https://scratch.mit.edu/projects/190338403/
   // https://scratch.mit.edu/projects/191960126/
   "okaei",
+
+  // https://scratch.mit.edu/projects/125525203/
+  // https://scratch.mit.edu/projects/124740625/
+  "hopkitten",
+
+  // https://scratch.mit.edu/projects/166470049/
+  // https://scratch.mit.edu/projects/161400162/
+  "Dis_Gurrrl",
+
+  // https://scratch.mit.edu/projects/192556271/
+  // https://scratch.mit.edu/projects/189734205/
+  "ChocciChip",
+
+  // https://scratch.mit.edu/projects/194966772/
+  // https://scratch.mit.edu/projects/181297092/
+  "TheGamingArcher",
+
+  // https://scratch.mit.edu/projects/139641550/
+  // https://scratch.mit.edu/projects/141282783/
+  // https://scratch.mit.edu/projects/151096802/
+  // https://scratch.mit.edu/projects/138295753/
+  "PretzelFlavour",
+
+  // https://scratch.mit.edu/projects/180223689/
+  // https://scratch.mit.edu/projects/178713577/
+  "Aqua-Kitty",
+
+  // https://scratch.mit.edu/projects/149463841/
+  // https://scratch.mit.edu/projects/194128628/
+  "wolfypup9990",
+
+  // https://scratch.mit.edu/projects/172237166/
+  // https://scratch.mit.edu/projects/182774608/
+  "cupcakenoah",
 ];
 
 // Strings that can't be in titles or else the project is hidden
+// TODO: examples
 const BLOCKED_TITLE_PARTS: string[] = [
   // I don't know why but "meme" creators like to declare that their furry is a meme
   "[meme]", // https://scratch.mit.edu/projects/193695254/
@@ -365,8 +399,28 @@ function getProjectCreator(el: HTMLElement): string {
 }
 
 function blockProject(project: HTMLElement) {
-  project.style.display = "none";
-  // (project.parentElement as HTMLElement).removeChild(project);
+  // When a project is on a slider on the home page treat it specially so that it doesn't break the sliding
+  // Setting `display: none;` really breaks them
+  // This instead will cover them up so you can't see it and scrolling doesn't break.
+  if (project.classList.contains("slick-slide")) {
+    project.style.position = "relative";
+
+    // Create a div that will cover up the element
+    const overlay = document.createElement("div");
+    overlay.style.position = "absolute";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.zIndex = "9999";
+    overlay.style.backgroundColor = "white";
+
+    // And append it
+    project.appendChild(overlay);
+  } else {
+    // Otherwise we should hide them the normal way
+    project.style.display = "none";
+  }
 }
 
 type TFilter = (title: string, creator: string) => boolean;
@@ -448,15 +502,13 @@ class NoMoreFurries {
   }
 
   private titleFilter(title: string, creator: string): boolean {
+    // Convert everything to lower case to avoid case sensitivity
     title = title.toLowerCase();
     for (const i of BLOCKED_TITLE_PARTS) {
       if (title.indexOf(i.toLowerCase()) > -1) {
         return true;
       }
     }
-
-    // make typescript stop complaining
-    // this code is never reached
     return false;
   }
 
@@ -481,3 +533,18 @@ class NoMoreFurries {
 }
 
 new NoMoreFurries();
+
+// You can move this wherever you want so I put at the bottom
+// It just looks cleaner
+
+// ==UserScript==
+// @name         NO MORE FURRIES
+// @version      2.1
+// @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
+// @description  FURRIES AREN'T MEMES
+// @author       GarboMuffin
+// @match        https://scratch.mit.edu/*
+// @run-at       document-end
+// @downloadURL  https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
+// @updateURL    https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
+// ==/UserScript==
