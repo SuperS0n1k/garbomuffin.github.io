@@ -5,54 +5,58 @@
     <link rel="stylesheet" href="/core.css">
     <link href="../style.css" type="text/css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        background-color: #AAAAAA;
+      }
+      .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        background-color: #EEEEEE;
+        text-align: center;
+        padding: 100px;
+        border-radius: 50px;
+        width: 50%;
+      }
+      h1 {
+        font-size: 3em;
+      }
+    </style>
   </head>
   <body>
-    <h1>NO MORE FURRIES</h1>
+    <div class="center">
+      <h1>NO MORE FURRIES</h1>
 
-    <p>Hide a lot of projects that contain furries on Scratch.</p>
-    <p>Don't ask why.</p>
-    <a href="no-more-furries.user.js">Install!</a>
+      <p>Furries are a cancer. They grow rapidly and are simply terrible.</p>
+      <p><b>This is the cure.</b></p>
 
-    <h3>Changelog:</h3>
-    <noscript>Enable javascript</noscript>
-    <span class="changelog" id="changelog"></span>
+      <hr>
 
-    <script src="../script.js"></script>
-    <script>
-      version("1.1.6", [
-        "Update filters"
-      ], "9/8/2017");
-      version("1.1.5", [
-        "Update download location.",
-        "Update filters"
-      ], "1/19/2017");
-      version("1.1.3", [
-        "Update filters",
-        "Debug mode"
-      ], "1/4/2017");
-      version("1.1.2", [
-        "Update filters"
-      ], "12/29/2016");
-      version("1.1.1", [
-        "Update filters"
-      ], "12/27/2016");
-      version("1.1.0", [
-        "New \"case sensitive\" filters",
-        "Update filters",
-        "Fix bug with the homepage",
-      ], "12/25/2016");
-      version("1.0.3", [
-        "Update filters",
-      ], "12/22/2016");
-      version("1.0.2", [
-        "Add \"please don't actually use this\" text in source"
-      ], "12/21/2016");
-      version("1.0.1", [
-        "Auto update",
-      ], "12/21/2016");
-      version("1.0.0", [
-        "Initial Release",
-      ], "12/21/2016");
-    </script>
+      <p>
+        Install a userscript manager such as
+        <b><a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en">TamperMonkey</a></b> or
+        <b><a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/">GreaseMonkey</a></b>.
+      </p>
+
+      <p>
+        <b>
+          <a href="no-more-furries.user.js">Then click on this link to install the script.</a>
+        </b>
+      </p>
+
+      <p>
+        <a href="before.png">Before</a> and
+        <a href="after.png">After</a>
+      </p>
+
+      <hr>
+
+      <p>
+        <a href="https://github.com/GarboMuffin/garbomuffin.github.io/issues">Report Bugs</a>.
+        <a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/userscripts/no-more-furries">Source Code</a>
+      </p>
+    </div>
   </body>
 </html>

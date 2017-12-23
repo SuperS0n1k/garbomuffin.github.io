@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "es3",
+    "strict": true
+  },
+  "include": [
+    "no-more-furries.user.ts",
+  ]
+}
