@@ -1,3 +1,6 @@
+// Changes in v2.1.1:
+//  * Filter updates
+// ============================================================================
 // Changes in v2.1:
 //  * Improved support for the home page
 //    Sliding things no longer break
@@ -10,12 +13,26 @@
 // https://scratch.mit.edu/users/GarboMuffin/ -- random garbage
 // https://scratch.mit.edu/users/GarboMarvin/ -- ACTUAL memes
 // ============================================================================
-// Below this section is code.
+// Below this section is the source code.
 // You really shouldn't edit it unless you know what you're doing.
 // ============================================================================
 
+// ==UserScript==
+// @name         NO MORE FURRIES
+// @version      2.1.1
+// @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
+// @description  FURRIES AREN'T MEMES
+// @author       GarboMuffin
+// @match        https://scratch.mit.edu/*
+// @run-at       document-end
+// @downloadURL  https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
+// @updateURL    https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
+// ==/UserScript==
+
+const DEBUG = false;
+
 // List of users that have a history of making furries and are blocked globally
-// Links above user are relavent scratch projects
+// Links above user are relevant scratch projects
 const BLOCKED_CREATORS: string[] = [
   // https://scratch.mit.edu/projects/123751084/
   // https://scratch.mit.edu/projects/124715889/
@@ -295,67 +312,159 @@ const BLOCKED_CREATORS: string[] = [
   // https://scratch.mit.edu/projects/172237166/
   // https://scratch.mit.edu/projects/182774608/
   "cupcakenoah",
+
+  // https://scratch.mit.edu/projects/167347915/
+  // https://scratch.mit.edu/projects/125925425/
+  "MagicaJaphet",
+
+  // https://scratch.mit.edu/projects/170532778/
+  // https://scratch.mit.edu/projects/172288870/
+  "Russel_the_Pirate",
+
+  // https://scratch.mit.edu/projects/129046287/
+  // https://scratch.mit.edu/projects/130229716/
+  "togegirl",
+
+  // https://scratch.mit.edu/projects/173461146/
+  // https://scratch.mit.edu/projects/185790597/
+  "CocoaTwist",
+
+  // https://scratch.mit.edu/projects/113900222/
+  // https://scratch.mit.edu/projects/113760070/
+  "Pudding_the_cat",
+
+  // https://scratch.mit.edu/projects/149785165/
+  // https://scratch.mit.edu/projects/140161180/
+  "rocer77712",
+
+  // https://scratch.mit.edu/projects/165437630/
+  // https://scratch.mit.edu/projects/165428352/
+  "-LilacWishes-",
+
+  // https://scratch.mit.edu/projects/168239277/
+  // https://scratch.mit.edu/projects/169999607/
+  "riverdaIe",
+
+  // https://scratch.mit.edu/projects/194817292/
+  // https://scratch.mit.edu/projects/195004634/
+  "RedCuzImAwesome",
+
+  // https://scratch.mit.edu/projects/129806946/
+  // https://scratch.mit.edu/projects/145749558/
+  "Flannel_shirt",
+
+  // https://scratch.mit.edu/projects/153654091/
+  // https://scratch.mit.edu/projects/150267665/
+  "CocoaKey",
+
+  // https://scratch.mit.edu/projects/188247824/
+  // https://scratch.mit.edu/projects/187032928/
+  "KichiChan",
+
+  // https://scratch.mit.edu/projects/124419533/
+  // https://scratch.mit.edu/projects/176243157/
+  "nednilclan",
+
+  // https://scratch.mit.edu/projects/179884900/
+  // https://scratch.mit.edu/projects/169015095/
+  "softea",
+
+  // https://scratch.mit.edu/projects/149218788/
+  // https://scratch.mit.edu/projects/149834014/
+  "Blackie-",
+
+  // https://scratch.mit.edu/projects/148381774/
+  // https://scratch.mit.edu/projects/179121323/
+  "bendyfox",
+
+  // https://scratch.mit.edu/projects/189702291/
+  // https://scratch.mit.edu/projects/190865189/
+  "TapiocaTail",
+
+  // https://scratch.mit.edu/projects/115346965/
+  // (account 404s)
+  "Convexity",
 ];
 
 // Strings that can't be in titles or else the project is hidden
 // TODO: examples
 const BLOCKED_TITLE_PARTS: string[] = [
   // I don't know why but "meme" creators like to declare that their furry is a meme
-  "[meme]", // https://scratch.mit.edu/projects/193695254/
+
+  // https://scratch.mit.edu/projects/110440079/
+  // https://scratch.mit.edu/projects/92782806/
+  // https://scratch.mit.edu/projects/105717454/
+  "[meme]",
+  // https://scratch.mit.edu/projects/108494123/ (almost)
   "{meme}",
+  // https://scratch.mit.edu/projects/115725045/
   "(meme)",
   "- meme",
   "-meme",
 
   // Declaring that you made the "original" meme is aparently very important
+  // https://scratch.mit.edu/projects/117843402/
+  // https://scratch.mit.edu/projects/158072213/
+  // https://scratch.mit.edu/projects/131468328/
+  // https://scratch.mit.edu/projects/141548517/
+  // https://scratch.mit.edu/projects/174360806/
+  // https://scratch.mit.edu/projects/127028614/
+  // https://scratch.mit.edu/projects/157337470/
+  // https://scratch.mit.edu/projects/125591212/
+  // https://scratch.mit.edu/projects/117224374/
+  // https://scratch.mit.edu/projects/168331632/
+  // https://scratch.mit.edu/projects/164504639/
+  // https://scratch.mit.edu/projects/113394588/
+  // https://scratch.mit.edu/projects/169501759/
+  // https://scratch.mit.edu/projects/117552646/
+  // https://scratch.mit.edu/projects/116075128/
   "original meme",
-  "[original]",
-  "{original}",
-  "(original)",
+  // TODO: consider some filters such as "[original]"
+  // can't find enough examples to justify being in the filter list
 
-  // Special characters
-  // "memes" love these
-  "◊",
-  "▬",
-  "✨",
-  "ɛ",
-  "ɠ",
-  "н",
-  "σ",
-  "ѕ",
-  "т",
-  "Я",
-  "Ө",
-  "Ї",
-  "Ƨ",
-  "ᗰ",
-  "ᕮ",
-  "Ꮗ",
-  "Ꭵ",
-  "Ꮑ",
-  "Ꮦ",
-  "Ꮛ",
-  "Ꮢ",
-  "Ꮒ",
-  "Ꮆ",
-  "Ꮥ",
-  "Я",
-  "Ї",
-  "ｇ",
-  "ｒ",
-  "ａ",
-  "ｖ",
-  "ｉ",
-  "ｔ",
-  "ｙ",
-  "ᴏ",
-  "ɴ",
-  "ᴇ",
-  "ᴡ",
-  "ᴋ",
-  "ᴍ",
-  "ᴀ",
-  "ᴘ",
+  // Very special characters
+  // TODO: consider adding these back in
+  // can't find enough examples to justify being in the filter list + there are some ok uses of these characters
+  // "◊",
+  // "▬",
+  // "ɛ",
+  // "ɠ",
+  // "н",
+  // "σ",
+  // "ѕ",
+  // "т",
+  // "Я",
+  // "Ө",
+  // "Ї",
+  // "Ƨ",
+  // "ᗰ",
+  // "ᕮ",
+  // "Ꮗ",
+  // "Ꭵ",
+  // "Ꮑ",
+  // "Ꮦ",
+  // "Ꮛ",
+  // "Ꮢ",
+  // "Ꮒ",
+  // "Ꮆ",
+  // "Ꮥ",
+  // "Я",
+  // "Ї",
+  // "ｇ",
+  // "ｒ",
+  // "ａ",
+  // "ｖ",
+  // "ｉ",
+  // "ｔ",
+  // "ｙ",
+  // "ᴏ",
+  // "ɴ",
+  // "ᴇ",
+  // "ᴡ",
+  // "ᴋ",
+  // "ᴍ",
+  // "ᴀ",
+  // "ᴘ",
 ];
 
 // BLOCKED_TITLE_PARTS but for things that are case sensitive
@@ -398,21 +507,35 @@ function getProjectCreator(el: HTMLElement): string {
   }
 }
 
+function getProjectLink(el: HTMLElement): string {
+  const links = el.getElementsByTagName("a");
+  if (links.length >= 1) {
+    return links[0].href;
+  }
+  return "";
+}
+
 function blockProject(project: HTMLElement) {
   // When a project is on a slider on the home page treat it specially so that it doesn't break the sliding
   // Setting `display: none;` really breaks them
   // This instead will cover them up so you can't see it and scrolling doesn't break.
   if (project.classList.contains("slick-slide")) {
+    // Changes how position: absolute will work in child elements
     project.style.position = "relative";
 
     // Create a div that will cover up the element
     const overlay = document.createElement("div");
+    // Allow us to position it on top
     overlay.style.position = "absolute";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
+    // Move it to the upper left corner
     overlay.style.top = "0";
     overlay.style.left = "0";
+    // Cover the entire element
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    // Make sure it goes on top of the existing element
     overlay.style.zIndex = "9999";
+    // Cover it up using background color
     overlay.style.backgroundColor = "white";
 
     // And append it
@@ -426,20 +549,11 @@ function blockProject(project: HTMLElement) {
 type TFilter = (title: string, creator: string) => boolean;
 
 class NoMoreFurries {
-  private projects: HTMLElement[] = [];
   private filters: TFilter[] = [];
+  // TODO: consider a "furries eradicated" number like in the old pre v2.0 versions
   private blockedFurries: number = 0;
 
   constructor() {
-    // Project list calls this.handlePush() when .push() is called
-    const self = this;
-    this.projects.push = function(...args) {
-      for (const thing of args) {
-        self.handlePush(thing);
-      }
-      return Array.prototype.push.apply(this, ...args);
-    };
-
     // Add in our filters
     this.addFilters();
 
@@ -461,29 +575,32 @@ class NoMoreFurries {
       for (let i = 0; i < mutation.addedNodes.length; i++) {
         const el = mutation.addedNodes[i];
         if (isProject(el as HTMLElement)) {
-          this.projects.push(el as HTMLElement);
+          this.handleProject(el as HTMLElement);
         }
       }
     }
   }
 
-  private handlePush(project: HTMLElement) {
+  private handleProject(project: HTMLElement) {
     const title = getProjectTitle(project);
     const creator = getProjectCreator(project);
 
     for (const filter of this.filters) {
       const result = filter(title, creator);
       if (result) {
-        console.log(`blocked '${title}' by ${creator}`);
+        let message = `blocked '${title}' by ${creator}`;
+        if (DEBUG) {
+          message += ` (${getProjectLink(project)})`;
+        }
+        console.log(message);
         blockProject(project);
-
         this.blockedFurries++;
       }
     }
   }
 
   //
-  // FILTERS
+  // FILTERING
   //
 
   private addFilter(filter: TFilter) {
@@ -496,6 +613,10 @@ class NoMoreFurries {
     this.addFilter(this.caseSensitiveTitleFilter);
     this.addFilter(this.regexTitleFilter);
   }
+
+  //
+  // FILTERS
+  //
 
   private creatorFilter(title: string, creator: string): boolean {
     return BLOCKED_CREATORS.indexOf(creator) > -1;
@@ -533,18 +654,3 @@ class NoMoreFurries {
 }
 
 new NoMoreFurries();
-
-// You can move this wherever you want so I put at the bottom
-// It just looks cleaner
-
-// ==UserScript==
-// @name         NO MORE FURRIES
-// @version      2.1
-// @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
-// @description  FURRIES AREN'T MEMES
-// @author       GarboMuffin
-// @match        https://scratch.mit.edu/*
-// @run-at       document-end
-// @downloadURL  https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
-// @updateURL    https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
-// ==/UserScript==
