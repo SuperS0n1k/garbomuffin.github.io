@@ -1,4 +1,8 @@
 "use strict";
+// Changes in v2.1.2:
+//  * Disabled loading thumbnails of blocked projects
+//  * You may notice significant speed improvements
+// ============================================================================
 // Changes in v2.1.1:
 //  * Filter updates
 // ============================================================================
@@ -19,7 +23,7 @@
 // ============================================================================
 // ==UserScript==
 // @name         NO MORE FURRIES
-// @version      2.1.1
+// @version      2.1.2
 // @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
 // @description  FURRIES AREN'T MEMES
 // @author       GarboMuffin
@@ -342,30 +346,38 @@ var BLOCKED_TITLE_PARTS_SENSITIVE = [
 var BLOCKED_TITLE_REGEX = [];
 // Returns if an HTMLElement is a project
 function isProject(el) {
+    // If an element has the "project" class they are a project
     return el.classList && el.classList.contains("project");
 }
 // Returns the title of a project given its element in the DOM
 function getProjectTitle(el) {
+    // Get the thumbnail and title container
+    // Will contain the thumbnail image and title
     var titleContainer = el.getElementsByClassName("thumbnail-title")[0];
+    // Safety check
     if (!titleContainer) {
         return "";
     }
+    // Get the first link in the container
+    // This is the title
     var titleElement = titleContainer.getElementsByTagName("a")[0];
+    // Safety check
     if (!titleElement) {
         return "";
     }
+    // Return the contents
     return titleElement.innerHTML;
 }
 // Returns the creator of a project given its element in the DOM
 function getProjectCreator(el) {
     var creatorElement = el.getElementsByClassName("thumbnail-creator")[0];
-    if (creatorElement) {
-        return creatorElement.innerText;
-    }
-    else {
+    // Safety check
+    if (!creatorElement) {
         return "";
     }
+    return creatorElement.innerText;
 }
+// Returns the link to a project given its element in the DOM
 function getProjectLink(el) {
     var links = el.getElementsByTagName("a");
     if (links.length >= 1) {
@@ -373,6 +385,7 @@ function getProjectLink(el) {
     }
     return "";
 }
+// Blocks a project in the DOM
 function blockProject(project) {
     // When a project is on a slider on the home page treat it specially so that it doesn't break the sliding
     // Setting `display: none;` really breaks them
@@ -401,6 +414,13 @@ function blockProject(project) {
         // Otherwise we should hide them the normal way
         project.style.display = "none";
     }
+    // Change the "src" attributes to of images to prevent them from loading
+    // The image is invisible but browsers will still download the thumbnail slowing down the rest of the page
+    var images = project.getElementsByTagName("img");
+    for (var i = 0; i < images.length; i++) {
+        var image = images[i];
+        image.src = "";
+    }
 }
 var NoMoreFurries = /** @class */ (function () {
     function NoMoreFurries() {
@@ -408,7 +428,10 @@ var NoMoreFurries = /** @class */ (function () {
         // TODO: consider a "furries eradicated" number like in the old pre v2.0 versions
         this.blockedFurries = 0;
         // Add in our filters
-        this.addFilters();
+        this.addFilter(this.creatorFilter);
+        this.addFilter(this.titleFilter);
+        this.addFilter(this.caseSensitiveTitleFilter);
+        this.addFilter(this.regexTitleFilter);
         // Create the observer
         var observer = new MutationObserver(this.handleMutation.bind(this));
         observer.observe(document.body, {
@@ -420,11 +443,15 @@ var NoMoreFurries = /** @class */ (function () {
     //
     // HANDLING THINGS
     //
+    // Called whenver the MutationObserver notices something
     NoMoreFurries.prototype.handleMutation = function (mutationList) {
         for (var _i = 0, mutationList_1 = mutationList; _i < mutationList_1.length; _i++) {
             var mutation = mutationList_1[_i];
+            // Loop over any added nodes
+            // Any projects are added to the DOM and will be in addedNodes
             for (var i = 0; i < mutation.addedNodes.length; i++) {
                 var el = mutation.addedNodes[i];
+                // If it is a project then run the filtering on it
                 if (isProject(el)) {
                     this.handleProject(el);
                 }
@@ -432,38 +459,47 @@ var NoMoreFurries = /** @class */ (function () {
         }
     };
     NoMoreFurries.prototype.handleProject = function (project) {
+        // Get metadata
         var title = getProjectTitle(project);
         var creator = getProjectCreator(project);
-        for (var _i = 0, _a = this.filters; _i < _a.length; _i++) {
-            var filter = _a[_i];
-            var result = filter(title, creator);
-            if (result) {
-                var message = "blocked '" + title + "' by " + creator;
-                if (DEBUG) {
-                    message += " (" + getProjectLink(project) + ")";
-                }
-                console.log(message);
-                blockProject(project);
-                this.blockedFurries++;
+        // Is it blocked?
+        var blocked = this.isFiltered(title, creator);
+        if (blocked) {
+            // Console outputting what is blocked
+            var message = "blocked '" + title + "' by " + creator;
+            // For debugging also output a URL
+            if (DEBUG) {
+                message += " (" + getProjectLink(project) + ")";
             }
+            console.log(message);
+            blockProject(project);
+            this.blockedFurries++;
         }
     };
     //
     // FILTERING
     //
+    // Adds a function to the filter list
     NoMoreFurries.prototype.addFilter = function (filter) {
         this.filters.push(filter);
     };
-    NoMoreFurries.prototype.addFilters = function () {
-        this.addFilter(this.creatorFilter);
-        this.addFilter(this.titleFilter);
-        this.addFilter(this.caseSensitiveTitleFilter);
-        this.addFilter(this.regexTitleFilter);
+    NoMoreFurries.prototype.isFiltered = function (title, creator) {
+        // Go through all of our filters and run each of them on it
+        // If even one matches then return true
+        for (var _i = 0, _a = this.filters; _i < _a.length; _i++) {
+            var filter = _a[_i];
+            var result = filter(title, creator);
+            if (result) {
+                return true;
+            }
+        }
+        return false;
     };
     //
     // FILTERS
     //
     NoMoreFurries.prototype.creatorFilter = function (title, creator) {
+        // If the BLOCKED_CREATORS list contains the creator's name they are blocked
         return BLOCKED_CREATORS.indexOf(creator) > -1;
     };
     NoMoreFurries.prototype.titleFilter = function (title, creator) {
@@ -471,6 +507,8 @@ var NoMoreFurries = /** @class */ (function () {
         title = title.toLowerCase();
         for (var _i = 0, BLOCKED_TITLE_PARTS_1 = BLOCKED_TITLE_PARTS; _i < BLOCKED_TITLE_PARTS_1.length; _i++) {
             var i = BLOCKED_TITLE_PARTS_1[_i];
+            // If the title contains any of the things in the BLOCKED_TITLE_PARTS then it is blocked
+            // This filter is case insensitive due to the toLowerCase()
             if (title.indexOf(i.toLowerCase()) > -1) {
                 return true;
             }
@@ -478,7 +516,7 @@ var NoMoreFurries = /** @class */ (function () {
         return false;
     };
     NoMoreFurries.prototype.caseSensitiveTitleFilter = function (title, creator) {
-        // Pretty much #titleFilter()
+        // titleFilter() but case sensitive
         for (var _i = 0, BLOCKED_TITLE_PARTS_SENSITIVE_1 = BLOCKED_TITLE_PARTS_SENSITIVE; _i < BLOCKED_TITLE_PARTS_SENSITIVE_1.length; _i++) {
             var i = BLOCKED_TITLE_PARTS_SENSITIVE_1[_i];
             if (title.indexOf(i) > -1) {
@@ -488,6 +526,7 @@ var NoMoreFurries = /** @class */ (function () {
         return false;
     };
     NoMoreFurries.prototype.regexTitleFilter = function (title, creator) {
+        // titleFilter() but for regular expressions
         for (var _i = 0, BLOCKED_TITLE_REGEX_1 = BLOCKED_TITLE_REGEX; _i < BLOCKED_TITLE_REGEX_1.length; _i++) {
             var i = BLOCKED_TITLE_REGEX_1[_i];
             if (i.test(title)) {
