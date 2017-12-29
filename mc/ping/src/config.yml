@@ -1,0 +1,35 @@
+# This is the config file for the Ping plugin
+# You can configure different messages here.
+# Color codes like &4 (dark red) or &a (light green) are supported
+
+### Results of /ping
+# %PING% is replaced with the actual ping, in milliseconds (ms)
+# %PLAYER% is replaced with the player's name
+
+# Shown to a player getting their own ping with /ping
+self-result: "&6Your ping is: &a%PING%ms"
+
+# Shown to a player getting another player's ping with /ping <player>
+other-result: "&6%PLAYER%'s ping is: &a%PING%ms"
+
+### Warnings
+
+# When a player joins for the first time the results are often not very accurate due to some potential lag
+# By default the plugin will output a warning if the player joined very recently
+# Disable the warning by settings the "recent-join-time" to -1 or another negative number
+
+# The # of seconds before someone is no longer considered "recently joined"
+recent-join-time: 10
+# The warning to show when this is activated
+recent-join-warning: "&7&o%PLAYER% joined recently. The results of this command may be inaccurate"
+# Variation of the above that will show when a player runs /ping without specifying a player
+recent-join-warning-self: "&7&oYou joined recently. The results of this command may be inaccurate"
+
+### Errors
+
+# Error shown when a player is not online
+not-online: "&c%PLAYER% is not online"
+
+# Error shown when running /ping without a player from the console
+# (you have to specify a player when running from the console)
+console-no-player: "&cYou need to specify a player"

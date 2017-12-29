@@ -1,0 +1,15 @@
+name: Ping
+version: 0.9
+author: GarboMuffin
+main: com.garbomuffin.ping.PingPlugin
+
+commands:
+  ping:
+    description: Get the ping of yourself or another player
+    permission: ping.command
+    usage: Type /ping [player] to get player's ping. Don't specify a player to get your own.
+
+permissions:
+  ping.command:
+    description: Access to the /ping command
+    default: true
