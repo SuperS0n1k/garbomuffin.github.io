@@ -1,3 +1,9 @@
+// Edit This Page script.
+// This is loaded by the bookmarklet on most sites.
+
+// It is designed to (hopefully) work in almost any browser.
+
+/* jshint esversion: 3 */
 (function () {
   "use strict";
 

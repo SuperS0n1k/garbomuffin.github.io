@@ -51,7 +51,6 @@
     <div class="center">
       <h1>The Edit This Page Bookmark Has Updated!</h1>
       <h2>Please replace the existing bookmark with this new one!</h2>
-      <h3>(I fixed the link. It works now)</h3>
 
       <h1><a onclick="return false;" id="install-button">Edit This Page</a></h1>
       <p>(Remember to <b>DRAG</b> it onto your bookmarks bar!)</p>
@@ -92,7 +91,6 @@
         [
           "Improved support for sites that must use the bookmark's fallback. (like <a href='https://github.com'>GitHub</a>)",
           "Toggles between editable and uneditable",
-          "Only shows update message once (as long as you don't refresh)"
         ],
       ];
 
@@ -112,7 +110,7 @@
         var changes = changeLog[version];
         if (version === -1) {
           changes = [
-            "You're special."
+            "You're special.",
           ];
         }
 

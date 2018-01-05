@@ -32,7 +32,7 @@
     "var e=document.getElementsByTagName('*');",
 
     /*
-    for (var i = 0;i < e.length; i++) {
+    for (var i = 0; i < e.length; i++) {
       if (__editThisPageState) {
         e[i].setAttribute("contenteditable", "true");
       } else {
@@ -45,7 +45,7 @@
     "};",
 
     // append our script to the body
-    "document.body.append(s)",
+    "document.body.appendChild(s)",
   ].join("");
 
   document.addEventListener("DOMContentLoaded", function () {
