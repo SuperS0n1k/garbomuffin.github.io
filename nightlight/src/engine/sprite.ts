@@ -94,8 +94,9 @@ export abstract class AbstractSprite extends TaskRunner {
 
   // Test for intersections by literally rendering the sprites and looking for spots where they both exist
   // This needs some MASSIVE speed ups
-  public complexIntersects(thing: Sprite): boolean {
+  public complexIntersects(thing: Sprite, speed: number = 2): boolean {
     // some inspiration from:
+    // (although very different)
     // https://github.com/nathan/phosphorus/blob/master/phosphorus.js#L1663
 
     const createCanvas = () => {
@@ -119,8 +120,9 @@ export abstract class AbstractSprite extends TaskRunner {
     const dataA = ctxA.getImageData(0, 0, width, height).data;
     const dataB = ctxB.getImageData(0, 0, width, height).data;
 
+    const increment = 4 * speed;
     const length = dataA.length;
-    for (let i = 0; i < length; i += 4) {
+    for (let i = 0; i < length; i += increment) {
       if (dataA[i + 3] && dataB[i + 3]) {
         return true;
       }

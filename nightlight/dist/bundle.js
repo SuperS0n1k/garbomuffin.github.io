@@ -664,8 +664,9 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
     }
     // Test for intersections by literally rendering the sprites and looking for spots where they both exist
     // This needs some MASSIVE speed ups
-    complexIntersects(thing) {
+    complexIntersects(thing, speed = 2) {
         // some inspiration from:
+        // (although very different)
         // https://github.com/nathan/phosphorus/blob/master/phosphorus.js#L1663
         const createCanvas = () => {
             const canvas = document.createElement("canvas");
@@ -683,8 +684,9 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
         const height = canvasA.height;
         const dataA = ctxA.getImageData(0, 0, width, height).data;
         const dataB = ctxB.getImageData(0, 0, width, height).data;
+        const increment = 4 * speed;
         const length = dataA.length;
-        for (let i = 0; i < length; i += 4) {
+        for (let i = 0; i < length; i += increment) {
             if (dataA[i + 3] && dataB[i + 3]) {
                 return true;
             }
