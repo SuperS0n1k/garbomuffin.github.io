@@ -92,6 +92,12 @@ export abstract class AbstractSprite extends TaskRunner {
     }
   }
 
+  public needsFancyRendering() {
+    return this.scale.x === 1 &&
+           this.scale.y === 1 &&
+           this.rotation === 0;
+  }
+
   // Test for intersections by literally rendering the sprites and looking for spots where they both exist
   // This needs some MASSIVE speed ups
   public complexIntersects(thing: Sprite, speed: number = 2): boolean {
@@ -99,15 +105,8 @@ export abstract class AbstractSprite extends TaskRunner {
     // (although very different)
     // https://github.com/nathan/phosphorus/blob/master/phosphorus.js#L1663
 
-    const createCanvas = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = this.runtime.canvas.width;
-      canvas.height = this.runtime.canvas.height;
-      return canvas;
-    };
-
-    const canvasA = createCanvas();
-    const canvasB = createCanvas();
+    const canvasA = this.runtime.createCanvas();
+    const canvasB = this.runtime.createCanvas();
 
     const ctxA = canvasA.getContext("2d") as CanvasRenderingContext2D;
     const ctxB = canvasB.getContext("2d") as CanvasRenderingContext2D;
@@ -117,6 +116,7 @@ export abstract class AbstractSprite extends TaskRunner {
 
     const width = canvasA.width;
     const height = canvasA.height;
+
     const dataA = ctxA.getImageData(0, 0, width, height).data;
     const dataB = ctxB.getImageData(0, 0, width, height).data;
 

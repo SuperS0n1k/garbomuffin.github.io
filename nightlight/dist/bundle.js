@@ -662,20 +662,19 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunn
             return false;
         }
     }
+    needsFancyRendering() {
+        return this.scale.x === 1 &&
+            this.scale.y === 1 &&
+            this.rotation === 0;
+    }
     // Test for intersections by literally rendering the sprites and looking for spots where they both exist
     // This needs some MASSIVE speed ups
     complexIntersects(thing, speed = 2) {
         // some inspiration from:
         // (although very different)
         // https://github.com/nathan/phosphorus/blob/master/phosphorus.js#L1663
-        const createCanvas = () => {
-            const canvas = document.createElement("canvas");
-            canvas.width = this.runtime.canvas.width;
-            canvas.height = this.runtime.canvas.height;
-            return canvas;
-        };
-        const canvasA = createCanvas();
-        const canvasB = createCanvas();
+        const canvasA = this.runtime.createCanvas();
+        const canvasB = this.runtime.createCanvas();
         const ctxA = canvasA.getContext("2d");
         const ctxB = canvasB.getContext("2d");
         this.render(ctxA);
@@ -1272,12 +1271,14 @@ function run() {
 
 
 
+const SPOTLIGHT_SIZE = 75;
 class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* GameRuntime */] {
     constructor() {
         super(document.getElementById("canvas"));
         this.level = 0;
         this.background = "black";
         this.backgroundMusic = [];
+        this.darkLevel = false;
         // containers
         this.blocks = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
         this.lightBlocks = new __WEBPACK_IMPORTED_MODULE_7__engine_container__["a" /* Container */]();
@@ -1354,6 +1355,23 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         this.createPlayer();
         this.createStarBackground();
         this.renderLevel();
+    }
+    render() {
+        super.render();
+        if (this.darkLevel) {
+            // https://stackoverflow.com/a/6271865
+            const coverCanvas = this.createCanvas();
+            const coverCtx = coverCanvas.getContext("2d");
+            coverCtx.fillStyle = "black";
+            this.resetCanvas(coverCtx, "black");
+            coverCtx.globalCompositeOperation = "xor";
+            const player = this.player;
+            const centerX = player.x + (player.width / 2);
+            const centerY = player.y + (player.height / 2);
+            coverCtx.arc(centerX, centerY, SPOTLIGHT_SIZE, 0, 2 * Math.PI);
+            coverCtx.fill();
+            this.ctx.drawImage(coverCanvas, 0, 0);
+        }
     }
     //
     // Levels
@@ -1433,6 +1451,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
                 handler(this);
             }
         }
+        this.darkLevel = !!level.dark;
         this.spawnJumpLights();
         this.player.reset();
     }
@@ -2067,10 +2086,12 @@ function getLevels(game) {
         // 17
         {
             levelData: "^^^^^^^^^^^^-....)^^^^^^^-....^^^^^^^^^^^^-....)^^^^^^^-....************(....&*******(................................................................................................yyy......................t.................................................................y..........ss............................x..............t.................................w............................w.w..........................._@+....................t......)^-................t..........&u(...t...t...t.................................................................................................................................................................................................",
+            dark: true,
         },
         // 18
         {
             levelData: "^^^^^^^^-oooooooooooo)^^^^^^^^^^^^^^^^-............)^^^^^^^^^^^^^^^^-............)^^^^^^^^********(............&********................................................................................................................................................................................................................................................==================+$..........^^^^^^^^^^^^^^^^^^-$..........`*****************($..........-.............................-.............................-.............................-.............................-.............................-.............................`=@=======+...................^^^^^^^^^^-...................",
+            dark: true,
         },
         // 19
         {
@@ -2131,9 +2152,12 @@ const DAMAGED_TEXTURES = [
 ];
 const DAMAGE_ANIMATE_FRAME_LENGTH = 2;
 const PLAYER_JUMP_YV = 3;
-// rip
+// death
 const DEAD_ROTATION_SPEED = 0.742857142857 / 2; // 0.742... is how the game actually defines this.
 const DEAD_STARTING_VELOCITY = 2;
+// collision
+const COLLISION_INTERVAL = 3;
+const COLLISION_SPEED = 3;
 class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
     constructor(opts) {
         super(opts);
@@ -2141,6 +2165,7 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
         this.hitPlayer = false;
         this._sizeScale = 1;
         this.yv = DEAD_STARTING_VELOCITY;
+        this.testCollision = false;
         this.startingHeight = this.height;
         this.startingWidth = this.width;
         this.resetCoordinates();
@@ -2148,13 +2173,20 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
             run: this.beginSpinAttack,
             delay: 60,
         }));
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            run: this.intersectTest,
+            repeatEvery: COLLISION_INTERVAL,
+        }));
         this.rotationPoint = new __WEBPACK_IMPORTED_MODULE_3__engine_vector2d__["a" /* Vector2D */](0.5, 0.1);
     }
     //
     // Utilities
     //
     intersectTest() {
-        const intersectsPlayer = this.complexIntersects(this.runtime.player);
+        if (!this.testCollision) {
+            return;
+        }
+        const intersectsPlayer = this.complexIntersects(this.runtime.player, COLLISION_SPEED);
         if (intersectsPlayer) {
             this.runtime.player.kill();
             this.hitPlayer = true;
@@ -2197,6 +2229,7 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
     // Spin Attack
     //
     beginSpinAttack() {
+        this.testCollision = true;
         this.spinDirection = -this.multiplier;
         this.phaseDelay = SWIPE_BASE_DELAY;
         this.hitPlayer = false;
@@ -2222,7 +2255,6 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
             this.beginSwipeAttack();
         }
         this.resetCoordinates();
-        this.intersectTest();
     }
     //
     // Swipe Attack
@@ -2306,7 +2338,6 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
     }
     swipeAttack(speed) {
         this.y += speed;
-        this.intersectTest();
     }
     swipeSize(multi) {
         this.sizeScale += SWIPE_SIZE_CHANGE_RATE * multi;
@@ -2315,6 +2346,7 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
     // Rest Phase
     //
     beginRestPhase() {
+        this.testCollision = false;
         if (this.hitPlayer) {
             this.texture = this.runtime.getImage("boss/sword/heal");
             const position = new __WEBPACK_IMPORTED_MODULE_5__engine_vector__["a" /* Vector */](this.position);

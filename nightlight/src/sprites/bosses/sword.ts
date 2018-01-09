@@ -45,9 +45,13 @@ const DAMAGED_TEXTURES = [
 const DAMAGE_ANIMATE_FRAME_LENGTH = 2;
 const PLAYER_JUMP_YV = 3;
 
-// rip
+// death
 const DEAD_ROTATION_SPEED = 0.742857142857 / 2; // 0.742... is how the game actually defines this.
 const DEAD_STARTING_VELOCITY = 2;
+
+// collision
+const COLLISION_INTERVAL = 3;
+const COLLISION_SPEED = 3;
 
 export class SwordBoss extends ImageSprite {
   private health: number = HEALTH;
@@ -56,6 +60,7 @@ export class SwordBoss extends ImageSprite {
   private phaseDelay: number;
   private spinDirection: number;
   private yv: number = DEAD_STARTING_VELOCITY;
+  private testCollision: boolean = false;
 
   private readonly startingHeight: number;
   private readonly startingWidth: number;
@@ -73,6 +78,11 @@ export class SwordBoss extends ImageSprite {
       delay: 60,
     }));
 
+    this.addTask(new Task({
+      run: this.intersectTest,
+      repeatEvery: COLLISION_INTERVAL,
+    }));
+
     this.rotationPoint = new Vector2D(0.5, 0.1);
   }
 
@@ -81,7 +91,11 @@ export class SwordBoss extends ImageSprite {
   //
 
   public intersectTest() {
-    const intersectsPlayer = this.complexIntersects(this.runtime.player);
+    if (!this.testCollision) {
+      return;
+    }
+
+    const intersectsPlayer = this.complexIntersects(this.runtime.player, COLLISION_SPEED);
     if (intersectsPlayer) {
       this.runtime.player.kill();
       this.hitPlayer = true;
@@ -131,6 +145,8 @@ export class SwordBoss extends ImageSprite {
   //
 
   private beginSpinAttack() {
+    this.testCollision = true;
+
     this.spinDirection = -this.multiplier;
     this.phaseDelay = SWIPE_BASE_DELAY;
     this.hitPlayer = false;
@@ -160,7 +176,6 @@ export class SwordBoss extends ImageSprite {
     }
 
     this.resetCoordinates();
-    this.intersectTest();
   }
 
   //
@@ -262,7 +277,6 @@ export class SwordBoss extends ImageSprite {
 
   private swipeAttack(speed: number) {
     this.y += speed;
-    this.intersectTest();
   }
 
   private swipeSize(multi: number) {
@@ -274,6 +288,8 @@ export class SwordBoss extends ImageSprite {
   //
 
   private beginRestPhase() {
+    this.testCollision = false;
+
     if (this.hitPlayer) {
       this.texture = this.runtime.getImage("boss/sword/heal");
 

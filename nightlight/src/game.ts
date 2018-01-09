@@ -15,6 +15,8 @@ import { JumpLight } from "./sprites/jumplight";
 import { ZIndexes } from "./sprites/zindex";
 import { LightBlock } from "./sprites/blocks/lightblock";
 
+const SPOTLIGHT_SIZE = 75;
+
 export class Nightlight extends GameRuntime {
   public level: number = 0;
   public levelData: string;
@@ -22,6 +24,7 @@ export class Nightlight extends GameRuntime {
   public player: PlayerSprite;
   public background: TBackground = "black";
   public backgroundMusic: TSound[] = [];
+  public darkLevel: boolean = false;
 
   // containers
   public blocks: Container<Block> = new Container();
@@ -119,6 +122,28 @@ export class Nightlight extends GameRuntime {
     this.renderLevel();
   }
 
+  public render() {
+    super.render();
+
+    if (this.darkLevel) {
+      // https://stackoverflow.com/a/6271865
+      const coverCanvas = this.createCanvas();
+      const coverCtx = coverCanvas.getContext("2d") as CanvasRenderingContext2D;
+      coverCtx.fillStyle = "black";
+      this.resetCanvas(coverCtx, "black");
+      coverCtx.globalCompositeOperation = "xor";
+
+      const player = this.player;
+      const centerX = player.x + (player.width / 2);
+      const centerY = player.y + (player.height / 2);
+
+      coverCtx.arc(centerX, centerY, SPOTLIGHT_SIZE, 0, 2 * Math.PI);
+      coverCtx.fill();
+
+      this.ctx.drawImage(coverCanvas, 0, 0);
+    }
+  }
+
   //
   // Levels
   //
@@ -210,6 +235,8 @@ export class Nightlight extends GameRuntime {
         handler(this);
       }
     }
+
+    this.darkLevel = !!level.dark;
 
     this.spawnJumpLights();
 
