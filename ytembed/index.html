@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>it just embeds yt videos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <div>
+      <form>
+        <div><label>Video URL: <input type="text" value="https://www.youtube.com/watch?v=dQw4w9WgXcQ" id="input"></label></div>
+        <div><label>Video width: <input type="number" value="480" id="width"></label></div>
+        <div><label>Video height: <input type="number" value="360" id="height"></label></div>
+      </form>
+      <button id="submit-button">Do It</button>
+    </div>
+
+    <div id="embed-container"></div>
+    <textarea id="embed-code" onclick="this.focus();this.select();" readonly>The embed code will go here</textarea>
+
+    <script src="script.js"></script>
+  </body>
+</html>
