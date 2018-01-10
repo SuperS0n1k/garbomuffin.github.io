@@ -12,6 +12,7 @@ import { Nightlight } from "../game";
 import { SwordBoss } from "../sprites/bosses/sword";
 import { Vector } from "../engine/vector";
 import { ImageSprite } from "../engine/sprites/imagesprite";
+import { NossBoss } from "../sprites/bosses/noss/noss";
 
 export type THandler = (game: Nightlight) => void;
 
@@ -43,6 +44,7 @@ function bossSpawner(bossType: typeof ImageSprite, texture: TImage) {
   };
 }
 
+// This is terrible and should be changed.
 export function getLevels(game: Nightlight): Level[] {
   return [
     // 0
@@ -101,6 +103,7 @@ export function getLevels(game: Nightlight): Level[] {
     // 12
     {
       levelData: "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
+      handlers: [bossSpawner(NossBoss, game.getImage("boss/noss/noss"))],
       newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
     },
     // 13

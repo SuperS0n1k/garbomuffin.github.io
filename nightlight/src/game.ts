@@ -10,7 +10,7 @@ import * as config from "./config";
 import { Container } from "./engine/container";
 import { BackgroundStarSprite } from "./sprites/star";
 import { getRandomInt } from "./utils";
-import { JumpLights } from "./levels/jumplights";
+import { JUMP_LIGHTS } from "./levels/jumplights";
 import { JumpLight } from "./sprites/jumplight";
 import { ZIndexes } from "./sprites/zindex";
 import { LightBlock } from "./sprites/blocks/lightblock";
@@ -18,7 +18,8 @@ import { LightBlock } from "./sprites/blocks/lightblock";
 const SPOTLIGHT_SIZE = 75;
 
 export class Nightlight extends GameRuntime {
-  public level: number = 0;
+  // public level: number = 0;
+  public level: number = 12;
   public levelData: string;
   public levels: Level[];
   public player: PlayerSprite;
@@ -222,29 +223,36 @@ export class Nightlight extends GameRuntime {
       }
     }
 
+    // Level metadata
+
+    // if a level changes the background
     if (level.newBackground) {
       this.background = level.newBackground;
     }
 
+    // if a level has new background music
     if (level.newBackgroundMusic) {
       this.setBackgroundMusic(level.newBackgroundMusic);
     }
 
+    // if a level has any handlers that need to run
     if (level.handlers) {
       for (const handler of level.handlers) {
         handler(this);
       }
     }
 
+    // dark rooms
     this.darkLevel = !!level.dark;
 
+    // spawn things that you can jump on
     this.spawnJumpLights();
 
     this.player.reset();
   }
 
   private spawnJumpLights() {
-    const jumpLights = JumpLights[this.level];
+    const jumpLights = JUMP_LIGHTS[this.level];
     if (!jumpLights) {
       return;
     }

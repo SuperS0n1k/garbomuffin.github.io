@@ -6,6 +6,7 @@ import { Sprite, TGame } from "./types";
 import { getOrDefault, degreeToRadians } from "./utils";
 import { FRICTION, GRAVITY } from "../config";
 import { ImageSprite } from "./sprites/imagesprite";
+import { Block } from "../sprites/blocks/block";
 
 export interface ISpriteOptions {
   position: Vector;
@@ -40,7 +41,12 @@ export abstract class AbstractSprite extends TaskRunner {
   public constructor(options: ISpriteOptions) {
     super();
 
-    this.position = options.position;
+    // disable pass by reference for positions
+    if (options.position instanceof Vector) {
+      this.position = new Vector(options.position);
+    } else {
+      this.position = options.position;
+    }
 
     this.width = getOrDefault(options.width, 0);
     this.height = getOrDefault(options.height, 0);
@@ -92,43 +98,11 @@ export abstract class AbstractSprite extends TaskRunner {
     }
   }
 
-  public needsFancyRendering() {
-    return this.scale.x === 1 &&
-           this.scale.y === 1 &&
-           this.rotation === 0;
-  }
-
-  // Test for intersections by literally rendering the sprites and looking for spots where they both exist
-  // This needs some MASSIVE speed ups
-  public complexIntersects(thing: Sprite, speed: number = 2): boolean {
-    // some inspiration from:
-    // (although very different)
-    // https://github.com/nathan/phosphorus/blob/master/phosphorus.js#L1663
-
-    const canvasA = this.runtime.createCanvas();
-    const canvasB = this.runtime.createCanvas();
-
-    const ctxA = canvasA.getContext("2d") as CanvasRenderingContext2D;
-    const ctxB = canvasB.getContext("2d") as CanvasRenderingContext2D;
-
-    this.render(ctxA);
-    thing.render(ctxB);
-
-    const width = canvasA.width;
-    const height = canvasA.height;
-
-    const dataA = ctxA.getImageData(0, 0, width, height).data;
-    const dataB = ctxB.getImageData(0, 0, width, height).data;
-
-    const increment = 4 * speed;
-    const length = dataA.length;
-    for (let i = 0; i < length; i += increment) {
-      if (dataA[i + 3] && dataB[i + 3]) {
-        return true;
-      }
-    }
-
-    return false;
+  public containsPoint(point: Vector) {
+    return this.x < point.x &&
+      this.x + this.width > point.x &&
+      this.y < point.y &&
+      this.y + this.height > point.y;
   }
 
   protected _setRenderValues(ctx: CanvasRenderingContext2D) {
@@ -154,6 +128,20 @@ export abstract class AbstractSprite extends TaskRunner {
     }
   }
 
+  // moves in the direction being faced X pixels
+  public moveForward(steps: number) {
+    const angle = degreeToRadians(this.rotation);
+    const sin = Math.sin(angle);
+    const cos = Math.cos(angle);
+
+    this.x += sin * steps;
+    this.y += cos * steps;
+  }
+
+  public distanceTo(point: Vector) {
+    return Math.sqrt((point.x - this.centerX) ** 2 + (point.y - this.centerY) ** 2);
+  }
+
   get x() {
     return this.position.x;
   }
@@ -171,6 +159,14 @@ export abstract class AbstractSprite extends TaskRunner {
   }
   set z(z) {
     this.position.z = z;
+  }
+
+  get centerX() {
+    return this.x + (this.width / 2);
+  }
+
+  get centerY() {
+    return this.y + (this.height / 2);
   }
 
   //
@@ -226,8 +222,22 @@ export abstract class AbstractSprite extends TaskRunner {
   }
 
   private handleCollision(velocity: number, horizontal: boolean) {
+    const intersects = (block: Block) => block.solid &&
+      this.intersects(block) &&
+      block.handleIntersect(this, velocity, horizontal) !== false;
+
+    const thisAsAny = this as any as {_lastSolidBlock?: Block};
+
+    // optimization: if we are touching the same block as before (as when still)
+    // then we try that first instead of looping over everything
+    // this reduces the performance impact of running lots of physics, especially things that aren't moving
+    if (thisAsAny._lastSolidBlock && intersects(thisAsAny._lastSolidBlock)) {
+      return true;
+    }
+
     for (const block of this.runtime.blocks) {
-      if (block.solid && this.intersects(block) && block.handleIntersect(this, velocity, horizontal) !== false) {
+      if (intersects(block)) {
+        thisAsAny._lastSolidBlock = block;
         return true;
       }
     }

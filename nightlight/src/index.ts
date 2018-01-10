@@ -88,6 +88,7 @@ game.addImage("hit/+0");
 //
 // Post sword
 //
+
 game.addImage("blocks/1");
 game.addImage("blocks/2");
 game.addImage("blocks/3");
@@ -104,6 +105,12 @@ game.addImage("blocks/lightbutton/2");
 game.addImage("blocks/lightbutton/down");
 
 game.addImage("jumplight");
+
+// Noss
+game.addImage("boss/noss/noss");
+game.addImage("boss/noss/hit");
+game.addImage("boss/noss/rest");
+game.addImage("boss/noss/bullet");
 
 //
 // Post second boss / Castle

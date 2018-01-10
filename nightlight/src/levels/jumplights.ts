@@ -1,16 +1,11 @@
 import { Vector } from "../engine/vector";
+import { scratchCoordinate } from "../utils";
 
 // This is how the original defines jump lights
 // It does not use the level code
 // (although I believe it at one point did due to the image name being "^.png", as if it were the ^ character in level codes)
 
-// Converts Scratch coordinates to coordinates this game will understand
-// Hardcoded values are bad but just ignore that
-function scratchCoordinate(x: number, y: number) {
-  return new Vector(x + 236, (360 - y) - 184);
-}
-
-export const JumpLights: Vector[][] = [
+export const JUMP_LIGHTS: Vector[][] = [
   [],
   [],
   [],
@@ -73,6 +68,6 @@ export const JumpLights: Vector[][] = [
     scratchCoordinate(0, -52),
     scratchCoordinate(104, 20),
     scratchCoordinate(176, -35),
-  ]
+  ],
   // none past this level
 ];

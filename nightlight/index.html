@@ -29,7 +29,7 @@
   </head>
 
   <body>
-    <h1>Nightlight in JS (v0.0.8.9.high.quality.memes)</h1>
+    <h1>Nightlight in JS (v0.0.9.0)</h1>
 
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a></p>
     <p><a href="https://scratch.mit.edu/projects/167502369/">Also play my remix which contains some of the features I plan to add here.</a></p>
@@ -38,10 +38,12 @@
       Assets are used with permission.
     </p>
 
-    <p>boss collision changed (fixed a couple edge cases) and
-      <!-- onclick: first fix the background and then switch to dark room -->
-      <button onclick="runtime.level=13;runtime.renderLevel();runtime.level=17;runtime.renderLevel();">DARK ROOMS</button>
-    </p>
+    <p>v0.0.9:</p>
+    <ul>
+      <li><button onclick="runtime.level=5;runtime.renderLevel();">Sword boss</button> runs almost perfectly on a chromebook</li>
+      <li><button onclick="runtime.level=5;runtime.renderLevel();">Sword boss</button> becomes vulnerable at the right time</li>
+      <li><button onclick="runtime.level=12;runtime.renderLevel();">Second boss</button> very early implementation</li>
+    </ul>
 
     <progress id="progress" value="0"></progress>
     <canvas id="canvas"></canvas>
@@ -53,20 +55,15 @@
     <button onclick="runtime.addTask(runtime.exit);">Stop (refresh to restart)</button>
 
     <h4>Major To do list:</h4>
-    <p><input type="checkbox" disabled>Bosses</p>
-    <p><input type="checkbox" disabled>Major optimizations (many related to bosses)</p>
+    <p><input type="checkbox" disabled>Bosses (2/3 "done")</p>
     <p><input type="checkbox" disabled>Menus</p>
     <p><input type="checkbox" disabled checked>Sounds</p>
 
     <p><a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/nightlight">Source code</a></p>
 
     <p>Version plans:</p>
-    <p>v0.0.9 - first boss mostly done</p>
-    <p>v0.1 - first boss done</p>
-    <p>v0.2 - second boss done</p>
-    <p>v0.3 - third boss done</p>
-    <p>v0.4 - sounds/other quality of life things</p>
-    <p>v1.0 - everything is done and I never want to touch this again</p>
+    <p>v0.1 - most things implemented (not quite there, after an early version of the final boss it would)</p>
+    <p>v0.2 - pretty much everything implemented pretty much exactly like in the original</p>
 
     <script src="dist/bundle.js"></script>
   </body>

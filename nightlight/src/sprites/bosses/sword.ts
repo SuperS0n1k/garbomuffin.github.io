@@ -14,6 +14,7 @@ import { Vector2D } from "../../engine/vector2d";
 import { HitEffectSprite } from "./hiteffect";
 import { Vector } from "../../engine/vector";
 import { LevelUpCoinSprite } from "../coin";
+import { AbstractBoss } from "./boss";
 
 const HEALTH = 3;
 
@@ -53,11 +54,10 @@ const DEAD_STARTING_VELOCITY = 2;
 const COLLISION_INTERVAL = 3;
 const COLLISION_SPEED = 3;
 
-export class SwordBoss extends ImageSprite {
+export class SwordBoss extends AbstractBoss {
   private health: number = HEALTH;
   private hitPlayer: boolean = false;
   private _sizeScale: number = 1;
-  private phaseDelay: number;
   private spinDirection: number;
   private yv: number = DEAD_STARTING_VELOCITY;
   private testCollision: boolean = false;
@@ -90,31 +90,53 @@ export class SwordBoss extends ImageSprite {
   // Utilities
   //
 
+  private intersectsPlayer(): boolean {
+    // Render ourselves on a canvas
+    const canvas = this.runtime.createCanvas();
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.render(ctx);
+
+    const height = canvas.height;
+    const width = canvas.width;
+
+    const data = ctx.getImageData(0, 0, width, height).data;
+    // some browsers are funny
+    // TODO: warning message?
+    if (!data) {
+      return false;
+    }
+
+    const player = this.runtime.player;
+    const length = data.length;
+    for (let i = 0; i < length; i += 4) {
+      const j = i / 4;
+
+      if (data[i + 3]) {
+        const point = new Vector(j % width, Math.floor(j / width));
+        if (player.containsPoint(point)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   public intersectTest() {
     if (!this.testCollision) {
       return;
     }
 
-    const intersectsPlayer = this.complexIntersects(this.runtime.player, COLLISION_SPEED);
-    if (intersectsPlayer) {
+    if (this.intersectsPlayer()) {
       this.runtime.player.kill();
       this.hitPlayer = true;
     }
   }
 
-  private startRoutine() {
+  protected startRoutine() {
+    super.startRoutine();
     this.texture = this.runtime.getImage("boss/sword/sword");
     this.beginSpinAttack();
-  }
-
-  private addPhase(task: Task, afterDelay: number = 0) {
-    task.delay += this.phaseDelay;
-    if (task.repeatEvery > -1) {
-      this.phaseDelay += task.repeatMax * (task.repeatEvery + 1);
-    }
-    this.phaseDelay += (task.originalOptions.delay) || 0;
-    this.phaseDelay += afterDelay;
-    this.addTask(task);
   }
 
   private resetCoordinates() {
@@ -263,7 +285,6 @@ export class SwordBoss extends ImageSprite {
 
     this.addPhase(new Task({
       run: this.beginRestPhase,
-      delay: 30,
     }));
   }
 
@@ -334,7 +355,8 @@ export class SwordBoss extends ImageSprite {
 
   private restVulnerable(task: Task) {
     // use simple intersects for performance reasons
-    if (this.intersects(this.runtime.player)) {
+    if (this.playerJumpedOn()) {
+      this.bouncePlayer();
       this.damage();
       task.stop();
     }
@@ -343,7 +365,6 @@ export class SwordBoss extends ImageSprite {
   private damage() {
     this.health--;
 
-    this.runtime.player.yv = PLAYER_JUMP_YV;
     new HitEffectSprite({
       position: new Vector(this.position),
       texture: this.runtime.getImage("hit/-1"),

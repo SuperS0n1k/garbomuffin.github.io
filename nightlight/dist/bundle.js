@@ -60,16 +60,17 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 140);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 10:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(32);
 
 
 class Block extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
@@ -153,11 +154,12 @@ class PseudoSolidBlock extends SolidBlock {
 
 
 /***/ }),
-/* 1 */
+
+/***/ 11:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector2d__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector2d__ = __webpack_require__(98);
 /*
  * A 3D Vector: (x, y, z)
  *
@@ -182,618 +184,12 @@ class Vector extends __WEBPACK_IMPORTED_MODULE_0__vector2d__["a" /* Vector2D */]
 
 
 /***/ }),
-/* 2 */
+
+/***/ 134:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(5);
-/*
- * Tasks and TaskRunners are a very core part of the engine
- *
- * Handles what to run, when to run it, to repeat it, and removal.
- */
-
-// a task is something to be run at a certain time, maybe repeating
-class Task {
-    constructor(options) {
-        this.repeatCount = 0;
-        const runnable = options.run;
-        const delay = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getOrDefault */])(options.delay, 0);
-        const repeatEvery = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getOrDefault */])(options.repeatEvery, -1);
-        const repeatMax = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getOrDefault */])(options.repeatMax, Infinity);
-        this.originalOptions = options;
-        this.runnable = runnable;
-        this.delay = delay;
-        this.repeatEvery = repeatEvery;
-        this.repeatMax = repeatMax;
-    }
-    run() {
-        // pass this task to the function so that it can call things like task.stop();
-        this.runnable(this);
-    }
-    stop() {
-        this.delay = -1;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Task;
-
-// the things that runs tasks
-// adds everything tasks use
-// most methods prefixed with _ to avoid as many collisions as possible
-// almost EVERYTHING extends this (and as such can have tasks on it)
-class TaskRunner {
-    constructor() {
-        this._tasks = [];
-    }
-    runTasks() {
-        for (const task of this._tasks) {
-            if (task.delay <= 0) {
-                task.run();
-                task.repeatCount++;
-                if (task.delay === -1) {
-                    // called task.stop();
-                }
-                else if (task.repeatEvery >= 0 && task.repeatCount < task.repeatMax) {
-                    task.delay = task.repeatEvery;
-                }
-                else {
-                    task.delay = -1;
-                }
-            }
-            else {
-                task.delay--;
-            }
-        }
-        this._tasks = this._tasks.filter((task) => task.delay !== -1);
-    }
-    resetTasks() {
-        this._tasks = [];
-    }
-    // add a task
-    // can either be a task or a function
-    // if it is a task it is added as you would expect
-    // if it is a function it will repeat every frame
-    addTask(task) {
-        if (typeof task === "function") {
-            return this.addTask(new Task({
-                run: task,
-                repeatEvery: 0,
-            }));
-        }
-        else {
-            task.runnable = task.runnable.bind(this);
-            this._tasks.push(task);
-            return task;
-        }
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["b"] = TaskRunner;
-
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/*
- * Config values that are global to the whole game
- * Options to one specific thing are in its file
- */
-const BLOCK_HEIGHT = 16;
-/* harmony export (immutable) */ __webpack_exports__["a"] = BLOCK_HEIGHT;
-
-const BLOCK_WIDTH = 16;
-/* harmony export (immutable) */ __webpack_exports__["b"] = BLOCK_WIDTH;
-
-const LEVEL_HEIGHT = 23;
-/* unused harmony export LEVEL_HEIGHT */
-
-const LEVEL_WIDTH = 30;
-/* harmony export (immutable) */ __webpack_exports__["e"] = LEVEL_WIDTH;
-
-const GRAVITY = 0.195;
-/* harmony export (immutable) */ __webpack_exports__["d"] = GRAVITY;
-
-const FRICTION = 0.75;
-/* harmony export (immutable) */ __webpack_exports__["c"] = FRICTION;
-
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(5);
-/*
- * A sprite that has an image as a texture.
- */
-
-
-class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
-    constructor(options) {
-        super(options);
-        this.texture = options.texture;
-        this.width = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.width, this.texture.width);
-        this.height = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.height, this.texture.height);
-    }
-    render(ctx) {
-        if (!this.visible) {
-            return;
-        }
-        ctx.save();
-        this._setRenderValues(ctx);
-        const x = Math.floor(this.x);
-        const y = Math.floor(this.y);
-        ctx.drawImage(this.texture, x, y, this.width, this.height);
-        ctx.restore();
-    }
-    updateDimensions() {
-        this.width = this.texture.width;
-        this.height = this.texture.height;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ImageSprite;
-
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["c"] = isMobile;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getOrDefault;
-/* harmony export (immutable) */ __webpack_exports__["d"] = toHex;
-/* unused harmony export radiansToDegree */
-/* harmony export (immutable) */ __webpack_exports__["a"] = degreeToRadians;
-// https://stackoverflow.com/a/3540295
-// tests if the device is probably a mobile phone
-function isMobile() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-// if obj is defined, return obj
-// else return def
-// used as less verbose option defaulting without neglecting falsy values (|| does that)
-function getOrDefault(obj, def) {
-    if (typeof obj === "undefined") {
-        return def;
-    }
-    else {
-        return obj;
-    }
-}
-// https://stackoverflow.com/a/697841
-function toHex(number) {
-    return number.toString(16).toUpperCase();
-}
-function radiansToDegree(rad) {
-    return rad * 180 / Math.PI;
-}
-function degreeToRadians(deg) {
-    return deg * Math.PI / 180;
-}
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fragment__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_vector__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__blocks_block__ = __webpack_require__(0);
-/*
- * It's a player.
- *
- * For now there doesn't seem to be any problems with having the player also be the graphic
- * And until there are problems they will be staying as one
- * (in some other games the size of the player textures chagne and that ruins physics)
- */
-
-
-
-
-
-
-// How fast the player walks
-const PLAYER_WALK_SPEED = 0.5 / 2;
-// The velocity gained when jumping
-const JUMP_HEIGHT = 5.4;
-// Maximum speed the player is allowed to move at
-const PLAYER_MAX_SPEED = 4 / 2;
-// The player uses a custom friction
-// This is the value used in that friction
-const PLAYER_FRICTION = 0.8 / 2;
-// Fragment textures that will always be present when dying
-const FRAGMENT_TEXTURES = [1, 2, 3, 4];
-// The minimum amount of small pieces to create
-const FRAGMENT_SMALL_PIECE_MIN = 4;
-// The maxiumum amount of small pieces to create
-const FRAGMENT_SMALL_PIECE_MAX = 6;
-// The texture associated with small pieces
-const FRAGMENT_SMALL_PIECE_TEXTURE = 5;
-// The range of xv values that pieces will have
-const FRAGMENT_XV_RANGE = 1;
-// The minimum yv that pieces will have
-const FRAGMENT_YV_MIN = 3;
-// The maxiumum yv that pieces will have
-const FRAGMENT_YV_MAX = 6;
-// The range of rotation change that pieces will have
-const FRAGMENT_RV_RANGE = 10;
-// Frames in the walk animation
-const WALK_ANIMATION_FRAMES = 4;
-// Length of each frame
-const WALK_ANIMATION_LENGTH = 4;
-var MovementDirection;
-(function (MovementDirection) {
-    MovementDirection[MovementDirection["Right"] = 1] = "Right";
-    MovementDirection[MovementDirection["Left"] = -1] = "Left";
-})(MovementDirection || (MovementDirection = {}));
-class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
-    constructor(opts) {
-        super(opts);
-        this.yv = 0;
-        this.xv = 0;
-        this.lastMovementDirection = MovementDirection.Right;
-        this.onGround = true;
-        this.walkingAnimationProgress = 1;
-        this.currentFrameProgress = 0;
-        this.moving = false;
-        this.hasJumpLight = false;
-        this.addTask(this.run);
-        this.addTask(this.updateGraphic);
-    }
-    handleInputs(onGround) {
-        const keys = this.runtime.keyboard.keys;
-        const rightDown = keys[39].isPressed;
-        const leftDown = keys[37].isPressed;
-        const upDown = keys[38].isPressed;
-        const upJustPressed = keys[38].justPressed;
-        this.moving = false;
-        if (rightDown && !leftDown) {
-            this.xv += PLAYER_WALK_SPEED;
-            this.lastMovementDirection = MovementDirection.Right;
-            this.moving = true;
-        }
-        if (leftDown && !rightDown) {
-            this.xv -= PLAYER_WALK_SPEED;
-            this.lastMovementDirection = MovementDirection.Left;
-            this.moving = true;
-        }
-        if ((upDown && onGround) || (upJustPressed && this.hasJumpLight)) {
-            const quiet = this.texture === this.runtime.getImage("player/idle");
-            this.runtime.playSound(`player/jump${quiet ? 2 : 1}`);
-            this.hasJumpLight = false;
-            this.yv = JUMP_HEIGHT;
-        }
-        else if (!upDown && this.yv > 3) {
-            this.yv = 3;
-        }
-        return {
-            rightDown, leftDown, upDown,
-        };
-    }
-    run() {
-        if (this.xv > PLAYER_MAX_SPEED) {
-            this.xv = PLAYER_MAX_SPEED;
-        }
-        else if (this.xv < -PLAYER_MAX_SPEED) {
-            this.xv = -PLAYER_MAX_SPEED;
-        }
-        const prevXv = this.xv;
-        const prevYv = this.yv;
-        const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
-            friction: false,
-        });
-        this.xv = physicsResult.xv;
-        this.yv = physicsResult.yv;
-        this.onGround = physicsResult.onGround;
-        if (this.onGround && prevYv < -1.6) {
-            this.runtime.playSound("player/ding");
-        }
-        if (this.onGround) {
-            this.hasJumpLight = false;
-        }
-        const inputs = this.handleInputs(physicsResult.onGround);
-        if ((!inputs.leftDown && !inputs.rightDown) || (inputs.leftDown && inputs.rightDown)) {
-            if (this.xv > 0) {
-                this.xv -= PLAYER_FRICTION;
-                this.xv = Math.max(this.xv, 0);
-            }
-            else {
-                this.xv += PLAYER_FRICTION;
-                this.xv = Math.min(this.xv, 0);
-            }
-        }
-        if (this.y >= this.runtime.canvas.height) {
-            this.kill();
-        }
-    }
-    reset() {
-        this.position.x = 40;
-        this.position.y = this.runtime.canvas.height - __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
-        this.xv = 0;
-        this.yv = 0;
-        const sprites = this.runtime.blocks.sprites.filter((s) => s.solid || s instanceof __WEBPACK_IMPORTED_MODULE_5__blocks_block__["b" /* PseudoSolidBlock */]);
-        while (this.intersects(sprites)) {
-            this.y -= __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
-        }
-    }
-    kill() {
-        const fragmentTextures = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* clone */])(FRAGMENT_TEXTURES);
-        const smallPieces = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(FRAGMENT_SMALL_PIECE_MIN, FRAGMENT_SMALL_PIECE_MAX);
-        for (let i = 0; i < smallPieces; i++) {
-            fragmentTextures.push(FRAGMENT_SMALL_PIECE_TEXTURE);
-        }
-        for (const i of fragmentTextures) {
-            new __WEBPACK_IMPORTED_MODULE_2__fragment__["a" /* PlayerFragmentSprite */]({
-                position: new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](this.position),
-                texture: this.runtime.getImage(`fragments/${i}`),
-                xv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
-                yv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
-                rv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getRandomInt */])(-FRAGMENT_RV_RANGE * 1000, FRAGMENT_RV_RANGE * 1000) / 1000,
-            });
-        }
-        this.reset();
-        this.runtime.playSound("player/death");
-    }
-    updateGraphic() {
-        this.scale.x = this.lastMovementDirection;
-        if (this.onGround) {
-            if (this.moving) {
-                this.currentFrameProgress++;
-                if (this.currentFrameProgress === WALK_ANIMATION_LENGTH) {
-                    this.currentFrameProgress = 0;
-                    this.walkingAnimationProgress++;
-                }
-                if (this.walkingAnimationProgress > WALK_ANIMATION_FRAMES) {
-                    this.walkingAnimationProgress = 1;
-                }
-                this.texture = this.runtime.getImage(`player/walk${this.walkingAnimationProgress}`);
-            }
-            else {
-                this.texture = this.runtime.getImage("player/idle");
-            }
-        }
-        else {
-            if (this.yv < 0.1) {
-                this.texture = this.runtime.getImage("player/down");
-            }
-            else {
-                this.texture = this.runtime.getImage("player/up");
-            }
-        }
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = PlayerSprite;
-
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/*
- * A 2D Vector: (x, y)
- *
- * Used for scale and other only 2D stuff
- */
-class Vector2D {
-    constructor(x = 0, y = 0) {
-        if (typeof x === "object") {
-            this.x = x.x;
-            this.y = x.y;
-        }
-        else {
-            this.x = x;
-            this.y = y;
-        }
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Vector2D;
-
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector2d__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config__ = __webpack_require__(3);
-
-
-
-
-class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_1__task__["b" /* TaskRunner */] {
-    constructor(options) {
-        super();
-        this.runtime = AbstractSprite.runtime;
-        this.position = options.position;
-        this.width = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.width, 0);
-        this.height = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.height, 0);
-        this.scale = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.scale, new __WEBPACK_IMPORTED_MODULE_0__vector2d__["a" /* Vector2D */](1, 1));
-        this.persistent = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.persistent, false);
-        this.visible = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.visible, true);
-        this.rotation = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.rotation, 0);
-        this.opacity = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.opacity, 1);
-        this.rotationPoint = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.rotationPoint, new __WEBPACK_IMPORTED_MODULE_0__vector2d__["a" /* Vector2D */](0.5, 0.5));
-        this.runtime.sprites.push(this);
-    }
-    update() {
-        this.runTasks();
-    }
-    destroy() {
-        this._removeFromContainer(this.runtime.sprites);
-        for (const container of this.runtime.containers) {
-            this._removeFromContainer(container);
-        }
-        this.resetTasks(); // stop all future things from running
-    }
-    _removeFromContainer(container) {
-        const index = container.sprites.indexOf(this);
-        if (index > -1) {
-            container.sprites.splice(index, 1);
-        }
-    }
-    // TODO: rotation
-    intersects(thing) {
-        if (thing instanceof AbstractSprite) {
-            return this.x < thing.x + thing.width &&
-                this.x + this.width > thing.x &&
-                this.y < thing.y + thing.height &&
-                this.y + this.height > thing.y;
-        }
-        else {
-            for (const sprite of thing) {
-                if (this.intersects(sprite)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-    needsFancyRendering() {
-        return this.scale.x === 1 &&
-            this.scale.y === 1 &&
-            this.rotation === 0;
-    }
-    // Test for intersections by literally rendering the sprites and looking for spots where they both exist
-    // This needs some MASSIVE speed ups
-    complexIntersects(thing, speed = 2) {
-        // some inspiration from:
-        // (although very different)
-        // https://github.com/nathan/phosphorus/blob/master/phosphorus.js#L1663
-        const canvasA = this.runtime.createCanvas();
-        const canvasB = this.runtime.createCanvas();
-        const ctxA = canvasA.getContext("2d");
-        const ctxB = canvasB.getContext("2d");
-        this.render(ctxA);
-        thing.render(ctxB);
-        const width = canvasA.width;
-        const height = canvasA.height;
-        const dataA = ctxA.getImageData(0, 0, width, height).data;
-        const dataB = ctxB.getImageData(0, 0, width, height).data;
-        const increment = 4 * speed;
-        const length = dataA.length;
-        for (let i = 0; i < length; i += increment) {
-            if (dataA[i + 3] && dataB[i + 3]) {
-                return true;
-            }
-        }
-        return false;
-    }
-    _setRenderValues(ctx) {
-        ctx.globalAlpha = this.opacity;
-        if (this.rotation !== 0) {
-            // terrible code
-            // rotation is difficult
-            // https://stackoverflow.com/a/4650102
-            const translateX = this.x + this.width * this.rotationPoint.x;
-            const translateY = this.y + this.height * this.rotationPoint.y;
-            ctx.translate(translateX, translateY);
-            ctx.rotate(Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* degreeToRadians */])(this.rotation));
-            ctx.translate(-translateX, -translateY);
-        }
-        if (this.scale.x !== 1 || this.scale.y !== 1) {
-            const translateX = this.x + this.width / 2;
-            const translateY = this.y + this.height / 2;
-            ctx.translate(translateX, translateY);
-            ctx.scale(this.scale.x, this.scale.y);
-            ctx.translate(-translateX, -translateY);
-        }
-    }
-    get x() {
-        return this.position.x;
-    }
-    set x(x) {
-        this.position.x = x;
-    }
-    get y() {
-        return this.position.y;
-    }
-    set y(y) {
-        this.position.y = y;
-    }
-    get z() {
-        return this.position.z;
-    }
-    set z(z) {
-        this.position.z = z;
-    }
-    //
-    // Nightlight related code
-    //
-    runBasicPhysics(xv, yv, options = {}) {
-        options.collision = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.collision, true);
-        options.restrictPositionValues = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.restrictPositionValues, true);
-        options.friction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.friction, __WEBPACK_IMPORTED_MODULE_3__config__["c" /* FRICTION */]);
-        options.midAirFriction = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.midAirFriction, true);
-        options.roundValues = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getOrDefault */])(options.roundValues, true);
-        this.x += xv;
-        if (options.collision && this.handleCollision(xv, true)) {
-            xv = 0;
-        }
-        if (options.restrictPositionValues) {
-            if (this.x < 0) {
-                this.x = 0;
-                xv = 0;
-            }
-            else if (this.x + this.width > this.runtime.canvas.width) {
-                this.x = this.runtime.canvas.width - this.width;
-                xv = 0;
-            }
-        }
-        let onGround = false;
-        yv -= __WEBPACK_IMPORTED_MODULE_3__config__["d" /* GRAVITY */];
-        this.y -= yv;
-        if (options.collision && this.handleCollision(yv, false)) {
-            if (yv < 0) {
-                onGround = true;
-            }
-            yv = 0;
-        }
-        if (options.friction !== false) {
-            if (onGround || options.midAirFriction) {
-                xv *= options.friction;
-            }
-        }
-        if (options.roundValues) {
-            this.x = Math.round(this.x);
-            this.y = Math.round(this.y);
-        }
-        return {
-            xv, yv, onGround,
-        };
-    }
-    handleCollision(velocity, horizontal) {
-        for (const block of this.runtime.blocks) {
-            if (block.solid && this.intersects(block) && block.handleIntersect(this, velocity, horizontal) !== false) {
-                return true;
-            }
-        }
-        return false;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractSprite;
-
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__ = __webpack_require__(343);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__3rd_party_stableSort__);
 /*
  * A container holds sprites
@@ -810,15 +206,15 @@ class Container {
     push(...items) {
         return this.sprites.push(...items);
     }
-    *[Symbol.iterator]() {
-        for (const sprite of this.sprites) {
-            yield sprite;
-        }
-    }
     sort() {
         this.sprites.stableSort((a, b) => {
             return a.position.z - b.position.z;
         });
+    }
+    *[Symbol.iterator]() {
+        for (const sprite of this.sprites) {
+            yield sprite;
+        }
     }
     get length() {
         return this.sprites.length;
@@ -829,12 +225,13 @@ class Container {
 
 
 /***/ }),
-/* 10 */
+
+/***/ 135:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__task__ = __webpack_require__(17);
 /*
  * A few shared classes and things to extend for mouse/touch drivers
  */
@@ -903,13 +300,14 @@ class EmptyMouseButton {
 
 
 /***/ }),
-/* 11 */
+
+/***/ 136:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(11);
 /*
  * The coin that levels you up
  */
@@ -958,38 +356,50 @@ class LevelUpCoinSprite extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" 
 
 
 /***/ }),
-/* 12 */
+
+/***/ 137:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["b"] = getRandomInt;
-/* harmony export (immutable) */ __webpack_exports__["a"] = clone;
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-// Clones an array
-// Allows you to use inplace methods on an array without changing the actual array
-// (eg. sort)
-function clone(array) {
-    let i = array.length;
-    const result = [];
-    while (i--) {
-        result[i] = array[i];
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(46);
+
+const PLAYER_JUMP_YV = 3;
+class AbstractBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
+    constructor(options) {
+        super(options);
     }
-    return result;
+    // call super.startRoutine() in implementations!!!
+    startRoutine() {
+        this.phaseDelay = 0;
+    }
+    addPhase(task, afterDelay = 0) {
+        task.delay += this.phaseDelay;
+        if (task.repeatEvery > -1) {
+            this.phaseDelay += task.repeatMax * (task.repeatEvery + 1);
+        }
+        this.phaseDelay += (task.originalOptions.delay) || 0;
+        this.phaseDelay += afterDelay;
+        this.addTask(task);
+    }
+    playerJumpedOn() {
+        return this.intersects(this.runtime.player) && this.runtime.player.yv < -1;
+    }
+    bouncePlayer() {
+        this.runtime.player.yv = PLAYER_JUMP_YV;
+    }
 }
+/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractBoss;
+
 
 
 /***/ }),
-/* 13 */
+
+/***/ 138:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(32);
 /*
  * It's a grass block.
  *
@@ -1009,13 +419,14 @@ class GrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
 
 
 /***/ }),
-/* 14 */
+
+/***/ 139:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(11);
 /*
  * A block that falls when you hit the switch.
  *
@@ -1091,12 +502,13 @@ class FallingBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBloc
 
 
 /***/ }),
-/* 15 */
+
+/***/ 140:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(341);
 /*
  * The loader.
  *
@@ -1187,6 +599,11 @@ game.addImage("blocks/lightbutton/1");
 game.addImage("blocks/lightbutton/2");
 game.addImage("blocks/lightbutton/down");
 game.addImage("jumplight");
+// Noss
+game.addImage("boss/noss/noss");
+game.addImage("boss/noss/hit");
+game.addImage("boss/noss/rest");
+game.addImage("boss/noss/bullet");
 //
 // Post second boss / Castle
 //
@@ -1241,23 +658,145 @@ function run() {
 
 
 /***/ }),
-/* 16 */
+
+/***/ 17:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_runtime__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__levels_levels__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blockmap__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__engine_container__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_star__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__sprites_zindex__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(54);
+/*
+ * Tasks and TaskRunners are a very core part of the engine
+ *
+ * Handles what to run, when to run it, to repeat it, and removal.
+ */
+
+// a task is something to be run at a certain time, maybe repeating
+class Task {
+    constructor(options) {
+        this.repeatCount = 0;
+        const runnable = options.run;
+        const delay = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getOrDefault */])(options.delay, 0);
+        const repeatEvery = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getOrDefault */])(options.repeatEvery, -1);
+        const repeatMax = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getOrDefault */])(options.repeatMax, Infinity);
+        this.originalOptions = options;
+        this.runnable = runnable;
+        this.delay = delay;
+        this.repeatEvery = repeatEvery;
+        this.repeatMax = repeatMax;
+    }
+    run() {
+        // pass this task to the function so that it can call things like task.stop();
+        this.runnable(this);
+    }
+    stop() {
+        this.delay = -1;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Task;
+
+// the things that runs tasks
+// adds everything tasks use
+// most methods prefixed with _ to avoid as many collisions as possible
+// almost EVERYTHING extends this (and as such can have tasks on it)
+class TaskRunner {
+    constructor() {
+        this._tasks = [];
+    }
+    runTasks() {
+        for (const task of this._tasks) {
+            if (task.delay <= 0) {
+                task.run();
+                task.repeatCount++;
+                if (task.delay === -1) {
+                    // called task.stop();
+                }
+                else if (task.repeatEvery >= 0 && task.repeatCount < task.repeatMax) {
+                    task.delay = task.repeatEvery;
+                }
+                else {
+                    task.delay = -1;
+                }
+            }
+            else {
+                task.delay--;
+            }
+        }
+        this._tasks = this._tasks.filter((task) => task.delay !== -1);
+    }
+    resetTasks() {
+        this._tasks = [];
+    }
+    // add a task
+    // can either be a task or a function
+    // if it is a task it is added as you would expect
+    // if it is a function it will repeat every frame
+    addTask(task) {
+        if (typeof task === "function") {
+            return this.addTask(new Task({
+                run: task,
+                repeatEvery: 0,
+            }));
+        }
+        else {
+            task.runnable = task.runnable.bind(this);
+            this._tasks.push(task);
+            return task;
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = TaskRunner;
+
+
+
+/***/ }),
+
+/***/ 32:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/*
+ * Config values that are global to the whole game
+ * Options to one specific thing are in its file
+ */
+const BLOCK_HEIGHT = 16;
+/* harmony export (immutable) */ __webpack_exports__["a"] = BLOCK_HEIGHT;
+
+const BLOCK_WIDTH = 16;
+/* harmony export (immutable) */ __webpack_exports__["b"] = BLOCK_WIDTH;
+
+const LEVEL_HEIGHT = 23;
+/* unused harmony export LEVEL_HEIGHT */
+
+const LEVEL_WIDTH = 30;
+/* harmony export (immutable) */ __webpack_exports__["e"] = LEVEL_WIDTH;
+
+const GRAVITY = 0.195;
+/* harmony export (immutable) */ __webpack_exports__["d"] = GRAVITY;
+
+const FRICTION = 0.75;
+/* harmony export (immutable) */ __webpack_exports__["c"] = FRICTION;
+
+
+
+/***/ }),
+
+/***/ 341:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_runtime__ = __webpack_require__(342);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__levels_levels__ = __webpack_require__(349);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blockmap__ = __webpack_require__(355);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__config__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__engine_container__ = __webpack_require__(134);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_star__ = __webpack_require__(366);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(367);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(368);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__sprites_zindex__ = __webpack_require__(369);
 
 
 
@@ -1275,7 +814,8 @@ const SPOTLIGHT_SIZE = 75;
 class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* GameRuntime */] {
     constructor() {
         super(document.getElementById("canvas"));
-        this.level = 0;
+        // public level: number = 0;
+        this.level = 12;
         this.background = "black";
         this.backgroundMusic = [];
         this.darkLevel = false;
@@ -1336,8 +876,8 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
     }
     createStarBackground() {
         for (let i = 0; i < 50; i++) {
-            const x = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["b" /* getRandomInt */])(0, this.canvas.width);
-            const y = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["b" /* getRandomInt */])(0, this.canvas.height);
+            const x = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["c" /* getRandomInt */])(0, this.canvas.width);
+            const y = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["c" /* getRandomInt */])(0, this.canvas.height);
             new __WEBPACK_IMPORTED_MODULE_8__sprites_star__["a" /* BackgroundStarSprite */]({
                 position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](x, y, -10),
                 width: 2,
@@ -1440,23 +980,29 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
                 y -= __WEBPACK_IMPORTED_MODULE_6__config__["a" /* BLOCK_HEIGHT */];
             }
         }
+        // Level metadata
+        // if a level changes the background
         if (level.newBackground) {
             this.background = level.newBackground;
         }
+        // if a level has new background music
         if (level.newBackgroundMusic) {
             this.setBackgroundMusic(level.newBackgroundMusic);
         }
+        // if a level has any handlers that need to run
         if (level.handlers) {
             for (const handler of level.handlers) {
                 handler(this);
             }
         }
+        // dark rooms
         this.darkLevel = !!level.dark;
+        // spawn things that you can jump on
         this.spawnJumpLights();
         this.player.reset();
     }
     spawnJumpLights() {
-        const jumpLights = __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__["a" /* JumpLights */][this.level];
+        const jumpLights = __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__["a" /* JUMP_LIGHTS */][this.level];
         if (!jumpLights) {
             return;
         }
@@ -1474,18 +1020,19 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
 
 
 /***/ }),
-/* 17 */
+
+/***/ 342:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__container__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__drivers_keyboard_keyboard__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_mouse__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__drivers_mouse_touchscreen__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errors_exit__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprite__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__task__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__container__ = __webpack_require__(134);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__drivers_keyboard_keyboard__ = __webpack_require__(344);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_mouse__ = __webpack_require__(346);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__drivers_mouse_touchscreen__ = __webpack_require__(347);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errors_exit__ = __webpack_require__(348);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprite__ = __webpack_require__(99);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__task__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils__ = __webpack_require__(54);
 /*
  * The main game runtime object
  */
@@ -1719,7 +1266,8 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
 
 
 /***/ }),
-/* 18 */
+
+/***/ 343:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1746,11 +1294,12 @@ Array.prototype.stableSort = function (cmp = defaultCmp) {
 
 
 /***/ }),
-/* 19 */
+
+/***/ 344:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(345);
 /*
  * The keyboard driver for computers
  */
@@ -1786,11 +1335,12 @@ Keyboard.PREVENT = [
 
 
 /***/ }),
-/* 20 */
+
+/***/ 345:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__task__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__task__ = __webpack_require__(17);
 /*
  * A few base classes and things to extend for keyboard drivers
  *
@@ -1836,11 +1386,12 @@ class Key {
 
 
 /***/ }),
-/* 21 */
+
+/***/ 346:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(135);
 /*
  * A mouse driver for computers
  */
@@ -1887,12 +1438,13 @@ class Mouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMouse */] {
 
 
 /***/ }),
-/* 22 */
+
+/***/ 347:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(135);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__vector__ = __webpack_require__(11);
 /*
  * A mouse driver for touchscreens
  *
@@ -1951,7 +1503,8 @@ class TouchscreenMouse extends __WEBPACK_IMPORTED_MODULE_0__base__["a" /* BaseMo
 
 
 /***/ }),
-/* 23 */
+
+/***/ 348:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1969,13 +1522,15 @@ class ExitError extends Error {
 
 
 /***/ }),
-/* 24 */
+
+/***/ 349:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getLevels;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_bosses_sword__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_bosses_sword__ = __webpack_require__(350);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_bosses_noss_noss__ = __webpack_require__(352);
 /*
  * It's level data
  *
@@ -1984,6 +1539,7 @@ class ExitError extends Error {
  *  - new music
  *  - functions to be called (to spawn things like bosses)
  */
+
 
 
 function deleteBackgroundStars(game) {
@@ -2004,6 +1560,7 @@ function bossSpawner(bossType, texture) {
         });
     };
 }
+// This is terrible and should be changed.
 function getLevels(game) {
     return [
         // 0
@@ -2062,6 +1619,7 @@ function getLevels(game) {
         // 12
         {
             levelData: "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
+            handlers: [bossSpawner(__WEBPACK_IMPORTED_MODULE_2__sprites_bosses_noss_noss__["a" /* NossBoss */], game.getImage("boss/noss/noss"))],
             newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
         },
         // 13
@@ -2103,17 +1661,18 @@ function getLevels(game) {
 
 
 /***/ }),
-/* 25 */
+
+/***/ 350:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector2d__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__hiteffect__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__engine_vector__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__coin__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_task__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector2d__ = __webpack_require__(98);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__hiteffect__ = __webpack_require__(351);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_vector__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__coin__ = __webpack_require__(136);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__boss__ = __webpack_require__(137);
 /*
  * The first boss: A Sword
  *
@@ -2158,7 +1717,7 @@ const DEAD_STARTING_VELOCITY = 2;
 // collision
 const COLLISION_INTERVAL = 3;
 const COLLISION_SPEED = 3;
-class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
+class SwordBoss extends __WEBPACK_IMPORTED_MODULE_6__boss__["a" /* AbstractBoss */] {
     constructor(opts) {
         super(opts);
         this.health = HEALTH;
@@ -2169,52 +1728,69 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
         this.startingHeight = this.height;
         this.startingWidth = this.width;
         this.resetCoordinates();
-        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: this.beginSpinAttack,
             delay: 60,
         }));
-        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: this.intersectTest,
             repeatEvery: COLLISION_INTERVAL,
         }));
-        this.rotationPoint = new __WEBPACK_IMPORTED_MODULE_3__engine_vector2d__["a" /* Vector2D */](0.5, 0.1);
+        this.rotationPoint = new __WEBPACK_IMPORTED_MODULE_2__engine_vector2d__["a" /* Vector2D */](0.5, 0.1);
     }
     //
     // Utilities
     //
+    intersectsPlayer() {
+        // Render ourselves on a canvas
+        const canvas = this.runtime.createCanvas();
+        const ctx = canvas.getContext("2d");
+        this.render(ctx);
+        const height = canvas.height;
+        const width = canvas.width;
+        const data = ctx.getImageData(0, 0, width, height).data;
+        // some browsers are funny
+        // TODO: warning message?
+        if (!data) {
+            return false;
+        }
+        const player = this.runtime.player;
+        const length = data.length;
+        for (let i = 0; i < length; i += 4) {
+            const j = i / 4;
+            if (data[i + 3]) {
+                const point = new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](j % width, Math.floor(j / width));
+                if (player.containsPoint(point)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     intersectTest() {
         if (!this.testCollision) {
             return;
         }
-        const intersectsPlayer = this.complexIntersects(this.runtime.player, COLLISION_SPEED);
-        if (intersectsPlayer) {
+        if (this.intersectsPlayer()) {
             this.runtime.player.kill();
             this.hitPlayer = true;
         }
     }
     startRoutine() {
+        super.startRoutine();
         this.texture = this.runtime.getImage("boss/sword/sword");
         this.beginSpinAttack();
     }
-    addPhase(task, afterDelay = 0) {
-        task.delay += this.phaseDelay;
-        if (task.repeatEvery > -1) {
-            this.phaseDelay += task.repeatMax * (task.repeatEvery + 1);
-        }
-        this.phaseDelay += (task.originalOptions.delay) || 0;
-        this.phaseDelay += afterDelay;
-        this.addTask(task);
-    }
     resetCoordinates() {
         this.recenter();
-        this.y = 14 * __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */];
+        this.y = 14 * __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
     }
     recenter() {
         this.x = this.runtime.canvas.width / 2 - this.width / 2;
     }
     animate(textures, times, length, cb) {
         for (let i = 0; i < times; i++) {
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: () => {
                     this.texture = this.runtime.getImage(textures[i % textures.length]);
                     if (cb) {
@@ -2233,7 +1809,7 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
         this.spinDirection = -this.multiplier;
         this.phaseDelay = SWIPE_BASE_DELAY;
         this.hitPlayer = false;
-        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: this.spinAttack,
             repeatEvery: 0,
             delay: 60,
@@ -2267,35 +1843,35 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
         // This is terrible.
         const multi = this.multiplier;
         const animate = () => {
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: () => this.animate(SWIPE_TEXTURES, SWIPE_ANIMATE_TIMES, SWIPE_ANIMATE_FRAME_LENGTH),
                 delay: 10,
             }), SWIPE_ANIMATE_TIMES * SWIPE_ANIMATE_FRAME_LENGTH);
         };
         const attack = () => {
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: () => this.swipeAttack(SWIPE_DOWN_SPEED),
                 repeatEvery: 0,
                 repeatMax: 16,
                 delay: 10,
             }));
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: () => this.swipeAttack(-SWIPE_UP_SPEED),
                 repeatEvery: 0,
                 repeatMax: 32,
             }));
         };
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.swipeRotate(-1 * multi),
             repeatEvery: 0,
             repeatMax: 36,
         }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.swipeMove(1),
             repeatEvery: 0,
             repeatMax: 24,
         }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => {
                 this.swipeRotate(-1 * multi);
                 this.swipeSize(1);
@@ -2305,14 +1881,14 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
         }));
         animate();
         attack();
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.swipeRotate(1 * multi),
             repeatEvery: 0,
             repeatMax: 36,
         }));
         animate();
         attack();
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => {
                 this.swipeRotate(1 * multi);
                 this.swipeSize(-1);
@@ -2320,14 +1896,13 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
             repeatEvery: 0,
             repeatMax: 18,
         }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.swipeMove(-1),
             repeatEvery: 0,
             repeatMax: 24,
         }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: this.beginRestPhase,
-            delay: 30,
         }));
     }
     swipeRotate(multi) {
@@ -2349,34 +1924,34 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
         this.testCollision = false;
         if (this.hitPlayer) {
             this.texture = this.runtime.getImage("boss/sword/heal");
-            const position = new __WEBPACK_IMPORTED_MODULE_5__engine_vector__["a" /* Vector */](this.position);
+            const position = new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](this.position);
             if (this.health === HEALTH) {
-                new __WEBPACK_IMPORTED_MODULE_4__hiteffect__["a" /* HitEffectSprite */]({
+                new __WEBPACK_IMPORTED_MODULE_3__hiteffect__["a" /* HitEffectSprite */]({
                     position,
                     texture: this.runtime.getImage("hit/+0"),
                 });
             }
             else {
-                new __WEBPACK_IMPORTED_MODULE_4__hiteffect__["a" /* HitEffectSprite */]({
+                new __WEBPACK_IMPORTED_MODULE_3__hiteffect__["a" /* HitEffectSprite */]({
                     position,
                     texture: this.runtime.getImage("hit/+1"),
                 });
                 this.health++;
             }
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: this.startRoutine,
                 delay: 60,
             }));
         }
         else {
             this.texture = this.runtime.getImage("boss/sword/open");
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: this.restVulnerable,
                 repeatEvery: 0,
                 repeatMax: 180,
             }));
             const health = this.health;
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: () => {
                     if (this.health === health) {
                         this.startRoutine();
@@ -2388,51 +1963,51 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
     }
     restVulnerable(task) {
         // use simple intersects for performance reasons
-        if (this.intersects(this.runtime.player)) {
+        if (this.playerJumpedOn()) {
+            this.bouncePlayer();
             this.damage();
             task.stop();
         }
     }
     damage() {
         this.health--;
-        this.runtime.player.yv = PLAYER_JUMP_YV;
-        new __WEBPACK_IMPORTED_MODULE_4__hiteffect__["a" /* HitEffectSprite */]({
-            position: new __WEBPACK_IMPORTED_MODULE_5__engine_vector__["a" /* Vector */](this.position),
+        new __WEBPACK_IMPORTED_MODULE_3__hiteffect__["a" /* HitEffectSprite */]({
+            position: new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](this.position),
             texture: this.runtime.getImage("hit/-1"),
         });
         this.phaseDelay = 0;
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.y += DAMAGED_FALL_SPEED,
             repeatEvery: 0,
             repeatMax: 5,
         }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
         }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
         if (this.health === 0) {
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH, () => {
                     this.rotation -= DEAD_ROTATION_SPEED;
                 }),
             }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: this.deadPhysics,
                 repeatEvery: 0,
             }));
         }
         else {
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
             }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: () => this.texture = this.runtime.getImage("boss/sword/sword"),
             }));
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: () => this.y -= DAMAGED_RISE_SPEED,
                 repeatEvery: 0,
                 repeatMax: 10,
             }));
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: this.startRoutine,
             }));
         }
@@ -2447,7 +2022,7 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
         this.yv = physicsResult.yv;
         if (this.y > this.runtime.canvas.height) {
             task.stop();
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
                 run: this.spawnCoin,
                 delay: 30,
             }));
@@ -2455,8 +2030,8 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
     }
     spawnCoin() {
         const texture = this.runtime.getImage("coin/1");
-        const position = new __WEBPACK_IMPORTED_MODULE_5__engine_vector__["a" /* Vector */]((this.runtime.canvas.width / 2) - (texture.width / 2), this.runtime.canvas.height / 2);
-        new __WEBPACK_IMPORTED_MODULE_6__coin__["a" /* LevelUpCoinSprite */]({
+        const position = new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */]((this.runtime.canvas.width / 2) - (texture.width / 2), this.runtime.canvas.height / 2);
+        new __WEBPACK_IMPORTED_MODULE_5__coin__["a" /* LevelUpCoinSprite */]({
             texture,
             position,
         });
@@ -2487,11 +2062,12 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite_
 
 
 /***/ }),
-/* 26 */
+
+/***/ 351:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(46);
 /*
  * Health events for bosses
  *
@@ -2528,11 +2104,158 @@ class HitEffectSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_images
 
 
 /***/ }),
-/* 27 */
+
+/***/ 352:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__bullet__ = __webpack_require__(353);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__boss__ = __webpack_require__(137);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_task__ = __webpack_require__(17);
+
+
+
+
+const POSITIONS = [
+    Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-152, 136),
+    Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-112, -8),
+    Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(160, 72),
+];
+const HEALTH = 3;
+class NossBoss extends __WEBPACK_IMPORTED_MODULE_2__boss__["a" /* AbstractBoss */] {
+    constructor(options) {
+        super(options);
+        this.health = HEALTH;
+        this.x = this.runtime.canvas.width / 2;
+        this.y = this.runtime.canvas.height / 2;
+        this.startRoutine();
+    }
+    //
+    // ROUTINE
+    //
+    startRoutine() {
+        super.startRoutine();
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_3__engine_task__["a" /* Task */]({
+            run: () => this.teleport(),
+        }), 60);
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_3__engine_task__["a" /* Task */]({
+            run: () => this.spawnBullets(),
+            repeatEvery: 1,
+            repeatMax: 10,
+        }), __WEBPACK_IMPORTED_MODULE_1__bullet__["a" /* MOVE_TIME */]);
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_3__engine_task__["a" /* Task */]({
+            run: (task) => this.rest(task),
+            repeatEvery: 0,
+            repeatMax: 60,
+        }));
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_3__engine_task__["a" /* Task */]({
+            run: () => this.endRoutine(),
+        }));
+    }
+    endRoutine() {
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_3__engine_task__["a" /* Task */]({
+            run: () => this.startRoutine(),
+            delay: 0,
+        }));
+    }
+    poof() {
+    }
+    teleport() {
+        const position = POSITIONS[Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* getRandomInt */])(0, POSITIONS.length - 1)];
+        this.position = position;
+    }
+    rest(task) {
+        if (this.playerJumpedOn()) {
+            task.stop();
+            this.health--;
+            this.bouncePlayer();
+            console.log("oof");
+        }
+    }
+    spawnBullets() {
+        new __WEBPACK_IMPORTED_MODULE_1__bullet__["b" /* NossBossBulletSprite */]({
+            position: this.position,
+            texture: this.runtime.getImage("boss/noss/bullet"),
+        });
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = NossBoss;
+
+
+
+/***/ }),
+
+/***/ 353:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(55);
+
+
+
+
+const GLIDE_TIME = 30;
+const SPEED_GAIN = 0.5;
+const TURN_SPEED = 7.5;
+const MOVE_TIME = 180;
+/* harmony export (immutable) */ __webpack_exports__["a"] = MOVE_TIME;
+
+class NossBossBulletSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
+    constructor(options) {
+        super(options);
+        this.speed = 0;
+        // TODO: actual gliding
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            run: () => this.glideToCenter(),
+            repeatEvery: 0,
+            repeatMax: GLIDE_TIME,
+        }));
+        const height = this.runtime.canvas.height;
+        const width = this.runtime.canvas.width;
+        this.center = new __WEBPACK_IMPORTED_MODULE_2__engine_vector__["a" /* Vector */]((width / 2) - (this.width / 2), (height / 2) - (this.height / 2));
+        this.glideMoveSpeed = this.distanceTo(this.center) / GLIDE_TIME;
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            run: () => this.move(),
+            delay: GLIDE_TIME,
+            repeatEvery: 0,
+            repeatMax: MOVE_TIME,
+        }));
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+            run: () => this.destroy(),
+            delay: MOVE_TIME,
+        }));
+        this.rotation = 45;
+    }
+    // TODO: actual gliding
+    glideToCenter() {
+        this.position = this.center;
+    }
+    move() {
+        this.speed += SPEED_GAIN;
+        this.rotation -= TURN_SPEED;
+        this.moveForward(this.speed);
+        this.x = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* clamp */])(this.x, 0, this.runtime.canvas.width);
+        this.y = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* clamp */])(this.y, 0, this.runtime.canvas.height);
+        if (this.intersects(this.runtime.player)) {
+            this.runtime.player.kill();
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = NossBossBulletSprite;
+
+
+
+/***/ }),
+
+/***/ 354:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(46);
 /*
  * Fragments of the player that will fly everywhere you when the player dies
  */
@@ -2597,22 +2320,23 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 
 
 /***/ }),
-/* 28 */
+
+/***/ 355:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_crumble__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_falling__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_blockswitchspawner__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_lightblock__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightswitch__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_blocks_grass__ = __webpack_require__(138);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_blocks_spike__ = __webpack_require__(356);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_blocks_tallgrass__ = __webpack_require__(357);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_blocks_crumble__ = __webpack_require__(358);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_falling__ = __webpack_require__(139);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__sprites_blocks_blockswitchspawner__ = __webpack_require__(359);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_lightblock__ = __webpack_require__(361);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_lightswitch__ = __webpack_require__(362);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__ = __webpack_require__(363);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__ = __webpack_require__(364);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__ = __webpack_require__(365);
 /*
  * A map of characters and the texture and class
  * they correspond to
@@ -2696,12 +2420,13 @@ const blockMap = {
 
 
 /***/ }),
-/* 29 */
+
+/***/ 356:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(56);
 /*
  * It's a spike. It kills the player.
  */
@@ -2759,13 +2484,14 @@ class RightSpikeBlock extends SpikeBlock {
 
 
 /***/ }),
-/* 30 */
+
+/***/ 357:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__grass__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__grass__ = __webpack_require__(138);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(11);
 /*
  * It's a tall grass block.
  *
@@ -2790,13 +2516,14 @@ class TallGrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block *
 
 
 /***/ }),
-/* 31 */
+
+/***/ 358:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__player_player__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__block__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__player_player__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__block__ = __webpack_require__(10);
 /*
  * A block that crumbles beneath you as you stand on it
  * Will reappear after a few seconds
@@ -2872,14 +2599,15 @@ class CrumblingBlock extends __WEBPACK_IMPORTED_MODULE_2__block__["c" /* SolidBl
 
 
 /***/ }),
-/* 32 */
+
+/***/ 359:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blockswitch__ = __webpack_require__(360);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(11);
 
 
 
@@ -2902,13 +2630,14 @@ class BlockSwitchSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /
 
 
 /***/ }),
-/* 33 */
+
+/***/ 360:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blocks_falling__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blocks_falling__ = __webpack_require__(139);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(11);
 /*
  * The switch that makes the FallingBlocks fall
  *
@@ -2950,11 +2679,12 @@ class BlockSwitch extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Blo
 
 
 /***/ }),
-/* 34 */
+
+/***/ 361:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
 /*
  * A block that is toggled solid/not solid when a switch is hit.
  */
@@ -2995,13 +2725,14 @@ class DisabledLightBlock extends LightBlock {
 
 
 /***/ }),
-/* 35 */
+
+/***/ 362:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(17);
 /*
  * A block that toggles the solidity of LightBlocks
  */
@@ -3063,14 +2794,15 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
 
 
 /***/ }),
-/* 36 */
+
+/***/ 363:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(136);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(11);
 /*
  * Spawns the level up coin
  * The level up coin itself is not part of the level code,
@@ -3111,11 +2843,12 @@ class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
 
 
 /***/ }),
-/* 37 */
+
+/***/ 364:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
 /*
  * A block that allows things to go up but not down.
  */
@@ -3148,14 +2881,15 @@ class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock
 
 
 /***/ }),
-/* 38 */
+
+/***/ 365:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(11);
 /*
  * A block that is in the corner
  */
@@ -3239,13 +2973,14 @@ class CastleCornerBlock extends CornerBlock {
 
 
 /***/ }),
-/* 39 */
+
+/***/ 366:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprite__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprite__ = __webpack_require__(99);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_utils__ = __webpack_require__(54);
 /*
  * The stars in the background.
  *
@@ -3309,21 +3044,17 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
 
 
 /***/ }),
-/* 40 */
+
+/***/ 367:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(55);
 
 // This is how the original defines jump lights
 // It does not use the level code
 // (although I believe it at one point did due to the image name being "^.png", as if it were the ^ character in level codes)
-// Converts Scratch coordinates to coordinates this game will understand
-// Hardcoded values are bad but just ignore that
-function scratchCoordinate(x, y) {
-    return new __WEBPACK_IMPORTED_MODULE_0__engine_vector__["a" /* Vector */](x + 236, (360 - y) - 184);
-}
-const JumpLights = [
+const JUMP_LIGHTS = [
     [],
     [],
     [],
@@ -3335,70 +3066,70 @@ const JumpLights = [
     [],
     // in scratch: 10
     [
-        scratchCoordinate(-168, -60),
-        scratchCoordinate(-184, 20),
-        scratchCoordinate(-168, 100),
-        scratchCoordinate(-56, 36),
-        scratchCoordinate(136, -132),
-        scratchCoordinate(184, -76),
-        scratchCoordinate(136, -20),
-        scratchCoordinate(88, 20),
-        scratchCoordinate(136, 76),
-        scratchCoordinate(184, 116),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-168, -60),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-184, 20),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-168, 100),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-56, 36),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(136, -132),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(184, -76),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(136, -20),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(88, 20),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(136, 76),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(184, 116),
     ],
     // in scratch: 11
     [
-        scratchCoordinate(-200, 116),
-        scratchCoordinate(104, -52),
-        scratchCoordinate(-120, -44),
-        scratchCoordinate(-120, 36),
-        scratchCoordinate(-200, -28),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-200, 116),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(104, -52),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-120, -44),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-120, 36),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-200, -28),
     ],
     // in scratch: 12
     [
-        scratchCoordinate(104, -28),
-        scratchCoordinate(-80, -116),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(104, -28),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-80, -116),
     ],
     // in scratch: 13
     [
-        scratchCoordinate(0, -44),
-        scratchCoordinate(0, 20),
-        scratchCoordinate(0, 84),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, -44),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, 20),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, 84),
     ],
     [],
     [],
     // in scratch: 16
     [
-        scratchCoordinate(-144, -60),
-        scratchCoordinate(-144, 0),
-        scratchCoordinate(-144, 60),
-        scratchCoordinate(0, -44),
-        scratchCoordinate(144, -60),
-        scratchCoordinate(144, 0),
-        scratchCoordinate(144, 60),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-144, -60),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-144, 0),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-144, 60),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, -44),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(144, -60),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(144, 0),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(144, 60),
     ],
     [],
     [],
     // in scratch: 19
     [
-        scratchCoordinate(0, -52),
-        scratchCoordinate(104, 20),
-        scratchCoordinate(176, -35),
-    ]
-    // none past this level
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, -52),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(104, 20),
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(176, -35),
+    ],
 ];
-/* harmony export (immutable) */ __webpack_exports__["a"] = JumpLights;
+/* harmony export (immutable) */ __webpack_exports__["a"] = JUMP_LIGHTS;
 
 
 
 /***/ }),
-/* 41 */
+
+/***/ 368:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(17);
 /*
  * A light that will allow the player to jump again once while in the air.
  */
@@ -3434,7 +3165,8 @@ class JumpLight extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["c" /* Solid
 
 
 /***/ }),
-/* 42 */
+
+/***/ 369:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3448,5 +3180,557 @@ var ZIndexes;
 })(ZIndexes || (ZIndexes = {}));
 
 
+/***/ }),
+
+/***/ 46:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(99);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(54);
+/*
+ * A sprite that has an image as a texture.
+ */
+
+
+class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
+    constructor(options) {
+        super(options);
+        this.texture = options.texture;
+        this.width = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.width, this.texture.width);
+        this.height = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.height, this.texture.height);
+    }
+    render(ctx) {
+        if (!this.visible) {
+            return;
+        }
+        ctx.save();
+        this._setRenderValues(ctx);
+        const x = Math.floor(this.x);
+        const y = Math.floor(this.y);
+        ctx.drawImage(this.texture, x, y, this.width, this.height);
+        ctx.restore();
+    }
+    updateDimensions() {
+        this.width = this.texture.width;
+        this.height = this.texture.height;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ImageSprite;
+
+
+
+/***/ }),
+
+/***/ 54:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["c"] = isMobile;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getOrDefault;
+/* harmony export (immutable) */ __webpack_exports__["d"] = toHex;
+/* unused harmony export radiansToDegree */
+/* harmony export (immutable) */ __webpack_exports__["a"] = degreeToRadians;
+// https://stackoverflow.com/a/3540295
+// tests if the device is probably a mobile phone
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+// if obj is defined, return obj
+// else return def
+// used as less verbose option defaulting without neglecting falsy values (|| does that)
+function getOrDefault(obj, def) {
+    if (typeof obj === "undefined") {
+        return def;
+    }
+    else {
+        return obj;
+    }
+}
+// https://stackoverflow.com/a/697841
+function toHex(number) {
+    return number.toString(16).toUpperCase();
+}
+function radiansToDegree(rad) {
+    return rad * 180 / Math.PI;
+}
+function degreeToRadians(deg) {
+    return deg * Math.PI / 180;
+}
+
+
+/***/ }),
+
+/***/ 55:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["c"] = getRandomInt;
+/* harmony export (immutable) */ __webpack_exports__["b"] = clone;
+/* harmony export (immutable) */ __webpack_exports__["d"] = scratchCoordinate;
+/* harmony export (immutable) */ __webpack_exports__["a"] = clamp;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_vector__ = __webpack_require__(11);
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+// Clones an array
+// Allows you to use inplace methods on an array without changing the actual array
+// (eg. sort)
+function clone(array) {
+    let i = array.length;
+    const result = [];
+    while (i--) {
+        result[i] = array[i];
+    }
+    return result;
+}
+// Converts Scratch coordinates to coordinates this game will understand
+function scratchCoordinate(x, y) {
+    return new __WEBPACK_IMPORTED_MODULE_0__engine_vector__["a" /* Vector */](x + 236, (360 - y) - 184);
+}
+function clamp(x, min, max) {
+    if (x < min) {
+        return min;
+    }
+    else if (x > max) {
+        return max;
+    }
+    else {
+        return x;
+    }
+}
+
+
+/***/ }),
+
+/***/ 56:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fragment__ = __webpack_require__(354);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_vector__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__blocks_block__ = __webpack_require__(10);
+/*
+ * It's a player.
+ *
+ * For now there doesn't seem to be any problems with having the player also be the graphic
+ * And until there are problems they will be staying as one
+ * (in some other games the size of the player textures chagne and that ruins physics)
+ */
+
+
+
+
+
+
+// How fast the player walks
+const PLAYER_WALK_SPEED = 0.5 / 2;
+// The velocity gained when jumping
+const JUMP_HEIGHT = 5.4;
+// Maximum speed the player is allowed to move at
+const PLAYER_MAX_SPEED = 4 / 2;
+// The player uses a custom friction
+// This is the value used in that friction
+const PLAYER_FRICTION = 0.8 / 2;
+// Fragment textures that will always be present when dying
+const FRAGMENT_TEXTURES = [1, 2, 3, 4];
+// The minimum amount of small pieces to create
+const FRAGMENT_SMALL_PIECE_MIN = 4;
+// The maxiumum amount of small pieces to create
+const FRAGMENT_SMALL_PIECE_MAX = 6;
+// The texture associated with small pieces
+const FRAGMENT_SMALL_PIECE_TEXTURE = 5;
+// The range of xv values that pieces will have
+const FRAGMENT_XV_RANGE = 1;
+// The minimum yv that pieces will have
+const FRAGMENT_YV_MIN = 3;
+// The maxiumum yv that pieces will have
+const FRAGMENT_YV_MAX = 6;
+// The range of rotation change that pieces will have
+const FRAGMENT_RV_RANGE = 10;
+// Frames in the walk animation
+const WALK_ANIMATION_FRAMES = 4;
+// Length of each frame
+const WALK_ANIMATION_LENGTH = 4;
+var MovementDirection;
+(function (MovementDirection) {
+    MovementDirection[MovementDirection["Right"] = 1] = "Right";
+    MovementDirection[MovementDirection["Left"] = -1] = "Left";
+})(MovementDirection || (MovementDirection = {}));
+class PlayerSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
+    constructor(opts) {
+        super(opts);
+        this.yv = 0;
+        this.xv = 0;
+        this.lastMovementDirection = MovementDirection.Right;
+        this.onGround = true;
+        this.walkingAnimationProgress = 1;
+        this.currentFrameProgress = 0;
+        this.moving = false;
+        this.hasJumpLight = false;
+        this.addTask(this.run);
+        this.addTask(this.updateGraphic);
+    }
+    handleInputs(onGround) {
+        const keys = this.runtime.keyboard.keys;
+        const rightDown = keys[39].isPressed;
+        const leftDown = keys[37].isPressed;
+        const upDown = keys[38].isPressed;
+        const upJustPressed = keys[38].justPressed;
+        this.moving = false;
+        if (rightDown && !leftDown) {
+            this.xv += PLAYER_WALK_SPEED;
+            this.lastMovementDirection = MovementDirection.Right;
+            this.moving = true;
+        }
+        if (leftDown && !rightDown) {
+            this.xv -= PLAYER_WALK_SPEED;
+            this.lastMovementDirection = MovementDirection.Left;
+            this.moving = true;
+        }
+        if ((upDown && onGround) || (upJustPressed && this.hasJumpLight)) {
+            const quiet = this.texture === this.runtime.getImage("player/idle");
+            this.runtime.playSound(`player/jump${quiet ? 2 : 1}`);
+            this.hasJumpLight = false;
+            this.yv = JUMP_HEIGHT;
+        }
+        else if (!upDown && this.yv > 3) {
+            this.yv = 3;
+        }
+        return {
+            rightDown, leftDown, upDown,
+        };
+    }
+    run() {
+        if (this.xv > PLAYER_MAX_SPEED) {
+            this.xv = PLAYER_MAX_SPEED;
+        }
+        else if (this.xv < -PLAYER_MAX_SPEED) {
+            this.xv = -PLAYER_MAX_SPEED;
+        }
+        const prevXv = this.xv;
+        const prevYv = this.yv;
+        const physicsResult = this.runBasicPhysics(this.xv, this.yv, {
+            friction: false,
+        });
+        this.xv = physicsResult.xv;
+        this.yv = physicsResult.yv;
+        this.onGround = physicsResult.onGround;
+        if (this.onGround && prevYv < -1.6) {
+            this.runtime.playSound("player/ding");
+        }
+        if (this.onGround) {
+            this.hasJumpLight = false;
+        }
+        const inputs = this.handleInputs(physicsResult.onGround);
+        if ((!inputs.leftDown && !inputs.rightDown) || (inputs.leftDown && inputs.rightDown)) {
+            if (this.xv > 0) {
+                this.xv -= PLAYER_FRICTION;
+                this.xv = Math.max(this.xv, 0);
+            }
+            else {
+                this.xv += PLAYER_FRICTION;
+                this.xv = Math.min(this.xv, 0);
+            }
+        }
+        if (this.y >= this.runtime.canvas.height) {
+            this.kill();
+        }
+    }
+    reset() {
+        this.position.x = 40;
+        this.position.y = this.runtime.canvas.height - __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
+        this.xv = 0;
+        this.yv = 0;
+        const sprites = this.runtime.blocks.sprites.filter((s) => s.solid || s instanceof __WEBPACK_IMPORTED_MODULE_5__blocks_block__["b" /* PseudoSolidBlock */]);
+        while (this.intersects(sprites)) {
+            this.y -= __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
+        }
+    }
+    kill() {
+        const fragmentTextures = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* clone */])(FRAGMENT_TEXTURES);
+        const smallPieces = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["c" /* getRandomInt */])(FRAGMENT_SMALL_PIECE_MIN, FRAGMENT_SMALL_PIECE_MAX);
+        for (let i = 0; i < smallPieces; i++) {
+            fragmentTextures.push(FRAGMENT_SMALL_PIECE_TEXTURE);
+        }
+        for (const i of fragmentTextures) {
+            new __WEBPACK_IMPORTED_MODULE_2__fragment__["a" /* PlayerFragmentSprite */]({
+                position: new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](this.position),
+                texture: this.runtime.getImage(`fragments/${i}`),
+                xv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["c" /* getRandomInt */])(-FRAGMENT_XV_RANGE * 1000, FRAGMENT_XV_RANGE * 1000) / 1000,
+                yv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["c" /* getRandomInt */])(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
+                rv: Object(__WEBPACK_IMPORTED_MODULE_3__utils__["c" /* getRandomInt */])(-FRAGMENT_RV_RANGE * 1000, FRAGMENT_RV_RANGE * 1000) / 1000,
+            });
+        }
+        this.reset();
+        this.runtime.playSound("player/death");
+    }
+    updateGraphic() {
+        this.scale.x = this.lastMovementDirection;
+        if (this.onGround) {
+            if (this.moving) {
+                this.currentFrameProgress++;
+                if (this.currentFrameProgress === WALK_ANIMATION_LENGTH) {
+                    this.currentFrameProgress = 0;
+                    this.walkingAnimationProgress++;
+                }
+                if (this.walkingAnimationProgress > WALK_ANIMATION_FRAMES) {
+                    this.walkingAnimationProgress = 1;
+                }
+                this.texture = this.runtime.getImage(`player/walk${this.walkingAnimationProgress}`);
+            }
+            else {
+                this.texture = this.runtime.getImage("player/idle");
+            }
+        }
+        else {
+            if (this.yv < 0.1) {
+                this.texture = this.runtime.getImage("player/down");
+            }
+            else {
+                this.texture = this.runtime.getImage("player/up");
+            }
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = PlayerSprite;
+
+
+
+/***/ }),
+
+/***/ 98:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/*
+ * A 2D Vector: (x, y)
+ *
+ * Used for scale and other only 2D stuff
+ */
+class Vector2D {
+    constructor(x = 0, y = 0) {
+        if (typeof x === "object") {
+            this.x = x.x;
+            this.y = x.y;
+        }
+        else {
+            this.x = x;
+            this.y = y;
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Vector2D;
+
+
+
+/***/ }),
+
+/***/ 99:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vector__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__vector2d__ = __webpack_require__(98);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__task__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__config__ = __webpack_require__(32);
+
+
+
+
+
+class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_2__task__["b" /* TaskRunner */] {
+    constructor(options) {
+        super();
+        this.runtime = AbstractSprite.runtime;
+        // disable pass by reference for positions
+        if (options.position instanceof __WEBPACK_IMPORTED_MODULE_0__vector__["a" /* Vector */]) {
+            this.position = new __WEBPACK_IMPORTED_MODULE_0__vector__["a" /* Vector */](options.position);
+        }
+        else {
+            this.position = options.position;
+        }
+        this.width = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.width, 0);
+        this.height = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.height, 0);
+        this.scale = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.scale, new __WEBPACK_IMPORTED_MODULE_1__vector2d__["a" /* Vector2D */](1, 1));
+        this.persistent = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.persistent, false);
+        this.visible = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.visible, true);
+        this.rotation = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.rotation, 0);
+        this.opacity = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.opacity, 1);
+        this.rotationPoint = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.rotationPoint, new __WEBPACK_IMPORTED_MODULE_1__vector2d__["a" /* Vector2D */](0.5, 0.5));
+        this.runtime.sprites.push(this);
+    }
+    update() {
+        this.runTasks();
+    }
+    destroy() {
+        this._removeFromContainer(this.runtime.sprites);
+        for (const container of this.runtime.containers) {
+            this._removeFromContainer(container);
+        }
+        this.resetTasks(); // stop all future things from running
+    }
+    _removeFromContainer(container) {
+        const index = container.sprites.indexOf(this);
+        if (index > -1) {
+            container.sprites.splice(index, 1);
+        }
+    }
+    // TODO: rotation
+    intersects(thing) {
+        if (thing instanceof AbstractSprite) {
+            return this.x < thing.x + thing.width &&
+                this.x + this.width > thing.x &&
+                this.y < thing.y + thing.height &&
+                this.y + this.height > thing.y;
+        }
+        else {
+            for (const sprite of thing) {
+                if (this.intersects(sprite)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    containsPoint(point) {
+        return this.x < point.x &&
+            this.x + this.width > point.x &&
+            this.y < point.y &&
+            this.y + this.height > point.y;
+    }
+    _setRenderValues(ctx) {
+        ctx.globalAlpha = this.opacity;
+        if (this.rotation !== 0) {
+            // terrible code
+            // rotation is difficult
+            // https://stackoverflow.com/a/4650102
+            const translateX = this.x + this.width * this.rotationPoint.x;
+            const translateY = this.y + this.height * this.rotationPoint.y;
+            ctx.translate(translateX, translateY);
+            ctx.rotate(Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* degreeToRadians */])(this.rotation));
+            ctx.translate(-translateX, -translateY);
+        }
+        if (this.scale.x !== 1 || this.scale.y !== 1) {
+            const translateX = this.x + this.width / 2;
+            const translateY = this.y + this.height / 2;
+            ctx.translate(translateX, translateY);
+            ctx.scale(this.scale.x, this.scale.y);
+            ctx.translate(-translateX, -translateY);
+        }
+    }
+    // moves in the direction being faced X pixels
+    moveForward(steps) {
+        const angle = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["a" /* degreeToRadians */])(this.rotation);
+        const sin = Math.sin(angle);
+        const cos = Math.cos(angle);
+        this.x += sin * steps;
+        this.y += cos * steps;
+    }
+    distanceTo(point) {
+        return Math.sqrt(Math.pow((point.x - this.centerX), 2) + Math.pow((point.y - this.centerY), 2));
+    }
+    get x() {
+        return this.position.x;
+    }
+    set x(x) {
+        this.position.x = x;
+    }
+    get y() {
+        return this.position.y;
+    }
+    set y(y) {
+        this.position.y = y;
+    }
+    get z() {
+        return this.position.z;
+    }
+    set z(z) {
+        this.position.z = z;
+    }
+    get centerX() {
+        return this.x + (this.width / 2);
+    }
+    get centerY() {
+        return this.y + (this.height / 2);
+    }
+    //
+    // Nightlight related code
+    //
+    runBasicPhysics(xv, yv, options = {}) {
+        options.collision = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.collision, true);
+        options.restrictPositionValues = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.restrictPositionValues, true);
+        options.friction = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.friction, __WEBPACK_IMPORTED_MODULE_4__config__["c" /* FRICTION */]);
+        options.midAirFriction = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.midAirFriction, true);
+        options.roundValues = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.roundValues, true);
+        this.x += xv;
+        if (options.collision && this.handleCollision(xv, true)) {
+            xv = 0;
+        }
+        if (options.restrictPositionValues) {
+            if (this.x < 0) {
+                this.x = 0;
+                xv = 0;
+            }
+            else if (this.x + this.width > this.runtime.canvas.width) {
+                this.x = this.runtime.canvas.width - this.width;
+                xv = 0;
+            }
+        }
+        let onGround = false;
+        yv -= __WEBPACK_IMPORTED_MODULE_4__config__["d" /* GRAVITY */];
+        this.y -= yv;
+        if (options.collision && this.handleCollision(yv, false)) {
+            if (yv < 0) {
+                onGround = true;
+            }
+            yv = 0;
+        }
+        if (options.friction !== false) {
+            if (onGround || options.midAirFriction) {
+                xv *= options.friction;
+            }
+        }
+        if (options.roundValues) {
+            this.x = Math.round(this.x);
+            this.y = Math.round(this.y);
+        }
+        return {
+            xv, yv, onGround,
+        };
+    }
+    handleCollision(velocity, horizontal) {
+        const intersects = (block) => block.solid &&
+            this.intersects(block) &&
+            block.handleIntersect(this, velocity, horizontal) !== false;
+        const thisAsAny = this;
+        // optimization: if we are touching the same block as before (as when still)
+        // then we try that first instead of looping over everything
+        // this reduces the performance impact of running lots of physics, especially things that aren't moving
+        if (thisAsAny._lastSolidBlock && intersects(thisAsAny._lastSolidBlock)) {
+            return true;
+        }
+        for (const block of this.runtime.blocks) {
+            if (intersects(block)) {
+                thisAsAny._lastSolidBlock = block;
+                return true;
+            }
+        }
+        return false;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = AbstractSprite;
+
+
+
 /***/ })
-/******/ ]);
+
+/******/ });
