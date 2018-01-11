@@ -3,25 +3,39 @@
 (function() {
   "use strict";
 
+  function getVideoURL(url){
+    // https://stackoverflow.com/a/8260383
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    return (match && match[7].length === 11) ? match[7] : false;
+  }
+
   var submitButton = document.getElementById("submit-button");
   var videoUrlElement = document.getElementById("input");
   var videoWidthElement = document.getElementById("width");
   var videoHeightElement = document.getElementById("height");
+  var autoplayElement = document.getElementById("autoplay");
   var embedCodeElement = document.getElementById("embed-code");
   var embedContainer = document.getElementById("embed-container");
-  submitButton.onclick = submit;
 
   var EMBED_URL = "https://www.youtube.com/embed/%ID%";
 
   function submit() {
-    var id = getVideoURL(input.value);
+    var id = getVideoURL(videoUrlElement.value);
     if (!id) {
       alert("Invalid video URL");
     }
     console.log("Video ID is " + id);
 
+    var src = EMBED_URL;
+    src = src.replace("%ID%", id);
+
+    if (autoplayElement.checked) {
+      src += "?autoplay=1";
+    }
+
     var embed = document.createElement("iframe");
-    embed.src = EMBED_URL.replace("%ID%", id);
+    embed.src = src;
     embed.setAttribute("frameborder", "0");
     embed.setAttribute("gesture", "media");
     embed.setAttribute("allow", "encrypted-media");
@@ -38,10 +52,5 @@
     embedCodeElement.value = embed.outerHTML;
   }
 
-  function getVideoURL(url){
-    // https://stackoverflow.com/a/8260383
-    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-    var match = url.match(regExp);
-    return (match && match[7].length === 11) ? match[7] : false;
-  }
+  submitButton.onclick = submit;
 }());

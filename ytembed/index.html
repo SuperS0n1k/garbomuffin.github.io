@@ -3,6 +3,16 @@
   <head>
     <title>it just embeds yt videos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77118590-7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-77118590-7');
+    </script>
   </head>
 
   <body>
@@ -11,6 +21,7 @@
         <div><label>Video URL: <input type="text" value="https://www.youtube.com/watch?v=dQw4w9WgXcQ" id="input"></label></div>
         <div><label>Video width: <input type="number" value="480" id="width"></label></div>
         <div><label>Video height: <input type="number" value="360" id="height"></label></div>
+        <div><label>Autoplay: <input type="checkbox" checked id="autoplay"></label></div>
       </form>
       <button id="submit-button">Do It</button>
     </div>
