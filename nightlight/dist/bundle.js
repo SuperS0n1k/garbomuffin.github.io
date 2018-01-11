@@ -3477,8 +3477,7 @@ class NossBossDustSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_ima
 
 
 
-const HEALTH = 1;
-3;
+const HEALTH = 3;
 // swipe and spin cycle
 const SPIN_ROTATION_SPEED = 5 / 2;
 const SPIN_SIZE_CHANGE_RATE = 0.035;

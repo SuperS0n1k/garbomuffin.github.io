@@ -15,7 +15,7 @@ import { HitEffectSprite } from "../hiteffect";
 import { Vector } from "../../../engine/vector";
 import { AbstractBoss } from "../boss";
 
-const HEALTH = 1\3;
+const HEALTH = 3;
 
 // swipe and spin cycle
 const SPIN_ROTATION_SPEED = 5 / 2;
