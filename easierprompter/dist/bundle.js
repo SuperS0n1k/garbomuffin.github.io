@@ -89,6 +89,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__prompter_prompter__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_prompterconfig__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__polyfill__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__polyfill___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__polyfill__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__email__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__email___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__email__);
+
+
 
 
 
@@ -767,6 +773,50 @@ function generateFunctionStack(functions) {
         return value;
     };
 }
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+// Older browsers do not have requestAnimationFrame
+// so use a simple polyfill just to setTimeout to run the code in ~1 frame
+// Adds support for: IE 9
+if (!window.requestAnimationFrame) {
+  window.requestAnimationFrame = function(func) {
+    setTimeout(func, 1000 / 60);
+  };
+}
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+// To avoid spambots, emails are not directly in the HTML
+// They are injected with javascript and some VERY simple "encryption"
+
+// Shifted one letter to the left and stored in an array.
+// No spambots are getting this unless they literally execute the page.
+
+var emailEncoded = [
+  "o", "m", "m", "y", "w", "e", "b", "e", "r", "3", "3", "@", "g", "m", "a", "i", "l", ".", "c", "o", "m", "t",
+].join("");
+var email = emailEncoded[emailEncoded.length - 1];
+for (var i = 0; i < emailEncoded.length - 1; i++) {
+  email += emailEncoded[i];
+}
+
+var els = document.getElementsByClassName("email");
+if (els) {
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    el.textContent = email;
+    el.href = "mailto:" + email;
+  }
+}
+
+
 
 
 /***/ })

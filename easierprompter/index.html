@@ -4,10 +4,10 @@
     <title>Easier Prompter</title>
     <link rel="stylesheet" href="/core.css">
 
-    <!-- <noscript> styles -->
+    <!-- fullscreen warnings -->
+    <!-- <noscript> or IE <= 8 -->
     <style>
-      /* that's an awful lot of css for a simple enable javascript message... */
-      #noscript {
+      .fullscreen-warning {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -67,6 +67,9 @@
       #prompter-lines {
         /* move text slightly away from caret */
         padding-left: 0.1em;
+
+        /* make sure things aren't alligned centered (cough cough ie 11 cough cough) */
+        text-align: left;
 
         /* wtf? */
         width: calc(100vw - 1em);
@@ -167,26 +170,28 @@
 
   <body>
     <noscript>
-      <div id="noscript">
+      <div class="fullscreen-warning">
         <div>
           <h1>ENABLE JAVASCRIPT</h1>
         </div>
       </div>
     </noscript>
 
+    <!-- This site works in IE 9 and later, so show a warning to users running IE 8 or older. -->
+    <!--[if lte IE 8]>
+      <div class="fullscreen-warning">
+        <div>
+          <h1>UPDATE YOUR BROWSER TO USE THIS SITE</h1>
+        </div>
+      </div>
+    <![endif]-->
+
     <div id="main">
-      <h1>Easier Prompter (v0.4.2)</h1>
+      <h1>Easier Prompter (v0.9.9)</h1>
 
       <hr>
 
-      <p>
-        Current focuses:
-        fixing bugs,
-        code maintainability/quality,
-        <b>release v1.0</b>.
-      </p>
-
-      <p><b>TEXT WRAPS PROPERLY AGAIN</b></p>
+      <p>Easier Prompter: The easiest and most featureful teleprompter. Enter your script and press start. It just works.</p>
 
       <div id="editor">
         <table>
@@ -217,7 +222,10 @@
       <div id="about-questions">
         <div>
           <h3>What is this?</h3>
-          <p>This is a simple teleprompter. You enter your script above then press the start button above.</p>
+          <p>
+            This is a simple teleprompter. You enter your script above then press the start button above.
+            No ads, no sign in, no cost. Just ease.
+          </p>
         </div>
 
         <div>
@@ -227,6 +235,8 @@
             <li>Written in pure javascript with no additional plugins.</li>
             <li>All client side. I never see your scripts.</li>
             <li>No ads.</li>
+            <li>Free.</li>
+            <li>Works in IE 9 and later.</li>
           </ul>
         </div>
 
@@ -239,6 +249,17 @@
             <li><kbd>Up</kbd> - increase speed</li>
             <li><kbd>Down</kbd> - decrease speed</li>
           </ul>
+        </div>
+
+        <div>
+          <h3>Bugs?</h3>
+          <p>Make a <a href="https://github.com/GarboMuffin/garbomuffin.github.io/issues/new">GitHub issue</a>
+          <b>OR</b> send me an email: <a class="email">[email hidden, enable javascript]</a></p>
+        </div>
+
+        <div>
+          <h3>Source code?</h3>
+          <p><a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/easierprompter">On GitHub!</a></p>
         </div>
       </div>
 

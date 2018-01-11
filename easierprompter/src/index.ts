@@ -2,6 +2,9 @@ import { Prompter } from "./prompter/prompter";
 import { getElement } from "./utils";
 import { PrompterConfigManager } from "./config/prompterconfig";
 
+import "./polyfill";
+import "./email";
+
 const config = new PrompterConfigManager();
 config.load();
 config.save();
