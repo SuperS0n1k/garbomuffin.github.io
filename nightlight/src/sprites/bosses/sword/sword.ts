@@ -4,18 +4,18 @@
  * This code is terrible. Please do not try to maintain it. Rewrite it from the ground up.
  */
 
-import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
-import { Task } from "../../engine/task";
-import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
-import { SolidBlock, IBlockOptions } from "../blocks/block";
-import { AbstractSprite } from "../../engine/sprite";
-import { PlayerSprite } from "../player/player";
-import { Vector2D } from "../../engine/vector2d";
-import { HitEffectSprite } from "./hiteffect";
-import { Vector } from "../../engine/vector";
-import { AbstractBoss } from "./boss";
+import { ImageSprite, IImageSpriteOptions } from "../../../engine/sprites/imagesprite";
+import { Task } from "../../../engine/task";
+import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../../config";
+import { SolidBlock, IBlockOptions } from "../../blocks/block";
+import { AbstractSprite } from "../../../engine/sprite";
+import { PlayerSprite } from "../../player/player";
+import { Vector2D } from "../../../engine/vector2d";
+import { HitEffectSprite } from "../hiteffect";
+import { Vector } from "../../../engine/vector";
+import { AbstractBoss } from "../boss";
 
-const HEALTH = 3;
+const HEALTH = 1\3;
 
 // swipe and spin cycle
 const SPIN_ROTATION_SPEED = 5 / 2;
@@ -313,17 +313,9 @@ export class SwordBoss extends AbstractBoss {
     if (this.hitPlayer) {
       this.texture = this.runtime.getImage("boss/sword/heal");
 
-      const position = new Vector(this.position);
-      if (this.health === HEALTH) {
-        new HitEffectSprite({
-          position,
-          texture: this.runtime.getImage("hit/+0"),
-        });
-      } else {
-        new HitEffectSprite({
-          position,
-          texture: this.runtime.getImage("hit/+1"),
-        });
+      this.spawnHitEffect(this.health === HEALTH ? "+0" : "+1");
+
+      if (this.health < HEALTH) {
         this.health++;
       }
 
@@ -364,10 +356,7 @@ export class SwordBoss extends AbstractBoss {
   private damage() {
     this.health--;
 
-    new HitEffectSprite({
-      position: new Vector(this.position),
-      texture: this.runtime.getImage("hit/-1"),
-    });
+    this.spawnHitEffect("-1");
 
     this.phaseDelay = 0;
     this.addPhase(new Task({
@@ -434,8 +423,8 @@ export class SwordBoss extends AbstractBoss {
 
   private spawnCoin() {
     const texture = this.runtime.getImage("coin/1");
-    const x = (this.runtime.canvas.width / 2) - (texture.width / 2);
-    const y = (this.runtime.canvas.height / 2) - (texture.height / 2);
+    const x = (this.runtime.canvas.width / 2) - (BLOCK_WIDTH / 2);
+    const y = (this.runtime.canvas.height / 2) - (BLOCK_WIDTH / 2);
     this.spawnLevelUpCoin(new Vector(x, y));
   }
 

@@ -9,7 +9,7 @@
 
 import { TBackground, TImage, TSound } from "../engine/types";
 import { Nightlight } from "../game";
-import { SwordBoss } from "../sprites/bosses/sword";
+import { SwordBoss } from "../sprites/bosses/sword/sword";
 import { Vector } from "../engine/vector";
 import { ImageSprite } from "../engine/sprites/imagesprite";
 import { NossBoss, BASE_TEXTURE as nossTexture } from "../sprites/bosses/noss/noss";

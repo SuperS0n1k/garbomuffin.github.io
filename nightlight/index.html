@@ -29,7 +29,7 @@
   </head>
 
   <body>
-    <h1>Nightlight in JS (v0.0.9.1)</h1>
+    <h1>Nightlight in JS (v0.0.9.2)</h1>
 
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a></p>
     <p><a href="https://scratch.mit.edu/projects/167502369/">Also play my remix which contains some of the features I plan to add here.</a></p>
@@ -41,7 +41,7 @@
     <progress id="progress" value="0"></progress>
     <canvas id="canvas"></canvas>
 
-    <button onclick="runtime.level++;runtime.renderLevel();">Skip Level</button>
+    <button onclick="runtime.level++;runtime.renderLevel();">Next Level</button>
     <button onclick="runtime.level--;runtime.renderLevel();">Prev Level</button>
     <button onclick="runtime.renderLevel();">Reset Level</button>
     <button onclick="runtime.player.kill();">Death</button>
@@ -50,7 +50,15 @@
     <pre>
       Changelog:
 
-      v0.0.9.1:
+      v0.0.9.2:
+       * <a href="#12">Second boss</a>'s bullets actually glide
+       * <a href="#12">Second boss</a> has hit effects
+       * Hit effects improved
+       * Pressing stop stops audio
+       * Boss coins are centered properly
+       * Other minor garbage
+
+       v0.0.9.1:
        * <a href="#12">Second boss</a> nearly done
 
       v0.0.9:

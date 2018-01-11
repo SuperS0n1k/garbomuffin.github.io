@@ -2,30 +2,38 @@ import { ImageSprite, IImageSpriteOptions } from "../../../engine/sprites/images
 import { Task } from "../../../engine/task";
 import { Vector } from "../../../engine/vector";
 import { clamp } from "../../../utils";
+import { radiansToDegree } from "../../../engine/utils";
 
 const GLIDE_TIME = 30;
-const SPEED_GAIN = 0.25;
+const SPEED_GAIN = 0.2;
 const TURN_SPEED = 7.5;
 export const MOVE_TIME = 180;
 
 export class NossBossBulletSprite extends ImageSprite {
   private speed: number = 0;
-  private center: Vector;
   private glideMoveSpeed: number;
 
   constructor(options: IImageSpriteOptions) {
     super(options);
 
-    // TODO: actual gliding
     this.addTask(new Task({
       run: () => this.glideToCenter(),
       repeatEvery: 0,
       repeatMax: GLIDE_TIME,
     }));
-    const height = this.runtime.canvas.height;
-    const width = this.runtime.canvas.width;
-    this.center = new Vector((width / 2) - (this.width / 2), (height / 2) - (this.height / 2));
-    this.glideMoveSpeed = this.distanceTo(this.center) / GLIDE_TIME;
+
+    const canvasX = (this.runtime.canvas.width / 2) - (this.width / 2);
+    const canvasY = (this.runtime.canvas.height / 2) - (this.height / 2);
+    const center = new Vector(canvasX, canvasY);
+
+    // figure out what rotation should be in order to glide to the center
+    const distance = this.distanceTo(center);
+    this.glideMoveSpeed = distance / GLIDE_TIME;
+    const heightDifference = this.centerY - canvasY;
+    this.rotation = -radiansToDegree(Math.acos(heightDifference / distance));
+    if (this.centerX > canvasX) {
+      this.rotation *= -1;
+    }
 
     this.addTask(new Task({
       run: () => this.move(),
@@ -33,16 +41,15 @@ export class NossBossBulletSprite extends ImageSprite {
       repeatEvery: 0,
       repeatMax: MOVE_TIME,
     }));
+
     this.addTask(new Task({
       run: () => this.destroy(),
       delay: MOVE_TIME,
     }));
-    this.rotation = 45;
   }
 
-  // TODO: actual gliding
   private glideToCenter() {
-    this.position = this.center;
+    this.moveForward(-this.glideMoveSpeed);
   }
 
   private move() {

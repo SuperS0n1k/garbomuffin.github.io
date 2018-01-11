@@ -346,8 +346,8 @@ class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractS
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["c"] = isMobile;
 /* harmony export (immutable) */ __webpack_exports__["b"] = getOrDefault;
-/* harmony export (immutable) */ __webpack_exports__["d"] = toHex;
-/* unused harmony export radiansToDegree */
+/* harmony export (immutable) */ __webpack_exports__["e"] = toHex;
+/* harmony export (immutable) */ __webpack_exports__["d"] = radiansToDegree;
 /* harmony export (immutable) */ __webpack_exports__["a"] = degreeToRadians;
 // https://stackoverflow.com/a/3540295
 // tests if the device is probably a mobile phone
@@ -751,13 +751,6 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_2__task__["b" /* TaskRunn
     distanceTo(point) {
         return Math.sqrt(Math.pow((point.x - this.centerX), 2) + Math.pow((point.y - this.centerY), 2));
     }
-    centerPosition() {
-        // TODO: move to a getter and use centerX/centerY instead?
-        const position = new __WEBPACK_IMPORTED_MODULE_0__vector__["a" /* Vector */](this.position);
-        position.x += this.width / 2;
-        position.y += this.height / 2;
-        return position;
-    }
     get x() {
         return this.position.x;
     }
@@ -781,6 +774,9 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_2__task__["b" /* TaskRunn
     }
     get centerY() {
         return this.y + (this.height / 2);
+    }
+    get centerPosition() {
+        return new __WEBPACK_IMPORTED_MODULE_0__vector__["a" /* Vector */](this.centerX, this.centerY);
     }
     //
     // Nightlight related code
@@ -971,7 +967,11 @@ class EmptyMouseButton {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__coin__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__coin__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__hiteffect__ = __webpack_require__(27);
+
+
 
 
 const PLAYER_JUMP_YV = 3;
@@ -1000,16 +1000,19 @@ class AbstractBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagespri
     }
     spawnLevelUpCoin(position) {
         const texture = this.runtime.getImage("coin/1");
-        new __WEBPACK_IMPORTED_MODULE_1__coin__["a" /* LevelUpCoinSprite */]({
+        new __WEBPACK_IMPORTED_MODULE_2__coin__["a" /* LevelUpCoinSprite */]({
             texture,
             position,
         });
     }
-    spawnLevelUpCoinCentered(position) {
-        const texture = this.runtime.getImage("coin/1");
+    spawnHitEffect(type) {
+        const texture = this.runtime.getImage(`hit/${type}`);
+        const position = new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](this.centerX, this.y);
+        position.y -= texture.height;
         position.x -= texture.width / 2;
-        position.y -= texture.height / 2;
-        this.spawnLevelUpCoin(position);
+        new __WEBPACK_IMPORTED_MODULE_3__hiteffect__["a" /* HitEffectSprite */]({
+            texture, position,
+        });
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = AbstractBoss;
@@ -1368,8 +1371,7 @@ const SPOTLIGHT_SIZE = 75;
 class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* GameRuntime */] {
     constructor() {
         super(document.getElementById("canvas"));
-        // public level: number = 0;
-        this.level = 12;
+        this.level = 0;
         this.background = "black";
         this.backgroundMusic = [];
         this.darkLevel = false;
@@ -1792,9 +1794,13 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
     sortSprites() {
         this.sprites.sort();
     }
+    stopAllSounds() {
+        this.sounds.forEach((sound) => this.stopSound(sound));
+    }
     // throws an error that is handled gracefully by the update function
     // stops ALL execution
     exit() {
+        this.stopAllSounds();
         console.warn("exiting using exit()");
         // instances of ExitError are treated specially by the update function
         throw new __WEBPACK_IMPORTED_MODULE_4__errors_exit__["a" /* ExitError */]();
@@ -2074,7 +2080,7 @@ class ExitError extends Error {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getLevels;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_bosses_sword__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprites_bosses_sword_sword__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_bosses_noss_noss__ = __webpack_require__(28);
 /*
@@ -2134,7 +2140,7 @@ function getLevels(game) {
         // 5
         {
             levelData: "aaaaaaaaaaafbccccdeaaaaaaaaaaaaaaaaaaaaaafooooooeaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaacccccccccccd......bccccccccccckkpppkkqpkkl......jkqkqkkpqqpp....................................................................................................................................................................................................................................................................................................................................................................................................................................",
-            handlers: [bossSpawner(__WEBPACK_IMPORTED_MODULE_0__sprites_bosses_sword__["a" /* SwordBoss */], game.getImage("boss/sword/sword"))],
+            handlers: [bossSpawner(__WEBPACK_IMPORTED_MODULE_0__sprites_bosses_sword_sword__["a" /* SwordBoss */], game.getImage("boss/sword/sword"))],
             newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
         },
         // 6
@@ -2207,418 +2213,24 @@ function getLevels(game) {
 
 
 /***/ }),
-/* 26 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_task__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector2d__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__hiteffect__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_vector__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__boss__ = __webpack_require__(12);
-/*
- * The first boss: A Sword
- *
- * This code is terrible. Please do not try to maintain it. Rewrite it from the ground up.
- */
-
-
-
-
-
-
-const HEALTH = 3;
-// swipe and spin cycle
-const SPIN_ROTATION_SPEED = 5 / 2;
-const SPIN_SIZE_CHANGE_RATE = 0.035;
-const SWIPE_ROTATION_SPEED = 10 / 2;
-const SWIPE_MOVE_SPEED = 12.5 / 2;
-const SWIPE_BASE_DELAY = 60;
-const SWIPE_SIZE_CHANGE_RATE = 0.115;
-const SWIPE_ANIMATE_TIMES = 15;
-const SWIPE_ANIMATE_FRAME_LENGTH = 3;
-const SWIPE_TEXTURES = [
-    "boss/sword/sword",
-    "boss/sword/open",
-];
-const SWIPE_DOWN_SPEED = 15 / 2;
-const SWIPE_UP_SPEED = SWIPE_DOWN_SPEED / 2;
-// getting damaged
-const DAMAGED_FALL_SPEED = 5;
-const DAMAGED_RISE_SPEED = DAMAGED_FALL_SPEED / 2;
-const DAMAGED_ANIMATE_TIMES = 20;
-const DAMAGED_TEXTURES = [
-    "boss/sword/open",
-    "boss/sword/hurt",
-];
-const DAMAGE_ANIMATE_FRAME_LENGTH = 2;
-const PLAYER_JUMP_YV = 3;
-// death
-const DEAD_ROTATION_SPEED = 0.742857142857 / 2; // 0.742... is how the game actually defines this.
-const DEAD_STARTING_VELOCITY = 2;
-// collision
-const COLLISION_INTERVAL = 3;
-const COLLISION_SPEED = 3;
-class SwordBoss extends __WEBPACK_IMPORTED_MODULE_5__boss__["a" /* AbstractBoss */] {
-    constructor(opts) {
-        super(opts);
-        this.health = HEALTH;
-        this.hitPlayer = false;
-        this._sizeScale = 1;
-        this.yv = DEAD_STARTING_VELOCITY;
-        this.testCollision = false;
-        this.startingHeight = this.height;
-        this.startingWidth = this.width;
-        this.resetCoordinates();
-        this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: this.beginSpinAttack,
-            delay: 60,
-        }));
-        this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: this.intersectTest,
-            repeatEvery: COLLISION_INTERVAL,
-        }));
-        this.rotationPoint = new __WEBPACK_IMPORTED_MODULE_2__engine_vector2d__["a" /* Vector2D */](0.5, 0.1);
-    }
-    //
-    // Utilities
-    //
-    intersectsPlayer() {
-        // Render ourselves on a canvas
-        const canvas = this.runtime.createCanvas();
-        const ctx = canvas.getContext("2d");
-        this.render(ctx);
-        const height = canvas.height;
-        const width = canvas.width;
-        const data = ctx.getImageData(0, 0, width, height).data;
-        // some browsers are funny
-        // TODO: warning message?
-        if (!data) {
-            return false;
-        }
-        const player = this.runtime.player;
-        const length = data.length;
-        for (let i = 0; i < length; i += 4) {
-            const j = i / 4;
-            if (data[i + 3]) {
-                const point = new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](j % width, Math.floor(j / width));
-                if (player.containsPoint(point)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    intersectTest() {
-        if (!this.testCollision) {
-            return;
-        }
-        if (this.intersectsPlayer()) {
-            this.runtime.player.kill();
-            this.hitPlayer = true;
-        }
-    }
-    startRoutine() {
-        super.startRoutine();
-        this.texture = this.runtime.getImage("boss/sword/sword");
-        this.beginSpinAttack();
-    }
-    resetCoordinates() {
-        this.recenter();
-        this.y = 14 * __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
-    }
-    recenter() {
-        this.x = this.runtime.canvas.width / 2 - this.width / 2;
-    }
-    animate(textures, times, length, cb) {
-        for (let i = 0; i < times; i++) {
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: () => {
-                    this.texture = this.runtime.getImage(textures[i % textures.length]);
-                    if (cb) {
-                        cb();
-                    }
-                },
-                delay: i * length,
-            }));
-        }
-    }
-    //
-    // Spin Attack
-    //
-    beginSpinAttack() {
-        this.testCollision = true;
-        this.spinDirection = -this.multiplier;
-        this.phaseDelay = SWIPE_BASE_DELAY;
-        this.hitPlayer = false;
-        this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: this.spinAttack,
-            repeatEvery: 0,
-            delay: 60,
-        }));
-    }
-    spinAttack(task) {
-        this.rotation += this.spinDirection * SPIN_ROTATION_SPEED;
-        // could be pos or neg
-        if (Math.abs(this.rotation) >= 180) {
-            this.sizeScale -= SPIN_SIZE_CHANGE_RATE;
-        }
-        else {
-            this.sizeScale += SPIN_SIZE_CHANGE_RATE;
-        }
-        // could be pos or neg
-        if (Math.abs(this.rotation) >= 360) {
-            this.rotation = 0;
-            task.stop();
-            this.beginSwipeAttack();
-        }
-        this.resetCoordinates();
-    }
-    //
-    // Swipe Attack
-    //
-    beginSwipeAttack() {
-        // make sure some values are reset properly
-        this.sizeScale = 1;
-        this.rotation = 0;
-        this.phaseDelay = SWIPE_BASE_DELAY;
-        // This is terrible.
-        const multi = this.multiplier;
-        const animate = () => {
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: () => this.animate(SWIPE_TEXTURES, SWIPE_ANIMATE_TIMES, SWIPE_ANIMATE_FRAME_LENGTH),
-                delay: 10,
-            }), SWIPE_ANIMATE_TIMES * SWIPE_ANIMATE_FRAME_LENGTH);
-        };
-        const attack = () => {
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: () => this.swipeAttack(SWIPE_DOWN_SPEED),
-                repeatEvery: 0,
-                repeatMax: 16,
-                delay: 10,
-            }));
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: () => this.swipeAttack(-SWIPE_UP_SPEED),
-                repeatEvery: 0,
-                repeatMax: 32,
-            }));
-        };
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: () => this.swipeRotate(-1 * multi),
-            repeatEvery: 0,
-            repeatMax: 36,
-        }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: () => this.swipeMove(1),
-            repeatEvery: 0,
-            repeatMax: 24,
-        }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: () => {
-                this.swipeRotate(-1 * multi);
-                this.swipeSize(1);
-            },
-            repeatEvery: 0,
-            repeatMax: 18,
-        }));
-        animate();
-        attack();
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: () => this.swipeRotate(1 * multi),
-            repeatEvery: 0,
-            repeatMax: 36,
-        }));
-        animate();
-        attack();
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: () => {
-                this.swipeRotate(1 * multi);
-                this.swipeSize(-1);
-            },
-            repeatEvery: 0,
-            repeatMax: 18,
-        }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: () => this.swipeMove(-1),
-            repeatEvery: 0,
-            repeatMax: 24,
-        }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: this.beginRestPhase,
-        }));
-    }
-    swipeRotate(multi) {
-        this.rotation += SWIPE_ROTATION_SPEED * multi;
-    }
-    swipeMove(multi) {
-        this.y -= SWIPE_MOVE_SPEED * multi;
-    }
-    swipeAttack(speed) {
-        this.y += speed;
-    }
-    swipeSize(multi) {
-        this.sizeScale += SWIPE_SIZE_CHANGE_RATE * multi;
-    }
-    //
-    // Rest Phase
-    //
-    beginRestPhase() {
-        this.testCollision = false;
-        if (this.hitPlayer) {
-            this.texture = this.runtime.getImage("boss/sword/heal");
-            const position = new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](this.position);
-            if (this.health === HEALTH) {
-                new __WEBPACK_IMPORTED_MODULE_3__hiteffect__["a" /* HitEffectSprite */]({
-                    position,
-                    texture: this.runtime.getImage("hit/+0"),
-                });
-            }
-            else {
-                new __WEBPACK_IMPORTED_MODULE_3__hiteffect__["a" /* HitEffectSprite */]({
-                    position,
-                    texture: this.runtime.getImage("hit/+1"),
-                });
-                this.health++;
-            }
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: this.startRoutine,
-                delay: 60,
-            }));
-        }
-        else {
-            this.texture = this.runtime.getImage("boss/sword/open");
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: this.restVulnerable,
-                repeatEvery: 0,
-                repeatMax: 180,
-            }));
-            const health = this.health;
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: () => {
-                    if (this.health === health) {
-                        this.startRoutine();
-                    }
-                },
-                delay: 180,
-            }));
-        }
-    }
-    restVulnerable(task) {
-        // use simple intersects for performance reasons
-        if (this.playerJumpedOn()) {
-            this.bouncePlayer();
-            this.damage();
-            task.stop();
-        }
-    }
-    damage() {
-        this.health--;
-        new __WEBPACK_IMPORTED_MODULE_3__hiteffect__["a" /* HitEffectSprite */]({
-            position: new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](this.position),
-            texture: this.runtime.getImage("hit/-1"),
-        });
-        this.phaseDelay = 0;
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: () => this.y += DAMAGED_FALL_SPEED,
-            repeatEvery: 0,
-            repeatMax: 5,
-        }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
-        }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
-        if (this.health === 0) {
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH, () => {
-                    this.rotation -= DEAD_ROTATION_SPEED;
-                }),
-            }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: this.deadPhysics,
-                repeatEvery: 0,
-            }));
-        }
-        else {
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
-            }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: () => this.texture = this.runtime.getImage("boss/sword/sword"),
-            }));
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: () => this.y -= DAMAGED_RISE_SPEED,
-                repeatEvery: 0,
-                repeatMax: 10,
-            }));
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: this.startRoutine,
-            }));
-        }
-    }
-    //
-    // Dead
-    //
-    deadPhysics(task) {
-        const physicsResult = this.runBasicPhysics(0, this.yv, {
-            collision: false,
-        });
-        this.yv = physicsResult.yv;
-        if (this.y > this.runtime.canvas.height) {
-            task.stop();
-            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: this.spawnCoin,
-                delay: 30,
-            }));
-        }
-    }
-    spawnCoin() {
-        const texture = this.runtime.getImage("coin/1");
-        const x = (this.runtime.canvas.width / 2) - (texture.width / 2);
-        const y = (this.runtime.canvas.height / 2) - (texture.height / 2);
-        this.spawnLevelUpCoin(new __WEBPACK_IMPORTED_MODULE_4__engine_vector__["a" /* Vector */](x, y));
-    }
-    //
-    // Getters and Setters
-    //
-    set sizeScale(scale) {
-        this.height = this.startingHeight * scale;
-        this.width = this.startingWidth * scale;
-        this._sizeScale = scale;
-        this.recenter();
-    }
-    get sizeScale() {
-        return this._sizeScale;
-    }
-    get multiplier() {
-        if ((this.runtime.player.x + this.runtime.player.width / 2) < (this.x + this.width / 2)) {
-            return 1;
-        }
-        else {
-            return -1;
-        }
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = SwordBoss;
-
-
-
-/***/ }),
+/* 26 */,
 /* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(1);
 /*
  * Health events for bosses
  *
  * +0, +1, -1
  */
 
+
 const LIFESPAN = 60;
 const OPACITY_PER_FRAME = 1 / LIFESPAN;
-const SIZE_CHANGE = 0.01;
-const Y_CHANGE = 0.1;
-const X_CHANGE = 0.1;
+const SIZE_CHANGE = 0.025;
+const Y_CHANGE = 0.5;
 class HitEffectSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
     constructor(opts) {
         super(opts);
@@ -2626,6 +2238,7 @@ class HitEffectSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_images
         this.addTask(this.run);
         this.startingHeight = this.height;
         this.startingWidth = this.width;
+        this.startingPosition = new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](this.position);
     }
     run() {
         this.lifespan++;
@@ -2633,10 +2246,14 @@ class HitEffectSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_images
             this.destroy();
         }
         this.opacity -= OPACITY_PER_FRAME;
-        this.height = this.startingHeight * (1 + (this.lifespan * SIZE_CHANGE));
-        this.width = this.startingWidth * (1 + (this.lifespan * SIZE_CHANGE));
-        this.x += X_CHANGE;
-        this.y -= Y_CHANGE;
+        // adjust the size accordingly
+        const mult = (1 + (this.lifespan * SIZE_CHANGE));
+        this.height = this.startingHeight * mult;
+        this.width = this.startingWidth * mult;
+        this.x = this.startingPosition.x - ((this.width - this.startingWidth) / 2);
+        this.y = this.startingPosition.y - ((this.height - this.startingHeight) / 2);
+        // this is terrible
+        this.startingPosition.y -= Y_CHANGE;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = HitEffectSprite;
@@ -2719,7 +2336,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__boss__["a" /* AbstractBoss *
         }), 60);
         this.addPhase(new __WEBPACK_IMPORTED_MODULE_4__engine_task__["a" /* Task */]({
             run: () => this.poof(),
-        }));
+        }), 60);
         this.addPhase(new __WEBPACK_IMPORTED_MODULE_4__engine_task__["a" /* Task */]({
             run: () => this.spawnBullets(),
             repeatEvery: 1,
@@ -2752,7 +2369,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__boss__["a" /* AbstractBoss *
     }
     poof() {
         this.visible = !this.visible;
-        const position = this.centerPosition();
+        const position = this.centerPosition;
         const texture = this.runtime.getImage("boss/noss/dust");
         position.x -= texture.width / 2;
         position.y -= texture.height / 2;
@@ -2776,6 +2393,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__boss__["a" /* AbstractBoss *
             task.stop();
             this.health--;
             this.shouldEndRoutine = false;
+            this.spawnHitEffect("-1");
             if (this.health === 0) {
                 this.dead();
             }
@@ -2811,7 +2429,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__boss__["a" /* AbstractBoss *
     }
     actuallyDead() {
         this.poof();
-        this.spawnLevelUpCoinCentered(this.centerPosition());
+        this.spawnLevelUpCoin(this.position);
         this.destroy();
     }
     spawnBullets() {
@@ -2834,12 +2452,14 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__boss__["a" /* AbstractBoss *
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_utils__ = __webpack_require__(5);
+
 
 
 
 
 const GLIDE_TIME = 30;
-const SPEED_GAIN = 0.25;
+const SPEED_GAIN = 0.2;
 const TURN_SPEED = 7.5;
 const MOVE_TIME = 180;
 /* harmony export (immutable) */ __webpack_exports__["a"] = MOVE_TIME;
@@ -2848,16 +2468,22 @@ class NossBossBulletSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
     constructor(options) {
         super(options);
         this.speed = 0;
-        // TODO: actual gliding
         this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
             run: () => this.glideToCenter(),
             repeatEvery: 0,
             repeatMax: GLIDE_TIME,
         }));
-        const height = this.runtime.canvas.height;
-        const width = this.runtime.canvas.width;
-        this.center = new __WEBPACK_IMPORTED_MODULE_2__engine_vector__["a" /* Vector */]((width / 2) - (this.width / 2), (height / 2) - (this.height / 2));
-        this.glideMoveSpeed = this.distanceTo(this.center) / GLIDE_TIME;
+        const canvasX = (this.runtime.canvas.width / 2) - (this.width / 2);
+        const canvasY = (this.runtime.canvas.height / 2) - (this.height / 2);
+        const center = new __WEBPACK_IMPORTED_MODULE_2__engine_vector__["a" /* Vector */](canvasX, canvasY);
+        // figure out what rotation should be in order to glide to the center
+        const distance = this.distanceTo(center);
+        this.glideMoveSpeed = distance / GLIDE_TIME;
+        const heightDifference = this.centerY - canvasY;
+        this.rotation = -Object(__WEBPACK_IMPORTED_MODULE_4__engine_utils__["d" /* radiansToDegree */])(Math.acos(heightDifference / distance));
+        if (this.centerX > canvasX) {
+            this.rotation *= -1;
+        }
         this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
             run: () => this.move(),
             delay: GLIDE_TIME,
@@ -2868,11 +2494,9 @@ class NossBossBulletSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
             run: () => this.destroy(),
             delay: MOVE_TIME,
         }));
-        this.rotation = 45;
     }
-    // TODO: actual gliding
     glideToCenter() {
-        this.position = this.center;
+        this.moveForward(-this.glideMoveSpeed);
     }
     move() {
         this.speed += SPEED_GAIN;
@@ -3661,7 +3285,7 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
     render(ctx) {
         const animationProgress = this.clamp(this.progress / ANIMATION_LENGTH, 0, 1);
         const color = Math.floor(255 * animationProgress);
-        const hexCode = Object(__WEBPACK_IMPORTED_MODULE_2__engine_utils__["d" /* toHex */])(color);
+        const hexCode = Object(__WEBPACK_IMPORTED_MODULE_2__engine_utils__["e" /* toHex */])(color);
         ctx.fillStyle = `#${hexCode}${hexCode}${hexCode}`;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
@@ -3830,6 +3454,388 @@ class NossBossDustSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_ima
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = NossBossDustSprite;
+
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_task__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_vector2d__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_vector__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__boss__ = __webpack_require__(12);
+/*
+ * The first boss: A Sword
+ *
+ * This code is terrible. Please do not try to maintain it. Rewrite it from the ground up.
+ */
+
+
+
+
+
+const HEALTH = 1;
+3;
+// swipe and spin cycle
+const SPIN_ROTATION_SPEED = 5 / 2;
+const SPIN_SIZE_CHANGE_RATE = 0.035;
+const SWIPE_ROTATION_SPEED = 10 / 2;
+const SWIPE_MOVE_SPEED = 12.5 / 2;
+const SWIPE_BASE_DELAY = 60;
+const SWIPE_SIZE_CHANGE_RATE = 0.115;
+const SWIPE_ANIMATE_TIMES = 15;
+const SWIPE_ANIMATE_FRAME_LENGTH = 3;
+const SWIPE_TEXTURES = [
+    "boss/sword/sword",
+    "boss/sword/open",
+];
+const SWIPE_DOWN_SPEED = 15 / 2;
+const SWIPE_UP_SPEED = SWIPE_DOWN_SPEED / 2;
+// getting damaged
+const DAMAGED_FALL_SPEED = 5;
+const DAMAGED_RISE_SPEED = DAMAGED_FALL_SPEED / 2;
+const DAMAGED_ANIMATE_TIMES = 20;
+const DAMAGED_TEXTURES = [
+    "boss/sword/open",
+    "boss/sword/hurt",
+];
+const DAMAGE_ANIMATE_FRAME_LENGTH = 2;
+const PLAYER_JUMP_YV = 3;
+// death
+const DEAD_ROTATION_SPEED = 0.742857142857 / 2; // 0.742... is how the game actually defines this.
+const DEAD_STARTING_VELOCITY = 2;
+// collision
+const COLLISION_INTERVAL = 3;
+const COLLISION_SPEED = 3;
+class SwordBoss extends __WEBPACK_IMPORTED_MODULE_4__boss__["a" /* AbstractBoss */] {
+    constructor(opts) {
+        super(opts);
+        this.health = HEALTH;
+        this.hitPlayer = false;
+        this._sizeScale = 1;
+        this.yv = DEAD_STARTING_VELOCITY;
+        this.testCollision = false;
+        this.startingHeight = this.height;
+        this.startingWidth = this.width;
+        this.resetCoordinates();
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: this.beginSpinAttack,
+            delay: 60,
+        }));
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: this.intersectTest,
+            repeatEvery: COLLISION_INTERVAL,
+        }));
+        this.rotationPoint = new __WEBPACK_IMPORTED_MODULE_2__engine_vector2d__["a" /* Vector2D */](0.5, 0.1);
+    }
+    //
+    // Utilities
+    //
+    intersectsPlayer() {
+        // Render ourselves on a canvas
+        const canvas = this.runtime.createCanvas();
+        const ctx = canvas.getContext("2d");
+        this.render(ctx);
+        const height = canvas.height;
+        const width = canvas.width;
+        const data = ctx.getImageData(0, 0, width, height).data;
+        // some browsers are funny
+        // TODO: warning message?
+        if (!data) {
+            return false;
+        }
+        const player = this.runtime.player;
+        const length = data.length;
+        for (let i = 0; i < length; i += 4) {
+            const j = i / 4;
+            if (data[i + 3]) {
+                const point = new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](j % width, Math.floor(j / width));
+                if (player.containsPoint(point)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    intersectTest() {
+        if (!this.testCollision) {
+            return;
+        }
+        if (this.intersectsPlayer()) {
+            this.runtime.player.kill();
+            this.hitPlayer = true;
+        }
+    }
+    startRoutine() {
+        super.startRoutine();
+        this.texture = this.runtime.getImage("boss/sword/sword");
+        this.beginSpinAttack();
+    }
+    resetCoordinates() {
+        this.recenter();
+        this.y = 14 * __WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */];
+    }
+    recenter() {
+        this.x = this.runtime.canvas.width / 2 - this.width / 2;
+    }
+    animate(textures, times, length, cb) {
+        for (let i = 0; i < times; i++) {
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: () => {
+                    this.texture = this.runtime.getImage(textures[i % textures.length]);
+                    if (cb) {
+                        cb();
+                    }
+                },
+                delay: i * length,
+            }));
+        }
+    }
+    //
+    // Spin Attack
+    //
+    beginSpinAttack() {
+        this.testCollision = true;
+        this.spinDirection = -this.multiplier;
+        this.phaseDelay = SWIPE_BASE_DELAY;
+        this.hitPlayer = false;
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: this.spinAttack,
+            repeatEvery: 0,
+            delay: 60,
+        }));
+    }
+    spinAttack(task) {
+        this.rotation += this.spinDirection * SPIN_ROTATION_SPEED;
+        // could be pos or neg
+        if (Math.abs(this.rotation) >= 180) {
+            this.sizeScale -= SPIN_SIZE_CHANGE_RATE;
+        }
+        else {
+            this.sizeScale += SPIN_SIZE_CHANGE_RATE;
+        }
+        // could be pos or neg
+        if (Math.abs(this.rotation) >= 360) {
+            this.rotation = 0;
+            task.stop();
+            this.beginSwipeAttack();
+        }
+        this.resetCoordinates();
+    }
+    //
+    // Swipe Attack
+    //
+    beginSwipeAttack() {
+        // make sure some values are reset properly
+        this.sizeScale = 1;
+        this.rotation = 0;
+        this.phaseDelay = SWIPE_BASE_DELAY;
+        // This is terrible.
+        const multi = this.multiplier;
+        const animate = () => {
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: () => this.animate(SWIPE_TEXTURES, SWIPE_ANIMATE_TIMES, SWIPE_ANIMATE_FRAME_LENGTH),
+                delay: 10,
+            }), SWIPE_ANIMATE_TIMES * SWIPE_ANIMATE_FRAME_LENGTH);
+        };
+        const attack = () => {
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: () => this.swipeAttack(SWIPE_DOWN_SPEED),
+                repeatEvery: 0,
+                repeatMax: 16,
+                delay: 10,
+            }));
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: () => this.swipeAttack(-SWIPE_UP_SPEED),
+                repeatEvery: 0,
+                repeatMax: 32,
+            }));
+        };
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: () => this.swipeRotate(-1 * multi),
+            repeatEvery: 0,
+            repeatMax: 36,
+        }));
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: () => this.swipeMove(1),
+            repeatEvery: 0,
+            repeatMax: 24,
+        }));
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: () => {
+                this.swipeRotate(-1 * multi);
+                this.swipeSize(1);
+            },
+            repeatEvery: 0,
+            repeatMax: 18,
+        }));
+        animate();
+        attack();
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: () => this.swipeRotate(1 * multi),
+            repeatEvery: 0,
+            repeatMax: 36,
+        }));
+        animate();
+        attack();
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: () => {
+                this.swipeRotate(1 * multi);
+                this.swipeSize(-1);
+            },
+            repeatEvery: 0,
+            repeatMax: 18,
+        }));
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: () => this.swipeMove(-1),
+            repeatEvery: 0,
+            repeatMax: 24,
+        }));
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: this.beginRestPhase,
+        }));
+    }
+    swipeRotate(multi) {
+        this.rotation += SWIPE_ROTATION_SPEED * multi;
+    }
+    swipeMove(multi) {
+        this.y -= SWIPE_MOVE_SPEED * multi;
+    }
+    swipeAttack(speed) {
+        this.y += speed;
+    }
+    swipeSize(multi) {
+        this.sizeScale += SWIPE_SIZE_CHANGE_RATE * multi;
+    }
+    //
+    // Rest Phase
+    //
+    beginRestPhase() {
+        this.testCollision = false;
+        if (this.hitPlayer) {
+            this.texture = this.runtime.getImage("boss/sword/heal");
+            this.spawnHitEffect(this.health === HEALTH ? "+0" : "+1");
+            if (this.health < HEALTH) {
+                this.health++;
+            }
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: this.startRoutine,
+                delay: 60,
+            }));
+        }
+        else {
+            this.texture = this.runtime.getImage("boss/sword/open");
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: this.restVulnerable,
+                repeatEvery: 0,
+                repeatMax: 180,
+            }));
+            const health = this.health;
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: () => {
+                    if (this.health === health) {
+                        this.startRoutine();
+                    }
+                },
+                delay: 180,
+            }));
+        }
+    }
+    restVulnerable(task) {
+        // use simple intersects for performance reasons
+        if (this.playerJumpedOn()) {
+            this.bouncePlayer();
+            this.damage();
+            task.stop();
+        }
+    }
+    damage() {
+        this.health--;
+        this.spawnHitEffect("-1");
+        this.phaseDelay = 0;
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: () => this.y += DAMAGED_FALL_SPEED,
+            repeatEvery: 0,
+            repeatMax: 5,
+        }));
+        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
+        }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
+        if (this.health === 0) {
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH, () => {
+                    this.rotation -= DEAD_ROTATION_SPEED;
+                }),
+            }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: this.deadPhysics,
+                repeatEvery: 0,
+            }));
+        }
+        else {
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
+            }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: () => this.texture = this.runtime.getImage("boss/sword/sword"),
+            }));
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: () => this.y -= DAMAGED_RISE_SPEED,
+                repeatEvery: 0,
+                repeatMax: 10,
+            }));
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: this.startRoutine,
+            }));
+        }
+    }
+    //
+    // Dead
+    //
+    deadPhysics(task) {
+        const physicsResult = this.runBasicPhysics(0, this.yv, {
+            collision: false,
+        });
+        this.yv = physicsResult.yv;
+        if (this.y > this.runtime.canvas.height) {
+            task.stop();
+            this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+                run: this.spawnCoin,
+                delay: 30,
+            }));
+        }
+    }
+    spawnCoin() {
+        const texture = this.runtime.getImage("coin/1");
+        const x = (this.runtime.canvas.width / 2) - (__WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] / 2);
+        const y = (this.runtime.canvas.height / 2) - (__WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] / 2);
+        this.spawnLevelUpCoin(new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](x, y));
+    }
+    //
+    // Getters and Setters
+    //
+    set sizeScale(scale) {
+        this.height = this.startingHeight * scale;
+        this.width = this.startingWidth * scale;
+        this._sizeScale = scale;
+        this.recenter();
+    }
+    get sizeScale() {
+        return this._sizeScale;
+    }
+    get multiplier() {
+        if ((this.runtime.player.x + this.runtime.player.width / 2) < (this.x + this.width / 2)) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = SwordBoss;
 
 
 

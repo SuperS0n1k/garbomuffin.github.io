@@ -5,6 +5,7 @@ import { NossBossBulletSprite, MOVE_TIME as BULLET_MOVE_TIME } from "./bullet";
 import { AbstractBoss } from "../boss";
 import { Task } from "../../../engine/task";
 import { NossBossDustSprite } from "./dust";
+import { HitEffectSprite } from "../hiteffect";
 
 interface INossPosition {
   position: Vector;
@@ -84,7 +85,7 @@ export class NossBoss extends AbstractBoss {
 
     this.addPhase(new Task({
       run: () => this.poof(),
-    }));
+    }), 60);
 
     this.addPhase(new Task({
       run: () => this.spawnBullets(),
@@ -125,7 +126,7 @@ export class NossBoss extends AbstractBoss {
   private poof() {
     this.visible = !this.visible;
 
-    const position = this.centerPosition();
+    const position = this.centerPosition;
     const texture = this.runtime.getImage("boss/noss/dust");
     position.x -= texture.width / 2;
     position.y -= texture.height / 2;
@@ -152,6 +153,8 @@ export class NossBoss extends AbstractBoss {
       task.stop();
       this.health--;
       this.shouldEndRoutine = false;
+
+      this.spawnHitEffect("-1");
 
       if (this.health === 0) {
         this.dead();
@@ -193,7 +196,7 @@ export class NossBoss extends AbstractBoss {
 
   private actuallyDead() {
     this.poof();
-    this.spawnLevelUpCoinCentered(this.centerPosition());
+    this.spawnLevelUpCoin(this.position);
     this.destroy();
   }
 

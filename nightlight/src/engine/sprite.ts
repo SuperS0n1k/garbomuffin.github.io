@@ -142,14 +142,6 @@ export abstract class AbstractSprite extends TaskRunner {
     return Math.sqrt((point.x - this.centerX) ** 2 + (point.y - this.centerY) ** 2);
   }
 
-  public centerPosition(): Vector {
-    // TODO: move to a getter and use centerX/centerY instead?
-    const position = new Vector(this.position);
-    position.x += this.width / 2;
-    position.y += this.height / 2;
-    return position;
-  }
-
   get x() {
     return this.position.x;
   }
@@ -175,6 +167,10 @@ export abstract class AbstractSprite extends TaskRunner {
 
   get centerY() {
     return this.y + (this.height / 2);
+  }
+
+  get centerPosition() {
+    return new Vector(this.centerX, this.centerY);
   }
 
   //

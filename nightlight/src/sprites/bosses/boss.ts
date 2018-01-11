@@ -2,6 +2,7 @@ import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagespri
 import { Task } from "../../engine/task";
 import { Vector } from "../../engine/vector";
 import { LevelUpCoinSprite } from "../coin";
+import { HitEffectSprite } from "./hiteffect";
 
 const PLAYER_JUMP_YV = 3;
 
@@ -43,10 +44,13 @@ export abstract class AbstractBoss extends ImageSprite {
     });
   }
 
-  protected spawnLevelUpCoinCentered(position: Vector) {
-    const texture = this.runtime.getImage("coin/1");
+  protected spawnHitEffect(type: string) {
+    const texture = this.runtime.getImage(`hit/${type}`);
+    const position = new Vector(this.centerX, this.y);
+    position.y -= texture.height;
     position.x -= texture.width / 2;
-    position.y -= texture.height / 2;
-    this.spawnLevelUpCoin(position);
+    new HitEffectSprite({
+      texture, position,
+    });
   }
 }

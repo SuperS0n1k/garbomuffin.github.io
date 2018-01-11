@@ -253,9 +253,15 @@ export class GameRuntime extends TaskRunner {
     this.sprites.sort();
   }
 
+  public stopAllSounds() {
+    this.sounds.forEach((sound) => this.stopSound(sound));
+  }
+
   // throws an error that is handled gracefully by the update function
   // stops ALL execution
   public exit() {
+    this.stopAllSounds();
+
     console.warn("exiting using exit()");
 
     // instances of ExitError are treated specially by the update function

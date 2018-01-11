@@ -5,18 +5,18 @@
  */
 
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
+import { Vector } from "../../engine/vector";
 
 const LIFESPAN = 60;
 const OPACITY_PER_FRAME = 1 / LIFESPAN;
-const SIZE_CHANGE = 0.01;
-const Y_CHANGE = 0.1;
-const X_CHANGE = 0.1;
+const SIZE_CHANGE = 0.025;
+const Y_CHANGE = 0.5;
 
 export class HitEffectSprite extends ImageSprite {
   private lifespan: number = 0;
-
   private readonly startingHeight: number;
   private readonly startingWidth: number;
+  private readonly startingPosition: Vector;
 
   constructor(opts: IImageSpriteOptions) {
     super(opts);
@@ -25,6 +25,7 @@ export class HitEffectSprite extends ImageSprite {
 
     this.startingHeight = this.height;
     this.startingWidth = this.width;
+    this.startingPosition = new Vector(this.position);
   }
 
   private run() {
@@ -35,10 +36,15 @@ export class HitEffectSprite extends ImageSprite {
 
     this.opacity -= OPACITY_PER_FRAME;
 
-    this.height = this.startingHeight * (1 + (this.lifespan * SIZE_CHANGE));
-    this.width = this.startingWidth * (1 + (this.lifespan * SIZE_CHANGE));
+    // adjust the size accordingly
+    const mult = (1 + (this.lifespan * SIZE_CHANGE));
+    this.height = this.startingHeight * mult;
+    this.width = this.startingWidth * mult;
 
-    this.x += X_CHANGE;
-    this.y -= Y_CHANGE;
+    this.x = this.startingPosition.x - ((this.width - this.startingWidth) / 2);
+    this.y = this.startingPosition.y - ((this.height - this.startingHeight) / 2);
+
+    // this is terrible
+    this.startingPosition.y -= Y_CHANGE;
   }
 }
