@@ -1,5 +1,7 @@
 import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
 import { Task } from "../../engine/task";
+import { Vector } from "../../engine/vector";
+import { LevelUpCoinSprite } from "../coin";
 
 const PLAYER_JUMP_YV = 3;
 
@@ -31,5 +33,20 @@ export abstract class AbstractBoss extends ImageSprite {
 
   protected bouncePlayer() {
     this.runtime.player.yv = PLAYER_JUMP_YV;
+  }
+
+  protected spawnLevelUpCoin(position: Vector) {
+    const texture = this.runtime.getImage("coin/1");
+    new LevelUpCoinSprite({
+      texture,
+      position,
+    });
+  }
+
+  protected spawnLevelUpCoinCentered(position: Vector) {
+    const texture = this.runtime.getImage("coin/1");
+    position.x -= texture.width / 2;
+    position.y -= texture.height / 2;
+    this.spawnLevelUpCoin(position);
   }
 }

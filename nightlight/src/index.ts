@@ -111,6 +111,7 @@ game.addImage("boss/noss/noss");
 game.addImage("boss/noss/hit");
 game.addImage("boss/noss/rest");
 game.addImage("boss/noss/bullet");
+game.addImage("boss/noss/dust");
 
 //
 // Post second boss / Castle
@@ -146,8 +147,7 @@ game.addSound("blocks/fds");
 
 game.addSound("player/death");
 game.addSound("player/ding");
-game.addSound("player/jump1");
-game.addSound("player/jump2");
+game.addSound("player/jump");
 
 // background music
 game.addSound("music/exploration");

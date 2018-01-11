@@ -90,8 +90,7 @@ export class PlayerSprite extends ImageSprite {
     }
 
     if ((upDown && onGround) || (upJustPressed && this.hasJumpLight)) {
-      const quiet = this.texture === this.runtime.getImage("player/idle");
-      this.runtime.playSound(`player/jump${quiet ? 2 : 1}`);
+      this.runtime.playSound("player/jump");
       this.hasJumpLight = false;
       this.yv = JUMP_HEIGHT;
     } else if (!upDown && this.yv > 3) {

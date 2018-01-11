@@ -18,7 +18,8 @@ import { LightBlock } from "./sprites/blocks/lightblock";
 const SPOTLIGHT_SIZE = 75;
 
 export class Nightlight extends GameRuntime {
-  public level: number = 0;
+  // public level: number = 0;
+  public level: number = 12;
   public levelData: string;
   public levels: Level[];
   public player: PlayerSprite;

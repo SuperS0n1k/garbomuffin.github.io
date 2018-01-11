@@ -4,7 +4,7 @@ import { Vector } from "../../../engine/vector";
 import { clamp } from "../../../utils";
 
 const GLIDE_TIME = 30;
-const SPEED_GAIN = 0.5;
+const SPEED_GAIN = 0.25;
 const TURN_SPEED = 7.5;
 export const MOVE_TIME = 180;
 
@@ -38,7 +38,6 @@ export class NossBossBulletSprite extends ImageSprite {
       delay: MOVE_TIME,
     }));
     this.rotation = 45;
-
   }
 
   // TODO: actual gliding

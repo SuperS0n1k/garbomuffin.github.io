@@ -13,7 +13,6 @@ import { PlayerSprite } from "../player/player";
 import { Vector2D } from "../../engine/vector2d";
 import { HitEffectSprite } from "./hiteffect";
 import { Vector } from "../../engine/vector";
-import { LevelUpCoinSprite } from "../coin";
 import { AbstractBoss } from "./boss";
 
 const HEALTH = 3;
@@ -435,11 +434,9 @@ export class SwordBoss extends AbstractBoss {
 
   private spawnCoin() {
     const texture = this.runtime.getImage("coin/1");
-    const position = new Vector((this.runtime.canvas.width / 2) - (texture.width / 2), this.runtime.canvas.height / 2);
-    new LevelUpCoinSprite({
-      texture,
-      position,
-    });
+    const x = (this.runtime.canvas.width / 2) - (texture.width / 2);
+    const y = (this.runtime.canvas.height / 2) - (texture.height / 2);
+    this.spawnLevelUpCoin(new Vector(x, y));
   }
 
   //
