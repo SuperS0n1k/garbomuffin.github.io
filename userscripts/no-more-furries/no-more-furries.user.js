@@ -1,4 +1,6 @@
 "use strict";
+// No Changelog here = Just filter update
+// 
 // Changes in v2.1.2:
 //  * Disabled loading thumbnails of blocked projects
 //  * You may notice significant speed improvements
@@ -23,7 +25,7 @@
 // ============================================================================
 // ==UserScript==
 // @name         NO MORE FURRIES
-// @version      2.1.2
+// @version      2.1.3
 // @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
 // @description  FURRIES AREN'T MEMES
 // @author       GarboMuffin
@@ -303,6 +305,15 @@ var BLOCKED_CREATORS = [
     // https://scratch.mit.edu/projects/115346965/
     // (account 404s)
     "Convexity",
+    // https://scratch.mit.edu/projects/194837420/
+    // https://scratch.mit.edu/projects/195023355/
+    "gulug",
+    // https://scratch.mit.edu/projects/190498658/
+    // https://scratch.mit.edu/projects/194378828/
+    "Wolf2ooAlt",
+    // https://scratch.mit.edu/projects/195268878/
+    // https://scratch.mit.edu/projects/194814866/
+    "BrightShine",
 ];
 // Strings that can't be in titles or else the project is hidden
 // TODO: examples
