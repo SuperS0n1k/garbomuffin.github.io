@@ -8,7 +8,7 @@
   "use strict";
 
   // metadata constants
-  var VERSION = "0.8";
+  var VERSION = "0.7";
 
   // detect if the bookmark version is out of date
   var LATEST_LOADER_VERSION = 1;
@@ -50,43 +50,10 @@
     }
   }
 
-  function makeEditable(el) {
-    el.setAttribute("contenteditable", "true");
-  }
-
-  function makeUneditable(el) {
-    el.removeAttribute("contenteditable");
-  }
-
-  // callback for the mutation observer
-  function mutationCallback(mutations) {
-    if (!window.__editThisPageState) {
-      return;
-    }
-
-    for (var i = 0; i < mutations.length; i++) {
-      var mutation = mutations[i];
-      var addedNodes = mutation.addedNodes;
-      for (var j = 0; j < addedNodes.length; j++) {
-        var node = addedNodes[j];
-        console.log(node);
-        makeEditable(node);
-      }
-    }
-  }
-
   // the main function, sets an element's 'contenteditable' tag
   // recurses into iframes
   function main(body, editable) {
-    // create a mutation observer
-    // observes changes and will apply contenteditable to new elements as they are made
-    if (!editThisPageAlreadyLoaded && window.MutationObserver) {
-      var observer = new MutationObserver(mutationCallback);
-      observer.observe(body, {
-        childList: true,
-        subtree: true
-      });
-    }
+    var elements = body.getElementsByTagName("*");
 
     // add the event listeners to stop stopPropogation
     // but only on the first run
@@ -94,13 +61,12 @@
       document.addEventListener("keypress", stopPropagation, true);
       document.addEventListener("keyup", stopPropagation, true);
       document.addEventListener("keydown", stopPropagation, true);
-      // TODO: cancel mouse events
+      // TODO: cancel mouse events for next minor release
       // document.addEventListener("mousedown", stopPropagation, true);
       // document.addEventListener("mouseup", stopPropagation, true);
       // document.addEventListener("mousemove", stopPropagation, true);
     }
 
-    var elements = body.getElementsByTagName("*");
     for (var i = 0; i < elements.length; i++) {
       var element = elements[i];
 
@@ -120,9 +86,9 @@
 
       // the actual toggling on/off of editability
       if (editable) {
-        makeEditable(element);
+        element.setAttribute("contenteditable", "true");
       } else {
-        makeUneditable(element);
+        element.removeAttribute("contenteditable");
       }
     }
   }
