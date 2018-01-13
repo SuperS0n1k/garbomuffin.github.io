@@ -99,7 +99,7 @@ export class TaskRunner {
         repeatEvery: 0,
       }));
     } else {
-      // task.runnable = task.runnable.bind(this);
+      task.runnable = task.runnable.bind(this);
       this._tasks.push(task);
       return task;
     }

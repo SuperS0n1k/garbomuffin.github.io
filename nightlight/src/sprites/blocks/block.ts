@@ -79,9 +79,15 @@ export class SolidBlock extends Block {
   public solid: boolean = true;
 }
 
+// Block with solid = true and staic = true by default
+// Setting static = true can greatly improve performance by not rendering things more than they need to be
+export class StaticSolidBlock extends SolidBlock {
+  public static: boolean = true;
+}
+
 // Block that is solid but doesn't handle intersecting
 // Used for blocks that shouldn't be solid but needed for player.reset() to work
-export class PseudoSolidBlock extends SolidBlock {
+export class PseudoSolidBlock extends StaticSolidBlock {
   public handleIntersect() {
     return false;
   }

@@ -170,9 +170,19 @@ class SolidBlock extends Block {
 }
 /* harmony export (immutable) */ __webpack_exports__["c"] = SolidBlock;
 
+// Block with solid = true and staic = true by default
+// Setting static = true can greatly improve performance by not rendering things more than they need to be
+class StaticSolidBlock extends SolidBlock {
+    constructor() {
+        super(...arguments);
+        this.static = true;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["d"] = StaticSolidBlock;
+
 // Block that is solid but doesn't handle intersecting
 // Used for blocks that shouldn't be solid but needed for player.reset() to work
-class PseudoSolidBlock extends SolidBlock {
+class PseudoSolidBlock extends StaticSolidBlock {
     handleIntersect() {
         return false;
     }
@@ -261,7 +271,7 @@ class TaskRunner {
             }));
         }
         else {
-            // task.runnable = task.runnable.bind(this);
+            task.runnable = task.runnable.bind(this);
             this._tasks.push(task);
             return task;
         }
@@ -679,6 +689,7 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_2__task__["b" /* TaskRunn
         this.rotation = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.rotation, 0);
         this.opacity = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.opacity, 1);
         this.rotationPoint = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.rotationPoint, new __WEBPACK_IMPORTED_MODULE_1__vector2d__["a" /* Vector2D */](0.5, 0.5));
+        this.static = Object(__WEBPACK_IMPORTED_MODULE_3__utils__["b" /* getOrDefault */])(options.static, false);
         this.runtime.sprites.push(this);
     }
     update() {
@@ -838,7 +849,20 @@ class AbstractSprite extends __WEBPACK_IMPORTED_MODULE_2__task__["b" /* TaskRunn
         if (self._lastSolidBlock && intersects(self._lastSolidBlock)) {
             return true;
         }
+        // optimization: if we are consistently running into blocks above us then break early
+        // if 5 blocks in a row are definitely above us then we know we are probably done and stop
+        // this is a major performance improvement
+        let above = 0;
         for (const block of this.runtime.blocks) {
+            if (block.y + block.width < this.y) {
+                above++;
+                if (above > 5) {
+                    break;
+                }
+            }
+            else {
+                above = 0;
+            }
             if (intersects(block)) {
                 self._lastSolidBlock = block;
                 return true;
@@ -1159,6 +1183,8 @@ class BackgroundStarSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__[
 
 
 class GrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
+    // there are a few visual bugs that come if you make this static
+    // public static: boolean = true;
     constructor(opts) {
         super(opts);
         // Move ourselves down
@@ -1396,7 +1422,7 @@ game.addImage("boss/noss/rest");
 game.addImage("boss/noss/bullet");
 game.addImage("boss/noss/dust");
 //
-// Post second boss / Castle
+// Castle
 //
 game.addImage("brick");
 game.addImage("blocks/caret");
@@ -1462,10 +1488,10 @@ function run() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__engine_container__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_star__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__sprites_zindex__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stats_js__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__levels_jumplights__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_jumplight__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__sprites_zindex__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stats_js__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stats_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_13__stats_js__);
 
 
@@ -1485,7 +1511,7 @@ const TOTAL_BACKGROUND_STARS = 100;
 
 class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* GameRuntime */] {
     constructor() {
-        super(document.getElementById("canvas"));
+        super(document.getElementById("container"));
         this.level = 0;
         this.background = "black";
         this.backgroundMusic = [];
@@ -1533,12 +1559,6 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
             }
         }
     }
-    createCanvas() {
-        const canvas = document.createElement("canvas");
-        canvas.height = this.canvas.height;
-        canvas.width = this.canvas.width;
-        return canvas;
-    }
     createPlayer() {
         this.player = new __WEBPACK_IMPORTED_MODULE_2__sprites_player_player__["a" /* PlayerSprite */]({
             texture: this.getImage("player/idle"),
@@ -1553,7 +1573,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
             const x = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["c" /* getRandomInt */])(0, this.canvas.width);
             const y = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["c" /* getRandomInt */])(0, this.canvas.height);
             new __WEBPACK_IMPORTED_MODULE_8__sprites_star__["a" /* BackgroundStarSprite */]({
-                position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](x, y, -10),
+                position: new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](x, y, __WEBPACK_IMPORTED_MODULE_12__sprites_zindex__["a" /* ZIndexes */].Star),
                 width: 2,
                 height: 2,
                 persistent: true,
@@ -1614,7 +1634,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         }
         else if (typeof blockType === "string") {
             texture = this.getImage(blockType);
-            spriteConstructor = __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_block__["c" /* SolidBlock */];
+            spriteConstructor = __WEBPACK_IMPORTED_MODULE_5__sprites_blocks_block__["d" /* StaticSolidBlock */];
         }
         else {
             texture = this.getImage(blockType.texture);
@@ -1672,6 +1692,8 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
         this.darkLevel = !!level.dark;
         // spawn things that you can jump on
         this.spawnJumpLights();
+        // render static things that were just created
+        this.updateStatic();
         this.player.reset();
     }
     spawnJumpLights() {
@@ -1705,9 +1727,13 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_0__engine_runtime__["a" /* Ga
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprite__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__task__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__staticRenderer__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__vector__ = __webpack_require__(0);
 /*
  * The main game runtime object
  */
+
+
 
 
 
@@ -1725,8 +1751,14 @@ const IMAGE_FORMAT = "png";
 // Format of sounds
 // mp3 has very wide browser support: https://caniuse.com/#feat=mp3
 const SOUND_FORMAT = "mp3";
+// Debugging rendering
+const _DEBUG_NON_STATIC_OUTLINE = false;
+const _DEBUG_STATIC_OUTLINE = false;
+if (_DEBUG_NON_STATIC_OUTLINE || _DEBUG_STATIC_OUTLINE) {
+    console.warn("Debug features are on!");
+}
 class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner */] {
-    constructor(canvas) {
+    constructor(container) {
         super();
         // see resetVariables()
         this.images = new Map();
@@ -1736,10 +1768,11 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         this.started = false;
         this.background = "white";
         this._assetPromises = [];
-        canvas.width = CANVAS_WIDTH;
-        canvas.height = CANVAS_HEIGHT;
-        this.canvas = canvas;
-        this.ctx = canvas.getContext("2d");
+        this.canvas = this.createCanvas();
+        this.ctx = this.canvas.getContext("2d");
+        container.appendChild(this.canvas);
+        this.staticCanvas = this.createCanvas();
+        this.staticCtx = this.staticCanvas.getContext("2d");
         // mouse driver, support pc and mobile to some degree
         if (!Object(__WEBPACK_IMPORTED_MODULE_7__utils__["c" /* isMobile */])()) {
             console.log("using normal mouse");
@@ -1759,7 +1792,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         // debugging
         window.runtime = this;
         // run the mouse driver
-        this.addTask(() => this.updateMouse());
+        this.addTask(() => this.mouse.update());
         // classess are weird
         this.loop = this.loop.bind(this);
     }
@@ -1869,6 +1902,10 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         this.resetVariables();
         this.loop();
         this.started = true;
+        new __WEBPACK_IMPORTED_MODULE_8__staticRenderer__["a" /* StaticRendererSprite */]({
+            position: new __WEBPACK_IMPORTED_MODULE_9__vector__["a" /* Vector */](0, 0, -1),
+            persistent: true,
+        });
     }
     // the main loop - calls all tasks in all sprites
     loop() {
@@ -1902,14 +1939,39 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
             sprite.update();
         }
     }
+    updateStatic() {
+        this.resetCanvas(this.staticCtx);
+        this.sortSprites();
+        for (const sprite of this.sprites) {
+            if (sprite.static) {
+                sprite.render(this.staticCtx);
+                if (_DEBUG_STATIC_OUTLINE) {
+                    this.staticCtx.strokeStyle = "orange";
+                    this.staticCtx.lineWidth = 2;
+                    this.staticCtx.beginPath();
+                    this.staticCtx.rect(sprite.x, sprite.y, sprite.width, sprite.height);
+                    this.staticCtx.stroke();
+                }
+            }
+        }
+    }
     render() {
         // clear the canvas
         this.resetCanvas(this.ctx, this.background);
-        // sort sprites by z TODO: find a better for to do this
+        // sort sprites by z TODO: perhaps only do this when we know something changed?
         this.sortSprites();
-        // render all sprites onto our canvas
+        // render all non static sprites onto our canvas
         for (const sprite of this.sprites) {
-            sprite.render(this.ctx);
+            if (!sprite.static) {
+                sprite.render(this.ctx);
+                if (_DEBUG_NON_STATIC_OUTLINE) {
+                    this.ctx.strokeStyle = "red";
+                    this.ctx.lineWidth = 1;
+                    this.ctx.beginPath();
+                    this.ctx.rect(sprite.x, sprite.y, sprite.width, sprite.height);
+                    this.ctx.stroke();
+                }
+            }
         }
     }
     sortSprites() {
@@ -1926,15 +1988,20 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_6__task__["b" /* TaskRunner 
         // instances of ExitError are treated specially by the update function
         throw new __WEBPACK_IMPORTED_MODULE_4__errors_exit__["a" /* ExitError */]();
     }
-    // clears the canvas and replaces it with a blank white background
-    resetCanvas(ctx, background = "white") {
+    // clears the canvas and sets the background or makes it transparent
+    resetCanvas(ctx, background = "rgba(0, 0, 0, 0)") {
+        const width = ctx.canvas.width;
+        const height = ctx.canvas.height;
         ctx.scale(1, 1);
+        ctx.clearRect(0, 0, width, height);
         ctx.fillStyle = background;
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.fillRect(0, 0, width, height);
     }
-    // small function that calls the mouse driver's update funciton
-    updateMouse() {
-        this.mouse.update();
+    createCanvas() {
+        const canvas = document.createElement("canvas");
+        canvas.width = CANVAS_WIDTH;
+        canvas.height = CANVAS_HEIGHT;
+        return canvas;
     }
     // called when exiting
     onexit() {
@@ -2571,7 +2638,7 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_4__boss__["a" /* AbstractBoss 
             repeatMax: 24,
         }));
         this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: this.beginRestPhase,
+            run: () => this.beginRestPhase(),
         }));
     }
     swipeRotate(multi) {
@@ -2664,7 +2731,7 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_4__boss__["a" /* AbstractBoss 
                 repeatMax: 10,
             }));
             this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-                run: this.startRoutine,
+                run: () => this.startRoutine(),
             }));
         }
     }
@@ -3138,10 +3205,12 @@ class PlayerFragmentSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_blocks_coinspawner__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_blocks_oneway__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_blocks_corner__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__sprites_blocks_black__ = __webpack_require__(44);
 /*
  * A map of characters and the texture and class
  * they correspond to
  */
+
 
 
 
@@ -3163,7 +3232,7 @@ function notsolid(texture) {
     return special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__["a" /* Block */], texture);
 }
 const blockMap = {
-    "a": special(__WEBPACK_IMPORTED_MODULE_0__sprites_blocks_block__["b" /* PseudoSolidBlock */], "blocks/a"),
+    "a": special(__WEBPACK_IMPORTED_MODULE_12__sprites_blocks_black__["a" /* BlackBlock */], "blocks/a"),
     "b": "blocks/b",
     "c": "blocks/c",
     "d": "blocks/d",
@@ -3235,6 +3304,10 @@ const blockMap = {
 // Spikes share pretty much all of their code
 // So an abstract class is made and extended
 class SpikeBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
+    constructor() {
+        super(...arguments);
+        this.static = true;
+    }
     handleIntersect(sprite, velocity, horizontal) {
         super.handleIntersect(sprite, velocity, horizontal);
         if (this.canKill(sprite) && sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
@@ -3303,8 +3376,9 @@ class RightSpikeBlock extends SpikeBlock {
 class TallGrassBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] {
     constructor(opts) {
         super(opts);
+        this.static = true;
         new __WEBPACK_IMPORTED_MODULE_1__grass__["a" /* GrassBlock */]({
-            position: new __WEBPACK_IMPORTED_MODULE_2__engine_vector__["a" /* Vector */](opts.position),
+            position: new __WEBPACK_IMPORTED_MODULE_2__engine_vector__["a" /* Vector */](this.position),
             texture: this.runtime.getImage("blocks/k"),
         });
         this.floorAlign();
@@ -3594,6 +3668,7 @@ class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* Solid
 class LevelUpCoinSpawnerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
     constructor(opts) {
         super(opts);
+        this.static = true;
         const position = this.getCoinPosition();
         new __WEBPACK_IMPORTED_MODULE_1__coin__["a" /* LevelUpCoinSprite */]({
             position,
@@ -3632,6 +3707,7 @@ class BelowLevelUpCoinSpawnerBlock extends LevelUpCoinSpawnerBlock {
 class OneWayBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["c" /* SolidBlock */] {
     constructor() {
         super(...arguments);
+        this.static = true;
         this.intersectsPlayer = false;
     }
     handleIntersect(sprite, velocity, horizontal) {
@@ -3682,7 +3758,7 @@ class CornerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] 
     constructor(opts) {
         super(opts);
         this.levelIndex = opts.levelIndex || 0;
-        // queue deletion
+        // queue deletion after other stuff runs
         this.destroy();
     }
     /**
@@ -3694,6 +3770,7 @@ class CornerBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["a" /* Block */] 
         const isAir = AIR.indexOf(charAtOffset) > -1;
         if (isAir) {
             const position = new __WEBPACK_IMPORTED_MODULE_3__engine_vector__["a" /* Vector */](this.x + x * (__WEBPACK_IMPORTED_MODULE_1__config__["b" /* BLOCK_WIDTH */] / 2), this.y + y * (__WEBPACK_IMPORTED_MODULE_1__config__["a" /* BLOCK_HEIGHT */] / 2));
+            // these should be static, but that seems to cause problems that i don't want to debug
             const sprite = new __WEBPACK_IMPORTED_MODULE_2__engine_sprites_imagesprite__["a" /* ImageSprite */]({
                 position,
                 texture,
@@ -3749,6 +3826,27 @@ class CastleCornerBlock extends CornerBlock {
 
 /***/ }),
 /* 44 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block__ = __webpack_require__(1);
+
+class BlackBlock extends __WEBPACK_IMPORTED_MODULE_0__block__["b" /* PseudoSolidBlock */] {
+    constructor() {
+        super(...arguments);
+        this.static = true;
+    }
+    render(ctx) {
+        ctx.fillStyle = "black";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = BlackBlock;
+
+
+
+/***/ }),
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3825,41 +3923,38 @@ const JUMP_LIGHTS = [
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__blocks_block__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_player__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_task__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_task__ = __webpack_require__(2);
 /*
  * A light that will allow the player to jump again once while in the air.
  */
 
 
-
 const HIDE_DURATION = 60 * 3;
-class JumpLight extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["c" /* SolidBlock */] {
+class JumpLight extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["a" /* Block */] {
+    constructor(opts) {
+        super(opts);
+        this.addTask(() => this.testIntersects());
+    }
     show() {
         this.visible = true;
     }
     activate(player) {
         player.hasJumpLight = true;
         this.visible = false;
-        this.addTask(new __WEBPACK_IMPORTED_MODULE_2__engine_task__["a" /* Task */]({
+        this.addTask(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
             run: () => this.show(),
             delay: HIDE_DURATION,
         }));
     }
-    handleIntersect(sprite, velocity, horizontal) {
-        // Only do things for players
-        if (sprite instanceof __WEBPACK_IMPORTED_MODULE_1__player_player__["a" /* PlayerSprite */]) {
-            if (this.visible) {
-                this.activate(sprite);
-            }
+    testIntersects() {
+        if (this.visible && this.intersects(this.runtime.player)) {
+            this.activate(this.runtime.player);
         }
-        // Never solid
-        return false;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = JumpLight;
@@ -3867,27 +3962,45 @@ class JumpLight extends __WEBPACK_IMPORTED_MODULE_0__blocks_block__["c" /* Solid
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ZIndexes; });
-// To avoid using magic values and 99999999 to put things on top
-// All z indexes are defined here
+// All z indexes are defined here to avoid magic numbers and using 9999999
+// Reminder: Static stuff renders at -1
 var ZIndexes;
 (function (ZIndexes) {
-    ZIndexes[ZIndexes["Player"] = 10] = "Player";
+    ZIndexes[ZIndexes["Star"] = -10] = "Star";
     ZIndexes[ZIndexes["Block"] = 0] = "Block";
+    ZIndexes[ZIndexes["Grass"] = 1] = "Grass";
+    ZIndexes[ZIndexes["Player"] = 10] = "Player";
 })(ZIndexes || (ZIndexes = {}));
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // todo: actual type definitions
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sprite__ = __webpack_require__(9);
+
+class StaticRendererSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractSprite */] {
+    render(ctx) {
+        ctx.drawImage(this.runtime.staticCanvas, 0, 0);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = StaticRendererSprite;
+
 
 
 /***/ })

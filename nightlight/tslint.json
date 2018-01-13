@@ -30,7 +30,8 @@
     ],
     "no-unused-expression": false,
     "ordered-imports": false,
-    "interface-name": false
+    "interface-name": false,
+    "prefer-for-of": false
   },
   "rulesDirectory": []
 }

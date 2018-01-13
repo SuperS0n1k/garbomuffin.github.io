@@ -19,6 +19,7 @@ export interface ISpriteOptions {
   rotation?: number;
   rotationPoint?: Vector2D;
   opacity?: number;
+  static?: boolean;
 
   // Nightlight:
   persistent?: boolean;
@@ -37,6 +38,7 @@ export abstract class AbstractSprite extends TaskRunner {
   public opacity: number;
   public persistent: boolean;
   public visible: boolean;
+  public static: boolean;
 
   public constructor(options: ISpriteOptions) {
     super();
@@ -56,6 +58,7 @@ export abstract class AbstractSprite extends TaskRunner {
     this.rotation = getOrDefault(options.rotation, 0);
     this.opacity = getOrDefault(options.opacity, 1);
     this.rotationPoint = getOrDefault(options.rotationPoint, new Vector2D(0.5, 0.5));
+    this.static = getOrDefault(options.static, false);
 
     this.runtime.sprites.push(this);
   }
@@ -244,7 +247,21 @@ export abstract class AbstractSprite extends TaskRunner {
       return true;
     }
 
+    // optimization: if we are consistently running into blocks above us then break early
+    // if 5 blocks in a row are definitely above us then we know we are probably done and stop
+    // this is a major performance improvement
+    let above = 0;
+
     for (const block of this.runtime.blocks) {
+      if (block.y + block.width < this.y) {
+        above++;
+        if (above > 5) {
+          break;
+        }
+      } else {
+        above = 0;
+      }
+
       if (intersects(block)) {
         self._lastSolidBlock = block;
         return true;

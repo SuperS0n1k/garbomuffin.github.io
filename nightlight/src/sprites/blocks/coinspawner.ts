@@ -12,6 +12,8 @@ import { BLOCK_HEIGHT } from "../../config";
 import { Vector } from "../../engine/vector";
 
 abstract class LevelUpCoinSpawnerBlock extends SolidBlock {
+  public static: boolean = true;
+
   constructor(opts: IBlockOptions) {
     super(opts);
 

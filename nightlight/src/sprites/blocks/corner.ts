@@ -23,7 +23,7 @@ abstract class CornerBlock extends Block {
 
     this.levelIndex = opts.levelIndex || 0;
 
-    // queue deletion
+    // queue deletion after other stuff runs
     this.destroy();
   }
 
@@ -40,6 +40,7 @@ abstract class CornerBlock extends Block {
         this.x + x * (BLOCK_WIDTH / 2),
         this.y + y * (BLOCK_HEIGHT / 2),
       );
+      // these should be static, but that seems to cause problems that i don't want to debug
       const sprite = new ImageSprite({
         position,
         texture,

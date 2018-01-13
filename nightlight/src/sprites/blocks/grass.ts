@@ -8,6 +8,9 @@ import { Block, IBlockOptions } from "./block";
 import { BLOCK_HEIGHT } from "../../config";
 
 export class GrassBlock extends Block {
+  // there are a few visual bugs that come if you make this static
+  // public static: boolean = true;
+
   constructor(opts: IBlockOptions) {
     super(opts);
 

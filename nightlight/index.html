@@ -13,6 +13,16 @@
       #progress {
         width: 480px;
       }
+
+      /* end goal is to use something like this to not drawImage() any static content at all */
+      /* #container {
+        position: relative;
+      }
+      #container * {
+        position: absolute;
+        top: 0;
+        left: 0;
+      } */
     </style>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,7 +39,7 @@
   </head>
 
   <body>
-    <h1>Nightlight in JS (v0.0.9.3)</h1>
+    <h1>Nightlight in JS (v0.0.9.4)</h1>
 
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a></p>
     <p><a href="https://scratch.mit.edu/projects/167502369/">Also play my remix which contains some of the features I plan to add here.</a></p>
@@ -41,7 +51,10 @@
     <p>This is in development. It's not finished. (notice the version number?)</p>
 
     <progress id="progress" value="0"></progress>
-    <canvas id="canvas"></canvas>
+
+    <!-- the <canvas>(s) are put into this div here -->
+    <!-- they are injected by code, no more need to manually add them anymore -->
+    <div id="container"></div>
 
     <button onclick="runtime.level++;runtime.renderLevel();">Next Level</button>
     <button onclick="runtime.level--;runtime.renderLevel();">Prev Level</button>
@@ -50,6 +63,16 @@
     <button onclick="runtime.addTask(function(){runtime.exit()});">Stop (refresh to restart)</button>
 
     <pre>
+      === CHANGELOG ===
+
+      v0.0.9.4: The Optimization Update
+       * Rendering optimized
+        * Performance gains of nearly 2x in some cases
+        * The <a href="#4">hardest level to render</a> now runs at 60 fps consistently on a chromebook.
+       * Collision optimized
+        * Death pieces can now in some cases have almost no performance impact
+       * Fixed some bugs from the previous version
+
       v0.0.9.3:
        * Added FPS counter (<a href="https://github.com/mrdoob/stats.js/">stats.js</a>)
        * <a href="#12">Noss</a> bullets don't render rotated

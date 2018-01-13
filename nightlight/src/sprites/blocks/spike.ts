@@ -9,6 +9,8 @@ import { AbstractSprite } from "../../engine/sprite";
 // Spikes share pretty much all of their code
 // So an abstract class is made and extended
 abstract class SpikeBlock extends SolidBlock {
+  public static: boolean = true;
+
   protected abstract canKill(sprite: AbstractSprite): boolean;
 
   public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {

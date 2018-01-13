@@ -12,6 +12,8 @@ import { AbstractSprite } from "./sprite";
 import { TaskRunner } from "./task";
 import { TImage, TBackground, TSound } from "./types";
 import { isMobile } from "./utils";
+import { StaticRendererSprite } from "./staticRenderer";
+import { Vector } from "./vector";
 
 // Dimensions of the canvas
 const CANVAS_WIDTH = 480;
@@ -25,6 +27,14 @@ const IMAGE_FORMAT = "png";
 // mp3 has very wide browser support: https://caniuse.com/#feat=mp3
 const SOUND_FORMAT = "mp3";
 
+// Debugging rendering
+const _DEBUG_NON_STATIC_OUTLINE = false;
+const _DEBUG_STATIC_OUTLINE = false;
+
+if (_DEBUG_NON_STATIC_OUTLINE || _DEBUG_STATIC_OUTLINE) {
+  console.warn("Debug features are on!");
+}
+
 export class GameRuntime extends TaskRunner {
   // see resetVariables()
   public readonly images: Map<string, TImage> = new Map();
@@ -33,21 +43,27 @@ export class GameRuntime extends TaskRunner {
   public containers: Container[] = [];
   public mouse: Mouse;
   public keyboard: AbstractKeyboard;
-  public canvas: HTMLCanvasElement;
-  public ctx: CanvasRenderingContext2D;
   public frames: number = 0;
   public started: boolean = false;
-
   public background: TBackground = "white";
   private _assetPromises: Array<Promise<TImage>> = [];
 
-  constructor(canvas: HTMLCanvasElement) {
+  // rendering
+  public canvas: HTMLCanvasElement;
+  public ctx: CanvasRenderingContext2D;
+
+  public staticCanvas: HTMLCanvasElement;
+  public staticCtx: CanvasRenderingContext2D;
+
+  constructor(container: HTMLElement) {
     super();
 
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
-    this.canvas = canvas;
-    this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.canvas = this.createCanvas();
+    this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    container.appendChild(this.canvas);
+
+    this.staticCanvas = this.createCanvas();
+    this.staticCtx = this.staticCanvas.getContext("2d") as CanvasRenderingContext2D;
 
     // mouse driver, support pc and mobile to some degree
     if (!isMobile()) {
@@ -72,7 +88,7 @@ export class GameRuntime extends TaskRunner {
     (window as any).runtime = this;
 
     // run the mouse driver
-    this.addTask(() => this.updateMouse());
+    this.addTask(() => this.mouse.update());
 
     // classess are weird
     this.loop = this.loop.bind(this);
@@ -203,6 +219,11 @@ export class GameRuntime extends TaskRunner {
     this.loop();
 
     this.started = true;
+
+    new StaticRendererSprite({
+      position: new Vector(0, 0, -1),
+      persistent: true,
+    });
   }
 
   // the main loop - calls all tasks in all sprites
@@ -240,16 +261,45 @@ export class GameRuntime extends TaskRunner {
     }
   }
 
+  public updateStatic() {
+    this.resetCanvas(this.staticCtx);
+    this.sortSprites();
+
+    for (const sprite of this.sprites) {
+      if (sprite.static) {
+        sprite.render(this.staticCtx);
+
+        if (_DEBUG_STATIC_OUTLINE) {
+          this.staticCtx.strokeStyle = "orange";
+          this.staticCtx.lineWidth = 2;
+          this.staticCtx.beginPath();
+          this.staticCtx.rect(sprite.x, sprite.y, sprite.width, sprite.height);
+          this.staticCtx.stroke();
+        }
+      }
+    }
+  }
+
   public render() {
     // clear the canvas
     this.resetCanvas(this.ctx, this.background);
 
-    // sort sprites by z TODO: find a better for to do this
+    // sort sprites by z TODO: perhaps only do this when we know something changed?
     this.sortSprites();
 
-    // render all sprites onto our canvas
+    // render all non static sprites onto our canvas
     for (const sprite of this.sprites) {
-      sprite.render(this.ctx);
+      if (!sprite.static) {
+        sprite.render(this.ctx);
+
+        if (_DEBUG_NON_STATIC_OUTLINE) {
+          this.ctx.strokeStyle = "red";
+          this.ctx.lineWidth = 1;
+          this.ctx.beginPath();
+          this.ctx.rect(sprite.x, sprite.y, sprite.width, sprite.height);
+          this.ctx.stroke();
+        }
+      }
     }
   }
 
@@ -272,16 +322,22 @@ export class GameRuntime extends TaskRunner {
     throw new ExitError();
   }
 
-  // clears the canvas and replaces it with a blank white background
-  protected resetCanvas(ctx: CanvasRenderingContext2D, background: TBackground = "white") {
+  // clears the canvas and sets the background or makes it transparent
+  protected resetCanvas(ctx: CanvasRenderingContext2D, background: TBackground = "rgba(0, 0, 0, 0)") {
+    const width = ctx.canvas.width;
+    const height = ctx.canvas.height;
+
     ctx.scale(1, 1);
+    ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = background;
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillRect(0, 0, width, height);
   }
 
-  // small function that calls the mouse driver's update funciton
-  private updateMouse() {
-    this.mouse.update();
+  public createCanvas() {
+    const canvas = document.createElement("canvas");
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+    return canvas;
   }
 
   // called when exiting

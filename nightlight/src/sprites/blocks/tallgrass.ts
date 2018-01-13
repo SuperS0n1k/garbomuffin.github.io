@@ -10,11 +10,12 @@ import { GrassBlock } from "./grass";
 import { Vector } from "../../engine/vector";
 
 export class TallGrassBlock extends Block {
+  public static: boolean = true;
   constructor(opts: IBlockOptions) {
     super(opts);
 
     new GrassBlock({
-      position: new Vector(opts.position),
+      position: new Vector(this.position),
       texture: this.runtime.getImage("blocks/k"),
     });
 

@@ -5,7 +5,7 @@ import { Vector } from "./engine/vector";
 import { blockMap } from "./blockmap";
 import { AbstractSprite } from "./engine/sprite";
 import { TImage, TBackground, TSound } from "./engine/types";
-import { Block, IBlockOptions, SolidBlock } from "./sprites/blocks/block";
+import { Block, IBlockOptions, SolidBlock, StaticSolidBlock } from "./sprites/blocks/block";
 import * as config from "./config";
 import { Container } from "./engine/container";
 import { BackgroundStarSprite } from "./sprites/star";
@@ -34,7 +34,7 @@ export class Nightlight extends GameRuntime {
   private stats: Stats;
 
   constructor() {
-    super(document.getElementById("canvas") as HTMLCanvasElement);
+    super(document.getElementById("container") as HTMLElement);
 
     // stats.js for fps monitoring
     this.stats = new Stats();
@@ -86,13 +86,6 @@ export class Nightlight extends GameRuntime {
     }
   }
 
-  public createCanvas() {
-    const canvas = document.createElement("canvas");
-    canvas.height = this.canvas.height;
-    canvas.width = this.canvas.width;
-    return canvas;
-  }
-
   private createPlayer() {
     this.player = new PlayerSprite({
       texture: this.getImage("player/idle"),
@@ -108,7 +101,7 @@ export class Nightlight extends GameRuntime {
       const x = getRandomInt(0, this.canvas.width);
       const y = getRandomInt(0, this.canvas.height);
       new BackgroundStarSprite({
-        position: new Vector(x, y, -10),
+        position: new Vector(x, y, ZIndexes.Star),
         width: 2,
         height: 2,
         persistent: true,
@@ -182,7 +175,7 @@ export class Nightlight extends GameRuntime {
       return;
     } else if (typeof blockType === "string") {
       texture = this.getImage(blockType);
-      spriteConstructor = SolidBlock;
+      spriteConstructor = StaticSolidBlock;
     } else {
       texture = this.getImage(blockType.texture);
       spriteConstructor = blockType.type;
@@ -255,6 +248,9 @@ export class Nightlight extends GameRuntime {
 
     // spawn things that you can jump on
     this.spawnJumpLights();
+
+    // render static things that were just created
+    this.updateStatic();
 
     this.player.reset();
   }

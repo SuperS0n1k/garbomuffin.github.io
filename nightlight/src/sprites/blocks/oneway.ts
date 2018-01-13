@@ -6,6 +6,7 @@ import { SolidBlock } from "./block";
 import { AbstractSprite } from "../../engine/sprite";
 
 export class OneWayBlock extends SolidBlock {
+  public static: boolean = true;
   private intersectsPlayer: boolean = false;
 
   public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {

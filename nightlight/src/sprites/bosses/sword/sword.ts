@@ -283,7 +283,7 @@ export class SwordBoss extends AbstractBoss {
     }));
 
     this.addPhase(new Task({
-      run: this.beginRestPhase,
+      run: () => this.beginRestPhase(),
     }));
   }
 
@@ -396,7 +396,7 @@ export class SwordBoss extends AbstractBoss {
       }));
 
       this.addPhase(new Task({
-        run: this.startRoutine,
+        run: () => this.startRoutine(),
       }));
     }
   }

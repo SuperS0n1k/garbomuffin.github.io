@@ -114,7 +114,7 @@ game.addImage("boss/noss/bullet");
 game.addImage("boss/noss/dust");
 
 //
-// Post second boss / Castle
+// Castle
 //
 
 game.addImage("brick");

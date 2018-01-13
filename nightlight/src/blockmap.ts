@@ -15,6 +15,7 @@ import { LightSwitchBlock } from "./sprites/blocks/lightswitch";
 import { AboveLevelUpCoinSpawnerBlock, BelowLevelUpCoinSpawnerBlock } from "./sprites/blocks/coinspawner";
 import { OneWayBlock } from "./sprites/blocks/oneway";
 import { RotatedCornerBlock, CastleCornerBlock } from "./sprites/blocks/corner";
+import { BlackBlock } from "./sprites/blocks/black";
 
 interface IBlockMap {
   [s: string]: string | IBlockMetaData;
@@ -36,7 +37,7 @@ function notsolid(texture: string) {
 }
 
 export const blockMap: IBlockMap = {
-  "a": special(PseudoSolidBlock, "blocks/a"),
+  "a": special(BlackBlock, "blocks/a"),
   "b": "blocks/b",
   "c": "blocks/c",
   "d": "blocks/d",
