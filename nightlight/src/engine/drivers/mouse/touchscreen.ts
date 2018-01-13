@@ -36,12 +36,10 @@ export class TouchscreenMouse extends BaseMouse implements IMouse {
     this.right = new EmptyMouseButton();
 
     // stop scrolling, zooming, or other stuff that you can do with your fingers
-    this.handleEvent = this.handleEvent.bind(this);
-
-    runtime.canvas.addEventListener("touchmove", this.handleEvent);
-    runtime.canvas.addEventListener("touchstart", this.handleEvent);
-    runtime.canvas.addEventListener("touchend", this.handleEvent);
-    runtime.canvas.addEventListener("touchcancel", this.handleEvent);
+    runtime.canvas.addEventListener("touchmove", (e) => this.handleEvent(e));
+    runtime.canvas.addEventListener("touchstart", (e) => this.handleEvent(e));
+    runtime.canvas.addEventListener("touchend", (e) => this.handleEvent(e));
+    runtime.canvas.addEventListener("touchcancel", (e) => this.handleEvent(e));
   }
 
   private handleEvent(e: any) {

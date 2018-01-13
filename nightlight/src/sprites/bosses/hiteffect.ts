@@ -21,7 +21,7 @@ export class HitEffectSprite extends ImageSprite {
   constructor(opts: IImageSpriteOptions) {
     super(opts);
 
-    this.addTask(this.run);
+    this.addTask(() => this.run());
 
     this.startingHeight = this.height;
     this.startingWidth = this.width;

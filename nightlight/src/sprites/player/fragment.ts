@@ -49,7 +49,7 @@ export class PlayerFragmentSprite extends ImageSprite {
       this.y = this.runtime.canvas.height - 1;
     }
 
-    this.addTask(this.run);
+    this.addTask(() => this.run());
   }
 
   private run() {

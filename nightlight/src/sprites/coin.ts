@@ -23,9 +23,9 @@ export class LevelUpCoinSprite extends Block {
     this.startingPosition = new Vector(this.position);
 
     this.centerAlign();
-    this.addTask(this.run);
+    this.addTask(() => this.run());
     this.addTask(new Task({
-      run: this.animate,
+      run: () => this.animate(),
       repeatEvery: FRAME_LENGTH,
       delay: FRAME_LENGTH,
     }));

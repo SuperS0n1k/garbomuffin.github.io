@@ -17,6 +17,10 @@ import { LightBlock } from "./sprites/blocks/lightblock";
 
 const SPOTLIGHT_SIZE = 75;
 
+const TOTAL_BACKGROUND_STARS = 100;
+
+import "./stats.js";
+
 export class Nightlight extends GameRuntime {
   public level: number = 0;
   public levelData: string;
@@ -25,19 +29,23 @@ export class Nightlight extends GameRuntime {
   public background: TBackground = "black";
   public backgroundMusic: TSound[] = [];
   public darkLevel: boolean = false;
-
-  // containers
   public blocks: Container<Block> = new Container();
-  public lightBlocks: Container<LightBlock> = new Container();
-  public backgroundStars: Container<BackgroundStarSprite> = new Container();
+
+  private stats: Stats;
 
   constructor() {
     super(document.getElementById("canvas") as HTMLCanvasElement);
 
+    // stats.js for fps monitoring
+    this.stats = new Stats();
+    this.stats.showPanel(0);
+    document.body.appendChild(this.stats.dom);
+
+    // for debugging allow you to change the level by changing the hash
+    // this will be removed in v1
     if (location.hash) {
       this.setLevelToHash();
     }
-
     window.onhashchange = () => this.setLevelToHash();
   }
 
@@ -96,7 +104,7 @@ export class Nightlight extends GameRuntime {
   }
 
   private createStarBackground() {
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < TOTAL_BACKGROUND_STARS; i++) {
       const x = getRandomInt(0, this.canvas.width);
       const y = getRandomInt(0, this.canvas.height);
       new BackgroundStarSprite({
@@ -123,6 +131,8 @@ export class Nightlight extends GameRuntime {
   }
 
   public render() {
+    this.stats.begin();
+
     super.render();
 
     if (this.darkLevel) {
@@ -142,6 +152,8 @@ export class Nightlight extends GameRuntime {
 
       this.ctx.drawImage(coverCanvas, 0, 0);
     }
+
+    this.stats.end();
   }
 
   //
@@ -197,9 +209,6 @@ export class Nightlight extends GameRuntime {
     this.destroyLevel();
 
     const level = this.levels[num];
-    if (!level) {
-      alert("That's the end of the game for now. Thanks for playing.");
-    }
     const levelData = level.levelData;
 
     this.levelData = levelData;

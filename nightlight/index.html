@@ -29,7 +29,7 @@
   </head>
 
   <body>
-    <h1>Nightlight in JS (v0.0.9.2)</h1>
+    <h1>Nightlight in JS (v0.0.9.3)</h1>
 
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a></p>
     <p><a href="https://scratch.mit.edu/projects/167502369/">Also play my remix which contains some of the features I plan to add here.</a></p>
@@ -38,6 +38,8 @@
       Assets are used with permission.
     </p>
 
+    <p>This is in development. It's not finished. (notice the version number?)</p>
+
     <progress id="progress" value="0"></progress>
     <canvas id="canvas"></canvas>
 
@@ -45,13 +47,20 @@
     <button onclick="runtime.level--;runtime.renderLevel();">Prev Level</button>
     <button onclick="runtime.renderLevel();">Reset Level</button>
     <button onclick="runtime.player.kill();">Death</button>
-    <button onclick="runtime.addTask(runtime.exit);">Stop (refresh to restart)</button>
+    <button onclick="runtime.addTask(function(){runtime.exit()});">Stop (refresh to restart)</button>
 
     <pre>
-      Changelog:
+      v0.0.9.3:
+       * Added FPS counter (<a href="https://github.com/mrdoob/stats.js/">stats.js</a>)
+       * <a href="#12">Noss</a> bullets don't render rotated
+       * 100 background stars instead of 50
+       * Light block toggle switches now show up again when you hit another one (<a href="#16">example</a>, ignore incorrect background/music)
+       * You now won't ever float when skipping around levels
+       * Stop button stops audio
+       * Other bug fixes
 
       v0.0.9.2:
-       * <a href="#12">Second boss</a>'s bullets actually glide
+       * <a href="#12">Second boss</a>'s bullets actually glide to the center
        * <a href="#12">Second boss</a> has hit effects
        * Hit effects improved
        * Pressing stop stops audio
@@ -72,10 +81,7 @@
 
     <p><a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/nightlight">Source code</a></p>
 
-    <p>Version plans:</p>
-    <p>v0.1 - most things implemented (not quite there, after an early version of the final boss it would)</p>
-    <p>v0.2 - pretty much everything implemented pretty much exactly like in the original</p>
-
+    <script src="/3rd-party/stats.js"></script>
     <script src="dist/bundle.js"></script>
   </body>
 </html>

@@ -61,7 +61,7 @@ export class BaseMouseButton implements IMouseButton {
   public framesDown: number = 0;
 
   constructor(mouse: BaseMouse) {
-    mouse.addTask(this.update.bind(this));
+    mouse.addTask(() => this.update());
   }
 
   public update() {

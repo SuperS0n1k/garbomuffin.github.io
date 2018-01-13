@@ -5,12 +5,6 @@
 import { IBlockOptions, Block } from "./block";
 
 export abstract class LightBlock extends Block {
-  constructor(opts: IBlockOptions) {
-    super(opts);
-
-    this.runtime.lightBlocks.push(this);
-  }
-
   public toggleSolid() {
     this.solid = !this.solid;
 

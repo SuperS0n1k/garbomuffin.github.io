@@ -36,7 +36,7 @@ export class FallingBlock extends SolidBlock {
   public trigger() {
     this.x -= VIBRATE_RANGE / 2;
     this.addTask(new Task({
-      run: this.vibrate,
+      run: (task) => this.vibrate(task),
       repeatEvery: 3,
     }));
   }
@@ -48,14 +48,16 @@ export class FallingBlock extends SolidBlock {
       const fromBottom = this.runtime.canvas.height - this.y;
       task.stop();
       this.position = this.startingPosition;
+
       const delay = fromBottom * FALL_DELAY_PER_Y;
       this.addTask(new Task({
-        run: this.fall,
+        run: (task2) => this.fall(task2),
         delay,
         repeatEvery: 0,
       }));
+
       this.addTask(new Task({
-        run: this.playSound,
+        run: () => this.playSound(),
         delay,
       }));
     } else if (this.vibrateProgress % 2 === 0) {

@@ -72,7 +72,7 @@ export class GameRuntime extends TaskRunner {
     (window as any).runtime = this;
 
     // run the mouse driver
-    this.addTask(this.updateMouse);
+    this.addTask(() => this.updateMouse());
 
     // classess are weird
     this.loop = this.loop.bind(this);
@@ -153,7 +153,11 @@ export class GameRuntime extends TaskRunner {
 
   // get an asset with a name
   public getImage(src: string): TImage {
-    return this.images.get(src) as TImage;
+    const image = this.images.get(src);
+    if (!image) {
+      console.warn("Couldn't get image", src);
+    }
+    return image as TImage;
   }
 
   // get a sound with a name

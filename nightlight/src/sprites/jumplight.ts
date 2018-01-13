@@ -19,7 +19,7 @@ export class JumpLight extends SolidBlock {
     this.visible = false;
 
     this.addTask(new Task({
-      run: this.show,
+      run: () => this.show(),
       delay: HIDE_DURATION,
     }));
   }

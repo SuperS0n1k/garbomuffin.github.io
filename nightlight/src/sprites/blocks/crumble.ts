@@ -39,7 +39,7 @@ export class CrumblingBlock extends SolidBlock {
       this.crumbling = true;
 
       this.addTask(new Task({
-        run: this.crumble,
+        run: (task) => this.crumble(task),
         repeatEvery: CRUMBLE_FRAME_LENGTH,
       }));
     }
@@ -70,7 +70,7 @@ export class CrumblingBlock extends SolidBlock {
       task.stop();
       this.solid = false;
       this.runtime.playSound("blocks/fall");
-      this.addTask(this.fall);
+      this.addTask((task2) => this.fall(task2));
     }
   }
 
@@ -83,7 +83,7 @@ export class CrumblingBlock extends SolidBlock {
     if (this.y >= this.runtime.canvas.height) {
       task.stop();
       this.addTask(new Task({
-        run: this.respawn,
+        run: () => this.respawn(),
         delay: CRUMBLE_RESPAWN,
       }));
     }

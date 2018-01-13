@@ -23,7 +23,7 @@ export class BlockSwitch extends Block {
     this.spawner = opts.spawner;
     this.startingPosition = new Vector(this.position);
     this.floorAlign();
-    this.addTask(this.run);
+    this.addTask((task) => this.run(task));
   }
 
   private trigger() {

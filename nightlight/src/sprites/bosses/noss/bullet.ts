@@ -46,10 +46,18 @@ export class NossBossBulletSprite extends ImageSprite {
       run: () => this.destroy(),
       delay: MOVE_TIME,
     }));
+
+    this.addTask(() => this.testIntersects());
   }
 
   private glideToCenter() {
     this.moveForward(-this.glideMoveSpeed);
+  }
+
+  private testIntersects() {
+    if (this.intersects(this.runtime.player)) {
+      this.runtime.player.kill();
+    }
   }
 
   private move() {
@@ -59,9 +67,12 @@ export class NossBossBulletSprite extends ImageSprite {
 
     this.x = clamp(this.x, 0, this.runtime.canvas.width);
     this.y = clamp(this.y, 0, this.runtime.canvas.height);
+  }
 
-    if (this.intersects(this.runtime.player)) {
-      this.runtime.player.kill();
-    }
+  public render() {
+    const rotation = this.rotation;
+    this.rotation = 0;
+    super.render.apply(this, arguments);
+    this.rotation = rotation;
   }
 }

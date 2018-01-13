@@ -9,8 +9,6 @@ import { Task } from "../engine/task";
 import { toHex } from "../engine/utils";
 
 // How often to update opacity
-// The original did it every 0.1 seconds and this takes a lot of inspiration from the original
-// (even in cases where changing it is completely possible)
 const UPDATE_EVERY = 6;
 
 // How many times will it update in each cycle
@@ -24,14 +22,10 @@ export class BackgroundStarSprite extends AbstractSprite {
   constructor(opts: ISpriteOptions) {
     super(opts);
 
-    this.animate = this.animate.bind(this);
-
     this.addTask(new Task({
       repeatEvery: UPDATE_EVERY,
-      run: this.animate,
+      run: () => this.animate(),
     }));
-
-    this.runtime.backgroundStars.push(this);
   }
 
   private animate() {

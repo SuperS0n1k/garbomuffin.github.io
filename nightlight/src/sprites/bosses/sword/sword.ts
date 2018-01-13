@@ -73,12 +73,12 @@ export class SwordBoss extends AbstractBoss {
     this.resetCoordinates();
 
     this.addTask(new Task({
-      run: this.beginSpinAttack,
+      run: () => this.beginSpinAttack(),
       delay: 60,
     }));
 
     this.addTask(new Task({
-      run: this.intersectTest,
+      run: () => this.intersectTest(),
       repeatEvery: COLLISION_INTERVAL,
     }));
 
@@ -173,7 +173,7 @@ export class SwordBoss extends AbstractBoss {
     this.hitPlayer = false;
 
     this.addTask(new Task({
-      run: this.spinAttack,
+      run: (task) => this.spinAttack(task),
       repeatEvery: 0,
       delay: 60,
     }));
@@ -320,14 +320,14 @@ export class SwordBoss extends AbstractBoss {
       }
 
       this.addTask(new Task({
-        run: this.startRoutine,
+        run: () => this.startRoutine(),
         delay: 60,
       }));
     } else {
       this.texture = this.runtime.getImage("boss/sword/open");
 
       this.addTask(new Task({
-        run: this.restVulnerable,
+        run: (task) => this.restVulnerable(task),
         repeatEvery: 0,
         repeatMax: 180, // 3 seconds
       }));
@@ -415,7 +415,7 @@ export class SwordBoss extends AbstractBoss {
       task.stop();
 
       this.addTask(new Task({
-        run: this.spawnCoin,
+        run: () => this.spawnCoin(),
         delay: 30,
       }));
     }

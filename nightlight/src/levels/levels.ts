@@ -13,6 +13,7 @@ import { SwordBoss } from "../sprites/bosses/sword/sword";
 import { Vector } from "../engine/vector";
 import { ImageSprite } from "../engine/sprites/imagesprite";
 import { NossBoss, BASE_TEXTURE as nossTexture } from "../sprites/bosses/noss/noss";
+import { BackgroundStarSprite } from "../sprites/star";
 
 export type THandler = (game: Nightlight) => void;
 
@@ -27,9 +28,9 @@ export interface Level {
 function deleteBackgroundStars(game: Nightlight) {
   // the sprites are removed from the list as we iterate over it
   // so a normal for loop would skip half the items
-  const length = game.backgroundStars.length;
-  for (let i = 0; i < length; i++) {
-    game.backgroundStars.sprites[0].destroy();
+  const sprites = game.sprites.sprites.filter((s) => s instanceof BackgroundStarSprite) as BackgroundStarSprite[];
+  for (const star of sprites) {
+    star.destroy();
   }
 }
 

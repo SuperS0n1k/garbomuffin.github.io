@@ -72,6 +72,10 @@ export abstract class AbstractSprite extends TaskRunner {
       this._removeFromContainer(container);
     }
     this.resetTasks(); // stop all future things from running
+
+    // removed from all lists, should be effectively invisible
+    // allows some nightlight optimizations to not ruin things
+    this.visible = false;
   }
 
   private _removeFromContainer(container: Container) {
@@ -227,21 +231,22 @@ export abstract class AbstractSprite extends TaskRunner {
 
   private handleCollision(velocity: number, horizontal: boolean) {
     const intersects = (block: Block) => block.solid &&
-      this.intersects(block) &&
-      block.handleIntersect(this, velocity, horizontal) !== false;
+                                         block.visible &&
+                                         this.intersects(block) &&
+                                         block.handleIntersect(this, velocity, horizontal) !== false;
 
-    const thisAsAny = this as any as {_lastSolidBlock?: Block};
+    const self = this as any as {_lastSolidBlock?: Block};
 
     // optimization: if we are touching the same block as before (as when still)
     // then we try that first instead of looping over everything
     // this reduces the performance impact of running lots of physics, especially things that aren't moving
-    if (thisAsAny._lastSolidBlock && intersects(thisAsAny._lastSolidBlock)) {
+    if (self._lastSolidBlock && intersects(self._lastSolidBlock)) {
       return true;
     }
 
     for (const block of this.runtime.blocks) {
       if (intersects(block)) {
-        thisAsAny._lastSolidBlock = block;
+        self._lastSolidBlock = block;
         return true;
       }
     }

@@ -65,8 +65,8 @@ export class PlayerSprite extends ImageSprite {
   constructor(opts: IImageSpriteOptions) {
     super(opts);
 
-    this.addTask(this.run);
-    this.addTask(this.updateGraphic);
+    this.addTask(() => this.run());
+    this.addTask(() => this.updateGraphic());
   }
 
   private handleInputs(onGround: boolean) {
