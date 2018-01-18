@@ -93,6 +93,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__polyfill___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__polyfill__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__email__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__email___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__email__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sw__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sw___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__sw__);
+
 
 
 
@@ -817,6 +820,27 @@ if (els) {
 }
 
 
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// Based on the code on:
+// https://developers.google.com/web/fundamentals/primers/service-workers/
+// https://developers.google.com/web/fundamentals/codelabs/offline/
+if ("serviceWorker" in navigator && location.href.indexOf("nosw") === -1) {
+    window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js").then(function () {
+            console.log("Registered Service Worker");
+        });
+    });
+}
+else {
+    console.log("Service Worker loading disabled (nosw)");
+}
 
 
 /***/ })

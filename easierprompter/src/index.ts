@@ -4,6 +4,7 @@ import { PrompterConfigManager } from "./config/prompterconfig";
 
 import "./polyfill";
 import "./email";
+import "./sw";
 
 const config = new PrompterConfigManager();
 config.load();

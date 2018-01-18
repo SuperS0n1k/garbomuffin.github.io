@@ -3,11 +3,13 @@
   <head>
     <title>Easier Prompter</title>
     <link rel="stylesheet" href="/core.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
 
     <!-- fullscreen warnings -->
     <!-- <noscript> or IE <= 8 -->
     <style>
       .fullscreen-warning {
+        /* cover everthing */
         position: absolute;
         bottom: 0;
         left: 0;
@@ -16,9 +18,13 @@
         color: white;
         background-color: black;
         z-index: 10;
+
+        /* centering */
         display: flex;
         align-items: center;
         justify-content: center;
+        text-align: center; /* for browsers that don't support display: flex */
+
         font-size: 2em;
       }
     </style>
@@ -72,6 +78,7 @@
         text-align: left;
 
         /* wtf? */
+        /* don't worry, it works (i don't know either) */
         width: calc(100vw - 1em);
       }
 
@@ -172,7 +179,12 @@
     <noscript>
       <div class="fullscreen-warning">
         <div>
-          <h1>ENABLE JAVASCRIPT</h1>
+          <h1>JavaScript Not Enabled</h1>
+          <hr>
+          <h2>Sorry, but Easier Prompter requires JavaScript to function.</h2>
+          <h2>Please enable JavaScript to use this site.</h2>
+          <hr>
+          <small>No ads. No crypto miners. Use an adblock to stop Google Analytics. (I recommend uBlock Origin)</small>
         </div>
       </div>
     </noscript>
@@ -181,17 +193,25 @@
     <!--[if lte IE 8]>
       <div class="fullscreen-warning">
         <div>
-          <h1>UPDATE YOUR BROWSER TO USE THIS SITE</h1>
+          <h1>Browser Not Supported</h1>
+          <hr>
+          <h2>Sorry, but Easier Prompter only supports versions of Internet Explorer 9 and later.</h2>
+          <h2>Please update your browser to use this site.</h2>
         </div>
       </div>
     <![endif]-->
 
     <div id="main">
-      <h1>Easier Prompter (v0.9.9)</h1>
+      <h1>Easier Prompter (v0.9.9.9)</h1>
 
       <hr>
 
       <p>Easier Prompter: The easiest and most featureful teleprompter. Enter your script and press start. It just works.</p>
+
+      <p>
+        New update: Experimenting with service workers. The website should now be able to load offline after you load in once in modern browsers. (Chrome/Firefox)
+        After I know this doesn't break everything v1.0 will be done.
+      </p>
 
       <div id="editor">
         <table>
@@ -236,7 +256,8 @@
             <li>All client side. I never see your scripts.</li>
             <li>No ads.</li>
             <li>Free.</li>
-            <li>Works in IE 9 and later.</li>
+            <li>Works in versions of Internet Explorer 9 and later.</li>
+            <li>Work offlines in supported browsers as long as you loaded the page once. (<a href="https://caniuse.com/#feat=serviceworkers">these browsers</a>)</li>
           </ul>
         </div>
 
