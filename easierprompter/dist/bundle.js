@@ -68,15 +68,40 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getElement;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getElement;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getCurrentTime;
+/* harmony export (immutable) */ __webpack_exports__["d"] = setDisplay;
+/* harmony export (immutable) */ __webpack_exports__["a"] = emptyElement;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(4);
 
+// Returns an element with an ID or throws ElementIDNotFoundError if it doesn't exist
 function getElement(id) {
     var el = document.getElementById(id);
     if (el === null) {
         throw new __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__["a" /* ElementIDNotFoundError */](id);
     }
     return el;
+}
+// Gets the current time in milliseconds
+function getCurrentTime() {
+    // If performance is supported use that, it's the most accurate
+    if (performance && performance.now) {
+        return performance.now();
+    }
+    else {
+        // Fallback to using date, supported in most browsers but just less accurate
+        return Date.now();
+    }
+}
+// Changes an element's visibility
+function setDisplay(el, show) {
+    el.style.display = show ? "block" : "none";
+}
+// Removes all children of an element
+function emptyElement(el) {
+    while (el.firstChild) {
+        el.removeChild(el.firstChild);
+    }
 }
 
 
@@ -104,9 +129,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 var config = new __WEBPACK_IMPORTED_MODULE_2__config_prompterconfig__["a" /* PrompterConfigManager */]();
 config.load();
 config.save();
-Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("save-button").onclick = function () { return config.save(); };
-Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("reset-button").onclick = function () { return config.promptReset(); };
+Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("save-button").onclick = function () { return config.save(); };
+Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("reset-button").onclick = function () { return config.promptReset(); };
 var prompter = new __WEBPACK_IMPORTED_MODULE_0__prompter_prompter__["a" /* Prompter */](config);
+window.onbeforeunload = function (e) {
+    if (prompter.config.options.unsavedChangesWarning.get() && prompter.config.hasChanged()) {
+        var text = "You have unsaved changes to your config! If you leave these changes will be reset!";
+        e.returnValue = text;
+        return text;
+    }
+};
 
 
 /***/ }),
@@ -136,23 +168,29 @@ var Prompter = /** @class */ (function (_super) {
     __extends(Prompter, _super);
     function Prompter(config) {
         var _this = _super.call(this, config) || this;
-        _this.prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
+        _this.prompterText = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("prompter-lines-text");
+        _this.prompterEndText = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("prompter-lines-end-text");
         _this.addListeners();
         _this.addKeyboardHandlers();
         return _this;
     }
     ///
-    /// Methods
+    /// Init Methods
     ///
     // Makes buttons work
     Prompter.prototype.addListeners = function () {
         var _this = this;
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("start-button").addEventListener("click", function (e) { return _this.show(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").addEventListener("click", function (e) { return _this.toggleScrolling(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").addEventListener("click", function (e) { return _this.reverseDirection(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-exit").addEventListener("click", function (e) { return _this.hide(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-up").addEventListener("click", function (e) { return _this.speedUp(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-speed-down").addEventListener("click", function (e) { return _this.speedDown(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("start-button").addEventListener("click", function (e) { return _this.show(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("options-toggle-run").addEventListener("click", function (e) { return _this.toggleScrolling(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("options-toggle-direction").addEventListener("click", function (e) { return _this.reverseDirection(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("options-exit").addEventListener("click", function (e) { return _this.hide(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("options-speed-up").addEventListener("click", function (e) { return _this.speedUp(); });
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("options-speed-down").addEventListener("click", function (e) { return _this.speedDown(); });
+        window.addEventListener("resize", function (e) {
+            if (_this.showing) {
+                _this.maxScrollDistance = _this.getTextLength();
+            }
+        });
     };
     // Keyboard support
     Prompter.prototype.addKeyboardHandlers = function () {
@@ -189,76 +227,78 @@ var Prompter = /** @class */ (function (_super) {
     Prompter.prototype.reverseDirection = function () {
         _super.prototype.reverseDirection.call(this);
         if (this.direction === __WEBPACK_IMPORTED_MODULE_0__abstract__["b" /* Direction */].Up) {
-            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").textContent = "Moving Down";
+            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("options-toggle-direction").textContent = "Moving Down";
         }
         else {
-            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-direction").textContent = "Moving Up";
+            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("options-toggle-direction").textContent = "Moving Up";
         }
     };
     // Start and update start/stop button text
     Prompter.prototype.start = function () {
         _super.prototype.start.call(this);
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Stop";
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("options-toggle-run").textContent = "Stop";
     };
     // Stop and update start/stop button text
     Prompter.prototype.stop = function () {
         _super.prototype.stop.call(this);
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("options-toggle-run").textContent = "Start";
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("options-toggle-run").textContent = "Start";
     };
     // Shows the script
     Prompter.prototype.show = function () {
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setDisplay */])(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("main"), false);
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setDisplay */])(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("prompter"), true);
         _super.prototype.show.call(this);
-        this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("main"), false);
-        this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter"), true);
     };
     // Hides the script
     Prompter.prototype.hide = function () {
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setDisplay */])(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("main"), true);
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setDisplay */])(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("prompter"), false);
         _super.prototype.hide.call(this);
-        this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("main"), true);
-        this.setDisplay(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter"), false);
     };
     ///
     /// Implementations of abstract methods
     ///
     // Applies the margin style to scroll the script
     Prompter.prototype.render = function (distance) {
-        var lines = this.prompterLines;
+        // This is the main bottle neck of the program
+        // A better way to do this would be great
+        // Considering:
+        // Canvas
+        // Scrolling
+        var lines = this.prompterText;
         lines.style.marginTop = "-" + distance + "px";
     };
-    // computes how long the script is and stores it
-    // makes sure we don't scroll way too far
-    Prompter.prototype.getTextLength = function () {
-        var styles = window.getComputedStyle(this.prompterLines);
-        var height = styles.height.replace("px", "");
-        return Number(height);
-    };
-    // Insertst the script into the DOM
+    // Inserts the script into the DOM
     Prompter.prototype.loadScript = function (script) {
         this.resetScript();
-        var prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("prompter-lines");
-        for (var _i = 0, _a = script.split("\n"); _i < _a.length; _i++) {
-            var line = _a[_i];
-            var listItem = document.createElement("p");
-            listItem.textContent = line;
-            prompterLines.appendChild(listItem);
+        var scriptLines = script.split("\n");
+        for (var _i = 0, scriptLines_1 = scriptLines; _i < scriptLines_1.length; _i++) {
+            var line = scriptLines_1[_i];
+            this.addLine(line);
         }
+        this.maxScrollDistance = this.getTextLength();
+        this.addLine(this.config.options.endText.get(), Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("prompter-lines-end-text"));
     };
     // Returns the current script
     Prompter.prototype.getScript = function () {
-        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* getElement */])("text-input").value;
+        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getElement */])("text-input").value;
     };
     ///
-    /// Utils or helper methods
+    /// Helper Methods
     ///
-    // Changes an element's visibility
-    Prompter.prototype.setDisplay = function (el, show) {
-        el.style.display = show ? "block" : "none";
+    Prompter.prototype.getTextLength = function () {
+        return this.prompterText.scrollHeight;
+    };
+    Prompter.prototype.addLine = function (text, container) {
+        if (container === void 0) { container = this.prompterText; }
+        var item = document.createElement("p");
+        item.textContent = text;
+        container.appendChild(item);
     };
     // Removes all existing lines from the script element
     Prompter.prototype.resetScript = function () {
-        while (this.prompterLines.firstChild) {
-            this.prompterLines.removeChild(this.prompterLines.firstChild);
-        }
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* emptyElement */])(this.prompterText);
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* emptyElement */])(this.prompterEndText);
     };
     // Speed Up
     Prompter.prototype.speedUp = function () {
@@ -284,6 +324,9 @@ var Prompter = /** @class */ (function (_super) {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Direction; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AbstractPrompter; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(0);
+
+var ONE_FRAME = 1000 / 60; // length of one frame at 60 fps
 var Direction;
 (function (Direction) {
     Direction[Direction["Up"] = 1] = "Up";
@@ -292,7 +335,7 @@ var Direction;
 var AbstractPrompter = /** @class */ (function () {
     function AbstractPrompter(config) {
         this._scrollDistance = 0;
-        this.textLength = Infinity;
+        this.maxScrollDistance = Infinity;
         this.direction = Direction.Up;
         this.showing = false;
         this.scrolling = false;
@@ -317,7 +360,6 @@ var AbstractPrompter = /** @class */ (function () {
         this.showing = true;
         this.scrollDistance = 0;
         this.loadScript(this.getScript());
-        this.textLength = this.getTextLength();
     };
     // hide & stop the prompter
     // call super.hide() in implementations
@@ -343,14 +385,18 @@ var AbstractPrompter = /** @class */ (function () {
         if (!this.showing) {
             return;
         }
+        var currentTime = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getCurrentTime */])();
+        var timeSinceLastFrame = currentTime - this.lastFrame;
         if (this.scrolling) {
-            this.scroll();
+            this.scroll(timeSinceLastFrame / ONE_FRAME);
         }
-        this.render(this.scrollDistance);
+        this.render(Math.floor(this.scrollDistance));
+        this.lastFrame = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getCurrentTime */])();
     };
     // Move the current scroll distance according to the speed
-    AbstractPrompter.prototype.scroll = function () {
-        this.scrollDistance += this.config.speed * this.direction;
+    // Also use the "time since last frame" to move slower or faster during periods of lag
+    AbstractPrompter.prototype.scroll = function (frames) {
+        this.scrollDistance += (this.config.speed * this.direction) * frames;
     };
     AbstractPrompter.prototype.toggleScrolling = function () {
         if (this.scrolling) {
@@ -361,19 +407,22 @@ var AbstractPrompter = /** @class */ (function () {
         }
     };
     Object.defineProperty(AbstractPrompter.prototype, "scrollDistance", {
+        ///
+        /// Accessors
+        ///
         get: function () {
             return this._scrollDistance;
         },
-        set: function (distance) {
-            // Make sure we can't scroll before the script
-            if (distance < 0) {
-                distance = 0;
+        set: function (scrollDistance) {
+            // Make sure we don't scroll above the script
+            if (scrollDistance < 0) {
+                scrollDistance = 0;
             }
             // Make sure we can't scroll too far past the script
-            if (distance > this.textLength) {
-                distance = this.textLength;
+            if (scrollDistance > this.maxScrollDistance) {
+                scrollDistance = this.maxScrollDistance;
             }
-            this._scrollDistance = distance;
+            this._scrollDistance = scrollDistance;
         },
         enumerable: true,
         configurable: true
@@ -510,10 +559,10 @@ var PrompterConfigManager = /** @class */ (function (_super) {
     __extends(PrompterConfigManager, _super);
     function PrompterConfigManager() {
         var _this = _super.call(this) || this;
-        var prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("prompter-lines-container");
+        var prompterElement = Object(__WEBPACK_IMPORTED_MODULE_2__utils__["c" /* getElement */])("prompter-lines-container");
         _this.options.speed = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
             default: 1.5,
-            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-current-speed"),
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["c" /* getElement */])("options-current-speed"),
             type: "number",
             setterOpts: {
                 transform: function (value) {
@@ -526,7 +575,7 @@ var PrompterConfigManager = /** @class */ (function (_super) {
         });
         _this.options.fontSize = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
             default: 75,
-            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-size"),
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["c" /* getElement */])("options-font-size"),
             type: "number",
             setterOpts: {
                 onchange: true,
@@ -537,7 +586,7 @@ var PrompterConfigManager = /** @class */ (function (_super) {
         });
         _this.options.fontFamily = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
             default: "sans-serif",
-            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-font-family"),
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["c" /* getElement */])("options-font-family"),
             type: "text",
             setterOpts: {
                 onchange: true,
@@ -548,7 +597,7 @@ var PrompterConfigManager = /** @class */ (function (_super) {
         });
         _this.options.boldText = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
             default: true,
-            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("options-bold-text"),
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["c" /* getElement */])("options-bold-text"),
             type: "checkbox",
             setterOpts: {
                 onchange: true,
@@ -557,9 +606,19 @@ var PrompterConfigManager = /** @class */ (function (_super) {
                 },
             },
         });
+        _this.options.unsavedChangesWarning = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
+            default: false,
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["c" /* getElement */])("options-unsaved-changes-warning"),
+            type: "checkbox",
+        });
+        _this.options.endText = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
+            default: "[END]",
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["c" /* getElement */])("options-end-text"),
+            type: "text",
+        });
         _this.options.text = new __WEBPACK_IMPORTED_MODULE_1__option__["a" /* ConfigOption */]({
             default: "Enter your script here!",
-            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* getElement */])("text-input"),
+            el: Object(__WEBPACK_IMPORTED_MODULE_2__utils__["c" /* getElement */])("text-input"),
             type: "text",
         });
         return _this;
@@ -595,19 +654,30 @@ var ConfigManager = /** @class */ (function () {
         configurable: true
     });
     ConfigManager.prototype.save = function () {
-        this.configSaver.save();
+        var saveData = this.configSaver.save();
     };
     ConfigManager.prototype.load = function () {
         this.configSaver.load();
     };
     ConfigManager.prototype.promptReset = function () {
         var message = [
-            "Are yousure you want to reset the settings?",
-            "This will reset your script, the config, and reload the page",
+            "Are you sure you want to reset the settings?",
+            "This will reset your script, the config, and reload the page.",
         ];
         if (confirm(message.join("\n\n"))) {
             this.configSaver.reset();
         }
+    };
+    ConfigManager.prototype.hasChanged = function () {
+        var newData = this.configSaver.generateSaveData();
+        var oldData = this.configSaver.lastSaveData;
+        for (var _i = 0, _a = Object.keys(newData); _i < _a.length; _i++) {
+            var key = _a[_i];
+            if (newData[key] !== oldData[key]) {
+                return true;
+            }
+        }
+        return false;
     };
     return ConfigManager;
 }());
@@ -653,6 +723,7 @@ var ConfigSaver = /** @class */ (function () {
     ConfigSaver.prototype.save = function () {
         var data = this.generateSaveData();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        this.lastSaveData = data;
     };
     ConfigSaver.prototype.load = function () {
         var options = this.getOptions();
@@ -661,7 +732,7 @@ var ConfigSaver = /** @class */ (function () {
             var value = options[key];
             var configOption = this.config.options[key];
             if (typeof configOption === "undefined") {
-                console.warn("unknown item in save:", key, value);
+                console.warn("Unknown item in save:", key, value);
                 continue;
             }
             this.config.options[key].set(value);
@@ -785,41 +856,63 @@ function generateFunctionStack(functions) {
 // Older browsers do not have requestAnimationFrame
 // so use a simple polyfill just to setTimeout to run the code in ~1 frame
 // Adds support for: IE 9
-if (!window.requestAnimationFrame) {
-  window.requestAnimationFrame = function(func) {
-    setTimeout(func, 1000 / 60);
-  };
-}
+
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+
+// MIT license
+
+(function() {
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+                                 || window[vendors[x]+'CancelRequestAnimationFrame'];
+  }
+
+  if (!window.requestAnimationFrame)
+      window.requestAnimationFrame = function(callback, element) {
+          var currTime = new Date().getTime();
+          var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+          var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+            timeToCall);
+          lastTime = currTime + timeToCall;
+          return id;
+      };
+
+  if (!window.cancelAnimationFrame)
+      window.cancelAnimationFrame = function(id) {
+          clearTimeout(id);
+      };
+}());
 
 
 /***/ }),
 /* 12 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 // To avoid spambots, emails are not directly in the HTML
 // They are injected with javascript and some VERY simple "encryption"
-
 // Shifted one letter to the left and stored in an array.
 // No spambots are getting this unless they literally execute the page.
-
 var emailEncoded = [
-  "o", "m", "m", "y", "w", "e", "b", "e", "r", "3", "3", "@", "g", "m", "a", "i", "l", ".", "c", "o", "m", "t",
+    "o", "m", "m", "y", "w", "e", "b", "e", "r", "3", "3", "@", "g", "m", "a", "i", "l", ".", "c", "o", "m", "t",
 ].join("");
 var email = emailEncoded[emailEncoded.length - 1];
 for (var i = 0; i < emailEncoded.length - 1; i++) {
-  email += emailEncoded[i];
+    email += emailEncoded[i];
 }
-
 var els = document.getElementsByClassName("email");
-if (els) {
-  for (var i = 0; i < els.length; i++) {
+for (var i = 0; i < els.length; i++) {
     var el = els[i];
     el.textContent = email;
     el.href = "mailto:" + email;
-  }
 }
-
-
 
 
 /***/ }),
@@ -831,15 +924,12 @@ if (els) {
 // Based on the code on:
 // https://developers.google.com/web/fundamentals/primers/service-workers/
 // https://developers.google.com/web/fundamentals/codelabs/offline/
-if ("serviceWorker" in navigator && location.href.indexOf("nosw") === -1) {
+if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
         navigator.serviceWorker.register("sw.js").then(function () {
             console.log("Registered Service Worker");
         });
     });
-}
-else {
-    console.log("Service Worker loading disabled (nosw)");
 }
 
 

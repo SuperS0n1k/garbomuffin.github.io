@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "removeComments": false,
     "strict": true,
-
-    "module": "es6"
+    "module": "es6",
   }
 }

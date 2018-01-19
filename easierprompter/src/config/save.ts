@@ -7,8 +7,13 @@ const STORE_VERSION = "0";
 // hopefully this is specific enough lol
 const STORAGE_KEY = `easierPrompter${STORE_VERSION}_configStore`;
 
+interface ISaveDataOutput {
+  [s: string]: any;
+}
+
 export class ConfigSaver {
   private config: ConfigManager;
+  public lastSaveData: ISaveDataOutput;
 
   constructor(config: ConfigManager) {
     this.config = config;
@@ -23,8 +28,8 @@ export class ConfigSaver {
     }
   }
 
-  private generateSaveData() {
-    const res: {[s: string]: ConfigOption} = {};
+  public generateSaveData(): ISaveDataOutput {
+    const res: ISaveDataOutput = {};
 
     for (const key of Object.keys(this.config.options)) {
       const value = this.config.options[key];
@@ -42,6 +47,7 @@ export class ConfigSaver {
   public save() {
     const data = this.generateSaveData();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    this.lastSaveData = data;
   }
 
   public load() {
@@ -50,7 +56,7 @@ export class ConfigSaver {
       const value = options[key];
       const configOption = this.config.options[key];
       if (typeof configOption === "undefined") {
-        console.warn("unknown item in save:", key, value);
+        console.warn("Unknown item in save:", key, value);
         continue;
       }
       this.config.options[key].set(value);

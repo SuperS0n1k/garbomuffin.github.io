@@ -1,8 +1,11 @@
 User-agent: *
-Disallow: /userscripts
-Disallow: /plugins
-Disallow: /site-old
-Disallow: /scratch
-Disallow: /school-projects
-Disallow: /mc
+Allow: /$
+Allow: /easierprompter/$
 Disallow: /games
+Disallow: /mc
+Disallow: /nightlight
+Disallow: /school-projects
+Disallow: /scratch
+Disallow: /site-old
+Disallow: /userscripts
+Disallow: /ytembed

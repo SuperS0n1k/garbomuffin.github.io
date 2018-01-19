@@ -21,7 +21,7 @@ export class ConfigManager {
   }
 
   public save() {
-    this.configSaver.save();
+    const saveData = this.configSaver.save();
   }
 
   public load() {
@@ -30,11 +30,22 @@ export class ConfigManager {
 
   public promptReset() {
     const message = [
-      "Are yousure you want to reset the settings?",
-      "This will reset your script, the config, and reload the page",
+      "Are you sure you want to reset the settings?",
+      "This will reset your script, the config, and reload the page.",
     ];
     if (confirm(message.join("\n\n"))) {
       this.configSaver.reset();
     }
+  }
+
+  public hasChanged() {
+    const newData = this.configSaver.generateSaveData();
+    const oldData = this.configSaver.lastSaveData;
+    for (const key of Object.keys(newData)) {
+      if (newData[key] !== oldData[key]) {
+        return true;
+      }
+    }
+    return false;
   }
 }

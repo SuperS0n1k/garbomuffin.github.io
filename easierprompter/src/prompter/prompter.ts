@@ -1,12 +1,13 @@
 import { AbstractPrompter, Direction } from "./abstract";
-import { getElement } from "../utils";
+import { getElement, setDisplay, emptyElement } from "../utils";
 import { ConfigManager } from "../config/config";
 import { Keyboard } from "../keyboard/keyboard";
 
 const SPEED_INCREMENT = 0.25;
 
 export class Prompter extends AbstractPrompter {
-  private prompterLines = getElement("prompter-lines") as HTMLUListElement;
+  private prompterText = getElement("prompter-lines-text") as HTMLUListElement;
+  private prompterEndText = getElement("prompter-lines-end-text") as HTMLUListElement;
 
   constructor(config: ConfigManager) {
     super(config);
@@ -16,7 +17,7 @@ export class Prompter extends AbstractPrompter {
   }
 
   ///
-  /// Methods
+  /// Init Methods
   ///
 
   // Makes buttons work
@@ -27,6 +28,12 @@ export class Prompter extends AbstractPrompter {
     getElement("options-exit").addEventListener("click", (e) => this.hide());
     getElement("options-speed-up").addEventListener("click", (e) => this.speedUp());
     getElement("options-speed-down").addEventListener("click", (e) => this.speedDown());
+
+    window.addEventListener("resize", (e) => {
+      if (this.showing) {
+        this.maxScrollDistance = this.getTextLength();
+      }
+    });
   }
 
   // Keyboard support
@@ -91,18 +98,16 @@ export class Prompter extends AbstractPrompter {
 
   // Shows the script
   public show() {
+    setDisplay(getElement("main"), false);
+    setDisplay(getElement("prompter"), true);
     super.show();
-
-    this.setDisplay(getElement("main"), false);
-    this.setDisplay(getElement("prompter"), true);
   }
 
   // Hides the script
   public hide() {
+    setDisplay(getElement("main"), true);
+    setDisplay(getElement("prompter"), false);
     super.hide();
-
-    this.setDisplay(getElement("main"), true);
-    this.setDisplay(getElement("prompter"), false);
   }
 
   ///
@@ -111,29 +116,27 @@ export class Prompter extends AbstractPrompter {
 
   // Applies the margin style to scroll the script
   protected render(distance: number) {
-    const lines = this.prompterLines as HTMLUListElement;
+    // This is the main bottle neck of the program
+    // A better way to do this would be great
+    // Considering:
+    // Canvas
+    // Scrolling
+    const lines = this.prompterText;
     lines.style.marginTop = `-${distance}px`;
   }
 
-  // computes how long the script is and stores it
-  // makes sure we don't scroll way too far
-  protected getTextLength() {
-    const styles = window.getComputedStyle(this.prompterLines);
-    const height = (styles.height as string).replace("px", "");
-    return Number(height);
-  }
-
-  // Insertst the script into the DOM
+  // Inserts the script into the DOM
   protected loadScript(script: string) {
     this.resetScript();
 
-    const prompterLines = getElement("prompter-lines");
-
-    for (const line of script.split("\n")) {
-      const listItem = document.createElement("p");
-      listItem.textContent = line;
-      prompterLines.appendChild(listItem);
+    const scriptLines = script.split("\n");
+    for (const line of scriptLines) {
+      this.addLine(line);
     }
+
+    this.maxScrollDistance = this.getTextLength();
+
+    this.addLine(this.config.options.endText.get(), getElement("prompter-lines-end-text"));
   }
 
   // Returns the current script
@@ -142,19 +145,23 @@ export class Prompter extends AbstractPrompter {
   }
 
   ///
-  /// Utils or helper methods
+  /// Helper Methods
   ///
 
-  // Changes an element's visibility
-  private setDisplay(el: HTMLElement, show: boolean) {
-    el.style.display = show ? "block" : "none";
+  private getTextLength() {
+    return this.prompterText.scrollHeight;
+  }
+
+  private addLine(text: string, container: HTMLElement = this.prompterText) {
+    const item = document.createElement("p");
+    item.textContent = text;
+    container.appendChild(item);
   }
 
   // Removes all existing lines from the script element
   private resetScript() {
-    while (this.prompterLines.firstChild) {
-      this.prompterLines.removeChild(this.prompterLines.firstChild);
-    }
+    emptyElement(this.prompterText);
+    emptyElement(this.prompterEndText);
   }
 
   // Speed Up

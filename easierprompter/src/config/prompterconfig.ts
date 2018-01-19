@@ -58,6 +58,18 @@ export class PrompterConfigManager extends ConfigManager {
       },
     });
 
+    this.options.unsavedChangesWarning = new ConfigOption<boolean>({
+      default: false,
+      el: getElement("options-unsaved-changes-warning"),
+      type: "checkbox",
+    });
+
+    this.options.endText = new ConfigOption<string>({
+      default: "[END]",
+      el: getElement("options-end-text"),
+      type: "text",
+    });
+
     this.options.text = new ConfigOption<string>({
       default: "Enter your script here!",
       el: getElement("text-input"),

@@ -3,7 +3,8 @@
   <head>
     <title>Easier Prompter</title>
     <link rel="stylesheet" href="/core.css">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Easier Prompter is the easiest and most featureful teleprompter. Enter your script and press start. It just works.">
 
     <!-- fullscreen warnings -->
     <!-- <noscript> or IE <= 8 -->
@@ -93,7 +94,10 @@
 
         /* break long words */
         overflow-wrap: break-word;
+        word-wrap: break-word;
       }
+
+      /* Options */
 
       #options-exit {
         /* move the exit button to the right TODO: find better place for it */
@@ -202,16 +206,13 @@
     <![endif]-->
 
     <div id="main">
-      <h1>Easier Prompter (v0.9.9.9)</h1>
+      <h1>Easier Prompter (v0.9.9.9.9)</h1>
 
       <hr>
 
-      <p>Easier Prompter: The easiest and most featureful teleprompter. Enter your script and press start. It just works.</p>
+      <p>Easier Prompter: The easiest and simplest teleprompter. Enter your script and press start. It just works.</p>
 
-      <p>
-        New update: Experimenting with service workers. The website should now be able to load offline after you load in once in modern browsers. (Chrome/Firefox)
-        After I know this doesn't break everything v1.0 will be done.
-      </p>
+      <p>Another new update! <a href="changelog.txt">View the changelog</a> (1/18/2018)</p>
 
       <div id="editor">
         <table>
@@ -227,6 +228,8 @@
               <div><label>Font size: <input type="number" id="options-font-size"></label></div>
               <div><label>Font family: <input type="text" id="options-font-family"></label></div>
               <div><label>Bold text: <input type="checkbox" id="options-bold-text"></label></div>
+              <div><label>End text: <input type="text" id="options-end-text"></label></div>
+              <div><label>Unsaved changes warning: <input type="checkbox" id="options-unsaved-changes-warning"></label></div>
 
               <button id="save-button">Save</button>
               <button id="reset-button">Reset</button>
@@ -257,12 +260,12 @@
             <li>No ads.</li>
             <li>Free.</li>
             <li>Works in versions of Internet Explorer 9 and later.</li>
-            <li>Work offlines in supported browsers as long as you loaded the page once. (<a href="https://caniuse.com/#feat=serviceworkers">these browsers</a>)</li>
+            <li>Work offline in supported browsers as long as you loaded the page once. (<a href="https://caniuse.com/#feat=serviceworkers">browsers that are green on here</a>)</li>
           </ul>
         </div>
 
         <div>
-          <h3>Are there keyboard shortcuts?</h3>
+          <h3>Keyboard shortcuts</h3>
           <p>Yes. In the prompter the following shortcuts exist:</p>
           <ul>
             <li><kbd>Space</kbd> - start/stop</li>
@@ -273,13 +276,13 @@
         </div>
 
         <div>
-          <h3>Bugs?</h3>
+          <h3>Bugs or Feature Requests</h3>
           <p>Make a <a href="https://github.com/GarboMuffin/garbomuffin.github.io/issues/new">GitHub issue</a>
           <b>OR</b> send me an email: <a class="email">[email hidden, enable javascript]</a></p>
         </div>
 
         <div>
-          <h3>Source code?</h3>
+          <h3>Source code</h3>
           <p><a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/easierprompter">On GitHub!</a></p>
         </div>
       </div>
@@ -294,7 +297,10 @@
           </th>
 
           <th>
-            <div id="prompter-lines"></div>
+            <div id="prompter-lines">
+              <div id="prompter-lines-text"></div>
+              <div id="prompter-lines-end-text"></div>
+            </div>
           </th>
         </tr>
       </table>

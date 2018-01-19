@@ -3,6 +3,7 @@
 // https://developers.google.com/web/fundamentals/codelabs/offline/
 
 // A very basic service worker to allow loading of the page offline
+// It doesn't try to do any fancy caching, etc.
 
 importScripts("serviceworker-cache-polyfill.js");
 
@@ -41,10 +42,12 @@ self.addEventListener("fetch", function(event) {
     .then(function(response) {
       var clone = response.clone();
       log("Got file from network: " + url);
-      caches.open(CACHE_NAME).then(function(cache) {
-        log("Caching: " + url);
-        cache.put(event.request, clone);
-      });
+      if (response.status === 200) {
+        caches.open(CACHE_NAME).then(function(cache) {
+          log("Caching: " + url);
+          cache.put(event.request, clone);
+        });
+      }
       return response;
     }).catch(function() {
       log("Got file from cache: " + url);

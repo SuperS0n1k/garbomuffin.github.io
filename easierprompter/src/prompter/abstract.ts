@@ -1,5 +1,7 @@
 import { ConfigManager } from "../config/config";
-import { getElement } from "../utils";
+import { getElement, getCurrentTime } from "../utils";
+
+const ONE_FRAME = 1000 / 60; // length of one frame at 60 fps
 
 interface IPrompter {
   start(): void;
@@ -15,7 +17,8 @@ export enum Direction {
 
 export abstract class AbstractPrompter implements IPrompter {
   private _scrollDistance: number = 0;
-  private textLength: number = Infinity;
+  private lastFrame: number;
+  protected maxScrollDistance: number = Infinity;
   protected direction: Direction = Direction.Up;
   public showing: boolean = false;
   public scrolling: boolean = false;
@@ -49,7 +52,6 @@ export abstract class AbstractPrompter implements IPrompter {
     this.scrollDistance = 0;
 
     this.loadScript(this.getScript());
-    this.textLength = this.getTextLength();
   }
 
   // hide & stop the prompter
@@ -81,16 +83,20 @@ export abstract class AbstractPrompter implements IPrompter {
       return;
     }
 
+    const currentTime = getCurrentTime();
+    const timeSinceLastFrame = currentTime - this.lastFrame;
     if (this.scrolling) {
-      this.scroll();
+      this.scroll(timeSinceLastFrame / ONE_FRAME);
     }
 
-    this.render(this.scrollDistance);
+    this.render(Math.floor(this.scrollDistance));
+    this.lastFrame = getCurrentTime();
   }
 
   // Move the current scroll distance according to the speed
-  protected scroll() {
-    this.scrollDistance += this.config.speed * this.direction;
+  // Also use the "time since last frame" to move slower or faster during periods of lag
+  protected scroll(frames: number) {
+    this.scrollDistance += (this.config.speed * this.direction) * frames;
   }
 
   protected toggleScrolling() {
@@ -101,22 +107,26 @@ export abstract class AbstractPrompter implements IPrompter {
     }
   }
 
-  protected get scrollDistance() {
+  ///
+  /// Accessors
+  ///
+
+  get scrollDistance() {
     return this._scrollDistance;
   }
 
-  protected set scrollDistance(distance) {
-    // Make sure we can't scroll before the script
-    if (distance < 0) {
-      distance = 0;
+  set scrollDistance(scrollDistance) {
+    // Make sure we don't scroll above the script
+    if (scrollDistance < 0) {
+      scrollDistance = 0;
     }
 
     // Make sure we can't scroll too far past the script
-    if (distance > this.textLength) {
-      distance = this.textLength;
+    if (scrollDistance > this.maxScrollDistance) {
+      scrollDistance = this.maxScrollDistance;
     }
 
-    this._scrollDistance = distance;
+    this._scrollDistance = scrollDistance;
   }
 
   ///
@@ -127,12 +137,10 @@ export abstract class AbstractPrompter implements IPrompter {
   protected abstract getScript(): string;
 
   // loads a script (not the javascript type) into the DOM
+  // Should also set maxScrollDistance
   protected abstract loadScript(script: string): void;
 
   // Render the prompter.
   // distance - how far the scrolling has gone (in pixels)
   protected abstract render(distance: number): void;
-
-  // how long the text is (in pixels)
-  protected abstract getTextLength(): number;
 }
