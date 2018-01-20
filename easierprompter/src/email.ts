@@ -1,8 +1,9 @@
 // To avoid spambots, emails are not directly in the HTML
 // They are injected with javascript and some VERY simple "encryption"
+// Stored in an array shifted one letter
 
-// Shifted one letter to the left and stored in an array.
-// No spambots are getting this unless they literally execute the page.
+// I know some spambots exist that probably run the javascript to look for emails
+// but not all of them do and this is a pretty easier way to avoid those
 
 const emailEncoded = [
   "o", "m", "m", "y", "w", "e", "b", "e", "r", "3", "3", "@", "g", "m", "a", "i", "l", ".", "c", "o", "m", "t",

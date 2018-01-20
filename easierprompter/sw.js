@@ -7,7 +7,7 @@
 
 importScripts("serviceworker-cache-polyfill.js");
 
-var CACHE_NAME = "easierprompter-v1";
+var CACHE_NAME = "easierprompter-v1.0";
 
 function log() {
   var args = Array.from(arguments);
@@ -17,6 +17,9 @@ function log() {
 
 // When installed: Cache offlines copies of the files
 self.addEventListener("install", function(event) {
+  // Let any new service worker coming in install itself right away
+  self.skipWaiting();
+
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
       log("Loading cache");
@@ -31,7 +34,7 @@ self.addEventListener("install", function(event) {
 });
 
 // When installed: Go to the network first
-// If we found it, use it and cache it
+// If it found it, use it and cache it so it can be used offline
 // If it failed, return from the cache
 // This isn't the most optimal thing, but it's the easiest to develop with
 self.addEventListener("fetch", function(event) {
@@ -63,7 +66,7 @@ self.addEventListener("activate", function(event) {
         cacheNames.filter(function(cacheName) {
           return cacheName !== CACHE_NAME;
         }).map(function(cacheName) {
-          log("Deleted cache: " + cacheName);
+          log("Deleting cache: " + cacheName);
           return caches.delete(cacheName);
         })
       );

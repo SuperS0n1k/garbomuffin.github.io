@@ -1,6 +1,6 @@
 {
   "name": "easierprompter",
-  "version": "0.9.9",
+  "version": "1.0.0",
   "description": "The easiest and most featureful teleprompter",
   "scripts": {
     "bundle": "webpack",

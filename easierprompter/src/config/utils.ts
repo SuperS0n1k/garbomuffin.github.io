@@ -1,7 +1,11 @@
-import { ConfigSetter, ConfigGetter } from "./option";
+import { ConfigGetter, ConfigSetter } from "./option";
 
-export type GetterType = "number" | "text" | "checkbox";
-export function getterFrom(el: HTMLElement, type: GetterType = "text"): ConfigGetter<string | number | boolean> {
+export type ValueType = "number" | "text" | "checkbox";
+// I don't understand typescript overloads.
+export function getterFrom(el: HTMLElement, type?: "text" | ValueType): ConfigGetter<string>;
+export function getterFrom(el: HTMLElement, type: "checkbox"): ConfigGetter<boolean>;
+export function getterFrom(el: HTMLElement, type: "number"): ConfigGetter<number>;
+export function getterFrom(el: HTMLElement, type: ValueType = "text"): ConfigGetter<any> {
   let getter: ConfigGetter<any> = () => el.textContent || "";
 
   if (el instanceof HTMLTextAreaElement) {
@@ -36,14 +40,16 @@ export interface ISetterFromOptions<T = any> {
   callback?: (value: T) => void;
   onchange?: boolean;
 }
-export function setterFrom(el: HTMLElement, opts: ISetterFromOptions = {}): ConfigSetter<string> {
-  function _getSetterFunction<T = any>(): ConfigSetter<T> {
+export function setterFrom(e: HTMLElement, t: "text" | ValueType, o?: ISetterFromOptions<string>): ConfigSetter<string>;
+export function setterFrom(el: HTMLElement, type: "checkbox", o?: ISetterFromOptions<boolean>): ConfigSetter<boolean>;
+export function setterFrom(el: HTMLElement, type: "number", opts?: ISetterFromOptions<number>): ConfigSetter<number>;
+export function setterFrom(el: HTMLElement, type: ValueType, opts: ISetterFromOptions<any> = {}): ConfigSetter<any> {
+  const getBaseSetter = () => {
     if (el instanceof HTMLTextAreaElement) {
       return (value: any) => el.value = value;
     }
 
     if (el instanceof HTMLInputElement) {
-      const type = el.type;
       if (type === "text") {
         return (value: any) => el.value = value;
       } else if (type === "number") {
@@ -56,9 +62,9 @@ export function setterFrom(el: HTMLElement, opts: ISetterFromOptions = {}): Conf
     }
 
     return (value: any) => el.textContent = value;
-  }
+  };
 
-  const setter = _getSetterFunction();
+  const setter = getBaseSetter();
 
   const stack: Func[] = [];
   if (opts.transform) {
@@ -69,7 +75,7 @@ export function setterFrom(el: HTMLElement, opts: ISetterFromOptions = {}): Conf
     stack.push(opts.callback);
   }
 
-  const functionStack = generateFunctionStack(stack);
+  const functionStack = createFunctionPipe(stack);
   if (opts.onchange) {
     const getter = getterFrom(el);
     el.onchange = () => {
@@ -81,7 +87,14 @@ export function setterFrom(el: HTMLElement, opts: ISetterFromOptions = {}): Conf
 }
 
 type Func = (...args: any[]) => any;
-function generateFunctionStack(functions: Func[]) {
+// Basic idea of a "Function Pipe":
+// Given functions A, B, C and an inital value:
+// A will be called with that inital value and its return value is stored as the new value
+// B will be called with the result of A and its return value is stored as the new value
+// C will be called with the result of B and its return value is stored as the new value
+// etc...
+// So basically: C(B(A("some inital value")))
+function createFunctionPipe(functions: Func[] = []) {
   return (value: any) => {
     for (const func of functions) {
       value = func(value);

@@ -1,5 +1,4 @@
 import { ConfigManager } from "../config/config";
-import { getElement, getCurrentTime } from "../utils";
 
 const ONE_FRAME = 1000 / 60; // length of one frame at 60 fps
 
@@ -28,7 +27,7 @@ export abstract class AbstractPrompter implements IPrompter {
     this.config = config;
 
     this.loop = this.loop.bind(this);
-    this.loop();
+    this.loop(0);
   }
 
   ///
@@ -76,21 +75,23 @@ export abstract class AbstractPrompter implements IPrompter {
   }
 
   // Main loop - renders and scrolls
-  protected loop() {
+  protected loop(currentTime: number) {
     requestAnimationFrame(this.loop);
+    // console.log(arguments);
 
     if (!this.showing) {
       return;
     }
 
-    const currentTime = getCurrentTime();
+    // Scroll the screen proportional to the amount of lag
     const timeSinceLastFrame = currentTime - this.lastFrame;
     if (this.scrolling) {
       this.scroll(timeSinceLastFrame / ONE_FRAME);
     }
+    this.lastFrame = currentTime;
 
+    // Render it using Math.floor just so the number is a nice integer and not decimals
     this.render(Math.floor(this.scrollDistance));
-    this.lastFrame = getCurrentTime();
   }
 
   // Move the current scroll distance according to the speed
@@ -116,12 +117,12 @@ export abstract class AbstractPrompter implements IPrompter {
   }
 
   set scrollDistance(scrollDistance) {
-    // Make sure we don't scroll above the script
+    // Make sure it don't scroll above the script
     if (scrollDistance < 0) {
       scrollDistance = 0;
     }
 
-    // Make sure we can't scroll too far past the script
+    // Make sure it can't scroll too far past the script
     if (scrollDistance > this.maxScrollDistance) {
       scrollDistance = this.maxScrollDistance;
     }

@@ -1,12 +1,13 @@
+import { getElement } from "../utils";
 import { ConfigManager } from "./config";
 import { ConfigOption } from "./option";
-import { getElement } from "../utils";
 
 export class PrompterConfigManager extends ConfigManager {
   constructor() {
     super();
 
-    const prompterElement = getElement("prompter-lines-container");
+    const prompterContainer = getElement("prompter-lines-container");
+    const prompterLines = getElement("prompter-lines");
 
     this.options.speed = new ConfigOption<number>({
       default: 1.5,
@@ -29,7 +30,7 @@ export class PrompterConfigManager extends ConfigManager {
       setterOpts: {
         onchange: true,
         callback: (value: number) => {
-          prompterElement.style.fontSize = `${value}px`;
+          prompterContainer.style.fontSize = `${value}px`;
         },
       },
     });
@@ -41,7 +42,7 @@ export class PrompterConfigManager extends ConfigManager {
       setterOpts: {
         onchange: true,
         callback: (value: string) => {
-          prompterElement.style.fontFamily = `${value}, sans-serif`;
+          prompterContainer.style.fontFamily = `${value}, sans-serif`;
         },
       },
     });
@@ -53,7 +54,7 @@ export class PrompterConfigManager extends ConfigManager {
       setterOpts: {
         onchange: true,
         callback: (value: boolean) => {
-          prompterElement.style.fontWeight = value ? "bold" : "normal";
+          prompterLines.style.fontWeight = value ? "bold" : "normal";
         },
       },
     });

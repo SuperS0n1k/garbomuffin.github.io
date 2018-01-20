@@ -1,5 +1,4 @@
 import { ConfigManager } from "./config";
-import { ConfigOption } from "./option";
 
 // increase every time an incompatible change is made to the store data
 const STORE_VERSION = "0";

@@ -1,13 +1,21 @@
 Easier Prompter Changelog:
 (Dates are in MM/DD/YYYY format)
 
-v0.9.9.9: (1/18/2018)
+v1.0: One Point Zero (1/20/2018)
+ * Finally v1.0
+ * Fixed a few grammar/spelling errors
+ * Removed some really cringey lines/phrases
+ * There will probably be a v1.0.1 in a few days fixing a few bugs
+
+v0.9.9.9.9: (1/18/2018)
  * I'll stop throwing 9s onto the version number. v1.0 is almost here.
  * During lag the script will still move at the same speed
  * "[END]" (customizable) is added to the end of the script and it will stop scrolling when it reaches that point
  * If you enable the unsaved changes warning you will get an alert when you try to leave the site without saving
   * Not enabled by default because I know getting alerts is annoying and saving in this usually isn't very important.
 
-v0.9.9: (1/17/2018)
+v0.9.9.9: (1/17/2018)
  * Experimenting with service workers
  * Site should now be able to load offline after being loaded once (in modern browsers)
+
+[there were many other updates prior to the changelog being maintained that aren't recorded here]

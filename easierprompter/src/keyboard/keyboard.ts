@@ -1,5 +1,3 @@
-import { AbstractPrompter } from "../prompter/abstract";
-
 type Handler = () => boolean | void;
 type HandlerList = Handler[][];
 type RequireHandler = (e: KeyboardEvent) => boolean;

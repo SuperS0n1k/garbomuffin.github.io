@@ -5,6 +5,8 @@ interface Config {
   [s: string]: ConfigOption;
 }
 
+// This isn't like a secret key or anything
+// It's just the location easier prompter will store its config in localStorage
 const STORAGE_KEY = "EasierPrompter_Config";
 
 // TODO: saving & loading

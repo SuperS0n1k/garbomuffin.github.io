@@ -1,6 +1,5 @@
-// Older browsers do not have requestAnimationFrame
-// so use a simple polyfill just to setTimeout to run the code in ~1 frame
-// Adds support for: IE 9
+/// Older browsers do not have requestAnimationFrame so a polyfill is needed
+/// Adds support for: IE 9
 
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating

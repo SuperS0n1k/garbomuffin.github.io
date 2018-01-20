@@ -1,7 +1,7 @@
-import { AbstractPrompter, Direction } from "./abstract";
-import { getElement, setDisplay, emptyElement } from "../utils";
 import { ConfigManager } from "../config/config";
 import { Keyboard } from "../keyboard/keyboard";
+import { emptyElement, getElement, setDisplay } from "../utils";
+import { AbstractPrompter, Direction } from "./abstract";
 
 const SPEED_INCREMENT = 0.25;
 
@@ -117,7 +117,7 @@ export class Prompter extends AbstractPrompter {
   // Applies the margin style to scroll the script
   protected render(distance: number) {
     // This is the main bottle neck of the program
-    // A better way to do this would be great
+    // A better way to do this would be great and really help performance
     // Considering:
     // Canvas
     // Scrolling
@@ -129,13 +129,16 @@ export class Prompter extends AbstractPrompter {
   protected loadScript(script: string) {
     this.resetScript();
 
+    // Add all of the lines to the prompter
     const scriptLines = script.split("\n");
     for (const line of scriptLines) {
       this.addLine(line);
     }
 
+    // Get the current text length
     this.maxScrollDistance = this.getTextLength();
 
+    // Now append the [END] text
     this.addLine(this.config.options.endText.get(), getElement("prompter-lines-end-text"));
   }
 
