@@ -52,5 +52,14 @@
     embedCodeElement.value = embed.outerHTML;
   }
 
+  if (window.location.hash) {
+    var hash = window.location.hash;
+    if (hash.charAt(0) === "#") {
+      hash = hash.substr(1);
+    }
+    videoUrlElement.value = hash;
+    submit();
+  }
+
   submitButton.onclick = submit;
 }());
