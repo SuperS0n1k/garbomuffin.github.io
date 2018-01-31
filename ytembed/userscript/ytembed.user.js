@@ -14,7 +14,7 @@ ytembed userscript v0.0.2:
 // @version      0.0.2
 // @author       GarboMuffin
 // @match        https://www.youtube.com/*
-// @match        https://garbomuffin.github./ytembed/userscript/config.html
+// @match        https://garbomuffin.github.io/ytembed/userscript/config.html
 // @downloadURL  https://garbomuffin.github.io/ytembed/userscript/ytembed.user.js
 // @run-at       document-idle
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
