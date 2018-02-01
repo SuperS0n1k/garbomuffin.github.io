@@ -20,6 +20,7 @@
     "var s=document.createElement('script');",
 
     // Math.random should stop browsers from caching
+    "s.src='" + scriptSource + "';",
     "s.src='" + scriptSource + "?'+Math.random();",
 
     // some sites block this using the Content Security Policy script-src directive (see: github)
