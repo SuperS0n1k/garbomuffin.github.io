@@ -1,10 +1,10 @@
+import { Vector2D } from "./vector2d";
+
 /*
  * A 3D Vector: (x, y, z)
  *
  * z is optional when creating Vectors
  */
-
-import { Vector2D } from "./vector2d";
 
 // a simple position class that removes some verbosity from code
 // can make for some nicer code sometimes

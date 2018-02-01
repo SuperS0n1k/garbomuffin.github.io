@@ -1,8 +1,8 @@
+import { Block } from "./block";
+
 /*
  * A block that is toggled solid/not solid when a switch is hit.
  */
-
-import { IBlockOptions, Block } from "./block";
 
 export abstract class LightBlock extends Block {
   public toggleSolid() {

@@ -1,12 +1,12 @@
+import { AbstractSprite, ISpriteOptions } from "../engine/sprite";
+import { Task } from "../engine/task";
+import { toHex } from "../engine/utils";
+
 /*
  * The stars in the background.
  *
  * Spawned randomly when the game starts and are deleted when you enter the castle.
  */
-
-import { AbstractSprite, ISpriteOptions } from "../engine/sprite";
-import { Task } from "../engine/task";
-import { toHex } from "../engine/utils";
 
 // How often to update opacity
 const UPDATE_EVERY = 6;

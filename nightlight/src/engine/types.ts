@@ -1,10 +1,10 @@
-/*
- * A few reusable types
- */
-
 import { Nightlight } from "../game";
 import { AbstractSprite } from "./sprite";
 import { Task } from "./task";
+
+/*
+ * A few reusable types
+ */
 
 export type TImage = HTMLImageElement;
 export type TSound = HTMLAudioElement;

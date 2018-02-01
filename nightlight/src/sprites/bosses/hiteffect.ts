@@ -1,11 +1,11 @@
+import { IImageSpriteOptions, ImageSprite } from "../../engine/sprites/imagesprite";
+import { Vector } from "../../engine/vector";
+
 /*
  * Health events for bosses
  *
  * +0, +1, -1
  */
-
-import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
-import { Vector } from "../../engine/vector";
 
 const LIFESPAN = 60;
 const OPACITY_PER_FRAME = 1 / LIFESPAN;

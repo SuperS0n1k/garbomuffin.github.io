@@ -1,3 +1,8 @@
+import { BLOCK_HEIGHT } from "../../config";
+import { Vector } from "../../engine/vector";
+import { LevelUpCoinSprite } from "../coin";
+import { IBlockOptions, SolidBlock } from "./block";
+
 /*
  * Spawns the level up coin
  * The level up coin itself is not part of the level code,
@@ -5,11 +10,6 @@
  *
  * Different types becasue that's how the level codes are. (and I really don't want to touch those)
  */
-
-import { IBlockOptions, SolidBlock } from "./block";
-import { LevelUpCoinSprite } from "../coin";
-import { BLOCK_HEIGHT } from "../../config";
-import { Vector } from "../../engine/vector";
 
 abstract class LevelUpCoinSpawnerBlock extends SolidBlock {
   public static: boolean = true;

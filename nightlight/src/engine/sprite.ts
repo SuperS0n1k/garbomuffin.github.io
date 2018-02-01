@@ -1,12 +1,11 @@
+import { FRICTION, GRAVITY } from "../config";
+import { Block } from "../sprites/blocks/block";
 import { Container } from "./container";
-import { Vector } from "./vector";
-import { Vector2D } from "./vector2d";
 import { TaskRunner } from "./task";
 import { Sprite, TGame } from "./types";
-import { getOrDefault, degreeToRadians } from "./utils";
-import { FRICTION, GRAVITY } from "../config";
-import { ImageSprite } from "./sprites/imagesprite";
-import { Block } from "../sprites/blocks/block";
+import { degreeToRadians, getOrDefault } from "./utils";
+import { Vector } from "./vector";
+import { Vector2D } from "./vector2d";
 
 export interface ISpriteOptions {
   position: Vector;
@@ -267,6 +266,54 @@ export abstract class AbstractSprite extends TaskRunner {
         return true;
       }
     }
+
+    return false;
+  }
+
+  // Tests if a "complex" (fancy rendering/non square) sprite is touching a simple (square) sprite
+  public complexIntersectsSimple(sprite: AbstractSprite): boolean {
+    // Render ourselves on a canvas
+    const canvas = this.runtime.createCanvas();
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.render(ctx);
+
+    const height = canvas.height;
+    const width = canvas.width;
+
+    const data = ctx.getImageData(0, 0, width, height).data;
+    // some browsers are funny
+    // TODO: warning message?
+    if (!data) {
+      return false;
+    }
+
+    const offsetOf = (x: number, y: number) => ((y * width) + x) * 4;
+
+    const startingX = Math.floor(sprite.x);
+    const startingY = Math.floor(sprite.y);
+    const endingX = startingX + Math.floor(sprite.width);
+    const endingY = startingY + Math.floor(sprite.height);
+
+    for (let y = startingY; y < endingY; y++) {
+      for (let x = startingX; x < endingX; x++) {
+        // if (this.canKill) debugger;
+        if (data[offsetOf(x, y) + 3]) {
+          return true;
+        }
+      }
+    }
+
+    // const length = data.length;
+    // for (let i = 0; i < length; i += 4) {
+    //   const j = i / 4;
+
+    //   if (data[i + 3]) {
+    //     const point = new Vector(j % width, Math.floor(j / width));
+    //     if (sprite.containsPoint(point)) {
+    //       return true;
+    //     }
+    //   }
+    // }
 
     return false;
   }

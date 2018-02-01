@@ -1,25 +1,23 @@
-import { GameRuntime } from "./engine/runtime";
-import { getLevels, Level } from "./levels/levels";
-import { PlayerSprite } from "./sprites/player/player";
-import { Vector } from "./engine/vector";
+import "./stats.js";
+
 import { blockMap } from "./blockmap";
-import { AbstractSprite } from "./engine/sprite";
-import { TImage, TBackground, TSound } from "./engine/types";
-import { Block, IBlockOptions, SolidBlock, StaticSolidBlock } from "./sprites/blocks/block";
 import * as config from "./config";
 import { Container } from "./engine/container";
-import { BackgroundStarSprite } from "./sprites/star";
-import { getRandomInt } from "./utils";
+import { GameRuntime } from "./engine/runtime";
+import { TBackground, TImage, TSound } from "./engine/types";
+import { Vector } from "./engine/vector";
 import { JUMP_LIGHTS } from "./levels/jumplights";
+import { getLevels, Level } from "./levels/levels";
+import { Block, IBlockOptions, StaticSolidBlock } from "./sprites/blocks/block";
 import { JumpLight } from "./sprites/jumplight";
+import { PlayerSprite } from "./sprites/player/player";
+import { BackgroundStarSprite } from "./sprites/star";
 import { ZIndexes } from "./sprites/zindex";
-import { LightBlock } from "./sprites/blocks/lightblock";
+import { getRandomInt } from "./utils";
 
 const SPOTLIGHT_SIZE = 75;
 
 const TOTAL_BACKGROUND_STARS = 100;
-
-import "./stats.js";
 
 export class Nightlight extends GameRuntime {
   public level: number = 0;
@@ -35,6 +33,11 @@ export class Nightlight extends GameRuntime {
 
   constructor() {
     super(document.getElementById("container") as HTMLElement);
+
+    (document.getElementById("volume") as HTMLInputElement).oninput = (e) => {
+      this.setVolume(Number((e.srcElement as HTMLInputElement).value));
+    };
+    this.setVolume(50); // 50%
 
     // stats.js for fps monitoring
     this.stats = new Stats();
@@ -107,6 +110,12 @@ export class Nightlight extends GameRuntime {
         persistent: true,
       });
     }
+  }
+
+  private setVolume(volume: number) {
+    super.setVolume(volume);
+    (document.getElementById("volume-level") as HTMLElement).textContent = volume + "%";
+    (document.getElementById("volume") as HTMLInputElement).value = volume.toString();
   }
 
   //

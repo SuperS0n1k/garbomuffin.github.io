@@ -1,19 +1,15 @@
+import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../../config";
+import { Task } from "../../../engine/task";
+import { Vector } from "../../../engine/vector";
+import { Vector2D } from "../../../engine/vector2d";
+import { IBlockOptions } from "../../blocks/block";
+import { AbstractBoss } from "../boss";
+
 /*
  * The first boss: A Sword
  *
  * This code is terrible. Please do not try to maintain it. Rewrite it from the ground up.
  */
-
-import { ImageSprite, IImageSpriteOptions } from "../../../engine/sprites/imagesprite";
-import { Task } from "../../../engine/task";
-import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../../config";
-import { SolidBlock, IBlockOptions } from "../../blocks/block";
-import { AbstractSprite } from "../../../engine/sprite";
-import { PlayerSprite } from "../../player/player";
-import { Vector2D } from "../../../engine/vector2d";
-import { HitEffectSprite } from "../hiteffect";
-import { Vector } from "../../../engine/vector";
-import { AbstractBoss } from "../boss";
 
 const HEALTH = 3;
 
@@ -89,44 +85,12 @@ export class SwordBoss extends AbstractBoss {
   // Utilities
   //
 
-  private intersectsPlayer(): boolean {
-    // Render ourselves on a canvas
-    const canvas = this.runtime.createCanvas();
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    this.render(ctx);
-
-    const height = canvas.height;
-    const width = canvas.width;
-
-    const data = ctx.getImageData(0, 0, width, height).data;
-    // some browsers are funny
-    // TODO: warning message?
-    if (!data) {
-      return false;
-    }
-
-    const player = this.runtime.player;
-    const length = data.length;
-    for (let i = 0; i < length; i += 4) {
-      const j = i / 4;
-
-      if (data[i + 3]) {
-        const point = new Vector(j % width, Math.floor(j / width));
-        if (player.containsPoint(point)) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
   public intersectTest() {
     if (!this.testCollision) {
       return;
     }
 
-    if (this.intersectsPlayer()) {
+    if (this.complexIntersectsSimple(this.runtime.player)) {
       this.runtime.player.kill();
       this.hitPlayer = true;
     }

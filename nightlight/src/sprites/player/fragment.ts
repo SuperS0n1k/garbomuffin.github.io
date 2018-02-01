@@ -1,9 +1,8 @@
+import { IImageSpriteOptions, ImageSprite } from "../../engine/sprites/imagesprite";
+
 /*
  * Fragments of the player that will fly everywhere you when the player dies
  */
-
-import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
-import { FRICTION } from "../../config";
 
 // How long before they will start to go away (opacity up)
 const LIFESPAN = 300;

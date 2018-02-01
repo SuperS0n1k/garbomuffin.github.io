@@ -1,3 +1,10 @@
+import { BLOCK_HEIGHT } from "../../config";
+import { IImageSpriteOptions, ImageSprite } from "../../engine/sprites/imagesprite";
+import { Vector } from "../../engine/vector";
+import { clone, getRandomInt } from "../../utils";
+import { PseudoSolidBlock } from "../blocks/block";
+import { PlayerFragmentSprite } from "./fragment";
+
 /*
  * It's a player.
  *
@@ -5,13 +12,6 @@
  * And until there are problems they will be staying as one
  * (in some other games the size of the player textures chagne and that ruins physics)
  */
-
-import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
-import { FRICTION, GRAVITY, BLOCK_HEIGHT } from "../../config";
-import { PlayerFragmentSprite } from "./fragment";
-import { getRandomInt, clone } from "../../utils";
-import { Vector } from "../../engine/vector";
-import { PseudoSolidBlock } from "../blocks/block";
 
 // How fast the player walks
 const PLAYER_WALK_SPEED = 0.5 / 2;

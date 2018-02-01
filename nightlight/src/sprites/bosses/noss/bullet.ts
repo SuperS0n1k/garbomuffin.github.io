@@ -1,8 +1,8 @@
-import { ImageSprite, IImageSpriteOptions } from "../../../engine/sprites/imagesprite";
+import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { Task } from "../../../engine/task";
+import { radiansToDegree } from "../../../engine/utils";
 import { Vector } from "../../../engine/vector";
 import { clamp } from "../../../utils";
-import { radiansToDegree } from "../../../engine/utils";
 
 const GLIDE_TIME = 30;
 const SPEED_GAIN = 0.2;

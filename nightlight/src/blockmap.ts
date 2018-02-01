@@ -1,21 +1,21 @@
+import { BlackBlock } from "./sprites/blocks/black";
+import { Block, PseudoSolidBlock } from "./sprites/blocks/block";
+import { BlockSwitchSpawnerBlock } from "./sprites/blocks/blockswitchspawner";
+import { AboveLevelUpCoinSpawnerBlock, BelowLevelUpCoinSpawnerBlock } from "./sprites/blocks/coinspawner";
+import { CastleCornerBlock, RotatedCornerBlock } from "./sprites/blocks/corner";
+import { CrumblingBlock } from "./sprites/blocks/crumble";
+import { FallingBlock } from "./sprites/blocks/falling";
+import { GrassBlock } from "./sprites/blocks/grass";
+import { DisabledLightBlock, EnabledLightBlock } from "./sprites/blocks/lightblock";
+import { LightSwitchBlock } from "./sprites/blocks/lightswitch";
+import { OneWayBlock } from "./sprites/blocks/oneway";
+import { DownSpikeBlock, LeftSpikeBlock, RightSpikeBlock, UpSpikeBlock } from "./sprites/blocks/spike";
+import { TallGrassBlock } from "./sprites/blocks/tallgrass";
+
 /*
  * A map of characters and the texture and class
  * they correspond to
  */
-
-import { Block, PseudoSolidBlock } from "./sprites/blocks/block";
-import { GrassBlock } from "./sprites/blocks/grass";
-import { UpSpikeBlock, LeftSpikeBlock, RightSpikeBlock, DownSpikeBlock } from "./sprites/blocks/spike";
-import { TallGrassBlock } from "./sprites/blocks/tallgrass";
-import { CrumblingBlock } from "./sprites/blocks/crumble";
-import { FallingBlock } from "./sprites/blocks/falling";
-import { BlockSwitchSpawnerBlock } from "./sprites/blocks/blockswitchspawner";
-import { DisabledLightBlock, EnabledLightBlock } from "./sprites/blocks/lightblock";
-import { LightSwitchBlock } from "./sprites/blocks/lightswitch";
-import { AboveLevelUpCoinSpawnerBlock, BelowLevelUpCoinSpawnerBlock } from "./sprites/blocks/coinspawner";
-import { OneWayBlock } from "./sprites/blocks/oneway";
-import { RotatedCornerBlock, CastleCornerBlock } from "./sprites/blocks/corner";
-import { BlackBlock } from "./sprites/blocks/black";
 
 interface IBlockMap {
   [s: string]: string | IBlockMetaData;
@@ -30,10 +30,6 @@ function special(type: typeof Block, texture: string) {
   return {
     type, texture,
   };
-}
-
-function notsolid(texture: string) {
-  return special(Block, texture);
 }
 
 export const blockMap: IBlockMap = {

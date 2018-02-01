@@ -1,3 +1,11 @@
+import { ImageSprite } from "../engine/sprites/imagesprite";
+import { TBackground, TImage, TSound } from "../engine/types";
+import { Vector } from "../engine/vector";
+import { Nightlight } from "../game";
+import { BASE_TEXTURE as nossTexture, NossBoss } from "../sprites/bosses/noss/noss";
+import { SwordBoss } from "../sprites/bosses/sword/sword";
+import { BackgroundStarSprite } from "../sprites/star";
+
 /*
  * It's level data
  *
@@ -6,14 +14,6 @@
  *  - new music
  *  - functions to be called (to spawn things like bosses)
  */
-
-import { TBackground, TImage, TSound } from "../engine/types";
-import { Nightlight } from "../game";
-import { SwordBoss } from "../sprites/bosses/sword/sword";
-import { Vector } from "../engine/vector";
-import { ImageSprite } from "../engine/sprites/imagesprite";
-import { NossBoss, BASE_TEXTURE as nossTexture } from "../sprites/bosses/noss/noss";
-import { BackgroundStarSprite } from "../sprites/star";
 
 export type THandler = (game: Nightlight) => void;
 
@@ -48,6 +48,7 @@ function bossSpawner(bossType: typeof ImageSprite, texture: TImage) {
 // This is terrible and should be changed.
 export function getLevels(game: Nightlight): Level[] {
   return [
+    /* tslint:disable:max-line-length */
     // 0
     {
       levelData: "eaaaaaaaaafeaaaafeaaaaaaaaaaaaeaaaaaaaaafbccccdeaaaaaaaaaaaaeaaaaaaaaafooooooeaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaabcccccccccd......bcccmaaaaaaaajkpppkkpqkl......jkqpeaaaaaaaa.....................eaaaaaaaa.....................eamccccnc.....................bcdkpkq.k.....................qpl..............................................................................................................................................................................................................................................................................................................................................................................",
@@ -141,5 +142,6 @@ export function getLevels(game: Nightlight): Level[] {
       levelData: "..)^^^^^^^^^^^^^^^^^^^^^^^^-....)^^^^^^^^^^^^^^^^^^^^^^^^-....&************************(..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
       newBackgroundMusic: [game.getSound("music/finalboss/1"), game.getSound("music/finalboss/2")],
     },
+    /* tslint:enable:max-line-length */
   ];
 }

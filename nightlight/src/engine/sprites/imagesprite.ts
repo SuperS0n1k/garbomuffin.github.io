@@ -1,11 +1,10 @@
+import { AbstractSprite, ISpriteOptions } from "../sprite";
+import { TImage } from "../types";
+import { getOrDefault } from "../utils";
+
 /*
  * A sprite that has an image as a texture.
  */
-
-import { AbstractSprite, ISpriteOptions } from "../sprite";
-import { TImage } from "../types";
-import { getOrDefault, degreeToRadians } from "../utils";
-import { Vector } from "../vector";
 
 export interface IImageSpriteOptions extends ISpriteOptions {
   texture: TImage;

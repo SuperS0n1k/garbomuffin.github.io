@@ -1,4 +1,4 @@
-import { ImageSprite, IImageSpriteOptions } from "../../../engine/sprites/imagesprite";
+import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { Task } from "../../../engine/task";
 
 const LIFESPAN = 20;

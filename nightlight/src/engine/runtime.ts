@@ -1,7 +1,3 @@
-/*
- * The main game runtime object
- */
-
 import { Container } from "./container";
 import { AbstractKeyboard } from "./drivers/keyboard/base";
 import { Keyboard } from "./drivers/keyboard/keyboard";
@@ -9,11 +5,15 @@ import { Mouse } from "./drivers/mouse/mouse";
 import { TouchscreenMouse } from "./drivers/mouse/touchscreen";
 import { ExitError } from "./errors/exit";
 import { AbstractSprite } from "./sprite";
-import { TaskRunner } from "./task";
-import { TImage, TBackground, TSound } from "./types";
-import { isMobile } from "./utils";
 import { StaticRendererSprite } from "./staticRenderer";
+import { TaskRunner } from "./task";
+import { TBackground, TImage, TSound } from "./types";
+import { isMobile } from "./utils";
 import { Vector } from "./vector";
+
+/*
+ * The main game runtime object
+ */
 
 // Dimensions of the canvas
 const CANVAS_WIDTH = 480;
@@ -27,15 +27,11 @@ const IMAGE_FORMAT = "png";
 // mp3 has very wide browser support: https://caniuse.com/#feat=mp3
 const SOUND_FORMAT = "mp3";
 
-// Debugging rendering
-const _DEBUG_NON_STATIC_OUTLINE = false;
-const _DEBUG_STATIC_OUTLINE = false;
-
-if (_DEBUG_NON_STATIC_OUTLINE || _DEBUG_STATIC_OUTLINE) {
-  console.warn("Debug features are on!");
-}
-
 export class GameRuntime extends TaskRunner {
+  // debug config variables
+  private readonly _DEBUG_NON_STATIC_OUTLINE = false;
+  private readonly _DEBUG_STATIC_OUTLINE = false;
+
   // see resetVariables()
   public readonly images: Map<string, TImage> = new Map();
   public readonly sounds: Map<string, TSound> = new Map();
@@ -201,6 +197,12 @@ export class GameRuntime extends TaskRunner {
     return src;
   }
 
+  public setVolume(volume: number) {
+    for (const sound of this.sounds.values()) {
+      sound.volume = volume / 100;
+    }
+  }
+
   ///
   /// CORE
   ///
@@ -269,9 +271,9 @@ export class GameRuntime extends TaskRunner {
       if (sprite.static) {
         sprite.render(this.staticCtx);
 
-        if (_DEBUG_STATIC_OUTLINE) {
+        if (this._DEBUG_STATIC_OUTLINE) {
           this.staticCtx.strokeStyle = "orange";
-          this.staticCtx.lineWidth = 2;
+          this.staticCtx.lineWidth = 1;
           this.staticCtx.beginPath();
           this.staticCtx.rect(sprite.x, sprite.y, sprite.width, sprite.height);
           this.staticCtx.stroke();
@@ -292,7 +294,7 @@ export class GameRuntime extends TaskRunner {
       if (!sprite.static) {
         sprite.render(this.ctx);
 
-        if (_DEBUG_NON_STATIC_OUTLINE) {
+        if (this._DEBUG_NON_STATIC_OUTLINE) {
           this.ctx.strokeStyle = "red";
           this.ctx.lineWidth = 1;
           this.ctx.beginPath();
@@ -337,6 +339,14 @@ export class GameRuntime extends TaskRunner {
     const canvas = document.createElement("canvas");
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
+
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    // makes images that are scaled still look pixelated, this is mainly for retro-style games
+    // thanks web browsers for using vendor prefixed things
+    ctx.imageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+
     return canvas;
   }
 

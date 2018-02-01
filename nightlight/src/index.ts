@@ -1,11 +1,10 @@
+import { Nightlight } from "./game";
+
 /*
  * The loader.
  *
  * It creates the game object, adds in assets, and starts the game.
  */
-
-import { Nightlight } from "./game";
-import { Task } from "./engine/task";
 
 const game = new Nightlight();
 

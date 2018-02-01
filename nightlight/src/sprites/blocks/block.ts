@@ -1,7 +1,6 @@
-import { ImageSprite, IImageSpriteOptions } from "../../engine/sprites/imagesprite";
+import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
 import { AbstractSprite } from "../../engine/sprite";
-import { Sprite } from "../../engine/types";
-import { BLOCK_WIDTH, BLOCK_HEIGHT } from "../../config";
+import { IImageSpriteOptions, ImageSprite } from "../../engine/sprites/imagesprite";
 
 export interface IBlockOptions extends IImageSpriteOptions {
   levelIndex?: number;

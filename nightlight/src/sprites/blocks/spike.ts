@@ -1,17 +1,15 @@
+import { AbstractSprite } from "../../engine/sprite";
+import { PlayerSprite } from "../player/player";
+import { IBlockOptions, SolidBlock } from "./block";
+
 /*
  * It's a spike. It kills the player.
  */
-
-import { IBlockOptions, SolidBlock } from "./block";
-import { PlayerSprite } from "../player/player";
-import { AbstractSprite } from "../../engine/sprite";
 
 // Spikes share pretty much all of their code
 // So an abstract class is made and extended
 abstract class SpikeBlock extends SolidBlock {
   public static: boolean = true;
-
-  protected abstract canKill(sprite: AbstractSprite): boolean;
 
   public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {
     super.handleIntersect(sprite, velocity, horizontal);
@@ -20,7 +18,10 @@ abstract class SpikeBlock extends SolidBlock {
       sprite.kill();
       return false;
     }
+    return true;
   }
+
+  protected abstract canKill(sprite: AbstractSprite): boolean;
 }
 
 export class UpSpikeBlock extends SpikeBlock {

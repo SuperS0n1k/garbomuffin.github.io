@@ -1,10 +1,10 @@
+import { Task } from "../engine/task";
+import { Vector } from "../engine/vector";
+import { Block, IBlockOptions } from "./blocks/block";
+
 /*
  * The coin that levels you up
  */
-
-import { Block, IBlockOptions } from "./blocks/block";
-import { Task } from "../engine/task";
-import { Vector } from "../engine/vector";
 
 // Length of an animation frame
 const FRAME_LENGTH = 4;

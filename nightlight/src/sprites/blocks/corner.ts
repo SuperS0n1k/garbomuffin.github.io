@@ -1,12 +1,12 @@
+import { BLOCK_HEIGHT, BLOCK_WIDTH, LEVEL_WIDTH } from "../../config";
+import { ImageSprite } from "../../engine/sprites/imagesprite";
+import { TImage } from "../../engine/types";
+import { Vector } from "../../engine/vector";
+import { Block, IBlockOptions } from "./block";
+
 /*
  * A block that is in the corner
  */
-
-import { Block, IBlockOptions } from "./block";
-import { LEVEL_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
-import { ImageSprite } from "../../engine/sprites/imagesprite";
-import { Vector } from "../../engine/vector";
-import { TImage } from "../../engine/types";
 
 const AIR = [
   ".", // air, literally

@@ -8,21 +8,19 @@
       canvas {
         display: block;
         border: 1px black solid;
-        image-rendering: pixelated;
       }
       #progress {
         width: 480px;
       }
 
-      /* end goal is to use something like this to not drawImage() any static content at all */
-      /* #container {
+      #debug-container {
         position: relative;
       }
-      #container * {
+      #debug-container canvas {
         position: absolute;
         top: 0;
         left: 0;
-      } */
+      }
     </style>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -39,7 +37,7 @@
   </head>
 
   <body>
-    <h1>Nightlight in JS (v0.0.9.4)</h1>
+    <h1>Nightlight in JS (v0.0.9.5)</h1>
 
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a></p>
     <p><a href="https://scratch.mit.edu/projects/167502369/">Also play my remix which contains some of the features I plan to add here.</a></p>
@@ -55,20 +53,37 @@
     <!-- the <canvas>(s) are put into this div here -->
     <!-- they are injected by code, no more need to manually add them anymore -->
     <div id="container"></div>
+    <div id="debug-container"></div>
+    <div id="sprite-explorer"></div>
 
+    <div><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
+    
     <button onclick="runtime.level++;runtime.renderLevel();">Next Level</button>
     <button onclick="runtime.level--;runtime.renderLevel();">Prev Level</button>
     <button onclick="runtime.renderLevel();">Reset Level</button>
     <button onclick="runtime.player.kill();">Death</button>
     <button onclick="runtime.addTask(function(){runtime.exit()});">Stop (refresh to restart)</button>
 
+
+    <br>
+    <div>
+      <b>Debug views:</b>
+      <label>Outline non static: <input type="checkbox" onchange="runtime._DEBUG_NON_STATIC_OUTLINE=!!this.checked;"></label>
+      <label>Outline static: <input type="checkbox" onchange="runtime._DEBUG_STATIC_OUTLINE=!!this.checked;runtime.updateStatic();"></label>
+    </div>
+
     <pre>
       === CHANGELOG ===
 
-      v0.0.9.4: The Optimization Update
+      v0.0.9.5:
+       * Things that are scaled will still look pixelated (see the <a href="#5">sword boss</a>)
+       * Added debug tools (accessable by checkboxes)
+       * Volume slider that starts at 50%
+
+       v0.0.9.4: The Optimization Update
        * Rendering optimized
         * Performance gains of nearly 2x in some cases
-        * The <a href="#4">hardest level to render</a> now runs at 60 fps consistently on a chromebook.
+        * The <a href="#4">hardest level to render</a> now runs at 60 fps on a chromebook
        * Collision optimized
         * Death pieces can now in some cases have almost no performance impact
        * Fixed some bugs from the previous version

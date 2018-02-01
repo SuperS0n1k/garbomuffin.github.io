@@ -1,12 +1,11 @@
+import { IImageSpriteOptions } from "../engine/sprites/imagesprite";
+import { Task } from "../engine/task";
+import { Block } from "./blocks/block";
+import { PlayerSprite } from "./player/player";
+
 /*
  * A light that will allow the player to jump again once while in the air.
  */
-
-import { Block, IBlockOptions, SolidBlock } from "./blocks/block";
-import { AbstractSprite } from "../engine/sprite";
-import { PlayerSprite } from "./player/player";
-import { Task } from "../engine/task";
-import { IImageSpriteOptions } from "../engine/sprites/imagesprite";
 
 const HIDE_DURATION = 60 * 3;
 

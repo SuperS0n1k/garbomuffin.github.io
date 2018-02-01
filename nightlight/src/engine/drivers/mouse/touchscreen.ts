@@ -1,12 +1,12 @@
+import { GameRuntime } from "../../runtime";
+import { Vector } from "../../vector";
+import { BaseMouse, BaseMouseButton, EmptyMouseButton, IMouse, IMouseButton } from "./base";
+
 /*
  * A mouse driver for touchscreens
  *
  * A little buggy but it does get the job done
  */
-
-import { GameRuntime } from "../../runtime";
-import { BaseMouse, BaseMouseButton, EmptyMouseButton, IMouse, IMouseButton } from "./base";
-import { Vector } from "../../vector";
 
 class TouchscreenButton extends BaseMouseButton implements IMouseButton {
   constructor(mouse: TouchscreenMouse) {

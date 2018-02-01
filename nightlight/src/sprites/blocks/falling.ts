@@ -1,12 +1,12 @@
+import { Task } from "../../engine/task";
+import { Vector } from "../../engine/vector";
+import { IBlockOptions, SolidBlock } from "./block";
+
 /*
  * A block that falls when you hit the switch.
  *
  * Will vibrate for a bit before disappearing.
  */
-
-import { SolidBlock, IBlockOptions } from "./block";
-import { Task } from "../../engine/task";
-import { Vector } from "../../engine/vector";
 
 // Time between each vibration before falling
 const VIBRATE_EVERY = 3;

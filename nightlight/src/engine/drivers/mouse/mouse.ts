@@ -1,9 +1,9 @@
+import { GameRuntime } from "../../runtime";
+import { BaseMouse, BaseMouseButton, IMouse, IMouseButton } from "./base";
+
 /*
  * A mouse driver for computers
  */
-
-import { GameRuntime } from "../../runtime";
-import { BaseMouse, BaseMouseButton, IMouse, IMouseButton } from "./base";
 
 enum Button {
   left = 0,

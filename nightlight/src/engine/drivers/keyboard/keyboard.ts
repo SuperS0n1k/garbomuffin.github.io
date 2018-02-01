@@ -1,9 +1,9 @@
+import { GameRuntime } from "../../runtime";
+import { AbstractKeyboard } from "./base";
+
 /*
  * The keyboard driver for computers
  */
-
-import { GameRuntime } from "../../runtime";
-import { AbstractKeyboard } from "./base";
 
 export class Keyboard extends AbstractKeyboard {
   private static readonly PREVENT: number[] = [

@@ -1,10 +1,10 @@
+import { toHex } from "./utils";
+
 /*
  * Colors
  *
  * WIP and unfinished
  */
-
-import { toHex } from "./utils";
 
 export abstract class Color {
   public abstract toString(): string;

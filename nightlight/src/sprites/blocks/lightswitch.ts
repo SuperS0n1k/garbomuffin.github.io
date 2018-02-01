@@ -1,13 +1,13 @@
+import { AbstractSprite } from "../../engine/sprite";
+import { Task } from "../../engine/task";
+import { Vector } from "../../engine/vector";
+import { PlayerSprite } from "../player/player";
+import { IBlockOptions, SolidBlock } from "./block";
+import { LightBlock } from "./lightblock";
+
 /*
  * A block that toggles the solidity of LightBlocks
  */
-
-import { SolidBlock, IBlockOptions } from "./block";
-import { AbstractSprite } from "../../engine/sprite";
-import { PlayerSprite } from "../player/player";
-import { Task } from "../../engine/task";
-import { LightBlock } from "./lightblock";
-import { Vector } from "../../engine/vector";
 
 // Frames to be played in the animation
 const ANIMATION_FRAMES = [

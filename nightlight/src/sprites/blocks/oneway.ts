@@ -1,9 +1,9 @@
+import { AbstractSprite } from "../../engine/sprite";
+import { SolidBlock } from "./block";
+
 /*
  * A block that allows things to go up but not down.
  */
-
-import { SolidBlock } from "./block";
-import { AbstractSprite } from "../../engine/sprite";
 
 export class OneWayBlock extends SolidBlock {
   public static: boolean = true;

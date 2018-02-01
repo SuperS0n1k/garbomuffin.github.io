@@ -1,12 +1,12 @@
+import { AbstractSprite } from "../../engine/sprite";
+import { Task } from "../../engine/task";
+import { PlayerSprite } from "../player/player";
+import { IBlockOptions, SolidBlock } from "./block";
+
 /*
  * A block that crumbles beneath you as you stand on it
  * Will reappear after a few seconds
  */
-
-import { AbstractSprite } from "../../engine/sprite";
-import { PlayerSprite } from "../player/player";
-import { Task } from "../../engine/task";
-import { IBlockOptions, SolidBlock } from "./block";
 
 // The amount of frames in the crumbling animation
 const CRUMBLE_FRAMES = 9;

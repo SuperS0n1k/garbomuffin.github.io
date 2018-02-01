@@ -1,4 +1,4 @@
-import { AbstractSprite, ISpriteOptions } from "./sprite";
+import { AbstractSprite } from "./sprite";
 
 export class StaticRendererSprite extends AbstractSprite {
   public render(ctx: CanvasRenderingContext2D) {
