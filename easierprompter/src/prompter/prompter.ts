@@ -67,6 +67,10 @@ export class Prompter extends AbstractPrompter {
 
     // down arrow - decrease speed
     keyboard.onKeyDown(40, () => this.speedDown());
+
+    // R key - hold to reverse
+    keyboard.onKeyDown(82, () => this.setDirection(Direction.Up));
+    keyboard.onKeyUp(82, () => this.setDirection(Direction.Down));
   }
 
   ///
@@ -78,9 +82,9 @@ export class Prompter extends AbstractPrompter {
     super.reverseDirection();
 
     if (this.direction === Direction.Up) {
-      getElement("options-toggle-direction").textContent = "Moving Down";
-    } else {
       getElement("options-toggle-direction").textContent = "Moving Up";
+    } else {
+      getElement("options-toggle-direction").textContent = "Moving Down";
     }
   }
 
@@ -116,7 +120,7 @@ export class Prompter extends AbstractPrompter {
 
   // Applies the margin style to scroll the script
   protected render(distance: number) {
-    // This is the main bottle neck of the program
+    // This is the main bottleneck of the program
     // A better way to do this would be great and really help performance
     // Considering:
     // Canvas
@@ -179,5 +183,9 @@ export class Prompter extends AbstractPrompter {
     if (this.showing) {
       this.config.speed -= SPEED_INCREMENT;
     }
+  }
+
+  protected setDirection(direction: Direction) {
+    this.direction = direction;
   }
 }

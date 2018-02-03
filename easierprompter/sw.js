@@ -8,8 +8,12 @@
 importScripts("serviceworker-cache-polyfill.js");
 
 var CACHE_NAME = "easierprompter-v1.0";
+var DEBUG_LOG = false;
 
 function log() {
+  if (!DEBUG_LOG) {
+    return;
+  }
   var args = Array.from(arguments);
   args.unshift("SW:");
   console.log.apply(console, args);

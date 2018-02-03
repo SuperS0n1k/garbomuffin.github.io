@@ -11,14 +11,14 @@ interface IPrompter {
 }
 
 export enum Direction {
-  Up = 1, Down = -1,
+  Up = -1, Down = 1,
 }
 
 export abstract class AbstractPrompter implements IPrompter {
   private _scrollDistance: number = 0;
   private lastFrame: number;
   protected maxScrollDistance: number = Infinity;
-  protected direction: Direction = Direction.Up;
+  protected direction: Direction = Direction.Down;
   public showing: boolean = false;
   public scrolling: boolean = false;
   public config: ConfigManager;

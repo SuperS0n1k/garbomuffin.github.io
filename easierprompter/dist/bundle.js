@@ -611,14 +611,16 @@ var Prompter = (function (_super) {
         });
         keyboard.onKeyDown(38, function () { return _this.speedUp(); });
         keyboard.onKeyDown(40, function () { return _this.speedDown(); });
+        keyboard.onKeyDown(82, function () { return _this.setDirection(__WEBPACK_IMPORTED_MODULE_2__abstract__["b" /* Direction */].Up); });
+        keyboard.onKeyUp(82, function () { return _this.setDirection(__WEBPACK_IMPORTED_MODULE_2__abstract__["b" /* Direction */].Down); });
     };
     Prompter.prototype.reverseDirection = function () {
         _super.prototype.reverseDirection.call(this);
         if (this.direction === __WEBPACK_IMPORTED_MODULE_2__abstract__["b" /* Direction */].Up) {
-            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-direction").textContent = "Moving Down";
+            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-direction").textContent = "Moving Up";
         }
         else {
-            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-direction").textContent = "Moving Up";
+            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-direction").textContent = "Moving Down";
         }
     };
     Prompter.prototype.start = function () {
@@ -678,6 +680,9 @@ var Prompter = (function (_super) {
         if (this.showing) {
             this.config.speed -= SPEED_INCREMENT;
         }
+    };
+    Prompter.prototype.setDirection = function (direction) {
+        this.direction = direction;
     };
     return Prompter;
 }(__WEBPACK_IMPORTED_MODULE_2__abstract__["a" /* AbstractPrompter */]));
@@ -769,14 +774,14 @@ var Keyboard = (function () {
 var ONE_FRAME = 1000 / 60;
 var Direction;
 (function (Direction) {
-    Direction[Direction["Up"] = 1] = "Up";
-    Direction[Direction["Down"] = -1] = "Down";
+    Direction[Direction["Up"] = -1] = "Up";
+    Direction[Direction["Down"] = 1] = "Down";
 })(Direction || (Direction = {}));
 var AbstractPrompter = (function () {
     function AbstractPrompter(config) {
         this._scrollDistance = 0;
         this.maxScrollDistance = Infinity;
-        this.direction = Direction.Up;
+        this.direction = Direction.Down;
         this.showing = false;
         this.scrolling = false;
         this.config = config;

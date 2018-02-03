@@ -1,6 +1,10 @@
 Easier Prompter Changelog:
 (Dates are in MM/DD/YYYY format)
 
+v1.0.1: (2/2/2018)
+ * Added new keybind: Hold R to reverse script direction
+ * You should use this instead of the "Moving Up/Down" button (which I'm considering removing)
+
 v1.0: One Point Zero (1/20/2018)
  * Finally v1.0
  * Fixed a few grammar/spelling errors
