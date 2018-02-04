@@ -1546,7 +1546,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
         this.darkLevel = false;
         this.blocks = new __WEBPACK_IMPORTED_MODULE_3__engine_container__["a" /* Container */]();
         document.getElementById("volume").oninput = (e) => {
-            this.setVolume(Number(e.srcElement.value));
+            this.setVolume(Number(e.target.value));
         };
         this.setVolume(50); // 50%
         // stats.js for fps monitoring
@@ -1666,7 +1666,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
         let spriteConstructor;
         let texture;
         if (typeof blockType === "undefined") {
-            console.warn("skipping block", char);
+            console.error(`Could not find block metadata for ${char}, skipping`);
             return;
         }
         else if (typeof blockType === "string") {
@@ -1678,7 +1678,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
             spriteConstructor = blockType.type;
         }
         if (!texture) {
-            console.error(`Could not find texture for ${blockType}`);
+            console.error(`Could not find block texture for ${blockType}, skipping`);
             return;
         }
         const opts = {
@@ -2560,11 +2560,9 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_7__task__["b" /* TaskRunner 
         this.staticCtx = this.staticCanvas.getContext("2d");
         // mouse driver, support pc and mobile to some degree
         if (!Object(__WEBPACK_IMPORTED_MODULE_8__utils__["c" /* isMobile */])()) {
-            console.log("using normal mouse");
             this.mouse = new __WEBPACK_IMPORTED_MODULE_2__drivers_mouse_mouse__["a" /* Mouse */](this);
         }
         else {
-            console.log("using mobile mouse");
             this.mouse = new __WEBPACK_IMPORTED_MODULE_3__drivers_mouse_touchscreen__["a" /* TouchscreenMouse */](this);
         }
         this.keyboard = new __WEBPACK_IMPORTED_MODULE_1__drivers_keyboard_keyboard__["a" /* Keyboard */](this);

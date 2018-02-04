@@ -63,10 +63,8 @@ export class GameRuntime extends TaskRunner {
 
     // mouse driver, support pc and mobile to some degree
     if (!isMobile()) {
-      console.log("using normal mouse");
       this.mouse = new Mouse(this);
     } else {
-      console.log("using mobile mouse");
       this.mouse = new TouchscreenMouse(this);
     }
 
@@ -315,7 +313,7 @@ export class GameRuntime extends TaskRunner {
 
   // throws an error that is handled gracefully by the update function
   // stops ALL execution
-  public exit() {
+  public exit(): never {
     this.stopAllSounds();
 
     console.warn("exiting using exit()");

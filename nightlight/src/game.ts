@@ -35,7 +35,7 @@ export class Nightlight extends GameRuntime {
     super(document.getElementById("container") as HTMLElement);
 
     (document.getElementById("volume") as HTMLInputElement).oninput = (e) => {
-      this.setVolume(Number((e.srcElement as HTMLInputElement).value));
+      this.setVolume(Number((e.target as HTMLInputElement).value));
     };
     this.setVolume(50); // 50%
 
@@ -112,7 +112,7 @@ export class Nightlight extends GameRuntime {
     }
   }
 
-  private setVolume(volume: number) {
+  public setVolume(volume: number) {
     super.setVolume(volume);
     (document.getElementById("volume-level") as HTMLElement).textContent = volume + "%";
     (document.getElementById("volume") as HTMLInputElement).value = volume.toString();
@@ -180,7 +180,7 @@ export class Nightlight extends GameRuntime {
     let texture: TImage;
 
     if (typeof blockType === "undefined") {
-      console.warn("skipping block", char);
+      console.error(`Could not find block metadata for ${char}, skipping`);
       return;
     } else if (typeof blockType === "string") {
       texture = this.getImage(blockType);
@@ -191,7 +191,7 @@ export class Nightlight extends GameRuntime {
     }
 
     if (!texture) {
-      console.error(`Could not find texture for ${blockType}`);
+      console.error(`Could not find block texture for ${blockType}, skipping`);
       return;
     }
 
