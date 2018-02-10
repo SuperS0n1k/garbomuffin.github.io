@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "description": "The easiest and most featureful teleprompter",
   "scripts": {
-    "bundle": "webpack",
+    "build": "webpack",
     "watch": "webpack --watch"
   },
   "author": "GarboMuffin",
   "license": "MIT",
   "devDependencies": {
-    "ts-loader": "^3.1.1",
-    "typescript": "^2.6.1",
-    "webpack": "^3.8.1"
+    "ts-loader": "^3.5.0",
+    "typescript": "^2.7.1",
+    "webpack": "^3.11.0"
   },
   "private": true
 }
