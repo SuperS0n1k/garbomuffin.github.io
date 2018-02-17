@@ -1,11 +1,16 @@
-import { ImageSprite, IImageSpriteOptions } from "../../../engine/sprites/imagesprite";
-import { scratchCoordinate, getRandomInt } from "../../../utils";
-import { Vector } from "../../../engine/vector";
-import { NossBossBulletSprite, MOVE_TIME as BULLET_MOVE_TIME } from "./bullet";
-import { AbstractBoss } from "../boss";
+import { IImageSpriteOptions } from "../../../engine/sprites/imagesprite";
 import { Task } from "../../../engine/task";
-import { NossBossDustSprite } from "./dust";
-import { HitEffectSprite } from "../hiteffect";
+import { Vector } from "../../../engine/vector";
+import { getRandomInt, scratchCoordinate } from "../../../utils";
+import {
+  AbstractNossBoss,
+  BASE_TEXTURE,
+  HIT_ANIMATION_REPEAT,
+  HIT_ANIMATION_REPEAT2,
+  HIT_ANIMATION_TOTAL_LENGTH,
+  HIT_ANIMATION_TOTAL_LENGTH2,
+} from "../noss";
+import { MOVE_TIME as BULLET_MOVE_TIME, NossBossBulletSprite } from "./bullet";
 
 interface INossPosition {
   position: Vector;
@@ -25,34 +30,11 @@ const POSITIONS: INossPosition[] = [
   },
 ];
 
-export const BASE_TEXTURE = "boss/noss/noss";
 const VULNERABLE_TEXTURE = "boss/noss/rest";
-
 const STARTING_POS = scratchCoordinate(-4, -104); // original (0, -108)
-
 const HEALTH = 3;
 
-const POOF_PARTICLE_COUNT = 8;
-const POOF_PARTICLE_ANGLE = 360 / POOF_PARTICLE_COUNT;
-
-const HIT_ANIMATION_FRAMES = [
-  "boss/noss/hit",
-  BASE_TEXTURE,
-];
-const HIT_ANIMATION_LENGTH = 2;
-const HIT_ANIMATION_REPEAT = 12;
-const HIT_ANIMATION_REPEAT2 = 35; // for dead
-
-const HIT_ANIMATION_TOTAL_LENGTH = HIT_ANIMATION_LENGTH *
-                                   HIT_ANIMATION_REPEAT *
-                                   HIT_ANIMATION_FRAMES.length +
-                                   HIT_ANIMATION_LENGTH;
-const HIT_ANIMATION_TOTAL_LENGTH2 = HIT_ANIMATION_LENGTH *
-                                    HIT_ANIMATION_REPEAT2 *
-                                    HIT_ANIMATION_FRAMES.length +
-                                    HIT_ANIMATION_LENGTH;
-
-export class NossBoss extends AbstractBoss {
+export class NossBoss extends AbstractNossBoss {
   private health: number = HEALTH;
   private shouldEndRoutine: boolean;
 
@@ -123,23 +105,6 @@ export class NossBoss extends AbstractBoss {
     }));
   }
 
-  private poof() {
-    this.visible = !this.visible;
-
-    const position = this.centerPosition;
-    const texture = this.runtime.getImage("boss/noss/dust");
-    position.x -= texture.width / 2;
-    position.y -= texture.height / 2;
-
-    for (let i = 0; i < POOF_PARTICLE_COUNT; i++) {
-      new NossBossDustSprite({
-        rotation: i * POOF_PARTICLE_ANGLE,
-        position,
-        texture,
-      });
-    }
-  }
-
   private teleport() {
     const position = POSITIONS[getRandomInt(0, POSITIONS.length - 1)];
     this.position = new Vector(position.position);
@@ -161,18 +126,6 @@ export class NossBoss extends AbstractBoss {
       } else {
         this.damage();
       }
-    }
-  }
-
-  private playHitAnimation(repeat: number) {
-    for (let i = 0; i < HIT_ANIMATION_FRAMES.length; i++) {
-      const frame = HIT_ANIMATION_FRAMES[i];
-      this.addTask(new Task({
-        run: () => this.texture = this.runtime.getImage(frame),
-        repeatEvery: HIT_ANIMATION_LENGTH * 2,
-        delay: i * HIT_ANIMATION_LENGTH,
-        repeatMax: repeat,
-      }));
     }
   }
 
@@ -205,5 +158,10 @@ export class NossBoss extends AbstractBoss {
       position: this.position,
       texture: this.runtime.getImage("boss/noss/bullet"),
     });
+  }
+
+  protected poof() {
+    super.poof();
+    this.visible = !this.visible;
   }
 }

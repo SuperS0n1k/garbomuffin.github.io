@@ -40,6 +40,7 @@ export class GameRuntime extends TaskRunner {
   public mouse: Mouse;
   public keyboard: AbstractKeyboard;
   public frames: number = 0;
+  public volume: number = 50;
   public started: boolean = false;
   public background: TBackground = "white";
   private _assetPromises: Array<Promise<TImage>> = [];
@@ -181,6 +182,7 @@ export class GameRuntime extends TaskRunner {
       src = this.getSound(src);
     }
     src.currentTime = 0;
+    src.volume = this.volume;
     src.play();
     return src;
   }
@@ -199,6 +201,7 @@ export class GameRuntime extends TaskRunner {
     for (const sound of this.sounds.values()) {
       sound.volume = volume / 100;
     }
+    this.volume = volume / 100;
   }
 
   ///
@@ -217,6 +220,7 @@ export class GameRuntime extends TaskRunner {
     console.log("starting loop");
     this.resetVariables();
     this.loop();
+    this.setVolume(this.volume);
 
     this.started = true;
 

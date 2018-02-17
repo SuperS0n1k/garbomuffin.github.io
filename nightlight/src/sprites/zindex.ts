@@ -7,4 +7,5 @@ export enum ZIndexes {
   Block = 0, // note: possibly static
   Grass = 1, // note: static
   Player = 10,
+  FinalBoss = 20,
 }

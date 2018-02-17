@@ -37,7 +37,6 @@ export class Nightlight extends GameRuntime {
     (document.getElementById("volume") as HTMLInputElement).oninput = (e) => {
       this.setVolume(Number((e.target as HTMLInputElement).value));
     };
-    this.setVolume(50); // 50%
 
     // stats.js for fps monitoring
     this.stats = new Stats();
