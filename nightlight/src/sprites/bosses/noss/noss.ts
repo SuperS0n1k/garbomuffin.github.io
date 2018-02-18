@@ -2,14 +2,7 @@ import { IImageSpriteOptions } from "../../../engine/sprites/imagesprite";
 import { Task } from "../../../engine/task";
 import { Vector } from "../../../engine/vector";
 import { getRandomInt, scratchCoordinate } from "../../../utils";
-import {
-  AbstractNossBoss,
-  BASE_TEXTURE,
-  HIT_ANIMATION_REPEAT,
-  HIT_ANIMATION_REPEAT2,
-  HIT_ANIMATION_TOTAL_LENGTH,
-  HIT_ANIMATION_TOTAL_LENGTH2,
-} from "../noss";
+import { AbstractNossBoss, BASE_TEXTURE, HIT_ANIMATION_TOTAL_LENGTH } from "../noss";
 import { MOVE_TIME as BULLET_MOVE_TIME, NossBossBulletSprite } from "./bullet";
 
 interface INossPosition {
@@ -41,8 +34,17 @@ export class NossBoss extends AbstractNossBoss {
   constructor(options: IImageSpriteOptions) {
     super(options);
 
+    this.visible = false;
     this.position = new Vector(STARTING_POS);
 
+    this.addTask(new Task({
+      run: () => this.start(),
+      delay: 60,
+    }));
+  }
+
+  private start() {
+    this.audiblePoof(true);
     this.addTask(new Task({
       run: () => this.startRoutine(),
       delay: 90,
@@ -59,20 +61,32 @@ export class NossBoss extends AbstractNossBoss {
 
     this.addPhase(new Task({
       run: () => this.poof(),
-    }));
+    }))
+
+    this.addPhase(new Task({
+      run: () => this.runtime.playSound("boss/noss/shadow1"),
+    }), 60);
+
+    this.addPhase(new Task({
+      run: () => this.runtime.playSound("boss/noss/shadow3"),
+    }), 90);
 
     this.addPhase(new Task({
       run: () => this.teleport(),
     }), 60);
 
     this.addPhase(new Task({
-      run: () => this.poof(),
+      run: () => this.audiblePoof(),
     }), 60);
 
     this.addPhase(new Task({
       run: () => this.spawnBullets(),
       repeatEvery: 1,
       repeatMax: 10,
+    }));
+
+    this.addPhase(new Task({
+      run: () => this.afterSpawnBullets(),
     }), BULLET_MOVE_TIME);
 
     this.addPhase(new Task({
@@ -82,7 +96,7 @@ export class NossBoss extends AbstractNossBoss {
     this.addPhase(new Task({
       run: (task) => this.rest(task),
       repeatEvery: 0,
-      repeatMax: 60,
+      repeatMax: 120,
     }));
 
     this.addPhase(new Task({
@@ -130,7 +144,7 @@ export class NossBoss extends AbstractNossBoss {
   }
 
   private damage() {
-    this.playHitAnimation(HIT_ANIMATION_REPEAT);
+    this.playHitAnimation();
 
     this.addTask(new Task({
       run: () => this.shouldEndRoutine = true,
@@ -139,18 +153,7 @@ export class NossBoss extends AbstractNossBoss {
   }
 
   private dead() {
-    this.playHitAnimation(HIT_ANIMATION_REPEAT2);
-
-    this.addTask(new Task({
-      run: () => this.actuallyDead(),
-      delay: HIT_ANIMATION_TOTAL_LENGTH2,
-    }));
-  }
-
-  private actuallyDead() {
-    this.poof();
-    this.spawnLevelUpCoin(this.position);
-    this.destroy();
+    this.playDeadAnimation();
   }
 
   private spawnBullets() {
@@ -160,8 +163,18 @@ export class NossBoss extends AbstractNossBoss {
     });
   }
 
-  protected poof() {
+  private afterSpawnBullets() {
+    this.runtime.playSound("boss/noss/shadow4");
+  }
+
+  protected poof(newVisibility: boolean = !this.visible) {
     super.poof();
-    this.visible = !this.visible;
+    this.visible = newVisibility;
+  }
+
+  // this function is brought to you by audible
+  private audiblePoof(newVisibility?: boolean) {
+    this.poof(newVisibility);
+    this.runtime.playSound("boss/noss/shadow2");
   }
 }

@@ -148,6 +148,15 @@ game.addSound("player/death");
 game.addSound("player/ding");
 game.addSound("player/jump");
 
+// boss
+game.addSound("boss/ouch");
+game.addSound("boss/sword/rumble");
+game.addSound("boss/noss/shadow1");
+game.addSound("boss/noss/shadow2");
+game.addSound("boss/noss/shadow3");
+game.addSound("boss/noss/shadow4");
+game.addSound("boss/shadow5");
+
 // background music
 game.addSound("music/exploration");
 game.addSound("music/netherslament");

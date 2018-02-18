@@ -12,15 +12,6 @@
       #progress {
         width: 480px;
       }
-
-      #debug-container {
-        position: relative;
-      }
-      #debug-container canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
     </style>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -37,7 +28,7 @@
   </head>
 
   <body>
-    <h1>Nightlight in JS (v0.0.999.0)</h1>
+    <h1>Nightlight in JS (v0.0.999.1)</h1>
 
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a></p>
     <p><a href="https://scratch.mit.edu/projects/167502369/">Also play my remix which contains some of the features I plan to add here.</a></p>
@@ -51,8 +42,6 @@
     <!-- the <canvas>(s) are put into this div here -->
     <!-- they are injected by code, no more need to manually add them anymore -->
     <div id="container"></div>
-    <div id="debug-container"></div>
-    <div id="sprite-explorer"></div>
 
     <div><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
     
@@ -62,7 +51,6 @@
     <button onclick="runtime.player.kill();">Death</button>
     <button onclick="runtime.addTask(function(){runtime.exit()});">Stop (refresh to restart)</button>
 
-
     <br>
     <div>
       <b>Debug views:</b>
@@ -71,10 +59,21 @@
     </div>
 
     <pre>
-      CHANGELOG:
+      <b>Upcoming changes/bug fixes:</b>
+       * Sounds shouldn't redownload on every use
+       * Spike hitboxes shouldn't be rectangle
+       * Remove skip level buttons
+       * Menus
+       * Proper ending that isn't an empty room
+
+      <b>Changelog:</b>
+
+      v0.0.999.1:
+       * Added just about all sounds
+       * Boss paterns are just about perfect
 
       v0.0.999.0:
-       * Added the <a href="#19">last boss</a>
+       * Added the <a href="#19">last boss</a> (ignore incorrect background with this link)
 
       v0.0.9.5:
        * Things that are scaled will still look pixelated (see the <a href="#5">sword boss</a>)

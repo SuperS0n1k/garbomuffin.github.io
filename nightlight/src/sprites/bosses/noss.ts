@@ -59,7 +59,23 @@ export abstract class AbstractNossBoss extends AbstractBoss {
     }
   }
 
-  protected playHitAnimation(repeat: number) {
+  protected playDeadAnimation() {
+    this.playHitAnimation(HIT_ANIMATION_REPEAT2);
+    this.runtime.playSound("boss/shadow5");
+    this.addTask(new Task({
+      run: () => this.kill(),
+      delay: HIT_ANIMATION_TOTAL_LENGTH2 + 60,
+    }));
+  }
+
+  protected kill() {
+    this.runtime.playSound("boss/noss/shadow1");
+    this.poof();
+    this.spawnLevelUpCoin(this.position);
+    this.destroy();
+  }
+
+  protected playHitAnimation(repeat: number = HIT_ANIMATION_REPEAT) {
     for (let i = 0; i < HIT_ANIMATION_FRAMES.length; i++) {
       const frame = HIT_ANIMATION_FRAMES[i];
       this.addTask(new Task({

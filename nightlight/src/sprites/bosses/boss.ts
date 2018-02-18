@@ -33,6 +33,7 @@ export abstract class AbstractBoss extends ImageSprite {
   }
 
   protected bouncePlayer() {
+    this.runtime.playSound("boss/ouch");
     this.runtime.player.yv = PLAYER_JUMP_YV;
   }
 

@@ -341,10 +341,14 @@ export class SwordBoss extends AbstractBoss {
       }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
 
       this.addPhase(new Task({
-        run: this.deadPhysics,
+        run: (task) => this.deadPhysics(task),
         repeatEvery: 0,
       }));
     } else {
+      this.addPhase(new Task({
+        run: () => this.runtime.playSound("boss/sword/rumble"),
+      }));
+
       this.addPhase(new Task({
         run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
       }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);

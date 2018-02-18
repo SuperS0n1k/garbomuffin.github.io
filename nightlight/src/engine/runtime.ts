@@ -40,7 +40,7 @@ export class GameRuntime extends TaskRunner {
   public mouse: Mouse;
   public keyboard: AbstractKeyboard;
   public frames: number = 0;
-  public volume: number = 50;
+  public volume: number = 0.5;
   public started: boolean = false;
   public background: TBackground = "white";
   private _assetPromises: Array<Promise<TImage>> = [];
@@ -201,7 +201,7 @@ export class GameRuntime extends TaskRunner {
     for (const sound of this.sounds.values()) {
       sound.volume = volume / 100;
     }
-    this.volume = volume / 100;
+    this.volume = volume;
   }
 
   ///

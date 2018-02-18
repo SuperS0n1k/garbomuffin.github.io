@@ -1,17 +1,5 @@
 const path = require("path");
 
-// const babelLoader = {
-//   loader: "babel-loader",
-//   options: {
-//     cacheDirectory: true,
-//     presets: [
-//       ["env", {
-//         useBuiltIns: "entry",
-//       }]
-//     ]
-//   }
-// };
-
 module.exports = {
   entry: "./src/index.ts",
   module: {
@@ -19,7 +7,6 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: [
-          // babelLoader,
           {
             loader: "ts-loader",
           }

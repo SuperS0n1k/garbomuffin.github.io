@@ -34,8 +34,8 @@ export class ImageSprite extends AbstractSprite {
 
     this._setRenderValues(ctx);
 
-    const x = Math.floor(this.x);
-    const y = Math.floor(this.y);
+    const x = this.x;
+    const y = this.y;
 
     ctx.drawImage(this.texture, x, y, this.width, this.height);
     ctx.restore();

@@ -2,15 +2,7 @@ import { IImageSpriteOptions } from "../../../engine/sprites/imagesprite";
 import { Task } from "../../../engine/task";
 import { getRandomInt } from "../../../utils";
 import { ZIndexes } from "../../zindex";
-import {
-  AbstractNossBoss,
-  BASE_TEXTURE,
-  HIT_ANIMATION_REPEAT,
-  HIT_ANIMATION_REPEAT2,
-  HIT_ANIMATION_TOTAL_LENGTH,
-  HIT_ANIMATION_TOTAL_LENGTH2,
-} from "../noss";
-import { Vector2D } from "../../../engine/vector2d";
+import { AbstractNossBoss, BASE_TEXTURE, HIT_ANIMATION_TOTAL_LENGTH } from "../noss";
 
 const HEALTH = 3;
 
@@ -23,12 +15,12 @@ const SLIDE_ATTACK_SIZE_CHANGE = 0.2 / 2;
 const SLIDE_ATTACK_MIN = 5;
 const SLIDE_ATTACK_MAX = 7;
 
-// typically the slide attack ends at around 1.9999999 due to floating point math
-const DROP_ATTACK_SCALE = 2;
-const DROP_ATTACK_GRAVITY = 7;
-const DROP_ATTACK_FALL_LENGTH = 46;
-const DROP_ATTACK_REPEAT = 5;
-const DROP_ATTACK_END = 288.5; // fuck it, close enough
+// any size changes during thet slide attack are replaced with this for consistency
+const DROP_ATTACK_SCALE = 3;
+const DROP_ATTACK_GRAVITY = 14;
+const DROP_ATTACK_FALL_LENGTH = 23;
+const DROP_ATTACK_REPEAT = 4; // +1 for the last one where the boss becomes vulnerable
+const DROP_ATTACK_END = 280 + 1/3;
 
 const REST_TEXTURE = "boss/noss/rest";
 
@@ -41,6 +33,14 @@ export class FinalBoss extends AbstractNossBoss {
   constructor(opts: IImageSpriteOptions) {
     super(opts);
 
+    // window.l=this;
+    // this.scale=new Vector2D(3,3);
+    // this.x=100;
+    // this.addTask(()=>{
+    //   if(this.runtime.keyboard.keys[40].isPressed){this.y++};
+    //   if(this.runtime.keyboard.keys[38].isPressed){this.y--};
+    // })
+    // return;
     this.z = ZIndexes.FinalBoss;
     this.visible = false;
     this.addTask(new Task({
@@ -49,7 +49,7 @@ export class FinalBoss extends AbstractNossBoss {
     }));
     this.addTask(new Task({
       run: () => this.startRoutine(),
-      delay: 30,
+      delay: 60,
     }));
   }
 
@@ -72,7 +72,7 @@ export class FinalBoss extends AbstractNossBoss {
       const addSpinAttack = (direction: number) => {
         this.addPhase(new Task({
           run: () => this.prepareSlideAttack(direction),
-        }), 30);
+        }), getRandomInt(0, 60));
         this.addPhase(new Task({
           run: () => this.slideAttack(direction),
           repeatEvery: 0,
@@ -92,8 +92,8 @@ export class FinalBoss extends AbstractNossBoss {
         run: () => this.dropAttack(),
         repeatEvery: 0,
         repeatMax: DROP_ATTACK_FALL_LENGTH,
-      }), endDelay ? 30 : 0);
-    }
+      }), endDelay ? 33 : 0); // 33: 0.05 sec + 30 frames (repeat 15)
+    };
 
     for (let i = 0; i < DROP_ATTACK_REPEAT; i++) {
       addDropAttack();
@@ -125,6 +125,7 @@ export class FinalBoss extends AbstractNossBoss {
   }
 
   private prepareSlideAttack(direction: number) {
+    this.runtime.playSound("boss/noss/shadow3");
     this.visible = false;
     this.scale.x = (Math.abs(this.scale.x) + SLIDE_ATTACK_SIZE_CHANGE) * direction;
     this.scale.y = (Math.abs(this.scale.y) + SLIDE_ATTACK_SIZE_CHANGE) * direction;
@@ -144,6 +145,7 @@ export class FinalBoss extends AbstractNossBoss {
   }
 
   private prepareDropAttack() {
+    this.runtime.playSound("boss/noss/shadow2");
     this.scale.x = DROP_ATTACK_SCALE;
     this.scale.y = DROP_ATTACK_SCALE;
     this.y = -this.height;
@@ -171,13 +173,9 @@ export class FinalBoss extends AbstractNossBoss {
       task.stop();
 
       if (this.health === 0) {
-        this.playHitAnimation(HIT_ANIMATION_REPEAT2);
-        this.addTask(new Task({
-          run: () => this.dead(),
-          delay: HIT_ANIMATION_TOTAL_LENGTH2,
-        }))
+        this.playDeadAnimation();
       } else {
-        this.playHitAnimation(HIT_ANIMATION_REPEAT);
+        this.playHitAnimation();
         this.addTask(new Task({
           run: () => this.endRoutine(),
           delay: HIT_ANIMATION_TOTAL_LENGTH,
