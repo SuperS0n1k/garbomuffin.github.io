@@ -11,7 +11,7 @@ ytembed userscript v0.0.2:
 // ==UserScript==
 // @name         ytembed
 // @namespace    https://garbomuffin.github.io/ytembed/
-// @version      0.0.2.1
+// @version      0.0.2.2
 // @author       GarboMuffin
 // @match        https://www.youtube.com/*
 // @match        https://garbomuffin.github.io/ytembed/userscript/config.html
@@ -89,20 +89,13 @@ ytembed userscript v0.0.2:
   // HANDLERS
   //
 
-  class AbstractHandler {
-    // must be implemented when extended
-    run() {
-      console.warn("ytembed: unimplemented run()");
-    }
-  }
-
-  class ConfigHandler extends AbstractHandler {
+  class ConfigHandler {
     run() {
       GM_config.open();
     }
   }
 
-  class VideoHandler extends AbstractHandler {
+  class VideoHandler {
     // must be implemented when extended
     isVideoBlocked() {
       console.warn("ytembed: unimplemented isVideoBlocked()");
@@ -224,7 +217,7 @@ ytembed userscript v0.0.2:
 
   function getHandler() {
     const onConfigPage = location.href.indexOf("/ytembed/userscript/config.html") > -1;
-    const isUsingMaterial = !!unsafeWindow.ytcsi;
+    const isUsingMaterial = document.getElementsByTagName("ytd-app").length > 0;
     if (onConfigPage) {
       return new ConfigHandler();
     } else if (isUsingMaterial && GM_config.get("materialSupport")) {
@@ -236,6 +229,9 @@ ytembed userscript v0.0.2:
   }
 
   const handler = getHandler();
+  if (!handler) {
+    return;
+  }
 
   // experimental: hide links option
   // makes them invisible however functionally the same if you know where to click
