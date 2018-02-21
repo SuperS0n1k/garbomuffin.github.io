@@ -11,7 +11,7 @@ ytembed userscript v0.0.2:
 // ==UserScript==
 // @name         ytembed
 // @namespace    https://garbomuffin.github.io/ytembed/
-// @version      0.0.2
+// @version      0.0.2.1
 // @author       GarboMuffin
 // @match        https://www.youtube.com/*
 // @match        https://garbomuffin.github.io/ytembed/userscript/config.html
@@ -222,28 +222,20 @@ ytembed userscript v0.0.2:
     }
   }
 
-  function getHandlerClass() {
+  function getHandler() {
     const onConfigPage = location.href.indexOf("/ytembed/userscript/config.html") > -1;
-    const isUsingMaterial = !!document.getElementById("polymer-app");
+    const isUsingMaterial = !!unsafeWindow.ytcsi;
     if (onConfigPage) {
-      return ConfigHandler;
+      return new ConfigHandler();
     } else if (isUsingMaterial && GM_config.get("materialSupport")) {
-      return MaterialHandler;
+      return new MaterialHandler();
     } else if (GM_config.get("classicSupport")) {
-      return ClassicHandler;
+      return new ClassicHandler();
     }
     return null;
   }
 
-  //
-  // CHOOSING A HANDLER AND RUNNING IT
-  //
-
-  const handlerClass = getHandlerClass();
-  if (!handlerClass) {
-    return;
-  }
-  const handler = new handlerClass();
+  const handler = getHandler();
 
   // experimental: hide links option
   // makes them invisible however functionally the same if you know where to click
