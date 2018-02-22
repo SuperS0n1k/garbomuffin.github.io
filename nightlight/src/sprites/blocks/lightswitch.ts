@@ -23,8 +23,8 @@ const HIDE_DELAY = 30;
 
 export class LightSwitchBlock extends SolidBlock {
   // see #show()
-  private activated: boolean;
-  private animationProgress: number;
+  private activated: boolean = false;
+  private animationProgress: number = 0;
   private startingPosition: Vector;
 
   constructor(opts: IBlockOptions) {

@@ -32,7 +32,6 @@ export class GameRuntime extends TaskRunner {
   private readonly _DEBUG_NON_STATIC_OUTLINE = false;
   private readonly _DEBUG_STATIC_OUTLINE = false;
 
-  // see resetVariables()
   public readonly images: Map<string, TImage> = new Map();
   public readonly sounds: Map<string, TSound> = new Map();
   public sprites: Container;
@@ -40,9 +39,9 @@ export class GameRuntime extends TaskRunner {
   public mouse: Mouse;
   public keyboard: AbstractKeyboard;
   public frames: number = 0;
-  public volume: number = 0.5;
   public started: boolean = false;
   public background: TBackground = "white";
+  private _volume: number = 0;
   private _assetPromises: Array<Promise<TImage>> = [];
 
   // rendering
@@ -55,10 +54,12 @@ export class GameRuntime extends TaskRunner {
   constructor(container: HTMLElement) {
     super();
 
+    // make the main canvas and add it to the DOM
     this.canvas = this.createCanvas();
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     container.appendChild(this.canvas);
 
+    // init static rendering optimizations
     this.staticCanvas = this.createCanvas();
     this.staticCtx = this.staticCanvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -68,22 +69,22 @@ export class GameRuntime extends TaskRunner {
     } else {
       this.mouse = new TouchscreenMouse(this);
     }
+    this.addTask(() => this.mouse.update());
 
     this.keyboard = new Keyboard(this);
 
     // set the current runtime on some objects
     // i dont want to do this but it works
+    // FIXME: GameRuntime.instance instead of this.runtime
     AbstractSprite.runtime = this as any;
     Container.runtime = this as any;
 
-    // reset other variables
-    this.resetVariables();
+    // set inital variables that have to happen after other things here
+    this.volume = 0.5;
+    this.sprites = new Container();
 
     // debugging
     (window as any).runtime = this;
-
-    // run the mouse driver
-    this.addTask(() => this.mouse.update());
 
     // classess are weird
     this.loop = this.loop.bind(this);
@@ -197,30 +198,14 @@ export class GameRuntime extends TaskRunner {
     return src;
   }
 
-  public setVolume(volume: number) {
-    for (const sound of this.sounds.values()) {
-      sound.volume = volume / 100;
-    }
-    this.volume = volume;
-  }
-
   ///
   /// CORE
   ///
 
-  // reset variabels to sane defaults
-  // after starting it has to reset things
-  protected resetVariables() {
-    // this.containers = [];
-    this.sprites = new Container();
-  }
-
   // resets things and starts the loop
   public start() {
     console.log("starting loop");
-    this.resetVariables();
     this.loop();
-    this.setVolume(this.volume);
 
     this.started = true;
 
@@ -264,6 +249,41 @@ export class GameRuntime extends TaskRunner {
       sprite.update();
     }
   }
+
+  public stopAllSounds() {
+    for (const sound of this.sounds.values()) {
+      this.stopSound(sound);
+    }
+  }
+
+  // throws an error that is handled gracefully by the update function
+  // stops ALL execution
+  public exit(): never {
+    this.stopAllSounds();
+
+    console.warn("exiting using exit()");
+
+    // instances of ExitError are treated specially by the update function
+    throw new ExitError();
+  }
+
+  ///
+  /// EVENTS
+  ///
+
+  // called when exiting
+  public onexit() {
+    this.started = false;
+  }
+
+  // when volume is set
+  public onsetvolume(volume: number) {
+
+  }
+
+  ///
+  /// RENDERING
+  ///
 
   public updateStatic() {
     this.resetCanvas(this.staticCtx);
@@ -311,21 +331,6 @@ export class GameRuntime extends TaskRunner {
     this.sprites.sort();
   }
 
-  public stopAllSounds() {
-    this.sounds.forEach((sound) => this.stopSound(sound));
-  }
-
-  // throws an error that is handled gracefully by the update function
-  // stops ALL execution
-  public exit(): never {
-    this.stopAllSounds();
-
-    console.warn("exiting using exit()");
-
-    // instances of ExitError are treated specially by the update function
-    throw new ExitError();
-  }
-
   // clears the canvas and sets the background or makes it transparent
   protected resetCanvas(ctx: CanvasRenderingContext2D, background: TBackground = "rgba(0, 0, 0, 0)") {
     const width = ctx.canvas.width;
@@ -352,8 +357,19 @@ export class GameRuntime extends TaskRunner {
     return canvas;
   }
 
-  // called when exiting
-  public onexit() {
-    this.started = false;
+  ///
+  /// ACCESSORS
+  ///
+
+  get volume() {
+    return this._volume;
+  }
+
+  set volume(volume: number) {
+    for (const sound of this.sounds.values()) {
+      sound.volume = volume;
+    }
+    this._volume = volume;
+    this.onsetvolume(volume);
   }
 }

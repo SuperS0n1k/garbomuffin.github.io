@@ -53,7 +53,7 @@ export class SwordBoss extends AbstractBoss {
   private health: number = HEALTH;
   private hitPlayer: boolean = false;
   private _sizeScale: number = 1;
-  private spinDirection: number;
+  private spinDirection: number = 1;
   private yv: number = DEAD_STARTING_VELOCITY;
   private testCollision: boolean = false;
 

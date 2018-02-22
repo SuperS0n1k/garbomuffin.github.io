@@ -29,7 +29,7 @@ const HEALTH = 3;
 
 export class NossBoss extends AbstractNossBoss {
   private health: number = HEALTH;
-  private shouldEndRoutine: boolean;
+  private shouldEndRoutine: boolean = false;
 
   constructor(options: IImageSpriteOptions) {
     super(options);
@@ -57,7 +57,7 @@ export class NossBoss extends AbstractNossBoss {
 
   protected startRoutine() {
     super.startRoutine();
-    this.shouldEndRoutine = true;
+    this.shouldEndRoutine = false;
 
     this.addPhase(new Task({
       run: () => this.poof(),
@@ -73,7 +73,7 @@ export class NossBoss extends AbstractNossBoss {
 
     this.addPhase(new Task({
       run: () => this.teleport(),
-    }), 60);
+    }));
 
     this.addPhase(new Task({
       run: () => this.audiblePoof(),
@@ -94,23 +94,18 @@ export class NossBoss extends AbstractNossBoss {
     }));
 
     this.addPhase(new Task({
+      // note: this.rest() does its own endRoutine(), task.stop()
       run: (task) => this.rest(task),
       repeatEvery: 0,
-      repeatMax: 120,
-    }));
-
-    this.addPhase(new Task({
-      run: (task) => this.testShouldEndRoutine(task),
-      repeatEvery: 0,
     }));
   }
 
-  private testShouldEndRoutine(task: Task) {
-    if (this.shouldEndRoutine) {
-      this.endRoutine();
-      task.stop();
-    }
-  }
+  // private testShouldEndRoutine(task: Task) {
+  //   if (this.shouldEndRoutine) {
+  //     this.endRoutine();
+  //     task.stop();
+  //   }
+  // }
 
   private endRoutine() {
     this.addTask(new Task({
@@ -127,13 +122,16 @@ export class NossBoss extends AbstractNossBoss {
   }
 
   private rest(task: Task) {
+    console.log(this.shouldEndRoutine, task.repeatCount);
+    if (this.shouldEndRoutine || task.repeatCount >= 300) {
+      this.endRoutine();
+      task.stop();
+    }
+
     if (this.playerJumpedOn()) {
       this.bouncePlayer();
-      task.stop();
-      this.health--;
-      this.shouldEndRoutine = false;
-
       this.spawnHitEffect("-1");
+      this.health--;
 
       if (this.health === 0) {
         this.dead();

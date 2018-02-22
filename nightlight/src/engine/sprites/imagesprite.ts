@@ -23,6 +23,8 @@ export class ImageSprite extends AbstractSprite {
     this.texture = options.texture;
     this.width = getOrDefault(options.width, this.texture.width) as number;
     this.height = getOrDefault(options.height, this.texture.height) as number;
+    this.rotation = getOrDefault(options.rotation, 0) as number;
+    this.opacity = getOrDefault(options.opacity, 1) as number;
   }
 
   public render(ctx: CanvasRenderingContext2D) {

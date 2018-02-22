@@ -18,7 +18,7 @@ export abstract class AbstractKeyboard extends TaskRunner {
     runtime.addTask(() => this.update());
 
     for (let i = 0; i < AbstractKeyboard.KEY_COUNT; i++) {
-      this.keys[i] = new Key(this, i);
+      this.keys[i] = new Key(this);
     }
   }
 
@@ -28,11 +28,10 @@ export abstract class AbstractKeyboard extends TaskRunner {
 }
 
 export class Key {
-  public readonly keyCode: number;
   public isPressed: boolean = false;
   public framesDown: number = 0;
 
-  constructor(keyboard: AbstractKeyboard, keyCode: number) {
+  constructor(keyboard: AbstractKeyboard) {
     keyboard.addTask(() => this.update());
   }
 

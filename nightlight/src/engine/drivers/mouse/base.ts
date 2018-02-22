@@ -24,9 +24,9 @@ export interface IMouse extends IMouseButton {
 
 export class BaseMouse extends TaskRunner implements IMouse {
   public runtime: GameRuntime;
-  public right: IMouseButton;
-  public middle: IMouseButton;
-  public left: IMouseButton;
+  public right!: IMouseButton;
+  public middle!: IMouseButton;
+  public left!: IMouseButton;
   public position: Vector = new Vector(0, 0);
 
   constructor(runtime: GameRuntime) {

@@ -7,7 +7,7 @@ import { HitEffectSprite } from "./hiteffect";
 const PLAYER_JUMP_YV = 3;
 
 export abstract class AbstractBoss extends ImageSprite {
-  protected phaseDelay: number;
+  protected phaseDelay: number = 0;
 
   constructor(options: IImageSpriteOptions) {
     super(options);

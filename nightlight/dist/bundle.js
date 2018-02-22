@@ -254,6 +254,11 @@ class TaskRunner {
     resetTasks() {
         this._tasks = [];
     }
+    stopAllTasks() {
+        for (const task of this._tasks) {
+            task.stop();
+        }
+    }
     // add a task
     // can either be a task or a function
     // if it is a task it is added as you would expect
@@ -319,6 +324,8 @@ class ImageSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* AbstractS
         this.texture = options.texture;
         this.width = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.width, this.texture.width);
         this.height = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.height, this.texture.height);
+        this.rotation = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.rotation, 0);
+        this.opacity = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getOrDefault */])(options.opacity, 1);
     }
     render(ctx) {
         if (!this.visible) {
@@ -1336,6 +1343,7 @@ const PLAYER_JUMP_YV = 3;
 class AbstractBoss extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__["a" /* ImageSprite */] {
     constructor(options) {
         super(options);
+        this.phaseDelay = 0;
     }
     // call super.startRoutine() in implementations!!!
     startRoutine() {
@@ -1665,12 +1673,15 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
     constructor() {
         super(document.getElementById("container"));
         this.level = 0;
+        this.levelData = "";
+        this.levels = [];
         this.background = "black";
         this.backgroundMusic = [];
         this.darkLevel = false;
         this.blocks = new __WEBPACK_IMPORTED_MODULE_3__engine_container__["a" /* Container */]();
         document.getElementById("volume").oninput = (e) => {
-            this.setVolume(Number(e.target.value));
+            const volume = Number(e.target.value);
+            this.volume = volume / 100;
         };
         // stats.js for fps monitoring
         this.stats = new Stats();
@@ -1734,11 +1745,6 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
                 persistent: true,
             });
         }
-    }
-    setVolume(volume) {
-        super.setVolume(volume);
-        document.getElementById("volume-level").textContent = volume + "%";
-        document.getElementById("volume").value = volume.toString();
     }
     //
     // Overrides
@@ -1868,6 +1874,9 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
                 position,
             });
         }
+    }
+    onsetvolume(volume) {
+        document.getElementById("volume-level").textContent = Math.round(volume * 100) + "%";
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Nightlight;
@@ -2393,6 +2402,9 @@ const HIDE_DELAY = 30;
 class LightSwitchBlock extends __WEBPACK_IMPORTED_MODULE_3__block__["c" /* SolidBlock */] {
     constructor(opts) {
         super(opts);
+        // see #show()
+        this.activated = false;
+        this.animationProgress = 0;
         this.startingPosition = new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](this.position);
         this.show();
     }
@@ -2668,18 +2680,19 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_7__task__["b" /* TaskRunner 
         // debug config variables
         this._DEBUG_NON_STATIC_OUTLINE = false;
         this._DEBUG_STATIC_OUTLINE = false;
-        // see resetVariables()
         this.images = new Map();
         this.sounds = new Map();
         this.containers = [];
         this.frames = 0;
-        this.volume = 0.5;
         this.started = false;
         this.background = "white";
+        this._volume = 0;
         this._assetPromises = [];
+        // make the main canvas and add it to the DOM
         this.canvas = this.createCanvas();
         this.ctx = this.canvas.getContext("2d");
         container.appendChild(this.canvas);
+        // init static rendering optimizations
         this.staticCanvas = this.createCanvas();
         this.staticCtx = this.staticCanvas.getContext("2d");
         // mouse driver, support pc and mobile to some degree
@@ -2689,17 +2702,18 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_7__task__["b" /* TaskRunner 
         else {
             this.mouse = new __WEBPACK_IMPORTED_MODULE_3__drivers_mouse_touchscreen__["a" /* TouchscreenMouse */](this);
         }
+        this.addTask(() => this.mouse.update());
         this.keyboard = new __WEBPACK_IMPORTED_MODULE_1__drivers_keyboard_keyboard__["a" /* Keyboard */](this);
         // set the current runtime on some objects
         // i dont want to do this but it works
+        // FIXME: GameRuntime.instance instead of this.runtime
         __WEBPACK_IMPORTED_MODULE_5__sprite__["a" /* AbstractSprite */].runtime = this;
         __WEBPACK_IMPORTED_MODULE_0__container__["a" /* Container */].runtime = this;
-        // reset other variables
-        this.resetVariables();
+        // set inital variables that have to happen after other things here
+        this.volume = 0.5;
+        this.sprites = new __WEBPACK_IMPORTED_MODULE_0__container__["a" /* Container */]();
         // debugging
         window.runtime = this;
-        // run the mouse driver
-        this.addTask(() => this.mouse.update());
         // classess are weird
         this.loop = this.loop.bind(this);
     }
@@ -2795,27 +2809,13 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_7__task__["b" /* TaskRunner 
         src.pause();
         return src;
     }
-    setVolume(volume) {
-        for (const sound of this.sounds.values()) {
-            sound.volume = volume / 100;
-        }
-        this.volume = volume;
-    }
     ///
     /// CORE
     ///
-    // reset variabels to sane defaults
-    // after starting it has to reset things
-    resetVariables() {
-        // this.containers = [];
-        this.sprites = new __WEBPACK_IMPORTED_MODULE_0__container__["a" /* Container */]();
-    }
     // resets things and starts the loop
     start() {
         console.log("starting loop");
-        this.resetVariables();
         this.loop();
-        this.setVolume(this.volume);
         this.started = true;
         new __WEBPACK_IMPORTED_MODULE_6__staticRenderer__["a" /* StaticRendererSprite */]({
             position: new __WEBPACK_IMPORTED_MODULE_9__vector__["a" /* Vector */](0, 0, -1),
@@ -2854,6 +2854,32 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_7__task__["b" /* TaskRunner 
             sprite.update();
         }
     }
+    stopAllSounds() {
+        for (const sound of this.sounds.values()) {
+            this.stopSound(sound);
+        }
+    }
+    // throws an error that is handled gracefully by the update function
+    // stops ALL execution
+    exit() {
+        this.stopAllSounds();
+        console.warn("exiting using exit()");
+        // instances of ExitError are treated specially by the update function
+        throw new __WEBPACK_IMPORTED_MODULE_4__errors_exit__["a" /* ExitError */]();
+    }
+    ///
+    /// EVENTS
+    ///
+    // called when exiting
+    onexit() {
+        this.started = false;
+    }
+    // when volume is set
+    onsetvolume(volume) {
+    }
+    ///
+    /// RENDERING
+    ///
     updateStatic() {
         this.resetCanvas(this.staticCtx);
         this.sortSprites();
@@ -2892,17 +2918,6 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_7__task__["b" /* TaskRunner 
     sortSprites() {
         this.sprites.sort();
     }
-    stopAllSounds() {
-        this.sounds.forEach((sound) => this.stopSound(sound));
-    }
-    // throws an error that is handled gracefully by the update function
-    // stops ALL execution
-    exit() {
-        this.stopAllSounds();
-        console.warn("exiting using exit()");
-        // instances of ExitError are treated specially by the update function
-        throw new __WEBPACK_IMPORTED_MODULE_4__errors_exit__["a" /* ExitError */]();
-    }
     // clears the canvas and sets the background or makes it transparent
     resetCanvas(ctx, background = "rgba(0, 0, 0, 0)") {
         const width = ctx.canvas.width;
@@ -2924,9 +2939,18 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_7__task__["b" /* TaskRunner 
         ctx.mozImageSmoothingEnabled = false;
         return canvas;
     }
-    // called when exiting
-    onexit() {
-        this.started = false;
+    ///
+    /// ACCESSORS
+    ///
+    get volume() {
+        return this._volume;
+    }
+    set volume(volume) {
+        for (const sound of this.sounds.values()) {
+            sound.volume = volume;
+        }
+        this._volume = volume;
+        this.onsetvolume(volume);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = GameRuntime;
@@ -2991,7 +3015,7 @@ class AbstractKeyboard extends __WEBPACK_IMPORTED_MODULE_0__task__["b" /* TaskRu
         this.keys = [];
         runtime.addTask(() => this.update());
         for (let i = 0; i < AbstractKeyboard.KEY_COUNT; i++) {
-            this.keys[i] = new Key(this, i);
+            this.keys[i] = new Key(this);
         }
     }
     update() {
@@ -3002,7 +3026,7 @@ class AbstractKeyboard extends __WEBPACK_IMPORTED_MODULE_0__task__["b" /* TaskRu
 
 AbstractKeyboard.KEY_COUNT = 256;
 class Key {
-    constructor(keyboard, keyCode) {
+    constructor(keyboard) {
         this.isPressed = false;
         this.framesDown = 0;
         keyboard.addTask(() => this.update());
@@ -3495,6 +3519,7 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_4__boss__["a" /* AbstractBoss 
         this.health = HEALTH;
         this.hitPlayer = false;
         this._sizeScale = 1;
+        this.spinDirection = 1;
         this.yv = DEAD_STARTING_VELOCITY;
         this.testCollision = false;
         this.startingHeight = this.height;
@@ -4008,6 +4033,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
     constructor(options) {
         super(options);
         this.health = HEALTH;
+        this.shouldEndRoutine = false;
         this.visible = false;
         this.position = new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](STARTING_POS);
         this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
@@ -4027,7 +4053,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
     //
     startRoutine() {
         super.startRoutine();
-        this.shouldEndRoutine = true;
+        this.shouldEndRoutine = false;
         this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.poof(),
         }));
@@ -4039,7 +4065,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
         }), 90);
         this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.teleport(),
-        }), 60);
+        }));
         this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.audiblePoof(),
         }), 60);
@@ -4055,21 +4081,17 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
             run: () => this.texture = this.runtime.getImage(VULNERABLE_TEXTURE),
         }));
         this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
+            // note: this.rest() does its own endRoutine(), task.stop()
             run: (task) => this.rest(task),
             repeatEvery: 0,
-            repeatMax: 120,
-        }));
-        this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
-            run: (task) => this.testShouldEndRoutine(task),
-            repeatEvery: 0,
         }));
     }
-    testShouldEndRoutine(task) {
-        if (this.shouldEndRoutine) {
-            this.endRoutine();
-            task.stop();
-        }
-    }
+    // private testShouldEndRoutine(task: Task) {
+    //   if (this.shouldEndRoutine) {
+    //     this.endRoutine();
+    //     task.stop();
+    //   }
+    // }
     endRoutine() {
         this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.startRoutine(),
@@ -4083,12 +4105,15 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
         this.texture = this.runtime.getImage(__WEBPACK_IMPORTED_MODULE_3__noss__["b" /* BASE_TEXTURE */]);
     }
     rest(task) {
+        console.log(this.shouldEndRoutine, task.repeatCount);
+        if (this.shouldEndRoutine || task.repeatCount >= 300) {
+            this.endRoutine();
+            task.stop();
+        }
         if (this.playerJumpedOn()) {
             this.bouncePlayer();
-            task.stop();
-            this.health--;
-            this.shouldEndRoutine = false;
             this.spawnHitEffect("-1");
+            this.health--;
             if (this.health === 0) {
                 this.dead();
             }

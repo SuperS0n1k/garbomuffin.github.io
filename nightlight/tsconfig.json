@@ -3,7 +3,6 @@
     "target": "es6",
     "removeComments": false,
     "strict": true,
-    "strictPropertyInitialization": false,
     "allowJs": true,
     "module": "es6"
   }

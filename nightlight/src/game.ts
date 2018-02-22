@@ -21,9 +21,9 @@ const TOTAL_BACKGROUND_STARS = 100;
 
 export class Nightlight extends GameRuntime {
   public level: number = 0;
-  public levelData: string;
-  public levels: Level[];
-  public player: PlayerSprite;
+  public levelData: string = "";
+  public levels: Level[] = [];
+  public player!: PlayerSprite;
   public background: TBackground = "black";
   public backgroundMusic: TSound[] = [];
   public darkLevel: boolean = false;
@@ -35,7 +35,8 @@ export class Nightlight extends GameRuntime {
     super(document.getElementById("container") as HTMLElement);
 
     (document.getElementById("volume") as HTMLInputElement).oninput = (e) => {
-      this.setVolume(Number((e.target as HTMLInputElement).value));
+      const volume = Number((e.target as HTMLInputElement).value);
+      this.volume = volume / 100;
     };
 
     // stats.js for fps monitoring
@@ -109,12 +110,6 @@ export class Nightlight extends GameRuntime {
         persistent: true,
       });
     }
-  }
-
-  public setVolume(volume: number) {
-    super.setVolume(volume);
-    (document.getElementById("volume-level") as HTMLElement).textContent = volume + "%";
-    (document.getElementById("volume") as HTMLInputElement).value = volume.toString();
   }
 
   //
@@ -276,5 +271,9 @@ export class Nightlight extends GameRuntime {
         position,
       });
     }
+  }
+
+  public onsetvolume(volume: number) {
+    document.getElementById("volume-level")!.textContent = Math.round(volume * 100) + "%";
   }
 }

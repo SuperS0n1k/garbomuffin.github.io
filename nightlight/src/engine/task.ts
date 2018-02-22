@@ -88,6 +88,12 @@ export class TaskRunner {
     this._tasks = [];
   }
 
+  public stopAllTasks() {
+    for (const task of this._tasks) {
+      task.stop();
+    }
+  }
+
   // add a task
   // can either be a task or a function
   // if it is a task it is added as you would expect
