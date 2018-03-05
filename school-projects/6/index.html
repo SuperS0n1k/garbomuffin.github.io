@@ -20,10 +20,12 @@
             c = "";
           }
         }
-        groups = groups.filter((s) => s !== "\n");
         groups.sort((a, b) => {
-          a = a.toLowerCase();
-          b = b.toLowerCase();
+          function r(s) {
+            return s.replace("The ", "").replace("A ", "").replace("“", "\"").replace("”", "\"");
+          }
+          a = r(a).toLowerCase();
+          b = r(b).toLowerCase();
           return a.localeCompare(b);
         });
         document.getElementById("out").value = groups.join("");
