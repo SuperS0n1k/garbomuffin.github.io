@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+  </head>
+  <body>
+    <textarea id="in"></textarea>
+    <textarea readonly id="out"></textarea>
+    <button onclick="ok();">ok</button>
+    <script>
+      function ok() {
+        var input = document.getElementById("in").value;
+        var lines = input.split("\n");
+        var groups = [];
+        var c = "";
+        for (var i of lines) {
+          c += i + "\n";
+          if (i === "") {
+            groups.push(c);
+            c = "";
+          }
+        }
+        groups = groups.filter((s) => s !== "\n");
+        groups.sort((a, b) => {
+          a = a.toLowerCase();
+          b = b.toLowerCase();
+          return a.localeCompare(b);
+        });
+        document.getElementById("out").value = groups.join("");
+        console.log(groups);
+      }
+    </script>
+  </body>
+</html>
