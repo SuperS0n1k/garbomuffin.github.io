@@ -261,7 +261,6 @@ function getConfig() {
     return new __WEBPACK_IMPORTED_MODULE_3__config_prompterconfig__["a" /* PrompterConfigManager */]();
 }
 function getPrompter(config) {
-    debugger;
     if (location.search === "?reilly") {
         return new __WEBPACK_IMPORTED_MODULE_5__prompter_reilly__["a" /* ReillyPrompter */](config);
     }
