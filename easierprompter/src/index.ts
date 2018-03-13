@@ -13,7 +13,6 @@ function getConfig() {
 }
 
 function getPrompter(config: ConfigManager) {
-  debugger;
   if (location.search === "?reilly") {
     return new ReillyPrompter(config);
   } else {
