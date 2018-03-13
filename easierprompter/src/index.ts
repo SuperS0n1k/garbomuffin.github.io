@@ -2,18 +2,33 @@ import "./email";
 import "./polyfill";
 import "./sw";
 
+import { ConfigManager } from "./config/config";
 import { PrompterConfigManager } from "./config/prompterconfig";
 import { Prompter } from "./prompter/prompter";
+import { ReillyPrompter } from "./prompter/reilly";
 import { getElement } from "./utils";
 
-const config = new PrompterConfigManager();
+function getConfig() {
+  return new PrompterConfigManager();
+}
+
+function getPrompter(config: ConfigManager) {
+  debugger;
+  if (location.search === "?reilly") {
+    return new ReillyPrompter(config);
+  } else {
+    return new Prompter(config);
+  }
+}
+
+const config = getConfig();
 config.load();
 config.save();
 
 getElement("save-button").onclick = () => config.save();
 getElement("reset-button").onclick = () => config.promptReset();
 
-const prompter = new Prompter(config);
+const prompter = getPrompter(config);
 
 window.onbeforeunload = (e) => {
   if (config.options.unsavedChangesWarning.get() && prompter.config.hasChanged()) {
