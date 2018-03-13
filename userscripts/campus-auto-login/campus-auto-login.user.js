@@ -1,10 +1,5 @@
-/* === CAMPUS AUTO LOGIN v3.5.2 ===
- * NEW IN v3.5.2: fix some bugs
- *
- * NEW IN v3.5.1: migration to github
- *
- * NEW IN v3.5: added config page!, now editing the config is MUCH easier and saves between updates
- * https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
+/* === CAMPUS AUTO LOGIN v3.5.3 ===
+ * v3.5.3: Google auto sign in works again!
  *
  * Supported sites:
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
@@ -19,30 +14,6 @@
  * See the website for usage information.
  * https://garbomuffin.github.io/userscripts/campus-auto-login/#supported
  */
-/*
-Copyright (c) 2017 GarboMuffin
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-// Don't touch anything below this line!
-// Real source: https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/userscripts/campus-auto-login/src
-var DUMMY_VAR_TO_PUT_HEADER_AT_TOP_OF_FILE = "";
 
 var PageState;
 (function (PageState) {
@@ -143,6 +114,7 @@ var KeyNames;
     KeyNames["BIM_PASSWORD"] = "BIM_PASSWORD";
 })(KeyNames || (KeyNames = {}));
 
+/// <reference path="../gm.ts" />
 class BasePortalAutoLogin {
     resetCredentials() {
         GM_deleteValue(KeyNames.CAMPUS_USERNAME);
@@ -239,6 +211,7 @@ class NewPortalAutoLogin extends BasePortalAutoLogin {
     }
 }
 
+/// <reference path="../gm.ts" />
 class TCIEncodedCredentials extends EncodedCredentials {
     constructor(username, password, teacher) {
         super(username, password);
@@ -318,6 +291,7 @@ class TCIAutoLogin {
     }
 }
 
+/// <reference path="../gm.ts" />
 class BIMAutoLogin {
     resetCredentials() {
         GM_deleteValue(KeyNames.BIM_USERNAME);
@@ -404,6 +378,7 @@ class EmptyAutoLogin {
     }
 }
 
+/// <reference path="../gm.ts" />
 const EMPOWER_CONSTS = {
     POPUP: "Please enable popups!\nSee: https://youtu.be/PdQLOfaAReQ",
 };
@@ -431,7 +406,7 @@ class GoogleChooseAccountManager extends EmptyAutoLogin {
     }
     onload() {
         const site = document.getElementsByClassName("uBOgn")[0].textContent;
-        if (site === "district112.org") {
+        if (site === "Empower") {
             const users = document.getElementsByClassName("C5uAFc w6VTHd");
             const user = users[this.user];
             const button = user.getElementsByTagName("div")[0];
@@ -442,7 +417,7 @@ class GoogleChooseAccountManager extends EmptyAutoLogin {
 class GoogleConsentManager extends EmptyAutoLogin {
     onload() {
         const site = document.getElementsByClassName("uBOgn")[0].textContent;
-        if (site === "district112.org") {
+        if (site === "Empower") {
             const buttons = document.getElementsByClassName("RveJvd snByac");
             buttons[1].click();
         }
@@ -506,7 +481,7 @@ GM_config.init({
     },
 });
 var foundMissing = false;
-const CONFIG$1 = {
+const CONFIG = {
     SUPPORT_OLD_CAMPUS: getOrDefault("OldPortalSupport", true),
     SUPPORT_NEW_CAMPUS: getOrDefault("NewPortalSupport", true),
     SUPPORT_TCI: getOrDefault("TCISupport", true),
@@ -532,51 +507,50 @@ if (foundMissing) {
     GM_config.save();
 }
 
-DUMMY_VAR_TO_PUT_HEADER_AT_TOP_OF_FILE.toString();
-const CONFIG = CONFIG$1;
+const CONFIG$1 = CONFIG;
 (function () {
     log("loaded");
     const pageType = getPageType();
     var loginManager = null;
     switch (pageType) {
         case PageType.CampusOld:
-            if (!CONFIG.SUPPORT_OLD_CAMPUS) {
+            if (!CONFIG$1.SUPPORT_OLD_CAMPUS) {
                 return;
             }
             loginManager = new OldPortalAutoLogin();
             break;
         case PageType.CampusNew:
-            if (!CONFIG.SUPPORT_NEW_CAMPUS) {
+            if (!CONFIG$1.SUPPORT_NEW_CAMPUS) {
                 return;
             }
             loginManager = new NewPortalAutoLogin();
             break;
         case PageType.TCI:
-            if (!CONFIG.SUPPORT_TCI) {
+            if (!CONFIG$1.SUPPORT_TCI) {
                 return;
             }
             loginManager = new TCIAutoLogin();
             break;
         case PageType.BIM:
-            if (!CONFIG.SUPPORT_BIM) {
+            if (!CONFIG$1.SUPPORT_BIM) {
                 return;
             }
             loginManager = new BIMAutoLogin();
             break;
         case PageType.Empower:
-            if (!CONFIG.SUPPORT_EMPOWER) {
+            if (!CONFIG$1.SUPPORT_EMPOWER) {
                 return;
             }
             loginManager = new EmpowerAutoLogin();
             break;
         case PageType.GoogleChooseAccount:
-            if (CONFIG.GOOGLE.USER === -1) {
+            if (CONFIG$1.GOOGLE.USER === -1) {
                 return;
             }
-            loginManager = new GoogleChooseAccountManager(CONFIG);
+            loginManager = new GoogleChooseAccountManager(CONFIG$1);
             break;
         case PageType.GoogleConsent:
-            if (!CONFIG.GOOGLE.CONSENT) {
+            if (!CONFIG$1.GOOGLE.CONSENT) {
                 return;
             }
             loginManager = new GoogleConsentManager();
@@ -621,7 +595,7 @@ const CONFIG = CONFIG$1;
 })();
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.5.2
+// @version      3.5.3
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
