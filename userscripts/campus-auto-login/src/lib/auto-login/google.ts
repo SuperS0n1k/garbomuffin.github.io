@@ -20,7 +20,7 @@ export class GoogleChooseAccountManager extends EmptyAutoLogin {
 
   onload() {
     const site = document.getElementsByClassName("uBOgn")[0].textContent;
-    if (site === "district112.org") {
+    if (site === "Empower") {
       const users = document.getElementsByClassName("C5uAFc w6VTHd");
       const user = users[this.user];
       const button = user.getElementsByTagName("div")[0];
@@ -32,7 +32,7 @@ export class GoogleChooseAccountManager extends EmptyAutoLogin {
 export class GoogleConsentManager extends EmptyAutoLogin {
   onload() {
     const site = document.getElementsByClassName("uBOgn")[0].textContent;
-    if (site === "district112.org") {
+    if (site === "Empower") {
       const buttons = document.getElementsByClassName("RveJvd snByac");
       (buttons[1] as HTMLSpanElement).click()
     }

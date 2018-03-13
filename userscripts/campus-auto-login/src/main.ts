@@ -116,7 +116,7 @@ const CONFIG = ConfigPage.CONFIG;
 
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.5.2
+// @version      3.5.3
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*

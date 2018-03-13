@@ -1,11 +1,6 @@
-/* === CAMPUS AUTO LOGIN v3.5.2 ===
- * NEW IN v3.5.2: fix some bugs
+/* === CAMPUS AUTO LOGIN v3.5.3 ===
+ * v3.5.3: Google auto sign in works again!
  * 
- * NEW IN v3.5.1: migration to github
- * 
- * NEW IN v3.5: added config page!, now editing the config is MUCH easier and saves between updates
- * https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
- *
  * Supported sites:
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
  * New Portal: https://campus.district112.org/campus/portal/students/isd112.jsp
