@@ -12,11 +12,11 @@ function getConfig() {
   return new PrompterConfigManager();
 }
 
-function getPrompter(config: ConfigManager) {
+function getPrompter(cfg: ConfigManager) {
   if (location.search === "?reilly") {
-    return new ReillyPrompter(config);
+    return new ReillyPrompter(cfg);
   } else {
-    return new Prompter(config);
+    return new Prompter(cfg);
   }
 }
 
@@ -36,7 +36,7 @@ window.onbeforeunload = (e) => {
     const text = [
       "You have unsaved changes to your config!",
       "If you leave these changes will be reset!",
-      "(disable this warning by unchecking \"Unsaved changes warning\"",
+      "(disable this warning by unchecking \"Unsaved changes warning\")",
     ].join("\n");
     e.returnValue = text;
     return text;

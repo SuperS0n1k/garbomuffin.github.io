@@ -260,12 +260,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 function getConfig() {
     return new __WEBPACK_IMPORTED_MODULE_3__config_prompterconfig__["a" /* PrompterConfigManager */]();
 }
-function getPrompter(config) {
+function getPrompter(cfg) {
     if (location.search === "?reilly") {
-        return new __WEBPACK_IMPORTED_MODULE_5__prompter_reilly__["a" /* ReillyPrompter */](config);
+        return new __WEBPACK_IMPORTED_MODULE_5__prompter_reilly__["a" /* ReillyPrompter */](cfg);
     }
     else {
-        return new __WEBPACK_IMPORTED_MODULE_4__prompter_prompter__["a" /* Prompter */](config);
+        return new __WEBPACK_IMPORTED_MODULE_4__prompter_prompter__["a" /* Prompter */](cfg);
     }
 }
 var config = getConfig();
@@ -279,7 +279,7 @@ window.onbeforeunload = function (e) {
         var text = [
             "You have unsaved changes to your config!",
             "If you leave these changes will be reset!",
-            "(disable this warning by unchecking \"Unsaved changes warning\"",
+            "(disable this warning by unchecking \"Unsaved changes warning\")",
         ].join("\n");
         e.returnValue = text;
         return text;
@@ -918,13 +918,33 @@ var ReillyPrompter = (function (_super) {
     function ReillyPrompter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    ReillyPrompter.prototype.getScript = function () {
-        var input = _super.prototype.getScript.call(this);
+    ReillyPrompter.prototype.unquote = function (input) {
         for (var _i = 0, QUOTES_1 = QUOTES; _i < QUOTES_1.length; _i++) {
             var c = QUOTES_1[_i];
             input = input.replace(c, "");
         }
         return input;
+    };
+    ReillyPrompter.prototype.comma = function (input) {
+        var s = input.split(" ");
+        var length = s.length;
+        var res = "";
+        for (var i = 0; i < length; i++) {
+            var text = s[i];
+            var progress = i / length;
+            res += text;
+            if (Math.random() < (progress / 2)) {
+                res += ", ";
+            }
+            else {
+                res += " ";
+            }
+        }
+        return res;
+    };
+    ReillyPrompter.prototype.getScript = function () {
+        var input = _super.prototype.getScript.call(this);
+        return this.comma(this.unquote(input));
     };
     return ReillyPrompter;
 }(__WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* Prompter */]));
