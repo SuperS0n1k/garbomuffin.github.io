@@ -1,17 +1,7 @@
-/*** CHANGELOG ***/
-
-/*
-ytembed userscript v0.0.2:
- * config page: https://garbomuffin.github./ytembed/userscript/config.html
- * hide links config
-   * links still functionally the same, but hidden unless you hover over them
- * disable on new/old youtube layouts
-*/
-
 // ==UserScript==
 // @name         ytembed
 // @namespace    https://garbomuffin.github.io/ytembed/
-// @version      0.0.2.2
+// @version      0.0.3
 // @author       GarboMuffin
 // @match        https://www.youtube.com/*
 // @match        https://garbomuffin.github.io/ytembed/userscript/config.html
@@ -46,6 +36,12 @@ ytembed userscript v0.0.2:
         label: "Support new(ish) YouTube design",
         type: "checkbox",
         default: true,
+      },
+      linkDestination: {
+        label: "Link Destination",
+        type: "select",
+        options: ["garbomuffin.github.io/ytembed", "youtube.com/embed"],
+        default: "garbomuffin.github.io/ytembed",
       },
 
       // Experimental
@@ -85,16 +81,35 @@ ytembed userscript v0.0.2:
     return el;
   }
 
+  function getVideoId() {
+    // https://stackoverflow.com/a/8260383
+    const url = window.location.href;
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[7].length === 11) ? match[7] : false;
+  }
+
+  function getBypassLink() {
+    const linkDestination = GM_config.get("linkDestination");
+    if (linkDestination === "garbomuffin.github.io/ytembed") {
+      return "https://garbomuffin.github.io/ytembed#" + window.location.href;
+    } else if (linkDestination === "youtube.com/embed") {
+      return "https://youtube.com/embed/" + getVideoId();
+    }
+  }
+
   //
   // HANDLERS
   //
 
+  // https://garbomuffin.github.io/ytembed/userscript/config.html
   class ConfigHandler {
     run() {
       GM_config.open();
     }
   }
 
+  // base handler for youtube watch pages
   class VideoHandler {
     // must be implemented when extended
     isVideoBlocked() {
@@ -130,15 +145,12 @@ ytembed userscript v0.0.2:
       }
     }
 
-    getYtembedUrl() {
-      return "https://garbomuffin.github.io/ytembed#" + window.location.href;
-    }
-
     canRun() {
       return !document.getElementById(YTEMBED_CONTAINER_ID);
     }
   }
 
+  // supports the "classic" youtube design
   class ClassicHandler extends VideoHandler {
     isVideoBlocked() {
       const el = document.getElementById("unavailable-message");
@@ -156,7 +168,7 @@ ytembed userscript v0.0.2:
       });
       container.appendChild(createElement("a", {
         textContent: "View it on ytembed!",
-        href: this.getYtembedUrl(),
+        href: getBypassLink(),
       }));
       submessage.appendChild(container);
     }
@@ -169,12 +181,13 @@ ytembed userscript v0.0.2:
       container.appendChild(createElement("a", {
         textContent: "ytembed",
         className: "yt-ui-menu-item has-icon yt-uix-menu-close-on-select action-panel-trigger",
-        href: this.getYtembedUrl(),
+        href: getBypassLink(),
       }));
       overflowMenu.appendChild(container);
     }
   }
 
+  // supports the "material" youtube design
   class MaterialHandler extends VideoHandler {
     isVideoBlocked() {
       const el = document.getElementsByTagName("ytd-playability-error-supported-renderers")[0];
@@ -192,13 +205,13 @@ ytembed userscript v0.0.2:
       });
       container.appendChild(createElement("a", {
         textContent: "View it on ytembed!",
-        href: this.getYtembedUrl(),
+        href: getBypassLink(),
       }));
       warning.appendChild(container);
     }
 
     addVideoLink() {
-      const overflowMenu = document.getElementsByClassName("selectable-content style-scope paper-menu")[0];
+      const overflowMenu = document.getElementsByTagName("paper-listbox")[0];
       if (!overflowMenu) {
         return;
       }
@@ -209,7 +222,7 @@ ytembed userscript v0.0.2:
       container.appendChild(createElement("a", {
         textContent: "ytembed",
         className: "style-scope ytd-menu-navigation-item-renderer",
-        href: this.getYtembedUrl(),
+        href: getBypassLink(),
       }));
       overflowMenu.appendChild(container);
     }
