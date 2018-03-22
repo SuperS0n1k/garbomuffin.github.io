@@ -20,7 +20,7 @@ const DROP_ATTACK_SCALE = 3;
 const DROP_ATTACK_GRAVITY = 14;
 const DROP_ATTACK_FALL_LENGTH = 23;
 const DROP_ATTACK_REPEAT = 4; // +1 for the last one where the boss becomes vulnerable
-const DROP_ATTACK_END = 280 + 1/3;
+const DROP_ATTACK_END = 280 + 1 / 3;
 
 const REST_TEXTURE = "boss/noss/rest";
 

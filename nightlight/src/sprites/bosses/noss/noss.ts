@@ -30,6 +30,7 @@ const HEALTH = 3;
 export class NossBoss extends AbstractNossBoss {
   private health: number = HEALTH;
   private shouldEndRoutine: boolean = false;
+  private alreadyHit: boolean = false;
 
   constructor(options: IImageSpriteOptions) {
     super(options);
@@ -58,10 +59,11 @@ export class NossBoss extends AbstractNossBoss {
   protected startRoutine() {
     super.startRoutine();
     this.shouldEndRoutine = false;
+    this.alreadyHit = false;
 
     this.addPhase(new Task({
       run: () => this.poof(),
-    }))
+    }));
 
     this.addPhase(new Task({
       run: () => this.runtime.playSound("boss/noss/shadow1"),
@@ -100,13 +102,6 @@ export class NossBoss extends AbstractNossBoss {
     }));
   }
 
-  // private testShouldEndRoutine(task: Task) {
-  //   if (this.shouldEndRoutine) {
-  //     this.endRoutine();
-  //     task.stop();
-  //   }
-  // }
-
   private endRoutine() {
     this.addTask(new Task({
       run: () => this.startRoutine(),
@@ -122,13 +117,13 @@ export class NossBoss extends AbstractNossBoss {
   }
 
   private rest(task: Task) {
-    console.log(this.shouldEndRoutine, task.repeatCount);
     if (this.shouldEndRoutine || task.repeatCount >= 300) {
       this.endRoutine();
       task.stop();
     }
 
-    if (this.playerJumpedOn()) {
+    if (!this.alreadyHit && this.playerJumpedOn()) {
+      this.alreadyHit = true;
       this.bouncePlayer();
       this.spawnHitEffect("-1");
       this.health--;

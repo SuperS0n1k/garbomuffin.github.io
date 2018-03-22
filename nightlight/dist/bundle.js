@@ -4034,6 +4034,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
         super(options);
         this.health = HEALTH;
         this.shouldEndRoutine = false;
+        this.alreadyHit = false;
         this.visible = false;
         this.position = new __WEBPACK_IMPORTED_MODULE_1__engine_vector__["a" /* Vector */](STARTING_POS);
         this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
@@ -4054,6 +4055,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
     startRoutine() {
         super.startRoutine();
         this.shouldEndRoutine = false;
+        this.alreadyHit = false;
         this.addPhase(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.poof(),
         }));
@@ -4086,12 +4088,6 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
             repeatEvery: 0,
         }));
     }
-    // private testShouldEndRoutine(task: Task) {
-    //   if (this.shouldEndRoutine) {
-    //     this.endRoutine();
-    //     task.stop();
-    //   }
-    // }
     endRoutine() {
         this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({
             run: () => this.startRoutine(),
@@ -4105,12 +4101,12 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
         this.texture = this.runtime.getImage(__WEBPACK_IMPORTED_MODULE_3__noss__["b" /* BASE_TEXTURE */]);
     }
     rest(task) {
-        console.log(this.shouldEndRoutine, task.repeatCount);
         if (this.shouldEndRoutine || task.repeatCount >= 300) {
             this.endRoutine();
             task.stop();
         }
-        if (this.playerJumpedOn()) {
+        if (!this.alreadyHit && this.playerJumpedOn()) {
+            this.alreadyHit = true;
             this.bouncePlayer();
             this.spawnHitEffect("-1");
             this.health--;
