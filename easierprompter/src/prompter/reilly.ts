@@ -1,60 +1,45 @@
-import { Prompter } from "./prompter";
+import { TameReillyPrompter } from "./tamereilly";
 
-const QUOTES = [
-  /«/ig,
-  /‹/ig,
-  /»/ig,
-  /›/ig,
-  /„/ig,
-  /‚/ig,
-  /“/ig,
-  /‟/ig,
-  /‘/ig,
-  /‛/ig,
-  /”/ig,
-  /’/ig,
-  /\"/ig,
-  /❛/ig,
-  /❜/ig,
-  /❟/ig,
-  /❝/ig,
-  /❞/ig,
-  /❮/ig,
-  /❯/ig,
-  /⹂/ig,
-  /〝/ig,
-  /〞/ig,
-  /〟/ig,
-  /＂/ig,
-];
-
-export class ReillyPrompter extends Prompter {
-  private unquote(input: string) {
-    for (const c of QUOTES) {
-      input = input.replace(c, "");
+function comma(input: string) {
+  const s = input.split(" ");
+  const length = s.length;
+  let res = "";
+  for (let i = 0; i < length; i++) {
+    const text = s[i];
+    const progress = i / length;
+    res += text;
+    if (Math.random() < progress / 10) {
+      res += ", ";
+    } else {
+      res += " ";
     }
-    return input;
   }
+  return res;
+}
 
-  private comma(input: string) {
-    const s = input.split(" ");
-    const length = s.length;
-    let res = "";
-    for (let i = 0; i < length; i++) {
-      const text = s[i];
-      const progress = i / length;
-      res += text;
-      if (Math.random() < (progress / 2)) {
-        res += ", ";
-      } else {
-        res += " ";
-      }
+function replaceName(input: string) {
+  const NAMES = ["Riley", "Reily", "Rilly"];
+  const s = input.split("Reilly");
+  const length = s.length;
+  let res = "";
+  for (let i = 0; i < length; i++) {
+    const text = s[i];
+    const progress = i / length;
+    res += text;
+    if (Math.random() < progress / 10) {
+      res += NAMES[Math.floor(Math.random())];
+    } else {
+      res += "Reilly";
     }
-    return res;
   }
+  return res;
+}
 
+export class ReillyPrompter extends TameReillyPrompter {
   protected getScript() {
-    const input = super.getScript();
-    return this.comma(this.unquote(input));
+    let input = super.getScript();
+    input = comma(input);
+    input = replaceName(input);
+    return input;
   }
 }

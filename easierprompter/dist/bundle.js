@@ -249,7 +249,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_prompterconfig__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__prompter_prompter__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__prompter_reilly__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__prompter_tamereilly__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils__ = __webpack_require__(0);
+
 
 
 
@@ -262,6 +264,9 @@ function getConfig() {
 }
 function getPrompter(cfg) {
     if (location.search === "?reilly") {
+        return new __WEBPACK_IMPORTED_MODULE_6__prompter_tamereilly__["a" /* TameReillyPrompter */](cfg);
+    }
+    else if (location.search === "?realreilly") {
         return new __WEBPACK_IMPORTED_MODULE_5__prompter_reilly__["a" /* ReillyPrompter */](cfg);
     }
     else {
@@ -271,8 +276,8 @@ function getPrompter(cfg) {
 var config = getConfig();
 config.load();
 config.save();
-Object(__WEBPACK_IMPORTED_MODULE_6__utils__["b" /* getElement */])("save-button").onclick = function () { return config.save(); };
-Object(__WEBPACK_IMPORTED_MODULE_6__utils__["b" /* getElement */])("reset-button").onclick = function () { return config.promptReset(); };
+Object(__WEBPACK_IMPORTED_MODULE_7__utils__["b" /* getElement */])("save-button").onclick = function () { return config.save(); };
+Object(__WEBPACK_IMPORTED_MODULE_7__utils__["b" /* getElement */])("reset-button").onclick = function () { return config.promptReset(); };
 var prompter = getPrompter(config);
 window.onbeforeunload = function (e) {
     if (config.options.unsavedChangesWarning.get() && prompter.config.hasChanged()) {
@@ -874,6 +879,75 @@ var AbstractPrompter = (function () {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ReillyPrompter; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tamereilly__ = __webpack_require__(15);
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+function comma(input) {
+    var s = input.split(" ");
+    var length = s.length;
+    var res = "";
+    for (var i = 0; i < length; i++) {
+        var text = s[i];
+        var progress = i / length;
+        res += text;
+        if (Math.random() < progress / 10) {
+            res += ", ";
+        }
+        else {
+            res += " ";
+        }
+    }
+    return res;
+}
+function replaceName(input) {
+    var NAMES = ["Riley", "Reily", "Rilly"];
+    var s = input.split("Reilly");
+    var length = s.length;
+    var res = "";
+    for (var i = 0; i < length; i++) {
+        var text = s[i];
+        var progress = i / length;
+        res += text;
+        if (Math.random() < progress / 10) {
+            res += NAMES[Math.floor(Math.random())];
+        }
+        else {
+            res += "Reilly";
+        }
+    }
+    return res;
+}
+var ReillyPrompter = (function (_super) {
+    __extends(ReillyPrompter, _super);
+    function ReillyPrompter() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ReillyPrompter.prototype.getScript = function () {
+        var input = _super.prototype.getScript.call(this);
+        input = comma(input);
+        input = replaceName(input);
+        return input;
+    };
+    return ReillyPrompter;
+}(__WEBPACK_IMPORTED_MODULE_0__tamereilly__["a" /* TameReillyPrompter */]));
+
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TameReillyPrompter; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__prompter__ = __webpack_require__(1);
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -913,40 +987,23 @@ var QUOTES = [
     /〟/ig,
     /＂/ig,
 ];
-var ReillyPrompter = (function (_super) {
-    __extends(ReillyPrompter, _super);
-    function ReillyPrompter() {
+function unquote(input) {
+    for (var _i = 0, QUOTES_1 = QUOTES; _i < QUOTES_1.length; _i++) {
+        var c = QUOTES_1[_i];
+        input = input.replace(c, "");
+    }
+    return input;
+}
+var TameReillyPrompter = (function (_super) {
+    __extends(TameReillyPrompter, _super);
+    function TameReillyPrompter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    ReillyPrompter.prototype.unquote = function (input) {
-        for (var _i = 0, QUOTES_1 = QUOTES; _i < QUOTES_1.length; _i++) {
-            var c = QUOTES_1[_i];
-            input = input.replace(c, "");
-        }
-        return input;
-    };
-    ReillyPrompter.prototype.comma = function (input) {
-        var s = input.split(" ");
-        var length = s.length;
-        var res = "";
-        for (var i = 0; i < length; i++) {
-            var text = s[i];
-            var progress = i / length;
-            res += text;
-            if (Math.random() < (progress / 2)) {
-                res += ", ";
-            }
-            else {
-                res += " ";
-            }
-        }
-        return res;
-    };
-    ReillyPrompter.prototype.getScript = function () {
+    TameReillyPrompter.prototype.getScript = function () {
         var input = _super.prototype.getScript.call(this);
-        return this.comma(this.unquote(input));
+        return unquote(input);
     };
-    return ReillyPrompter;
+    return TameReillyPrompter;
 }(__WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* Prompter */]));
 
 

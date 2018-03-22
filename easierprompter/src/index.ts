@@ -6,14 +6,17 @@ import { ConfigManager } from "./config/config";
 import { PrompterConfigManager } from "./config/prompterconfig";
 import { Prompter } from "./prompter/prompter";
 import { ReillyPrompter } from "./prompter/reilly";
+import { TameReillyPrompter } from "./prompter/tamereilly";
 import { getElement } from "./utils";
 
-function getConfig() {
+function getConfig(): ConfigManager {
   return new PrompterConfigManager();
 }
 
-function getPrompter(cfg: ConfigManager) {
+function getPrompter(cfg: ConfigManager): Prompter {
   if (location.search === "?reilly") {
+    return new TameReillyPrompter(cfg);
+  } else if (location.search === "?realreilly") {
     return new ReillyPrompter(cfg);
   } else {
     return new Prompter(cfg);
