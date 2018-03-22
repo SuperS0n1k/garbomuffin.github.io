@@ -27,7 +27,7 @@ function replaceName(input: string) {
     const progress = i / length;
     res += text;
     if (Math.random() < progress / 10) {
-      res += NAMES[Math.floor(Math.random())];
+      res += NAMES[Math.floor(Math.random() * 3)];
     } else {
       res += "Reilly";
     }
