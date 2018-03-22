@@ -899,7 +899,7 @@ function comma(input) {
         var text = s[i];
         var progress = i / length;
         res += text;
-        if (Math.random() < progress / 10) {
+        if (Math.random() < progress / 10 && /(?:\w|\d)$/.test(text)) {
             res += ", ";
         }
         else {

@@ -8,7 +8,7 @@ function comma(input: string) {
     const text = s[i];
     const progress = i / length;
     res += text;
-    if (Math.random() < progress / 10) {
+    if (Math.random() < progress / 10 && /(?:\w|\d)$/.test(text)) {
       res += ", ";
     } else {
       res += " ";
