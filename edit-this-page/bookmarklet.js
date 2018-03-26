@@ -18,10 +18,7 @@
 
     // create a script element and try to load our script
     "var s=document.createElement('script');",
-
-    // Math.random should stop browsers from caching
     "s.src='" + scriptSource + "';",
-    "s.src='" + scriptSource + "?'+Math.random();",
 
     // some sites block this using the Content Security Policy script-src directive (see: github)
     // so the bookmark uses onerror to detect loading failure and use a basic fallback
