@@ -9,7 +9,7 @@ export default {
   
   output: {
     format: "es",
-    file: "campus-auto-login.user.js"
+    file: "../campus-auto-login.user.js"
   },
 
   watch: {
