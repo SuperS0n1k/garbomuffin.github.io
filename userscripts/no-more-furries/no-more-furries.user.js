@@ -1,31 +1,22 @@
 "use strict";
-// No Changelog here = Just filter update
-// 
+// Changes in v2.2:
+//  * Refactoring
+//   * Filter updates
 // Changes in v2.1.2:
 //  * Disabled loading thumbnails of blocked projects
 //  * You may notice significant speed improvements
-// ============================================================================
 // Changes in v2.1.1:
 //  * Filter updates
-// ============================================================================
 // Changes in v2.1:
 //  * Improved support for the home page
 //    Sliding things no longer break
 //  * Filter updates
-// ============================================================================
+//
 // See this in action: https://scratch.mit.edu/search/projects?q=meme
-// Or just take a long trip through the home page
-// ============================================================================
-// Accounts:
-// https://scratch.mit.edu/users/GarboMuffin/ -- random garbage
-// https://scratch.mit.edu/users/GarboMarvin/ -- ACTUAL memes
-// ============================================================================
-// Below this section is the source code.
-// You really shouldn't edit it unless you know what you're doing.
-// ============================================================================
+//
 // ==UserScript==
 // @name         NO MORE FURRIES
-// @version      2.1.3
+// @version      2.2
 // @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
 // @description  FURRIES AREN'T MEMES
 // @author       GarboMuffin
@@ -34,7 +25,11 @@
 // @downloadURL  https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
 // @updateURL    https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
 // ==/UserScript==
-var DEBUG = false;
+var DEBUG = true;
+///
+/// Filters
+///
+// The actual functions that use these lists are in isFiltered() below
 // List of users that have a history of making furries and are blocked globally
 // Links above user are relevant scratch projects
 var BLOCKED_CREATORS = [
@@ -314,6 +309,14 @@ var BLOCKED_CREATORS = [
     // https://scratch.mit.edu/projects/195268878/
     // https://scratch.mit.edu/projects/194814866/
     "BrightShine",
+    // https://scratch.mit.edu/projects/206127830/
+    // https://scratch.mit.edu/projects/206662030/
+    // https://scratch.mit.edu/projects/205686276/
+    // https://scratch.mit.edu/projects/205212008/
+    "Lil_Art",
+    // https://scratch.mit.edu/projects/142359902/
+    // moved to https://scratch.mit.edu/users/scentedsope/, no furries yet on that account (as of now)
+    "NyanSpells",
 ];
 // Strings that can't be in titles or else the project is hidden
 // TODO: examples
@@ -346,6 +349,19 @@ var BLOCKED_TITLE_PARTS = [
     // https://scratch.mit.edu/projects/117552646/
     // https://scratch.mit.edu/projects/116075128/
     "original meme",
+    // https://scratch.mit.edu/projects/78985318/
+    // https://scratch.mit.edu/projects/83195632/
+    // https://scratch.mit.edu/projects/26140290/
+    // https://scratch.mit.edu/projects/15190786/
+    // https://scratch.mit.edu/projects/44354200/
+    // https://scratch.mit.edu/projects/148398500/
+    // https://scratch.mit.edu/projects/2338008/
+    // https://scratch.mit.edu/projects/29214560/
+    // https://scratch.mit.edu/projects/768502/
+    // https://scratch.mit.edu/projects/41985086/
+    // https://scratch.mit.edu/projects/57097926/
+    // https://scratch.mit.edu/search/projects?q=warrior%20cats
+    "warrior cat",
 ];
 // BLOCKED_TITLE_PARTS but for things that are case sensitive
 var BLOCKED_TITLE_PARTS_SENSITIVE = [
@@ -355,6 +371,9 @@ var BLOCKED_TITLE_PARTS_SENSITIVE = [
 ];
 // TODO: use regex to be more accurate with blocking based on titles
 var BLOCKED_TITLE_REGEX = [];
+///
+/// Functions
+///
 // Returns if an HTMLElement is a project
 function isProject(el) {
     // If an element has the "project" class they are a project
@@ -433,87 +452,14 @@ function blockProject(project) {
         image.src = "";
     }
 }
-var NoMoreFurries = /** @class */ (function () {
-    function NoMoreFurries() {
-        this.filters = [];
-        // TODO: consider a "furries eradicated" number like in the old pre v2.0 versions
-        this.blockedFurries = 0;
-        // Add in our filters
-        this.addFilter(this.creatorFilter);
-        this.addFilter(this.titleFilter);
-        this.addFilter(this.caseSensitiveTitleFilter);
-        this.addFilter(this.regexTitleFilter);
-        // Create the observer
-        var observer = new MutationObserver(this.handleMutation.bind(this));
-        observer.observe(document.body, {
-            // Look for any DOM changes
-            childList: true,
-            subtree: true
-        });
-    }
-    //
-    // HANDLING THINGS
-    //
-    // Called whenver the MutationObserver notices something
-    NoMoreFurries.prototype.handleMutation = function (mutationList) {
-        for (var _i = 0, mutationList_1 = mutationList; _i < mutationList_1.length; _i++) {
-            var mutation = mutationList_1[_i];
-            // Loop over any added nodes
-            // Any projects are added to the DOM and will be in addedNodes
-            for (var i = 0; i < mutation.addedNodes.length; i++) {
-                var el = mutation.addedNodes[i];
-                // If it is a project then run the filtering on it
-                if (isProject(el)) {
-                    this.handleProject(el);
-                }
-            }
-        }
-    };
-    NoMoreFurries.prototype.handleProject = function (project) {
-        // Get metadata
-        var title = getProjectTitle(project);
-        var creator = getProjectCreator(project);
-        // Is it blocked?
-        var blocked = this.isFiltered(title, creator);
-        if (blocked) {
-            // Console outputting what is blocked
-            var message = "blocked '" + title + "' by " + creator;
-            // For debugging also output a URL
-            if (DEBUG) {
-                message += " (" + getProjectLink(project) + ")";
-            }
-            console.log(message);
-            blockProject(project);
-            this.blockedFurries++;
-        }
-    };
-    //
-    // FILTERING
-    //
-    // Adds a function to the filter list
-    NoMoreFurries.prototype.addFilter = function (filter) {
-        this.filters.push(filter);
-    };
-    NoMoreFurries.prototype.isFiltered = function (title, creator) {
-        // Go through all of our filters and run each of them on it
-        // If even one matches then return true
-        for (var _i = 0, _a = this.filters; _i < _a.length; _i++) {
-            var filter = _a[_i];
-            var result = filter(title, creator);
-            if (result) {
-                return true;
-            }
-        }
-        return false;
-    };
-    //
-    // FILTERS
-    //
-    NoMoreFurries.prototype.creatorFilter = function (title, creator) {
+// Given a title and an author it determines if that project is filtered
+// Uses the filter definitions at the top
+function isFiltered(title, creator) {
+    function creatorFilter(creator) {
         // If the BLOCKED_CREATORS list contains the creator's name they are blocked
         return BLOCKED_CREATORS.indexOf(creator) > -1;
-    };
-    NoMoreFurries.prototype.titleFilter = function (title, creator) {
+    }
+    function titleFilter(title) {
         // Convert everything to lower case to avoid case sensitivity
         title = title.toLowerCase();
         for (var _i = 0, BLOCKED_TITLE_PARTS_1 = BLOCKED_TITLE_PARTS; _i < BLOCKED_TITLE_PARTS_1.length; _i++) {
@@ -525,8 +471,8 @@ var NoMoreFurries = /** @class */ (function () {
             }
         }
         return false;
-    };
-    NoMoreFurries.prototype.caseSensitiveTitleFilter = function (title, creator) {
+    }
+    function caseSensitiveTitleFilter(title) {
         // titleFilter() but case sensitive
         for (var _i = 0, BLOCKED_TITLE_PARTS_SENSITIVE_1 = BLOCKED_TITLE_PARTS_SENSITIVE; _i < BLOCKED_TITLE_PARTS_SENSITIVE_1.length; _i++) {
             var i = BLOCKED_TITLE_PARTS_SENSITIVE_1[_i];
@@ -535,8 +481,8 @@ var NoMoreFurries = /** @class */ (function () {
             }
         }
         return false;
-    };
-    NoMoreFurries.prototype.regexTitleFilter = function (title, creator) {
+    }
+    function regexTitleFilter(title) {
         // titleFilter() but for regular expressions
         for (var _i = 0, BLOCKED_TITLE_REGEX_1 = BLOCKED_TITLE_REGEX; _i < BLOCKED_TITLE_REGEX_1.length; _i++) {
             var i = BLOCKED_TITLE_REGEX_1[_i];
@@ -545,7 +491,50 @@ var NoMoreFurries = /** @class */ (function () {
             }
         }
         return false;
-    };
-    return NoMoreFurries;
-}());
-new NoMoreFurries();
+    }
+    return creatorFilter(creator) ||
+        titleFilter(title) ||
+        caseSensitiveTitleFilter(title) ||
+        regexTitleFilter(title);
+}
+// Called when the MutationObserver observes a mutation
+function handleMutation(mutationList) {
+    for (var _i = 0, mutationList_1 = mutationList; _i < mutationList_1.length; _i++) {
+        var mutation = mutationList_1[_i];
+        // Loop over any added nodes
+        // Any projects are added to the DOM and will be in addedNodes
+        for (var i = 0; i < mutation.addedNodes.length; i++) {
+            var el = mutation.addedNodes[i];
+            // If it is a project then run the filtering on it
+            if (isProject(el)) {
+                handleProject(el);
+            }
+        }
+    }
+}
+// Called if handleMutation detects a new project being added to the DOM
+function handleProject(project) {
+    // Get metadata
+    var title = getProjectTitle(project);
+    var creator = getProjectCreator(project);
+    // Is it blocked?
+    var blocked = isFiltered(title, creator);
+    if (blocked) {
+        if (DEBUG) {
+            // Console outputting what is blocked when DEBUG is on
+            console.log("blocked '" + title + "' by " + creator + " (" + getProjectLink(project) + ")");
+        }
+        blockProject(project);
+    }
+}
+///
+/// Run it all
+///
+// Observe DOM changes
+// As projects get added to the page they trigger this observer and allow us to block it instantly
+var observer = new MutationObserver(handleMutation);
+observer.observe(document.body, {
+    // Look for any DOM changes, anywhere
+    childList: true,
+    subtree: true
+});
