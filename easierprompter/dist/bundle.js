@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,7 +71,7 @@
 /* harmony export (immutable) */ __webpack_exports__["b"] = getElement;
 /* harmony export (immutable) */ __webpack_exports__["c"] = setDisplay;
 /* harmony export (immutable) */ __webpack_exports__["a"] = emptyElement;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(8);
 
 function getElement(id) {
     var el = document.getElementById(id);
@@ -96,9 +96,9 @@ function emptyElement(el) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Prompter; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__keyboard_keyboard__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__keyboard_keyboard__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__abstract__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__abstract__ = __webpack_require__(14);
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -239,17 +239,77 @@ var Prompter = (function (_super) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TameReillyPrompter; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__prompter__ = __webpack_require__(1);
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+var QUOTES = [
+    /„/ig,
+    /‚/ig,
+    /“/ig,
+    /‟/ig,
+    /‘/ig,
+    /‛/ig,
+    /”/ig,
+    /’/ig,
+    /\"/ig,
+    /❛/ig,
+    /❜/ig,
+    /❟/ig,
+    /❝/ig,
+    /❞/ig,
+    /⹂/ig,
+    /〝/ig,
+    /〞/ig,
+    /〟/ig,
+    /＂/ig,
+];
+function unquote(input) {
+    for (var _i = 0, QUOTES_1 = QUOTES; _i < QUOTES_1.length; _i++) {
+        var c = QUOTES_1[_i];
+        input = input.replace(c, "");
+    }
+    return input;
+}
+var TameReillyPrompter = (function (_super) {
+    __extends(TameReillyPrompter, _super);
+    function TameReillyPrompter() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    TameReillyPrompter.prototype.getScript = function () {
+        var input = _super.prototype.getScript.call(this);
+        return unquote(input);
+    };
+    return TameReillyPrompter;
+}(__WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* Prompter */]));
+
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__email__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__polyfill__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__polyfill__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__polyfill___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__polyfill__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sw__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sw__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sw___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__sw__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_prompterconfig__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_prompterconfig__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__prompter_prompter__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__prompter_reilly__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__prompter_tamereilly__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__prompter_reilly__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__prompter_tamereilly__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils__ = __webpack_require__(0);
 
 
@@ -293,7 +353,7 @@ window.onbeforeunload = function (e) {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -314,7 +374,7 @@ for (var i = 0; i < els.length; i++) {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 /// Older browsers do not have requestAnimationFrame so a polyfill is needed
@@ -354,7 +414,7 @@ for (var i = 0; i < els.length; i++) {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -369,14 +429,14 @@ if ("serviceWorker" in navigator) {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PrompterConfigManager; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__option__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__option__ = __webpack_require__(11);
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -465,7 +525,7 @@ var PrompterConfigManager = (function (_super) {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -491,12 +551,12 @@ var ElementIDNotFoundError = (function (_super) {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigManager; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__save__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__save__ = __webpack_require__(10);
 
 var STORAGE_KEY = "EasierPrompter_Config";
 var ConfigManager = (function () {
@@ -546,7 +606,7 @@ var ConfigManager = (function () {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -603,12 +663,12 @@ var ConfigSaver = (function () {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigOption; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(12);
 
 var ConfigOption = (function () {
     function ConfigOption(options) {
@@ -622,7 +682,7 @@ var ConfigOption = (function () {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -708,7 +768,7 @@ function createFunctionPipe(functions) {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -783,7 +843,7 @@ var Keyboard = (function () {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -874,12 +934,12 @@ var AbstractPrompter = (function () {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ReillyPrompter; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tamereilly__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tamereilly__ = __webpack_require__(2);
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -909,7 +969,7 @@ function comma(input) {
     return res;
 }
 function replaceName(input) {
-    var NAMES = ["Riley", "Reily", "Rilly"];
+    var NAMES = ["Riley", "Reily", "Rilly", "Rielly"];
     var s = input.split("Reilly");
     var length = s.length;
     var res = "";
@@ -918,10 +978,28 @@ function replaceName(input) {
         var progress = i / length;
         res += text;
         if (Math.random() < progress / 10) {
-            res += NAMES[Math.floor(Math.random() * 3)];
+            res += NAMES[Math.floor(Math.random() * (NAMES.length - 1))];
         }
         else {
             res += "Reilly";
+        }
+    }
+    return res;
+}
+function replacePeriods(input) {
+    var REPLACEMENTS = ["!", "?", "."];
+    var s = input.split(/!|\?|\./ig);
+    var length = s.length;
+    var res = "";
+    for (var i = 0; i < length; i++) {
+        var text = s[i];
+        var progress = i / length;
+        res += text;
+        if (Math.random() < progress / 10) {
+            res += REPLACEMENTS[Math.floor(Math.random() * (REPLACEMENTS.length - 1))];
+        }
+        else {
+            res += ".";
         }
     }
     return res;
@@ -935,76 +1013,11 @@ var ReillyPrompter = (function (_super) {
         var input = _super.prototype.getScript.call(this);
         input = comma(input);
         input = replaceName(input);
+        input = replacePeriods(input);
         return input;
     };
     return ReillyPrompter;
 }(__WEBPACK_IMPORTED_MODULE_0__tamereilly__["a" /* TameReillyPrompter */]));
-
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TameReillyPrompter; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__prompter__ = __webpack_require__(1);
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-
-var QUOTES = [
-    /«/ig,
-    /‹/ig,
-    /»/ig,
-    /›/ig,
-    /„/ig,
-    /‚/ig,
-    /“/ig,
-    /‟/ig,
-    /‘/ig,
-    /‛/ig,
-    /”/ig,
-    /’/ig,
-    /\"/ig,
-    /❛/ig,
-    /❜/ig,
-    /❟/ig,
-    /❝/ig,
-    /❞/ig,
-    /❮/ig,
-    /❯/ig,
-    /⹂/ig,
-    /〝/ig,
-    /〞/ig,
-    /〟/ig,
-    /＂/ig,
-];
-function unquote(input) {
-    for (var _i = 0, QUOTES_1 = QUOTES; _i < QUOTES_1.length; _i++) {
-        var c = QUOTES_1[_i];
-        input = input.replace(c, "");
-    }
-    return input;
-}
-var TameReillyPrompter = (function (_super) {
-    __extends(TameReillyPrompter, _super);
-    function TameReillyPrompter() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    TameReillyPrompter.prototype.getScript = function () {
-        var input = _super.prototype.getScript.call(this);
-        return unquote(input);
-    };
-    return TameReillyPrompter;
-}(__WEBPACK_IMPORTED_MODULE_0__prompter__["a" /* Prompter */]));
 
 
 

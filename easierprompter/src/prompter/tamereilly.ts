@@ -1,10 +1,6 @@
 import { Prompter } from "./prompter";
 
 const QUOTES = [
-  /«/ig,
-  /‹/ig,
-  /»/ig,
-  /›/ig,
   /„/ig,
   /‚/ig,
   /“/ig,
@@ -19,8 +15,6 @@ const QUOTES = [
   /❟/ig,
   /❝/ig,
   /❞/ig,
-  /❮/ig,
-  /❯/ig,
   /⹂/ig,
   /〝/ig,
   /〞/ig,
