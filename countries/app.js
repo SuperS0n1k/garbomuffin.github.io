@@ -51,7 +51,7 @@
   inputEl.addEventListener("keyup", () => onchange());
 
   function onchange() {
-    const value = inputEl.value;
+    const value = inputEl.value.replace(/ /g, "");
 
     parent:
     for (const c of state.countries) {
