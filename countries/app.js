@@ -83,6 +83,7 @@
     if (lastTime.minutes === 0) {
       cheater.style.display = "block";
     }
+    fetch("https://garbomuffin.com/iwonthecountriesquizforrealz?" + lastTime.formatted);
   }
 
   function start() {
