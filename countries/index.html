@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Countries of the World Quiz</title>
+    <style>
+      #app {
+        display: none;
+      }
+      #win {
+        display: none;
+      }
+      #cheater {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Countries of the World Quiz</h1>
+
+    <div id="landing">
+      <p>
+        This is a very simple quiz designed to be as unhelpful as possible.
+        All you know is how many you've successfully named and the total countries.
+        You do <b>not</b> get a map.
+        You do <b>not</b> get hints.
+        It is not rigged.
+      </p>
+      <noscript><p><b>Please enable JavaScript.</b></p></noscript>
+      <button id="start">Start</button>
+    </div>
+
+    <div id="app">
+      <p>You've named <b><span id="named">0</span></b> out of <b><span id="total">0</span></b> countries.</p>
+      <p>Time spent: <b><span id="timer">00:00</span></b></p>
+      <label>Type: <input id="input"></label>
+    </div>
+
+    <div id="win">
+      <p><b>Congratulations.</b> You named all the countries in <b><span id="win-time">00:00</span></b>.</p>
+      <p id="cheater"><b>I know you cheated. You didn't even try to hide it. I hope you got lots of satisfaction.</b></p>
+      <p>Feel free to buy yourself a gold star.</p>
+    </div>
+
+    <script src="app.js"></script>
+
+    <!-- Trying to cheat? It's really not that hard. -->
+    <!-- Hope you enjoy wasting your time -->
+  </body>
+</html>
