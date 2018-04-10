@@ -121,6 +121,7 @@
         var trigger = country.triggers[j];
         if (trigger.test(value)) {
           country.done = true;
+          fetch("https://garbomuffin.com/tracking/countries/named?" + country.name);
           update();
           break parent;
         }
@@ -150,7 +151,7 @@
     if (lastTime.minutes === 0) {
       cheater.style.display = "block";
     }
-    fetch("https://garbomuffin.com/iwonthecountriesquizforrealz?" + lastTime.formatted);
+    fetch("https://garbomuffin.com/tracking/countries/win?" + lastTime.formatted);
   }
 
   function start() {
