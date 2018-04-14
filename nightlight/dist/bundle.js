@@ -2712,10 +2712,6 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_7__task__["b" /* TaskRunner 
         // set inital variables that have to happen after other things here
         this.volume = 0.5;
         this.sprites = new __WEBPACK_IMPORTED_MODULE_0__container__["a" /* Container */]();
-        // debugging
-        window.runtime = this;
-        // classess are weird
-        this.loop = this.loop.bind(this);
     }
     ///
     /// ASSETS
@@ -2842,7 +2838,7 @@ class GameRuntime extends __WEBPACK_IMPORTED_MODULE_7__task__["b" /* TaskRunner 
         // render
         this.render();
         // request the next frame to render
-        requestAnimationFrame(this.loop);
+        requestAnimationFrame(() => this.loop());
     }
     update() {
         // all non-core details should be implemented using this.addTask
@@ -3856,14 +3852,6 @@ class FinalBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossB
         this.health = HEALTH;
         this.wasHit = false;
         this.animationProgress = 0;
-        // window.l=this;
-        // this.scale=new Vector2D(3,3);
-        // this.x=100;
-        // this.addTask(()=>{
-        //   if(this.runtime.keyboard.keys[40].isPressed){this.y++};
-        //   if(this.runtime.keyboard.keys[38].isPressed){this.y--};
-        // })
-        // return;
         this.z = __WEBPACK_IMPORTED_MODULE_2__zindex__["a" /* ZIndexes */].FinalBoss;
         this.visible = false;
         this.addTask(new __WEBPACK_IMPORTED_MODULE_0__engine_task__["a" /* Task */]({

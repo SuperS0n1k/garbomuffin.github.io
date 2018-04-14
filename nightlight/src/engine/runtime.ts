@@ -82,12 +82,6 @@ export class GameRuntime extends TaskRunner {
     // set inital variables that have to happen after other things here
     this.volume = 0.5;
     this.sprites = new Container();
-
-    // debugging
-    (window as any).runtime = this;
-
-    // classess are weird
-    this.loop = this.loop.bind(this);
   }
 
   ///
@@ -235,7 +229,7 @@ export class GameRuntime extends TaskRunner {
     this.render();
 
     // request the next frame to render
-    requestAnimationFrame(this.loop);
+    requestAnimationFrame(() => this.loop());
   }
 
   public update() {

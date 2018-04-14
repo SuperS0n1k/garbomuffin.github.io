@@ -33,14 +33,6 @@ export class FinalBoss extends AbstractNossBoss {
   constructor(opts: IImageSpriteOptions) {
     super(opts);
 
-    // window.l=this;
-    // this.scale=new Vector2D(3,3);
-    // this.x=100;
-    // this.addTask(()=>{
-    //   if(this.runtime.keyboard.keys[40].isPressed){this.y++};
-    //   if(this.runtime.keyboard.keys[38].isPressed){this.y--};
-    // })
-    // return;
     this.z = ZIndexes.FinalBoss;
     this.visible = false;
     this.addTask(new Task({
