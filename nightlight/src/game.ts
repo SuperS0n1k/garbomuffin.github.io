@@ -43,13 +43,6 @@ export class Nightlight extends GameRuntime {
     this.stats = new Stats();
     this.stats.showPanel(0);
     document.body.appendChild(this.stats.dom);
-
-    // for debugging allow you to change the level by changing the hash
-    // this will be removed in v1
-    if (location.hash) {
-      this.setLevelToHash();
-    }
-    window.onhashchange = () => this.setLevelToHash();
   }
 
   //
@@ -76,17 +69,6 @@ export class Nightlight extends GameRuntime {
       this.backgroundMusic.shift();
     }
     this.playSound(this.backgroundMusic[0]);
-  }
-
-  public setLevelToHash() {
-    console.log("set hash", location.hash);
-    const hash = location.hash.substr(1);
-    if (!isNaN(parseInt(hash, 10))) {
-      this.level = parseInt(hash, 10);
-      if (this.started) {
-        this.renderLevel();
-      }
-    }
   }
 
   private createPlayer() {

@@ -1687,12 +1687,6 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
         this.stats = new Stats();
         this.stats.showPanel(0);
         document.body.appendChild(this.stats.dom);
-        // for debugging allow you to change the level by changing the hash
-        // this will be removed in v1
-        if (location.hash) {
-            this.setLevelToHash();
-        }
-        window.onhashchange = () => this.setLevelToHash();
     }
     //
     // Utilities and Init
@@ -1714,16 +1708,6 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
             this.backgroundMusic.shift();
         }
         this.playSound(this.backgroundMusic[0]);
-    }
-    setLevelToHash() {
-        console.log("set hash", location.hash);
-        const hash = location.hash.substr(1);
-        if (!isNaN(parseInt(hash, 10))) {
-            this.level = parseInt(hash, 10);
-            if (this.started) {
-                this.renderLevel();
-            }
-        }
     }
     createPlayer() {
         this.player = new __WEBPACK_IMPORTED_MODULE_10__sprites_player_player__["a" /* PlayerSprite */]({
