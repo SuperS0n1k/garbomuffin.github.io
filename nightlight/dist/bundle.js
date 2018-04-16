@@ -2583,10 +2583,14 @@ class TallGrassBlock extends __WEBPACK_IMPORTED_MODULE_1__block__["a" /* Block *
     constructor(opts) {
         super(opts);
         this.static = true;
-        new __WEBPACK_IMPORTED_MODULE_2__grass__["a" /* GrassBlock */]({
+        const block = new __WEBPACK_IMPORTED_MODULE_2__grass__["a" /* GrassBlock */]({
             position: new __WEBPACK_IMPORTED_MODULE_0__engine_vector__["a" /* Vector */](this.position),
             texture: this.runtime.getImage("blocks/k"),
         });
+        // dirty hack to fix an OOB bug
+        if (this.runtime.level === 4) {
+            block.solid = true;
+        }
         this.floorAlign();
     }
 }

@@ -14,10 +14,14 @@ export class TallGrassBlock extends Block {
   constructor(opts: IBlockOptions) {
     super(opts);
 
-    new GrassBlock({
+    const block = new GrassBlock({
       position: new Vector(this.position),
       texture: this.runtime.getImage("blocks/k"),
     });
+    // dirty hack to fix an OOB bug
+    if (this.runtime.level === 4) {
+      block.solid = true;
+    }
 
     this.floorAlign();
   }
