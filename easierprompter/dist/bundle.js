@@ -291,6 +291,11 @@ var PrompterConfigManager = (function (_super) {
             el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-unsaved-changes-warning"),
             type: "checkbox",
         });
+        _this.options.useLegacyScrolling = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
+            default: navigator.userAgent.indexOf("MSIE 9.0") > -1,
+            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-use-legacy-scrolling"),
+            type: "checkbox",
+        });
         _this.options.endText = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
             default: "[END]",
             el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-end-text"),
@@ -578,8 +583,10 @@ var Prompter = (function (_super) {
     __extends(Prompter, _super);
     function Prompter(config) {
         var _this = _super.call(this, config) || this;
+        _this.prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("prompter-lines");
         _this.prompterText = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("prompter-lines-text");
         _this.prompterEndText = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("prompter-lines-end-text");
+        _this.useLegacyScrolling = navigator.userAgent.indexOf("MSIE 9.0") > -1;
         _this.addListeners();
         _this.addKeyboardHandlers();
         return _this;
@@ -648,8 +655,13 @@ var Prompter = (function (_super) {
         _super.prototype.hide.call(this);
     };
     Prompter.prototype.render = function (distance) {
-        var lines = this.prompterText;
-        lines.style.marginTop = "-" + distance + "px";
+        var lines = this.prompterLines;
+        if (!this.config.options.useLegacyScrolling.get()) {
+            lines.style.transform = "translateY(-" + distance + "px)";
+        }
+        else {
+            lines.style.marginTop = "-" + distance + "px";
+        }
     };
     Prompter.prototype.loadScript = function (script) {
         this.resetScript();

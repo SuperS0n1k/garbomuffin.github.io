@@ -82,6 +82,10 @@
         /* wtf? */
         /* don't worry, it works (i don't know either) */
         width: calc(100vw - 1em);
+
+        /* transform does change very often */
+        /* i've done tests, and this does reduce CPU usage and increase performance */
+        will-change: transform;
       }
 
       #prompter-lines p {
@@ -207,11 +211,13 @@
     <![endif]-->
 
     <div id="main">
-      <h1>Easier Prompter (v1.0.1)</h1>
+      <h1>Easier Prompter</h1>
 
       <hr>
 
       <p>Easier Prompter: The easiest and simplest teleprompter. Enter your script and press start. It just works.</p>
+
+      <p><b>Update:</b> Implemented some potentially significant optimizations to scrolling. If it's slower or doesn't work please check "Use legacy scrolling". Also, IE 9 support will be dropped soon(tm).</p>
 
       <div id="editor">
         <table>
@@ -231,6 +237,7 @@
               <div><label>Bold text: <input type="checkbox" id="options-bold-text"></label></div>
               <div><label>End text: <input type="text" id="options-end-text"></label></div>
               <div><label>Unsaved changes warning: <input type="checkbox" id="options-unsaved-changes-warning"></label></div>
+              <div><label>Use legacy scrolling: <input type="checkbox" id="options-use-legacy-scrolling"></label></div>
 
               <button id="save-button">Save</button>
               <button id="reset-button">Reset</button>

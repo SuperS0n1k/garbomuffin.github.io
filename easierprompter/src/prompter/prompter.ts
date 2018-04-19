@@ -6,8 +6,11 @@ import { AbstractPrompter, Direction } from "./abstract";
 const SPEED_INCREMENT = 0.25;
 
 export class Prompter extends AbstractPrompter {
-  private prompterText = getElement("prompter-lines-text") as HTMLUListElement;
-  private prompterEndText = getElement("prompter-lines-end-text") as HTMLUListElement;
+  private prompterLines = getElement("prompter-lines")!;
+  private prompterText = getElement("prompter-lines-text")!;
+  private prompterEndText = getElement("prompter-lines-end-text")!;
+
+  private readonly useLegacyScrolling: boolean = navigator.userAgent.indexOf("MSIE 9.0") > -1;
 
   constructor(config: ConfigManager) {
     super(config);
@@ -120,13 +123,15 @@ export class Prompter extends AbstractPrompter {
 
   // Applies the margin style to scroll the script
   protected render(distance: number) {
-    // This is the main bottleneck of the program
-    // A better way to do this would be great and really help performance
-    // Considering:
-    // Canvas
-    // Scrolling
-    const lines = this.prompterText;
-    lines.style.marginTop = `-${distance}px`;
+    // Scroll the text by applying the translateY transform
+    const lines = this.prompterLines;
+    if (!this.config.options.useLegacyScrolling.get()) {
+      // anything except IE 9
+      // in modern browsers transform is faster because it skips a layout
+      lines.style.transform = `translateY(-${distance}px)`;
+    } else {
+      lines.style.marginTop = `-${distance}px`;
+    }
   }
 
   // Inserts the script into the DOM
