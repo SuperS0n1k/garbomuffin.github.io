@@ -8,6 +8,9 @@ import { Nightlight } from "./game";
 
 const game = new Nightlight();
 
+// later made visibile in run()
+game.canvas.style.display = "none";
+
 // add in all of our assets
 
 //
@@ -167,15 +170,31 @@ game.addSound("music/blackroad/2");
 game.addSound("music/finalboss/1");
 game.addSound("music/finalboss/2");
 
+// html elements
+const progressBarElement = document.getElementById("progress-bar") as HTMLProgressElement;
+const progressTextElement = document.getElementById("progress-text")!;
+const loadingScreenElement = document.getElementById("loading-screen")!;
+const loadingScreenBackgroundElement = document.getElementById("loading-screen-background")!;
+const loadingContainerElement = document.getElementById("loading-container")!;
+const playButtonElement = document.getElementById("play-button") as HTMLButtonElement;
+
 // wait for it to load then run our stuff
-const progressElement = document.getElementById("progress") as HTMLProgressElement;
 game.waitForAssets((progress) => {
   // show a progress bar
   // with the addition of sounds it can take a long time to download stuff and it was inevitable
-  progressElement.value = progress;
-}).then(run);
+  const value = progress * 100;
+  progressBarElement.style.width = value + "%";
+}).then(() => canPlay());
+
+function canPlay() {
+  playButtonElement.onclick = () => run();
+  playButtonElement.textContent = "Play";
+  playButtonElement.disabled = false;
+  loadingScreenBackgroundElement.classList.add("active");
+}
 
 function run() {
-  progressElement.style.display = "none";
+  loadingContainerElement.style.display = "none";
+  game.canvas.style.display = "block";
   game.start();
 }

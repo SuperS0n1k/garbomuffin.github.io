@@ -5,12 +5,73 @@
     <title>Nightlight in JS</title>
 
     <style>
+      /* easier canvas stuff */
       canvas {
         display: block;
-        border: 1px black solid;
       }
-      #progress {
+
+      /* contains all the canvas elements and the starting menu */
+      #container {
+        /* makes positioning things inside here easier */
+        position: relative;
         width: 480px;
+        height: 360px;
+      }
+
+      /* LOADING SCREEN STUFF */
+
+      #loading-container {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* centered menu */
+      #loading-screen {
+        text-align: center;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      /* image in the background */
+      #loading-screen-background {
+        position: absolute;
+        z-index: -1;
+        filter: brightness(50%);
+      }
+
+      /* opacity increases once the game can be played */
+      @keyframes background-opacity-increase {
+        from {
+          filter: brightness(50%);
+        }
+
+        to {
+          filter: brightness(100%);
+        }
+      }
+
+      #loading-screen-background.active {
+        animation-duration: 1s;
+        animation-name: background-opacity-increase;
+        filter: brightness(100%);
+      }
+
+      /* we make our own fake progress bar element */
+      .progress-bar {
+        box-sizing: border-box;
+        border: 1px solid black;
+      }
+      .progress-bar-inside {
+        background-color: #7baaf7;
+        height: 100%;
+        width: 0;
+      }
+      #loading-screen-progress-bar {
+        height: 12px;
+        width: 480px;
+        position: absolute;
+        bottom: 0;
       }
     </style>
 
@@ -32,14 +93,21 @@
 
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a>. Assets are used with permission.</p>
 
-    <progress id="progress" value="0"></progress>
-
     <!-- the <canvas>(s) are put into this div here -->
     <!-- they are injected by code, no more need to manually add them anymore -->
-    <div id="container"></div>
-
+    <div id="container">
+      <div id="loading-container">
+        <div id="loading-screen-background"><img src="thumb.png" width="100%"></div>
+        <div id="loading-screen">
+          <button disabled id="play-button">Loading...</button>
+        </div>
+        <div id="loading-screen-progress-bar" class="progress-bar">
+          <div class="progress-bar-inside" id="progress-bar"></div>
+        </div>
+      </div>
+    </div>
     <div><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
-    
+
     <button onclick="runtime.level++;runtime.renderLevel();" disabled>Next Level</button>
     <button onclick="runtime.level--;runtime.renderLevel();" disabled>Prev Level</button>
     <button onclick="runtime.renderLevel();" disabled>Reset Level</button>
@@ -48,6 +116,11 @@
 
     <pre>
       <b>Changelog:</b>
+      In progress (v0.2):
+       * Start menu
+       * Pause menu
+       * Text
+
       v0.1.0.1:
        * Make Reilly triggered.
 
