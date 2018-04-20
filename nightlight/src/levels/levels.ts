@@ -7,6 +7,8 @@ import { SwordBoss } from "../sprites/bosses/sword/sword";
 import { BackgroundStarSprite } from "../sprites/star";
 import { FinalBoss } from "../sprites/bosses/final/finalboss";
 import { NossBoss } from "../sprites/bosses/noss/noss";
+import { INightlightTextSpriteOptions } from "../sprites/text/NightlightTextSprite";
+import { scratchCoordinate } from "../utils";
 
 /*
  * It's level data
@@ -25,6 +27,8 @@ export interface Level {
   newBackgroundMusic?: TSound[];
   handlers?: THandler[];
   dark?: boolean;
+  text?: INightlightTextSpriteOptions[];
+  jumpLights?: Vector[];
 }
 
 function deleteBackgroundStars(game: Nightlight) {
@@ -56,18 +60,38 @@ export function getLevels(game: Nightlight): Level[] {
       levelData: "eaaaaaaaaafeaaaafeaaaaaaaaaaaaeaaaaaaaaafbccccdeaaaaaaaaaaaaeaaaaaaaaafooooooeaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaabcccccccccd......bcccmaaaaaaaajkpppkkpqkl......jkqpeaaaaaaaa.....................eaaaaaaaa.....................eamccccnc.....................bcdkpkq.k.....................qpl..............................................................................................................................................................................................................................................................................................................................................................................",
       newBackground: "black",
       newBackgroundMusic: [game.getSound("music/exploration")],
+      text: [{
+        text: "Small challenges!",
+        position: scratchCoordinate(-214, -26),
+      }],
     },
     // 1
     {
       levelData: "aaaaaaaaaafr.r.r.r.r.r.eaaaaaaaaaaaaaaaafo.o.o.o.o.o.eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf.gi.........eaaaaaaaaaaaaaaaaf.jl.........eaaaaaaaaaaaaaaaaf.......gi...eaaaaaaccccccccccd.......jl...eaaaaaaqkkpkpqqkkl...........gmaaaaaa.....................gmaaaaaaa.....................bcmaaaaaa.....................kqeaaaaaa............ghhhhi.....eaaaaaa............jpqqkl.....eaaaaaa......ghi..............eaaaaaa......qkp..............eaaaaaa.......................eaaaaaa.............ghhhhi....bccnccc.............jqkkpl....pkq.kqk..........................................................................................",
+      text: [{
+        text: "Higher Hills!",
+        position: scratchCoordinate(-40, -124),
+      }],
     },
     // 2
     {
       levelData: "aaaaaaf..............srrrrrrrraaaaaaf..............srrrrrrrraaaaaaf..............srrrrrrrraaaaaaf..............sssssrrrraaaaaaf..................srrrraaaaaaf..t....t..........srrrraaaaaaf..................srrrraaaaaaf..................ssnssaaaaaaf.......................ccccccd.......................kpkqqkl....gi............................ef.........ghhhhhhh...........ef.......ghmaaaaaaa...........ef......gmaaaaaaaaa...........emhhhhhhmaaaaaaaaaa...........eaaaaaaaaaaaaaaaaaa.........ghmaaaaaaaaaaaaaaaaaa.......ghmaaaaaaaaaaaaaaaaaaaa.....ghmaaaaaaaaaaaaaaaaaaaaaa...ghmaaaaaaaaaaaaaaaaaaaaaaaa..gmaaaaaaaaaaaaaaaaaaaaaaaaaa.gmaaaaaaaaaaaaaaaaaaaaaaaaaaa.eaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      text: [{
+        text: "They crumble beneath you!",
+        position: scratchCoordinate(-112, -144),
+      }],
     },
     // 3
     {
       levelData: "rrrrrs...................srrrrrrrrrs...................srrrrrrrrrs...................srrrrrrrrrs...................srrrrrrssss...................ssnssrrs......t...t................rrs...........................sss..............t...................................................gi............................emhi.................hi......gmaaf.................amhi...gmaaami...............gaaamhhhmaaaaamhi...........ghmaaaaaaaaaaaaaaamhhi.....ghhmaaaaaaaaaaaaaaaaaaaamhhhhhmaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      text: [{
+          text: "Watch your faces...",
+          position: scratchCoordinate(-80, 92),
+        }, {
+          text: "All six of them",
+          position: scratchCoordinate(-64, 84),
+        },
+      ],
     },
     // 4
     {
@@ -95,20 +119,52 @@ export function getLevels(game: Nightlight): Level[] {
     // 9
     {
       levelData: "aaaaaaaaa5oooooooo4aa5......4aaaaaaaaaa5........4aa5......4aaaaaaaaaa5........1223......4a22222229a5..................4a.......4a5..................4a.......4a5..................4a.......4a5.............%....4a8ss....4a5.............o....4a5oo....4a5..................4a5......4a5..................4a5......4a5..................4a5......4a5...678............4a5....ss4a5...4a5.......%....4a5....oo4a5...4a5.......o....4a5......4a5...4a5............4a5......4a5...4a5............4a5......4a5...4a5............4a5s.....4a5...4a5............4a5o.....123...4a5.......%....4a5............4a5.......o....1n5............4a5..............5............4a5..............5............4a5..............",
+      text: [{
+        text: "Touch a dot, jump again!",
+        position: scratchCoordinate(-56, -108),
+      }],
+      jumpLights: [
+        scratchCoordinate(-168, -60),
+        scratchCoordinate(-184, 20),
+        scratchCoordinate(-168, 100),
+        scratchCoordinate(-56, 36),
+        scratchCoordinate(136, -132),
+        scratchCoordinate(184, -76),
+        scratchCoordinate(136, -20),
+        scratchCoordinate(88, 20),
+        scratchCoordinate(136, 76),
+        scratchCoordinate(184, 116),
+      ],
     },
     // 10
     {
       levelData: "4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............1n2122222222222223............w........y....................w........y.............zzz....w..$..#ss$.#s..........z.z....w..$...#s$.#s..........z.z....w..$....s$.#s....%.....zzz....w..s$...s$.#s...#s$...........w..ss$..s$.#s...#s$...........w..sss!!s$.#s...#s$...........w..sx...s$.#s...#s$...........w..s....s$.#s...#s$...........w.......su!ss...#s$...........w.......s...s...#s$...........w.......s...s...#s$...........w.......s...s...#s$...........w.......s!!!s...#s$..........#s$..............#s$..........#s$..............#s$..........#s$..............#s$..........#s$.",
+      jumpLights: [
+        scratchCoordinate(-200, 116),
+        scratchCoordinate(104, -52),
+        scratchCoordinate(-120, -44),
+        scratchCoordinate(-120, 36),
+        scratchCoordinate(-200, -28),
+      ],
     },
     // 11
     {
       levelData: "aaaaaa5....................4aaaaa92n3....................4aaaaa5......................69aaaaa5.....................6aaaaaaa9778..................129aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aa2222223wwwwwwwwwwwwwwwwwwww1u2..............................................................................................................................................................................................................................................................................",
+      jumpLights: [
+        scratchCoordinate(104, -28),
+        scratchCoordinate(-80, -116),
+      ],
     },
     // 12
     {
       levelData: "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
       handlers: [bossSpawner(NossBoss, game.getImage(nossTexture))],
       newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
+      jumpLights: [
+        scratchCoordinate(0, -44),
+        scratchCoordinate(0, 20),
+        scratchCoordinate(0, 84),
+      ],
     },
     // 13
     {
@@ -116,6 +172,10 @@ export function getLevels(game: Nightlight): Level[] {
       newBackground: game.ctx.createPattern(game.getImage("brick"), "repeat"),
       handlers: [deleteBackgroundStars],
       newBackgroundMusic: [game.getSound("music/netherslament")],
+      text: [{
+        text: "Your final challenges.",
+        position: scratchCoordinate(56, -127),
+      }],
     },
     // 14
     {
@@ -124,6 +184,19 @@ export function getLevels(game: Nightlight): Level[] {
     // 15
     {
       levelData: "^^^^-....................)^^^^^^^^-....................)^^^^****(....................&*u**.....................................................................................................................................................................................................................................................................................................................................%%%%%====+...................._====^^^^-....................)^^^^****(....................&*n**..x......................zw.wz.........................zwwwz.........................zzzzz..........................................................................................",
+      text: [{
+        text: "Timing is everything",
+        position: scratchCoordinate(-80, -130),
+      }],
+      jumpLights: [
+        scratchCoordinate(-144, -60),
+        scratchCoordinate(-144, 0),
+        scratchCoordinate(-144, 60),
+        scratchCoordinate(0, -44),
+        scratchCoordinate(144, -60),
+        scratchCoordinate(144, 0),
+        scratchCoordinate(144, 60),
+      ],
     },
     // 16
     {
@@ -138,6 +211,11 @@ export function getLevels(game: Nightlight): Level[] {
     {
       levelData: "^^^^^^^^-oooooooooooo)^^^^^^^^^^^^^^^^-............)^^^^^^^^^^^^^^^^-............)^^^^^^^^********(............&********................................................................................................................................................................................................................................................==================+$..........^^^^^^^^^^^^^^^^^^-$..........`*****************($..........-.............................-.............................-.............................-.............................-.............................-.............................`=@=======+...................^^^^^^^^^^-...................",
       dark: true,
+      jumpLights: [
+        scratchCoordinate(0, -52),
+        scratchCoordinate(104, 20),
+        scratchCoordinate(176, -35),
+      ],
     },
     // 19
     {

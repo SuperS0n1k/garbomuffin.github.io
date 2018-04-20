@@ -329,6 +329,12 @@ export class SwordBoss extends AbstractBoss {
       repeatMax: 5,
     }));
 
+    if (this.health === 0) {
+      this.addPhase(new Task({
+        run: () => this.runtime.playSound("boss/sword/rumble"),
+      }));
+    }
+
     this.addPhase(new Task({
       run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
     }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
@@ -345,10 +351,6 @@ export class SwordBoss extends AbstractBoss {
         repeatEvery: 0,
       }));
     } else {
-      this.addPhase(new Task({
-        run: () => this.runtime.playSound("boss/sword/rumble"),
-      }));
-
       this.addPhase(new Task({
         run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
       }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);

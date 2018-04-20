@@ -6,7 +6,6 @@ import { Container } from "./engine/container";
 import { GameRuntime } from "./engine/runtime";
 import { TBackground, TImage, TSound } from "./engine/types";
 import { Vector } from "./engine/vector";
-import { JUMP_LIGHTS } from "./levels/jumplights";
 import { getLevels, Level } from "./levels/levels";
 import { Block, IBlockOptions, StaticSolidBlock } from "./sprites/blocks/block";
 import { JumpLight } from "./sprites/jumplight";
@@ -14,6 +13,7 @@ import { PlayerSprite } from "./sprites/player/player";
 import { BackgroundStarSprite } from "./sprites/star";
 import { ZIndexes } from "./sprites/zindex";
 import { getRandomInt } from "./utils";
+import { NightlightTextSprite } from "./sprites/text/NightlightTextSprite";
 
 const SPOTLIGHT_SIZE = 75;
 
@@ -228,11 +228,20 @@ export class Nightlight extends GameRuntime {
       }
     }
 
+    // spawn text
+    if (level.text) {
+      for (const textOption of level.text) {
+        new NightlightTextSprite(textOption);
+      }
+    }
+
     // dark rooms
     this.darkLevel = !!level.dark;
 
     // spawn things that you can jump on
-    this.spawnJumpLights();
+    if (level.jumpLights) {
+      this.spawnJumpLights(level.jumpLights);
+    }
 
     // render static things that were just created
     this.updateStatic();
@@ -240,14 +249,10 @@ export class Nightlight extends GameRuntime {
     this.player.reset();
   }
 
-  private spawnJumpLights() {
-    const jumpLights = JUMP_LIGHTS[this.level];
-    if (!jumpLights) {
-      return;
-    }
+  private spawnJumpLights(positions: Vector[]) {
     const texture = this.getImage("jumplight");
 
-    for (const position of jumpLights) {
+    for (const position of positions) {
       new JumpLight({
         texture,
         position,

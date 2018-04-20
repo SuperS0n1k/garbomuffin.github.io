@@ -1497,6 +1497,35 @@ game.addImage("player/walk1");
 game.addImage("player/walk2");
 game.addImage("player/walk3");
 game.addImage("player/walk4");
+game.addImage("text/a");
+game.addImage("text/b");
+game.addImage("text/c");
+game.addImage("text/d");
+game.addImage("text/e");
+game.addImage("text/f");
+game.addImage("text/g");
+game.addImage("text/h");
+game.addImage("text/i");
+game.addImage("text/j");
+game.addImage("text/k");
+game.addImage("text/l");
+game.addImage("text/m");
+game.addImage("text/n");
+game.addImage("text/o");
+game.addImage("text/p");
+game.addImage("text/q");
+game.addImage("text/r");
+game.addImage("text/s");
+game.addImage("text/t");
+game.addImage("text/u");
+game.addImage("text/v");
+game.addImage("text/w");
+game.addImage("text/x");
+game.addImage("text/y");
+game.addImage("text/z");
+game.addImage("text/period");
+game.addImage("text/,");
+game.addImage("text/!");
 game.addImage("fragments/1");
 game.addImage("fragments/2");
 game.addImage("fragments/3");
@@ -1661,14 +1690,14 @@ function run() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_container__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_runtime__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__engine_vector__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__levels_jumplights__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__levels_levels__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_block__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_jumplight__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_player_player__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_star__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__sprites_zindex__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__utils__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__levels_levels__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_block__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_jumplight__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_player_player__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_star__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_zindex__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__sprites_text_NightlightTextSprite__ = __webpack_require__(51);
 
 
 
@@ -1726,9 +1755,9 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
         this.playSound(this.backgroundMusic[0]);
     }
     createPlayer() {
-        this.player = new __WEBPACK_IMPORTED_MODULE_10__sprites_player_player__["a" /* PlayerSprite */]({
+        this.player = new __WEBPACK_IMPORTED_MODULE_9__sprites_player_player__["a" /* PlayerSprite */]({
             texture: this.getImage("player/idle"),
-            position: new __WEBPACK_IMPORTED_MODULE_5__engine_vector__["a" /* Vector */](0, 0, __WEBPACK_IMPORTED_MODULE_12__sprites_zindex__["a" /* ZIndexes */].Player),
+            position: new __WEBPACK_IMPORTED_MODULE_5__engine_vector__["a" /* Vector */](0, 0, __WEBPACK_IMPORTED_MODULE_11__sprites_zindex__["a" /* ZIndexes */].Player),
             width: __WEBPACK_IMPORTED_MODULE_2__config__["b" /* BLOCK_WIDTH */],
             height: __WEBPACK_IMPORTED_MODULE_2__config__["a" /* BLOCK_HEIGHT */],
             persistent: true,
@@ -1736,10 +1765,10 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
     }
     createStarBackground() {
         for (let i = 0; i < TOTAL_BACKGROUND_STARS; i++) {
-            const x = Object(__WEBPACK_IMPORTED_MODULE_13__utils__["c" /* getRandomInt */])(0, this.canvas.width);
-            const y = Object(__WEBPACK_IMPORTED_MODULE_13__utils__["c" /* getRandomInt */])(0, this.canvas.height);
-            new __WEBPACK_IMPORTED_MODULE_11__sprites_star__["a" /* BackgroundStarSprite */]({
-                position: new __WEBPACK_IMPORTED_MODULE_5__engine_vector__["a" /* Vector */](x, y, __WEBPACK_IMPORTED_MODULE_12__sprites_zindex__["a" /* ZIndexes */].Star),
+            const x = Object(__WEBPACK_IMPORTED_MODULE_12__utils__["c" /* getRandomInt */])(0, this.canvas.width);
+            const y = Object(__WEBPACK_IMPORTED_MODULE_12__utils__["c" /* getRandomInt */])(0, this.canvas.height);
+            new __WEBPACK_IMPORTED_MODULE_10__sprites_star__["a" /* BackgroundStarSprite */]({
+                position: new __WEBPACK_IMPORTED_MODULE_5__engine_vector__["a" /* Vector */](x, y, __WEBPACK_IMPORTED_MODULE_11__sprites_zindex__["a" /* ZIndexes */].Star),
                 width: 2,
                 height: 2,
                 persistent: true,
@@ -1751,7 +1780,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
     //
     start() {
         super.start();
-        this.levels = Object(__WEBPACK_IMPORTED_MODULE_7__levels_levels__["a" /* getLevels */])(this);
+        this.levels = Object(__WEBPACK_IMPORTED_MODULE_6__levels_levels__["a" /* getLevels */])(this);
         this.createPlayer();
         this.createStarBackground();
         this.renderLevel();
@@ -1800,7 +1829,7 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
         }
         else if (typeof blockType === "string") {
             texture = this.getImage(blockType);
-            spriteConstructor = __WEBPACK_IMPORTED_MODULE_8__sprites_blocks_block__["d" /* StaticSolidBlock */];
+            spriteConstructor = __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_block__["d" /* StaticSolidBlock */];
         }
         else {
             texture = this.getImage(blockType.texture);
@@ -1854,22 +1883,26 @@ class Nightlight extends __WEBPACK_IMPORTED_MODULE_4__engine_runtime__["a" /* Ga
                 handler(this);
             }
         }
+        // spawn text
+        if (level.text) {
+            for (const textOption of level.text) {
+                new __WEBPACK_IMPORTED_MODULE_13__sprites_text_NightlightTextSprite__["a" /* NightlightTextSprite */](textOption);
+            }
+        }
         // dark rooms
         this.darkLevel = !!level.dark;
         // spawn things that you can jump on
-        this.spawnJumpLights();
+        if (level.jumpLights) {
+            this.spawnJumpLights(level.jumpLights);
+        }
         // render static things that were just created
         this.updateStatic();
         this.player.reset();
     }
-    spawnJumpLights() {
-        const jumpLights = __WEBPACK_IMPORTED_MODULE_6__levels_jumplights__["a" /* JUMP_LIGHTS */][this.level];
-        if (!jumpLights) {
-            return;
-        }
+    spawnJumpLights(positions) {
         const texture = this.getImage("jumplight");
-        for (const position of jumpLights) {
-            new __WEBPACK_IMPORTED_MODULE_9__sprites_jumplight__["a" /* JumpLight */]({
+        for (const position of positions) {
+            new __WEBPACK_IMPORTED_MODULE_8__sprites_jumplight__["a" /* JumpLight */]({
                 texture,
                 position,
             });
@@ -3196,83 +3229,7 @@ class StaticRendererSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* 
 
 
 /***/ }),
-/* 43 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(6);
-
-// This is how the original defines jump lights
-// It does not use the level code
-// (although I believe it at one point did due to the image name being "^.png", as if it were the ^ character in level codes)
-const JUMP_LIGHTS = [
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    // in scratch: 10
-    [
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-168, -60),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-184, 20),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-168, 100),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-56, 36),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(136, -132),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(184, -76),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(136, -20),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(88, 20),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(136, 76),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(184, 116),
-    ],
-    // in scratch: 11
-    [
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-200, 116),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(104, -52),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-120, -44),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-120, 36),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-200, -28),
-    ],
-    // in scratch: 12
-    [
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(104, -28),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-80, -116),
-    ],
-    // in scratch: 13
-    [
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, -44),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, 20),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, 84),
-    ],
-    [],
-    [],
-    // in scratch: 16
-    [
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-144, -60),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-144, 0),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(-144, 60),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, -44),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(144, -60),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(144, 0),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(144, 60),
-    ],
-    [],
-    [],
-    // in scratch: 19
-    [
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(0, -52),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(104, 20),
-        Object(__WEBPACK_IMPORTED_MODULE_0__utils__["d" /* scratchCoordinate */])(176, -35),
-    ],
-];
-/* harmony export (immutable) */ __webpack_exports__["a"] = JUMP_LIGHTS;
-
-
-
-/***/ }),
+/* 43 */,
 /* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3284,6 +3241,8 @@ const JUMP_LIGHTS = [
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_star__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_bosses_final_finalboss__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_bosses_noss_noss__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils__ = __webpack_require__(6);
+
 
 
 
@@ -3317,18 +3276,38 @@ function getLevels(game) {
             levelData: "eaaaaaaaaafeaaaafeaaaaaaaaaaaaeaaaaaaaaafbccccdeaaaaaaaaaaaaeaaaaaaaaafooooooeaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaaeaaaaaaaaaf......eaaaaaaaaaaaabcccccccccd......bcccmaaaaaaaajkpppkkpqkl......jkqpeaaaaaaaa.....................eaaaaaaaa.....................eamccccnc.....................bcdkpkq.k.....................qpl..............................................................................................................................................................................................................................................................................................................................................................................",
             newBackground: "black",
             newBackgroundMusic: [game.getSound("music/exploration")],
+            text: [{
+                    text: "Small challenges!",
+                    position: Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-214, -26),
+                }],
         },
         // 1
         {
             levelData: "aaaaaaaaaafr.r.r.r.r.r.eaaaaaaaaaaaaaaaafo.o.o.o.o.o.eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf............eaaaaaaaaaaaaaaaaf.gi.........eaaaaaaaaaaaaaaaaf.jl.........eaaaaaaaaaaaaaaaaf.......gi...eaaaaaaccccccccccd.......jl...eaaaaaaqkkpkpqqkkl...........gmaaaaaa.....................gmaaaaaaa.....................bcmaaaaaa.....................kqeaaaaaa............ghhhhi.....eaaaaaa............jpqqkl.....eaaaaaa......ghi..............eaaaaaa......qkp..............eaaaaaa.......................eaaaaaa.............ghhhhi....bccnccc.............jqkkpl....pkq.kqk..........................................................................................",
+            text: [{
+                    text: "Higher Hills!",
+                    position: Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-40, -124),
+                }],
         },
         // 2
         {
             levelData: "aaaaaaf..............srrrrrrrraaaaaaf..............srrrrrrrraaaaaaf..............srrrrrrrraaaaaaf..............sssssrrrraaaaaaf..................srrrraaaaaaf..t....t..........srrrraaaaaaf..................srrrraaaaaaf..................ssnssaaaaaaf.......................ccccccd.......................kpkqqkl....gi............................ef.........ghhhhhhh...........ef.......ghmaaaaaaa...........ef......gmaaaaaaaaa...........emhhhhhhmaaaaaaaaaa...........eaaaaaaaaaaaaaaaaaa.........ghmaaaaaaaaaaaaaaaaaa.......ghmaaaaaaaaaaaaaaaaaaaa.....ghmaaaaaaaaaaaaaaaaaaaaaa...ghmaaaaaaaaaaaaaaaaaaaaaaaa..gmaaaaaaaaaaaaaaaaaaaaaaaaaa.gmaaaaaaaaaaaaaaaaaaaaaaaaaaa.eaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            text: [{
+                    text: "They crumble beneath you!",
+                    position: Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-112, -144),
+                }],
         },
         // 3
         {
             levelData: "rrrrrs...................srrrrrrrrrs...................srrrrrrrrrs...................srrrrrrrrrs...................srrrrrrssss...................ssnssrrs......t...t................rrs...........................sss..............t...................................................gi............................emhi.................hi......gmaaf.................amhi...gmaaami...............gaaamhhhmaaaaamhi...........ghmaaaaaaaaaaaaaaamhhi.....ghhmaaaaaaaaaaaaaaaaaaaamhhhhhmaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            text: [{
+                    text: "Watch your faces...",
+                    position: Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-80, 92),
+                }, {
+                    text: "All six of them",
+                    position: Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-64, 84),
+                },
+            ],
         },
         // 4
         {
@@ -3356,20 +3335,52 @@ function getLevels(game) {
         // 9
         {
             levelData: "aaaaaaaaa5oooooooo4aa5......4aaaaaaaaaa5........4aa5......4aaaaaaaaaa5........1223......4a22222229a5..................4a.......4a5..................4a.......4a5..................4a.......4a5.............%....4a8ss....4a5.............o....4a5oo....4a5..................4a5......4a5..................4a5......4a5..................4a5......4a5...678............4a5....ss4a5...4a5.......%....4a5....oo4a5...4a5.......o....4a5......4a5...4a5............4a5......4a5...4a5............4a5......4a5...4a5............4a5s.....4a5...4a5............4a5o.....123...4a5.......%....4a5............4a5.......o....1n5............4a5..............5............4a5..............5............4a5..............",
+            text: [{
+                    text: "Touch a dot, jump again!",
+                    position: Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-56, -108),
+                }],
+            jumpLights: [
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-168, -60),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-184, 20),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-168, 100),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-56, 36),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(136, -132),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(184, -76),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(136, -20),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(88, 20),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(136, 76),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(184, 116),
+            ],
         },
         // 10
         {
             levelData: "4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............4aa4aaaaaaaaaaaaa5............1n2122222222222223............w........y....................w........y.............zzz....w..$..#ss$.#s..........z.z....w..$...#s$.#s..........z.z....w..$....s$.#s....%.....zzz....w..s$...s$.#s...#s$...........w..ss$..s$.#s...#s$...........w..sss!!s$.#s...#s$...........w..sx...s$.#s...#s$...........w..s....s$.#s...#s$...........w.......su!ss...#s$...........w.......s...s...#s$...........w.......s...s...#s$...........w.......s...s...#s$...........w.......s!!!s...#s$..........#s$..............#s$..........#s$..............#s$..........#s$..............#s$..........#s$.",
+            jumpLights: [
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-200, 116),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(104, -52),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-120, -44),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-120, 36),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-200, -28),
+            ],
         },
         // 11
         {
             levelData: "aaaaaa5....................4aaaaa92n3....................4aaaaa5......................69aaaaa5.....................6aaaaaaa9778..................129aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aaaaaaaa5....................4aa2222223wwwwwwwwwwwwwwwwwwww1u2..............................................................................................................................................................................................................................................................................",
+            jumpLights: [
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(104, -28),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-80, -116),
+            ],
         },
         // 12
         {
             levelData: "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
             handlers: [bossSpawner(__WEBPACK_IMPORTED_MODULE_5__sprites_bosses_noss_noss__["a" /* NossBoss */], game.getImage(__WEBPACK_IMPORTED_MODULE_1__sprites_bosses_noss__["b" /* BASE_TEXTURE */]))],
             newBackgroundMusic: [game.getSound("music/boss/1"), game.getSound("music/boss/2")],
+            jumpLights: [
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(0, -44),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(0, 20),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(0, 84),
+            ],
         },
         // 13
         {
@@ -3377,6 +3388,10 @@ function getLevels(game) {
             newBackground: game.ctx.createPattern(game.getImage("brick"), "repeat"),
             handlers: [deleteBackgroundStars],
             newBackgroundMusic: [game.getSound("music/netherslament")],
+            text: [{
+                    text: "Your final challenges.",
+                    position: Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(56, -127),
+                }],
         },
         // 14
         {
@@ -3385,6 +3400,19 @@ function getLevels(game) {
         // 15
         {
             levelData: "^^^^-....................)^^^^^^^^-....................)^^^^****(....................&*u**.....................................................................................................................................................................................................................................................................................................................................%%%%%====+...................._====^^^^-....................)^^^^****(....................&*n**..x......................zw.wz.........................zwwwz.........................zzzzz..........................................................................................",
+            text: [{
+                    text: "Timing is everything",
+                    position: Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-80, -130),
+                }],
+            jumpLights: [
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-144, -60),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-144, 0),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-144, 60),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(0, -44),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(144, -60),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(144, 0),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(144, 60),
+            ],
         },
         // 16
         {
@@ -3399,6 +3427,11 @@ function getLevels(game) {
         {
             levelData: "^^^^^^^^-oooooooooooo)^^^^^^^^^^^^^^^^-............)^^^^^^^^^^^^^^^^-............)^^^^^^^^********(............&********................................................................................................................................................................................................................................................==================+$..........^^^^^^^^^^^^^^^^^^-$..........`*****************($..........-.............................-.............................-.............................-.............................-.............................-.............................`=@=======+...................^^^^^^^^^^-...................",
             dark: true,
+            jumpLights: [
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(0, -52),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(104, 20),
+                Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(176, -35),
+            ],
         },
         // 19
         {
@@ -3739,6 +3772,11 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_4__boss__["a" /* AbstractBoss 
             repeatEvery: 0,
             repeatMax: 5,
         }));
+        if (this.health === 0) {
+            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
+                run: () => this.runtime.playSound("boss/sword/rumble"),
+            }));
+        }
         this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
             run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
         }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
@@ -3754,9 +3792,6 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_4__boss__["a" /* AbstractBoss 
             }));
         }
         else {
-            this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
-                run: () => this.runtime.playSound("boss/sword/rumble"),
-            }));
             this.addPhase(new __WEBPACK_IMPORTED_MODULE_1__engine_task__["a" /* Task */]({
                 run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH),
             }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
@@ -4258,6 +4293,43 @@ class JumpLight extends __WEBPACK_IMPORTED_MODULE_1__blocks_block__["a" /* Block
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = JumpLight;
+
+
+
+/***/ }),
+/* 51 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprite__ = __webpack_require__(7);
+
+const CHAR_WIDTH = 8;
+const CHAR_HEIGHT = CHAR_WIDTH;
+const TEXTURE_FOLDER = "text/";
+const CHAR_MAP = {
+    ".": "period",
+    " ": "skip",
+};
+class NightlightTextSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprite__["a" /* AbstractSprite */] {
+    constructor(options) {
+        super(options);
+        this.static = true;
+        this.text = options.text;
+    }
+    render(ctx) {
+        for (let i = 0; i < this.text.length; i++) {
+            const originalChar = this.text[i].toLowerCase();
+            const char = CHAR_MAP[originalChar] || originalChar;
+            if (char === "skip") {
+                continue;
+            }
+            const x = this.x + (i * CHAR_WIDTH);
+            const texture = this.runtime.getImage(TEXTURE_FOLDER + char);
+            ctx.drawImage(texture, x, this.y, Math.max(CHAR_WIDTH, texture.width), CHAR_HEIGHT);
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = NightlightTextSprite;
 
 
 

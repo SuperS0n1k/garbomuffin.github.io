@@ -108,18 +108,13 @@
     </div>
     <div><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
 
-    <button onclick="runtime.level++;runtime.renderLevel();" disabled>Next Level</button>
-    <button onclick="runtime.level--;runtime.renderLevel();" disabled>Prev Level</button>
-    <button onclick="runtime.renderLevel();" disabled>Reset Level</button>
-    <button onclick="runtime.player.kill();" disabled>Death</button>
-    <button onclick="runtime.addTask(function(){runtime.exit()});" disabled>Stop (refresh to restart)</button>
-
     <pre>
       <b>Changelog:</b>
-      In progress (v0.2):
-       * Start menu
-       * Pause menu
-       * Text
+      v0.1.2:
+       * Improved loading screen
+       * Basic start menu
+       * Text in levels
+       * Fixed hit sound timing in sword boss
 
       v0.1.0.1:
        * Make Reilly triggered.
@@ -139,11 +134,11 @@
        * Boss paterns are just about perfect
 
       v0.0.999.0:
-       * Added the last boss (ignore incorrect background with this link)
+       * Added the last boss
 
       v0.0.9.5:
-       * Things that are scaled will still look pixelated (see the sword boss)
-       * Added debug tools (accessable by checkboxes)
+       * Things that are scaled will still look pixelated
+       * Added debug tools
        * Volume slider that starts at 50%
 
       v0.0.9.4: The Optimization Update
