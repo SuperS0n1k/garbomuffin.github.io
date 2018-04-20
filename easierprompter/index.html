@@ -217,7 +217,14 @@
 
       <p>Easier Prompter: The easiest and simplest teleprompter. Enter your script and press start. It just works.</p>
 
-      <p><b>Update:</b> Implemented some potentially significant optimizations to scrolling. If it's slower or doesn't work please check "Use legacy scrolling". Also, IE 9 support will be dropped soon(tm).</p>
+      <p>
+        <b>Update:</b>
+        1) Implemented some potentially significant optimizations to scrolling. If it's slower or doesn't work please check "Use legacy scrolling".
+        2) You can hide the caret with the hide caret option
+        <!--[if IE 9]>
+          <b>3) IE 9 support will be dropped very soon.</b>
+        <![endif]-->
+      </p>
 
       <div id="editor">
         <table>
@@ -238,6 +245,7 @@
               <div><label>End text: <input type="text" id="options-end-text"></label></div>
               <div><label>Unsaved changes warning: <input type="checkbox" id="options-unsaved-changes-warning"></label></div>
               <div><label>Use legacy scrolling: <input type="checkbox" id="options-use-legacy-scrolling"></label></div>
+              <div><label>Show caret: <input type="checkbox" id="options-show-caret"></label></div>
 
               <button id="save-button">Save</button>
               <button id="reset-button">Reset</button>
@@ -303,8 +311,8 @@
     <div id="prompter">
       <table id="prompter-lines-container">
         <tr>
-          <th>
-            <p class="no-margin" id="prompter-caret">&gt;</p>
+          <th id="prompter-caret">
+            <p class="no-margin">&gt;</p>
           </th>
 
           <th>

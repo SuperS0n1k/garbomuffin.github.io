@@ -1,4 +1,4 @@
-import { getterFrom, ISetterFromOptions, setterFrom, ValueType } from "./utils";
+import { ISetterFromOptions, ValueType, getterFrom, setterFrom } from "./utils";
 
 export type ConfigSetter<T> = (val: T) => void;
 export type ConfigGetter<T> = () => T;

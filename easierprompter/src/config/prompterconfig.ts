@@ -1,4 +1,4 @@
-import { getElement } from "../utils";
+import { getElement, setDisplay } from "../utils";
 import { ConfigManager } from "./config";
 import { ConfigOption } from "./option";
 
@@ -8,6 +8,7 @@ export class PrompterConfigManager extends ConfigManager {
 
     const prompterContainer = getElement("prompter-lines-container");
     const prompterLines = getElement("prompter-lines");
+    const caret = getElement("prompter-caret");
 
     this.options.speed = new ConfigOption<number>({
       default: 1.5,
@@ -69,6 +70,18 @@ export class PrompterConfigManager extends ConfigManager {
       default: navigator.userAgent.indexOf("MSIE 9.0") > -1,
       el: getElement("options-use-legacy-scrolling"),
       type: "checkbox",
+    });
+
+    this.options.showCaret = new ConfigOption<boolean>({
+      default: true,
+      el: getElement("options-show-caret"),
+      type: "checkbox",
+      setterOpts: {
+        onchange: true,
+        callback: (value: boolean) => {
+          setDisplay(caret, value);
+        },
+      },
     });
 
     this.options.endText = new ConfigOption<string>({

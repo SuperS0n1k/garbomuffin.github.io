@@ -240,6 +240,7 @@ var PrompterConfigManager = (function (_super) {
         var _this = _super.call(this) || this;
         var prompterContainer = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("prompter-lines-container");
         var prompterLines = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("prompter-lines");
+        var caret = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("prompter-caret");
         _this.options.speed = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
             default: 1.5,
             el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-current-speed"),
@@ -295,6 +296,17 @@ var PrompterConfigManager = (function (_super) {
             default: navigator.userAgent.indexOf("MSIE 9.0") > -1,
             el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-use-legacy-scrolling"),
             type: "checkbox",
+        });
+        _this.options.showCaret = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
+            default: true,
+            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-show-caret"),
+            type: "checkbox",
+            setterOpts: {
+                onchange: true,
+                callback: function (value) {
+                    Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* setDisplay */])(caret, value);
+                },
+            },
         });
         _this.options.endText = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
             default: "[END]",
