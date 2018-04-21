@@ -1334,7 +1334,7 @@ class EmptyMouseButton {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_sprites_imagesprite__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__coin__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__hiteffect__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__hiteffect__ = __webpack_require__(44);
 
 
 
@@ -1690,14 +1690,14 @@ function run() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__engine_container__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__engine_runtime__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__engine_vector__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__levels_levels__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__levels_levels__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sprites_blocks_block__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_jumplight__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__sprites_jumplight__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__sprites_player_player__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sprites_star__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sprites_zindex__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__sprites_text_NightlightTextSprite__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__sprites_text_NightlightTextSprite__ = __webpack_require__(50);
 
 
 
@@ -3229,18 +3229,17 @@ class StaticRendererSprite extends __WEBPACK_IMPORTED_MODULE_0__sprite__["a" /* 
 
 
 /***/ }),
-/* 43 */,
-/* 44 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getLevels;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_vector__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_bosses_noss__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_bosses_sword_sword__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_bosses_sword_sword__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_star__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_bosses_final_finalboss__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_bosses_noss_noss__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sprites_bosses_final_finalboss__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sprites_bosses_noss_noss__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils__ = __webpack_require__(6);
 
 
@@ -3277,7 +3276,7 @@ function getLevels(game) {
             newBackground: "black",
             newBackgroundMusic: [game.getSound("music/exploration")],
             text: [{
-                    text: "Small challenges!",
+                    text: "Small challenges",
                     position: Object(__WEBPACK_IMPORTED_MODULE_6__utils__["d" /* scratchCoordinate */])(-214, -26),
                 }],
         },
@@ -3448,7 +3447,7 @@ function getLevels(game) {
 
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3495,7 +3494,7 @@ class HitEffectSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_images
 
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3856,7 +3855,7 @@ class SwordBoss extends __WEBPACK_IMPORTED_MODULE_4__boss__["a" /* AbstractBoss 
 
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4027,7 +4026,7 @@ class FinalBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossB
 
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4035,7 +4034,7 @@ class FinalBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossB
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_vector__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__noss__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bullet__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bullet__ = __webpack_require__(48);
 
 
 
@@ -4179,7 +4178,7 @@ class NossBoss extends __WEBPACK_IMPORTED_MODULE_3__noss__["a" /* AbstractNossBo
 
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4258,7 +4257,7 @@ class NossBossBulletSprite extends __WEBPACK_IMPORTED_MODULE_0__engine_sprites_i
 
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4297,7 +4296,7 @@ class JumpLight extends __WEBPACK_IMPORTED_MODULE_1__blocks_block__["a" /* Block
 
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

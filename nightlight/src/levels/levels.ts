@@ -61,7 +61,7 @@ export function getLevels(game: Nightlight): Level[] {
       newBackground: "black",
       newBackgroundMusic: [game.getSound("music/exploration")],
       text: [{
-        text: "Small challenges!",
+        text: "Small challenges",
         position: scratchCoordinate(-214, -26),
       }],
     },
