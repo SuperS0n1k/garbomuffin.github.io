@@ -29,7 +29,7 @@ export class Nightlight extends GameRuntime {
   public darkLevel: boolean = false;
   public blocks: Container<Block> = new Container();
 
-  private stats: Stats;
+  private stats: Stats | null = null;
 
   constructor() {
     super(document.getElementById("container") as HTMLElement);
@@ -40,9 +40,15 @@ export class Nightlight extends GameRuntime {
     };
 
     // stats.js for fps monitoring
-    this.stats = new Stats();
-    this.stats.showPanel(0);
-    document.body.appendChild(this.stats.dom);
+    // this.stats = new Stats();
+    // this.stats.showPanel(0);
+    // document.body.appendChild(this.stats.dom);
+  }
+
+  private testhash() {
+    if (location.hash === "#i-am-a-bad-person-who-just-wants-to-see-the-ending") {
+      this.renderLevel(20);
+    }
   }
 
   //
@@ -106,10 +112,15 @@ export class Nightlight extends GameRuntime {
     this.createPlayer();
     this.createStarBackground();
     this.renderLevel();
+
+    this.testhash();
+    window.onhashchange = () => this.testhash();
   }
 
   public render() {
-    this.stats.begin();
+    if (this.stats) {
+      this.stats.begin();
+    }
 
     super.render();
 
@@ -131,7 +142,9 @@ export class Nightlight extends GameRuntime {
       this.ctx.drawImage(coverCanvas, 0, 0);
     }
 
-    this.stats.end();
+    if (this.stats) {
+      this.stats.end();
+    }
   }
 
   //

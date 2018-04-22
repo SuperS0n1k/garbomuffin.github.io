@@ -235,7 +235,7 @@ export function getLevels(game: Nightlight): Level[] {
       levelData: "",
       newBackgroundMusic: [game.getSound("music/exploration")],
       newBackground: "black",
-      handlers: [goodbye],
+      handlers: [deleteBackgroundStars, goodbye],
     },
     /* tslint:enable:max-line-length */
   ];

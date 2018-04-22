@@ -94,7 +94,7 @@ export class EndingSprite extends AbstractSprite {
 
   private spawnEndScene() {
     const image = this.runtime.getImage("end/scene");
-    const x = -image.width;
+    const x = -image.width * 2;
     const y = this.runtime.canvas.height;
     new EndingSceneSprite({
       position: new Vector(x, y),
