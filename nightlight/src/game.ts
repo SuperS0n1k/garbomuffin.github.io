@@ -13,7 +13,7 @@ import { PlayerSprite } from "./sprites/player/player";
 import { BackgroundStarSprite } from "./sprites/star";
 import { ZIndexes } from "./sprites/zindex";
 import { getRandomInt } from "./utils";
-import { NightlightTextSprite } from "./sprites/text/NightlightTextSprite";
+import { StaticNightlightTextSprite } from "./sprites/text/StaticNightlightTextSprite";
 
 const SPOTLIGHT_SIZE = 75;
 
@@ -231,7 +231,7 @@ export class Nightlight extends GameRuntime {
     // spawn text
     if (level.text) {
       for (const textOption of level.text) {
-        new NightlightTextSprite(textOption);
+        new StaticNightlightTextSprite(textOption);
       }
     }
 

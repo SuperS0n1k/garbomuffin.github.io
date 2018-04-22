@@ -9,6 +9,7 @@ import { FinalBoss } from "../sprites/bosses/final/finalboss";
 import { NossBoss } from "../sprites/bosses/noss/noss";
 import { INightlightTextSpriteOptions } from "../sprites/text/NightlightTextSprite";
 import { scratchCoordinate } from "../utils";
+import { EndingSprite } from "../sprites/ending/EndingSprite";
 
 /*
  * It's level data
@@ -49,6 +50,12 @@ function bossSpawner(bossType: typeof ImageSprite, texture: TImage) {
       texture,
     });
   };
+}
+
+function goodbye() {
+  new EndingSprite({
+    position: new Vector(0, 0),
+  });
 }
 
 // This is terrible and should be changed.
@@ -223,9 +230,12 @@ export function getLevels(game: Nightlight): Level[] {
       newBackgroundMusic: [game.getSound("music/finalboss/1"), game.getSound("music/finalboss/2")],
       handlers: [bossSpawner(FinalBoss, game.getImage(nossTexture))],
     },
-    // end
+    // Goodbye
     {
       levelData: "",
+      newBackgroundMusic: [game.getSound("music/exploration")],
+      newBackground: "black",
+      handlers: [goodbye],
     },
     /* tslint:enable:max-line-length */
   ];

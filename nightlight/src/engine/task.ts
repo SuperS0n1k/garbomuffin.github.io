@@ -19,6 +19,7 @@ export interface ITaskOptions {
 export interface IRepeatingTaskOptions extends ITaskOptions {
   repeatEvery: number;
   repeatMax?: number;
+  onend?: (() => void) | null;
 }
 
 export type TaskOptions = ITaskOptions | IRepeatingTaskOptions;
@@ -30,6 +31,7 @@ export class Task {
   public repeatEvery: number;
   public repeatCount: number = 0;
   public repeatMax: number;
+  public onend: () => void;
   public readonly originalOptions: ITaskOptions;
 
   constructor(options: TaskOptions) {
@@ -37,6 +39,7 @@ export class Task {
     const delay = getOrDefault(options.delay, 0);
     const repeatEvery = getOrDefault((options as IRepeatingTaskOptions).repeatEvery, -1);
     const repeatMax = getOrDefault((options as IRepeatingTaskOptions).repeatMax, Infinity);
+    const onend = getOrDefault((options as IRepeatingTaskOptions).onend, null);
 
     this.originalOptions = options;
 
@@ -44,6 +47,7 @@ export class Task {
     this.delay = delay;
     this.repeatEvery = repeatEvery;
     this.repeatMax = repeatMax;
+    this.onend = onend;
   }
 
   public run() {
@@ -62,8 +66,16 @@ export class Task {
 // almost EVERYTHING extends this (and as such can have tasks on it)
 export class TaskRunner {
   private _tasks: Task[] = [];
+  private _newTasks: Task[] = [];
 
   protected runTasks() {
+    if (this._newTasks.length > 0) {
+      for (const newTask of this._newTasks) {
+        this._tasks.push(newTask);
+      }
+      this._newTasks = [];
+    }
+
     for (const task of this._tasks) {
       if (task.delay <= 0) {
         task.run();
@@ -81,7 +93,15 @@ export class TaskRunner {
       }
     }
 
-    this._tasks = this._tasks.filter((task) => task.delay !== -1);
+    this._tasks = this._tasks.filter((task) => {
+      if (task.delay === -1) {
+        if (task.onend) {
+          task.onend();
+        }
+        return false;
+      }
+      return true;
+    });
   }
 
   public resetTasks() {
@@ -105,7 +125,7 @@ export class TaskRunner {
         repeatEvery: 0,
       }));
     } else {
-      this._tasks.push(task);
+      this._newTasks.push(task);
       return task;
     }
   }

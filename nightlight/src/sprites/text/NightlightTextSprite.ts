@@ -11,10 +11,10 @@ const TEXTURE_FOLDER = "text/";
 const CHAR_MAP: {[s: string]: string | undefined} = {
   ".": "period",
   " ": "skip",
+  "'": "singlequote",
 };
 
 export class NightlightTextSprite extends AbstractSprite {
-  public static: boolean = true;
   private readonly text: string;
 
   constructor(options: INightlightTextSpriteOptions) {

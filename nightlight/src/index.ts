@@ -53,6 +53,7 @@ game.addImage("text/z");
 game.addImage("text/period");
 game.addImage("text/,");
 game.addImage("text/!");
+game.addImage("text/singlequote");
 
 game.addImage("fragments/1");
 game.addImage("fragments/2");
@@ -166,6 +167,10 @@ game.addImage("blocks/castlecorner/topleft");
 game.addImage("blocks/castlecorner/bottomright");
 game.addImage("blocks/castlecorner/bottomleft");
 
+// ending
+game.addImage("end/scene");
+game.addImage("thumb");
+
 //
 // Sounds
 //
@@ -221,6 +226,10 @@ function canPlay() {
   playButtonElement.textContent = "Play";
   playButtonElement.disabled = false;
   loadingScreenBackgroundElement.classList.add("active");
+
+  if (location.search === "?run") {
+    run();
+  }
 }
 
 function run() {
