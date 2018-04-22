@@ -233,7 +233,7 @@ export function getLevels(game: Nightlight): Level[] {
     // Goodbye
     {
       levelData: "",
-      newBackgroundMusic: [game.getSound("music/exploration")],
+      newBackgroundMusic: [],
       newBackground: "black",
       handlers: [deleteBackgroundStars, goodbye],
     },

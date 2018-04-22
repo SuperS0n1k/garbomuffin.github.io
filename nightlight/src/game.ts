@@ -62,12 +62,13 @@ export class Nightlight extends GameRuntime {
       sound.onended = () => {};
     }
 
+    this.backgroundMusic = music;
     for (const sound of music) {
       sound.onended = () => this.nextBackgroundMusic();
     }
-
-    this.backgroundMusic = music;
-    this.playSound(music[0]);
+    if (music.length > 0) {
+      this.playSound(music[0]);
+    }
   }
 
   private nextBackgroundMusic() {

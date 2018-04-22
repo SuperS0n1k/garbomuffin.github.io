@@ -72,6 +72,8 @@ export class EndingSprite extends AbstractSprite {
   }
 
   private startTextPhase() {
+    this.runtime.setBackgroundMusic([this.runtime.getSound("music/exploration")]);
+
     for (let i = 0; i < TEXT.length; i++) {
       const delay = (i + 1) * TEXT_PHASE_LINE_DELAY;
       const opts = TEXT[i];
