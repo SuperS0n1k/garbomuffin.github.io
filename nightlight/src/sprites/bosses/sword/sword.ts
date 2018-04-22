@@ -324,12 +324,20 @@ export class SwordBoss extends AbstractBoss {
 
     this.phaseDelay = 0;
     this.addPhase(new Task({
+      run: () => this.runtime.playSound("boss/ouch"),
+    }));
+
+    this.addPhase(new Task({
       run: () => this.y += DAMAGED_FALL_SPEED,
       repeatEvery: 0,
       repeatMax: 5,
     }));
 
     if (this.health === 0) {
+      this.addPhase(new Task({
+        run: () => this.runtime.playSound("boss/shadow5"),
+      }));
+    } else {
       this.addPhase(new Task({
         run: () => this.runtime.playSound("boss/sword/rumble"),
       }));
