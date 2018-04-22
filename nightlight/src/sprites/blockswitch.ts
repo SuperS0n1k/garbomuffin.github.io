@@ -17,13 +17,23 @@ export interface IBlockSwitchOptions extends IBlockOptions {
 export class BlockSwitch extends Block {
   private spawner: BlockSwitchSpawnerBlock;
   private startingPosition: Vector;
+  private triggered: boolean = false;
 
   constructor(opts: IBlockSwitchOptions) {
     super(opts);
     this.spawner = opts.spawner;
     this.startingPosition = new Vector(this.position);
     this.floorAlign();
-    this.addTask((task) => this.run(task));
+    this.addTask(() => this.run());
+  }
+
+  public resetState() {
+    this.triggered = false;
+    this.texture = this.runtime.getImage("blocks/button/red");
+    this.spawner.texture = this.runtime.getImage("blocks/u");
+    this.updateDimensions();
+    this.position = new Vector(this.startingPosition);
+    this.floorAlign();
   }
 
   private trigger() {
@@ -36,16 +46,16 @@ export class BlockSwitch extends Block {
     this.spawner.texture = this.runtime.getImage("blocks/u2");
     this.texture = this.runtime.getImage("blocks/button/on");
     this.updateDimensions();
-    this.position = this.startingPosition;
+    this.position = new Vector(this.startingPosition);
     this.floorAlign();
+    this.triggered = true;
 
     this.runtime.playSound("blocks/button");
   }
 
-  private run(task: Task) {
-    if (this.intersects(this.runtime.player)) {
+  private run() {
+    if (!this.triggered && this.intersects(this.runtime.player)) {
       this.trigger();
-      task.stop();
     }
   }
 }

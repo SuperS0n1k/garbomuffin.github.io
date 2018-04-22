@@ -109,9 +109,8 @@ export class TaskRunner {
   }
 
   public stopAllTasks() {
-    for (const task of this._tasks) {
-      task.stop();
-    }
+    this._tasks = [];
+    this._newTasks = [];
   }
 
   // add a task

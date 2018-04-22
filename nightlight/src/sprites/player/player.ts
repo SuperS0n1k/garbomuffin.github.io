@@ -10,7 +10,6 @@ import { PlayerFragmentSprite } from "./fragment";
  *
  * For now there doesn't seem to be any problems with having the player also be the graphic
  * And until there are problems they will be staying as one
- * (in some other games the size of the player textures chagne and that ruins physics)
  */
 
 // How fast the player walks
@@ -172,6 +171,10 @@ export class PlayerSprite extends ImageSprite {
         yv: getRandomInt(FRAGMENT_YV_MIN * 1000, FRAGMENT_YV_MAX * 1000) / 1000,
         rv: getRandomInt(-FRAGMENT_RV_RANGE * 1000, FRAGMENT_RV_RANGE * 1000) / 1000,
       });
+    }
+
+    for (const block of this.runtime.blocks) {
+      block.resetState();
     }
 
     this.reset();

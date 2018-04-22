@@ -33,6 +33,12 @@ export class LightSwitchBlock extends SolidBlock {
     this.show();
   }
 
+  public resetState() {
+    if (!this.visible) {
+      this.show();
+    }
+  }
+
   private show() {
     // reset variables
     this.animationProgress = 0;

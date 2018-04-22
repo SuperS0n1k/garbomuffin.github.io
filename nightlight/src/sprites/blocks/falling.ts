@@ -33,6 +33,16 @@ export class FallingBlock extends SolidBlock {
     this.startingPosition = new Vector(this.position);
   }
 
+  public resetState() {
+    this.stopAllTasks();
+    this.position = new Vector(this.startingPosition);
+    this.solid = true;
+    this.visible = true;
+    this.vibrateProgress = 0;
+    this.frame = 0;
+    this.yv = 0;
+  }
+
   public trigger() {
     this.x -= VIBRATE_RANGE / 2;
     this.addTask(new Task({
@@ -47,7 +57,7 @@ export class FallingBlock extends SolidBlock {
     if (this.vibrateProgress === VIBRATE_TIMES) {
       const fromBottom = this.runtime.canvas.height - this.y;
       task.stop();
-      this.position = this.startingPosition;
+      this.position = new Vector(this.startingPosition);
 
       const delay = fromBottom * FALL_DELAY_PER_Y;
       this.addTask(new Task({

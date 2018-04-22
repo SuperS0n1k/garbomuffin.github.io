@@ -1,25 +1,47 @@
-import { Block } from "./block";
+import { Block, IBlockOptions } from "./block";
 
 /*
  * A block that is toggled solid/not solid when a switch is hit.
  */
 
 export abstract class LightBlock extends Block {
-  public toggleSolid() {
-    this.solid = !this.solid;
+  public solid: boolean = true;
+  public abstract startingState: boolean;
 
+  constructor(options: IBlockOptions) {
+    super(options);
+  }
+
+  protected setSolid(solid: boolean) {
+    this.solid = solid;
     if (this.solid) {
       this.texture = this.runtime.getImage("blocks/z");
     } else {
       this.texture = this.runtime.getImage("blocks/y");
     }
   }
+
+  public resetState() {
+    this.setSolid(this.startingState);
+  }
+
+  public toggleSolid() {
+    this.setSolid(!this.solid);
+  }
 }
 
 export class EnabledLightBlock extends LightBlock {
-  public solid = true;
+  public startingState = true;
+  constructor(options: IBlockOptions) {
+    super(options);
+    this.setSolid(this.startingState);
+  }
 }
 
 export class DisabledLightBlock extends LightBlock {
-  public solid = false;
+  public startingState = false;
+  constructor(options: IBlockOptions) {
+    super(options);
+    this.setSolid(this.startingState);
+  }
 }

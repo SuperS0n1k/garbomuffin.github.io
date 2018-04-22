@@ -69,6 +69,8 @@ export class Block extends ImageSprite {
 
     return true;
   }
+
+  public resetState() {}
 }
 
 // Block with solid = true by default
