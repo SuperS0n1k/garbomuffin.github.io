@@ -20,7 +20,7 @@ const SWIPE_ROTATION_SPEED = 10 / 2;
 const SWIPE_MOVE_SPEED = 12.5 / 2;
 const SWIPE_BASE_DELAY = 60;
 const SWIPE_SIZE_CHANGE_RATE = 0.115;
-const SWIPE_ANIMATE_TIMES = 15;
+const SWIPE_ANIMATE_TIMES = 45;
 const SWIPE_ANIMATE_FRAME_LENGTH = 3;
 const SWIPE_TEXTURES = [
   "boss/sword/sword",
@@ -179,7 +179,6 @@ export class SwordBoss extends AbstractBoss {
     const animate = () => {
       this.addPhase(new Task({
         run: () => this.animate(SWIPE_TEXTURES, SWIPE_ANIMATE_TIMES, SWIPE_ANIMATE_FRAME_LENGTH),
-        delay: 10,
       }), SWIPE_ANIMATE_TIMES * SWIPE_ANIMATE_FRAME_LENGTH);
     };
 
@@ -188,7 +187,7 @@ export class SwordBoss extends AbstractBoss {
         run: () => this.swipeAttack(SWIPE_DOWN_SPEED),
         repeatEvery: 0,
         repeatMax: 16,
-        delay: 10,
+        // delay: 10,
       }));
 
       this.addPhase(new Task({

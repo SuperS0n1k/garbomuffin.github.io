@@ -54,6 +54,9 @@ export class BackgroundStarSprite extends AbstractSprite {
 
   // Implement render as this extends AbstractSprite
   public render(ctx: CanvasRenderingContext2D) {
+    if (!this.visible) {
+      return;
+    }
     const animationProgress = this.clamp(this.progress / ANIMATION_LENGTH, 0, 1);
     const color = Math.floor(255 * animationProgress);
     const hexCode = toHex(color);

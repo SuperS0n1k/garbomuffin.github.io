@@ -28,6 +28,7 @@ export class Nightlight extends GameRuntime {
   public backgroundMusic: TSound[] = [];
   public darkLevel: boolean = false;
   public blocks: Container<Block> = new Container();
+  public randomSpawn: boolean = false;
 
   private stats: Stats | null = null;
 
@@ -43,6 +44,8 @@ export class Nightlight extends GameRuntime {
     // this.stats = new Stats();
     // this.stats.showPanel(0);
     // document.body.appendChild(this.stats.dom);
+
+    (window as any).runtime = this;
   }
 
   private testhash() {
@@ -226,19 +229,26 @@ export class Nightlight extends GameRuntime {
     // Level metadata
 
     // if a level changes the background
-    if (level.newBackground) {
-      this.background = level.newBackground;
+    if (level.background) {
+      this.background = level.background;
     }
 
     // if a level has new background music
-    if (level.newBackgroundMusic) {
-      this.setBackgroundMusic(level.newBackgroundMusic);
+    if (level.backgroundMusic) {
+      this.setBackgroundMusic(level.backgroundMusic);
     }
 
     // if a level has any handlers that need to run
     if (level.handlers) {
       for (const handler of level.handlers) {
         handler(this);
+      }
+    }
+
+    if (typeof level.stars !== "undefined") {
+      const sprites = this.sprites.sprites.filter((s) => s instanceof BackgroundStarSprite) as BackgroundStarSprite[];
+      for (const star of sprites) {
+        star.visible = level.stars;
       }
     }
 
@@ -256,6 +266,9 @@ export class Nightlight extends GameRuntime {
     if (level.jumpLights) {
       this.spawnJumpLights(level.jumpLights);
     }
+
+    // random spawn
+    this.randomSpawn = typeof level.randomSpawn === "undefined" ? false : level.randomSpawn;
 
     // render static things that were just created
     this.updateStatic();

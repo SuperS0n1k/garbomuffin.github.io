@@ -106,8 +106,21 @@
     </div>
     <div><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
 
+    <div id="cheaty-boi">
+      <button onclick="runtime.level++;runtime.renderLevel();">Next level</button>
+      <button onclick="runtime.level--;runtime.renderLevel();">Prev level</button>
+    </div>
+    <script>document.getElementById("cheaty-boi").style.display=location.hash==="#cheaty-boi"?"block":"none"</script>
+
     <pre>
       <b>Changelog:</b>
+      v0.1.5:
+       * Last boss: player spawns in random locations to fix "hold up to win"
+       * Last boss: correct background image and stars
+       * Last boss: other behavior corrections
+       * Ending: images alligned correctly
+       * Sword boss: behavior corrections
+
       v0.1.4:
        * Death resets levels (to some degree)
        * Other bug fixes

@@ -57,7 +57,7 @@ export class FinalBoss extends AbstractNossBoss {
     this.wasHit = false;
     this.scale.x = 1;
     this.scale.y = 1;
-    this.visible = true;
+    this.visible = false;
 
     const repeatSlideAttack = getRandomInt(SLIDE_ATTACK_MIN, SLIDE_ATTACK_MAX);
     for (let i = 0; i < repeatSlideAttack; i++) {
@@ -95,7 +95,7 @@ export class FinalBoss extends AbstractNossBoss {
     this.addPhase(new Task({
       run: (task) => this.vulnerableAfterDropAttack(task),
       repeatEvery: 0,
-      repeatMax: 90,
+      repeatMax: 120,
     }));
     this.addPhase(new Task({
       run: () => this.endRoutine(this.wasHit),
@@ -137,6 +137,7 @@ export class FinalBoss extends AbstractNossBoss {
   }
 
   private prepareDropAttack() {
+    this.visible = true;
     this.runtime.playSound("boss/noss/shadow2");
     this.scale.x = DROP_ATTACK_SCALE;
     this.scale.y = DROP_ATTACK_SCALE;

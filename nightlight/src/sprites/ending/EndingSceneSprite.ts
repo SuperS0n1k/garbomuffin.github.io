@@ -14,7 +14,7 @@ export class EndingSceneSprite extends ImageSprite {
     super(options);
 
     this.endX = 0;
-    this.endY = this.runtime.canvas.height - this.height;
+    this.endY = this.runtime.canvas.height - this.height + 4;
     const xDistance = Math.abs(this.endX - this.x);
     const yDistance = Math.abs(this.endY - this.y);
     this.moveX = xDistance / MOVE_LENGTH;

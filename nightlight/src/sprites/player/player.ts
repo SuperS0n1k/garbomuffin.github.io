@@ -143,13 +143,23 @@ export class PlayerSprite extends ImageSprite {
   }
 
   public reset() {
-    this.position.x = 40;
+    const sprites = this.runtime.blocks.sprites.filter((s) => s.solid || s instanceof PseudoSolidBlock);
+
     this.position.y = this.runtime.canvas.height - BLOCK_HEIGHT;
+    if (this.runtime.randomSpawn) {
+      const minX = 0;
+      const maxX = this.runtime.canvas.width - this.width;
+      this.position.x = getRandomInt(minX, maxX);
+      while (!this.intersects(sprites)) {
+        this.position.x = getRandomInt(minX, maxX);
+      }
+    } else {
+      this.position.x = 40;
+    }
 
     this.xv = 0;
     this.yv = 0;
 
-    const sprites = this.runtime.blocks.sprites.filter((s) => s.solid || s instanceof PseudoSolidBlock);
     while (this.intersects(sprites)) {
       this.y -= BLOCK_HEIGHT;
     }
