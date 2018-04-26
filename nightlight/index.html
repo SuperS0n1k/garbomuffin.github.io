@@ -20,13 +20,13 @@
 
       /* LOADING SCREEN STUFF */
 
-      #loading-container {
+      #menu-container {
         width: 100%;
         height: 100%;
       }
 
       /* centered menu */
-      #loading-screen {
+      .menu {
         text-align: center;
         position: relative;
         top: 50%;
@@ -34,7 +34,7 @@
       }
 
       /* image in the background */
-      #loading-screen-background {
+      #menu-background {
         position: absolute;
         z-index: -1;
         filter: brightness(50%);
@@ -51,10 +51,14 @@
         }
       }
 
-      #loading-screen-background.active {
+      #menu-background.active {
         animation-duration: 1s;
         animation-name: background-opacity-increase;
         filter: brightness(100%);
+      }
+
+      #menu-screen {
+        display: none;
       }
 
       /* we make our own fake progress bar element */
@@ -94,10 +98,14 @@
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a>. Assets are used with permission.</p>
 
     <div id="container">
-      <div id="loading-container">
-        <div id="loading-screen-background"><img src="assets/thumb.png" width="100%"></div>
-        <div id="loading-screen">
-          <button disabled id="play-button">Loading...</button>
+      <div id="menu-container">
+        <div id="menu-background"><img src="assets/thumb.png" width="100%"></div>
+        <div id="loading-screen" class="menu">
+          <img src="assets/loading.png">
+        </div>
+        <div id="menu-screen" class="menu">
+          <div><button id="play-button">Start Game</button></div>
+          <div><button id="load-code-button">Load Level Code</button></div>
         </div>
         <div id="loading-screen-progress-bar" class="progress-bar">
           <div class="progress-bar-inside" id="progress-bar"></div>
@@ -114,6 +122,13 @@
 
     <pre>
       <b>Changelog:</b>
+      v0.1.9:
+       * Sword boss: fixed animation length
+       * Bridge level: blocks fall instantly so you have to actually use the dots
+       * Implemented pause (Escape)
+       * Implemented level codes
+       * Changed loading screen
+
       v0.1.5:
        * Last boss: player spawns in random locations to fix "hold up to win"
        * Last boss: correct background image and stars
@@ -162,7 +177,7 @@
       v0.0.9.4: The Optimization Update
        * Rendering optimized
         * Performance gains of nearly 2x in some cases
-        * The hardest level to render (#4) now runs at 60 fps on a chromebook
+        * The hardest level to render (the first one with a button) now runs at 60 fps on a chromebook
        * Collision optimized
         * Death pieces can now in some cases have almost no performance impact
        * Fixed some bugs from the previous version

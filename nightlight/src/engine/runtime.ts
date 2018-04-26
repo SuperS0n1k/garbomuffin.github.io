@@ -10,6 +10,7 @@ import { TaskRunner } from "./task";
 import { TBackground, TImage, TSound } from "./types";
 import { isMobile } from "./utils";
 import { Vector } from "./vector";
+import { GameState } from "./state";
 
 /*
  * The main game runtime object
@@ -41,6 +42,7 @@ export class GameRuntime extends TaskRunner {
   public frames: number = 0;
   public started: boolean = false;
   public background: TBackground = "white";
+  public defaultState: GameState = new GameState();
   private _volume: number = 0;
   private _assetPromises: Array<Promise<TImage>> = [];
 
@@ -240,6 +242,9 @@ export class GameRuntime extends TaskRunner {
 
     // all sprites
     for (const sprite of this.sprites) {
+      if (sprite.gameState && !sprite.gameState.updatingEnabled) {
+        continue;
+      }
       sprite.update();
     }
   }
@@ -307,6 +312,9 @@ export class GameRuntime extends TaskRunner {
 
     // render all non static sprites onto our canvas
     for (const sprite of this.sprites) {
+      if (sprite.gameState && !sprite.gameState.renderingEnabled) {
+        continue;
+      }
       if (!sprite.static) {
         sprite.render(this.ctx);
 

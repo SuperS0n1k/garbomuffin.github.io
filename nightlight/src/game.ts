@@ -14,6 +14,8 @@ import { BackgroundStarSprite } from "./sprites/star";
 import { ZIndexes } from "./sprites/zindex";
 import { getRandomInt } from "./utils";
 import { StaticNightlightTextSprite } from "./sprites/text/StaticNightlightTextSprite";
+import { GameState } from "./engine/state";
+import { PauseSprite } from "./sprites/pause/PauseSprite";
 
 const SPOTLIGHT_SIZE = 75;
 
@@ -29,6 +31,9 @@ export class Nightlight extends GameRuntime {
   public darkLevel: boolean = false;
   public blocks: Container<Block> = new Container();
   public randomSpawn: boolean = false;
+  public playState: GameState = this.defaultState;
+  public pauseState: GameState = new GameState();
+  public levelCode!: string;
 
   private stats: Stats | null = null;
 
@@ -110,6 +115,12 @@ export class Nightlight extends GameRuntime {
 
   public start() {
     super.start();
+
+    new PauseSprite({
+      texture: this.getImage("pause"),
+      position: new Vector(0, 0),
+      persistent: true,
+    });
 
     this.levels = getLevels(this);
 
@@ -273,7 +284,43 @@ export class Nightlight extends GameRuntime {
     // render static things that were just created
     this.updateStatic();
 
+    this.levelCode = this.createLevelCode();
+
     this.player.reset();
+  }
+
+  private createLevelCode(nlevel: number = this.level) {
+    let level = nlevel.toString();
+    if (level.length === 1) {
+      level = "0" + level;
+    }
+    let result = "";
+    result += getRandomInt(0, 9);
+    result += level[0];
+    result += getRandomInt(0, 9);
+    result += getRandomInt(0, 9);
+    result += level[1];
+    result += getRandomInt(0, 9);
+    result += getRandomInt(0, 9);
+    result += getRandomInt(0, 9);
+    return result;
+  }
+
+  public readLevelCode(code: string): number | null {
+    if (code.length !== 8) {
+      return null;
+    }
+    if (Math.floor(+code) !== +code) {
+      return null;
+    }
+    const level = +(code[1] + code[4]);
+    if (level < 0) {
+      return null;
+    }
+    if (!isFinite(level)) {
+      return null;
+    }
+    return level;
   }
 
   private spawnJumpLights(positions: Vector[]) {

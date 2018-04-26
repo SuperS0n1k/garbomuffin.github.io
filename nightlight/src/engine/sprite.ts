@@ -6,6 +6,7 @@ import { Sprite, TGame } from "./types";
 import { degreeToRadians, getOrDefault } from "./utils";
 import { Vector } from "./vector";
 import { Vector2D } from "./vector2d";
+import { GameState } from "./state";
 
 export interface ISpriteOptions {
   position: Vector;
@@ -19,6 +20,7 @@ export interface ISpriteOptions {
   rotationPoint?: Vector2D;
   opacity?: number;
   static?: boolean;
+  gameState?: GameState;
 
   // Nightlight:
   persistent?: boolean;
@@ -38,6 +40,7 @@ export abstract class AbstractSprite extends TaskRunner {
   public persistent: boolean;
   public visible: boolean;
   public static: boolean;
+  public gameState: GameState | undefined;
 
   public constructor(options: ISpriteOptions) {
     super();
@@ -58,6 +61,7 @@ export abstract class AbstractSprite extends TaskRunner {
     this.opacity = getOrDefault(options.opacity, 1);
     this.rotationPoint = getOrDefault(options.rotationPoint, new Vector2D(0.5, 0.5));
     this.static = getOrDefault(options.static, false);
+    this.gameState = getOrDefault(options.gameState, this.runtime.defaultState);
 
     this.runtime.sprites.push(this);
   }
@@ -302,18 +306,6 @@ export abstract class AbstractSprite extends TaskRunner {
         }
       }
     }
-
-    // const length = data.length;
-    // for (let i = 0; i < length; i += 4) {
-    //   const j = i / 4;
-
-    //   if (data[i + 3]) {
-    //     const point = new Vector(j % width, Math.floor(j / width));
-    //     if (sprite.containsPoint(point)) {
-    //       return true;
-    //     }
-    //   }
-    // }
 
     return false;
   }

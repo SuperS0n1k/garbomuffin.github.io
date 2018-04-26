@@ -8,4 +8,5 @@ export enum ZIndexes {
   Grass = 1, // note: static
   Player = 10,
   FinalBoss = 20,
+  PauseMenu = 100,
 }

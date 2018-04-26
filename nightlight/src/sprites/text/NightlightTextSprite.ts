@@ -4,18 +4,20 @@ export interface INightlightTextSpriteOptions extends ISpriteOptions {
   text: string;
 }
 
-const CHAR_WIDTH = 8;
-const CHAR_HEIGHT = CHAR_WIDTH;
+export const CHAR_WIDTH = 8;
+export const CHAR_HEIGHT = CHAR_WIDTH;
 const TEXTURE_FOLDER = "text/";
 
 const CHAR_MAP: {[s: string]: string | undefined} = {
   ".": "period",
   " ": "skip",
   "'": "singlequote",
+  ":": "colon",
 };
 
 export class NightlightTextSprite extends AbstractSprite {
-  private readonly text: string;
+  public static: boolean = false;
+  protected readonly text: string;
 
   constructor(options: INightlightTextSpriteOptions) {
     super(options);

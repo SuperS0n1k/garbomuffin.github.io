@@ -20,7 +20,7 @@ const SWIPE_ROTATION_SPEED = 10 / 2;
 const SWIPE_MOVE_SPEED = 12.5 / 2;
 const SWIPE_BASE_DELAY = 60;
 const SWIPE_SIZE_CHANGE_RATE = 0.115;
-const SWIPE_ANIMATE_TIMES = 45;
+const SWIPE_ANIMATE_TIMES = 25;
 const SWIPE_ANIMATE_FRAME_LENGTH = 3;
 const SWIPE_TEXTURES = [
   "boss/sword/sword",
@@ -45,9 +45,10 @@ const PLAYER_JUMP_YV = 3;
 const DEAD_ROTATION_SPEED = 0.742857142857 / 2; // 0.742... is how the game actually defines this.
 const DEAD_STARTING_VELOCITY = 2;
 
+const REST_PHASE_LENGTH = 180;
+
 // collision
-const COLLISION_INTERVAL = 3;
-const COLLISION_SPEED = 3;
+const COLLISION_INTERVAL = 1;
 
 export class SwordBoss extends AbstractBoss {
   private health: number = HEALTH;
@@ -292,7 +293,7 @@ export class SwordBoss extends AbstractBoss {
       this.addTask(new Task({
         run: (task) => this.restVulnerable(task),
         repeatEvery: 0,
-        repeatMax: 180, // 3 seconds
+        repeatMax: REST_PHASE_LENGTH,
       }));
 
       const health = this.health;

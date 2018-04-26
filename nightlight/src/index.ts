@@ -50,10 +50,21 @@ game.addImage("text/w");
 game.addImage("text/x");
 game.addImage("text/y");
 game.addImage("text/z");
+game.addImage("text/0");
+game.addImage("text/1");
+game.addImage("text/2");
+game.addImage("text/3");
+game.addImage("text/4");
+game.addImage("text/5");
+game.addImage("text/6");
+game.addImage("text/7");
+game.addImage("text/8");
+game.addImage("text/9");
 game.addImage("text/period");
 game.addImage("text/,");
 game.addImage("text/!");
 game.addImage("text/singlequote");
+game.addImage("text/colon");
 
 game.addImage("fragments/1");
 game.addImage("fragments/2");
@@ -171,6 +182,9 @@ game.addImage("blocks/castlecorner/bottomleft");
 game.addImage("end/scene");
 game.addImage("thumb");
 
+// pause
+game.addImage("pause");
+
 //
 // Sounds
 //
@@ -206,26 +220,43 @@ game.addSound("music/finalboss/1");
 game.addSound("music/finalboss/2");
 
 // html elements
-const progressBarElement = document.getElementById("progress-bar") as HTMLProgressElement;
-const progressTextElement = document.getElementById("progress-text")!;
-const loadingScreenElement = document.getElementById("loading-screen")!;
-const loadingScreenBackgroundElement = document.getElementById("loading-screen-background")!;
-const loadingContainerElement = document.getElementById("loading-container")!;
-const playButtonElement = document.getElementById("play-button") as HTMLButtonElement;
+const progressBar = document.getElementById("progress-bar") as HTMLProgressElement;
+
+const menuContainer = document.getElementById("menu-container")!;
+
+const loadingScreen = document.getElementById("loading-screen")!;
+const menuBackground = document.getElementById("menu-background")!;
+
+const menuScreen = document.getElementById("menu-screen")!;
+const playButton = document.getElementById("play-button") as HTMLButtonElement;
+const loadCodeButton = document.getElementById("load-code-button") as HTMLButtonElement;
 
 // wait for it to load then run our stuff
 game.waitForAssets((progress) => {
   // show a progress bar
   // with the addition of sounds it can take a long time to download stuff and it was inevitable
   const value = progress * 100;
-  progressBarElement.style.width = value + "%";
+  progressBar.style.width = value + "%";
 }).then(() => canPlay());
 
 function canPlay() {
-  playButtonElement.onclick = () => run();
-  playButtonElement.textContent = "Play";
-  playButtonElement.disabled = false;
-  loadingScreenBackgroundElement.classList.add("active");
+  playButton.onclick = () => run();
+  loadCodeButton.onclick = () => {
+    const code = prompt("Please the level code:");
+    if (code === null) {
+      return;
+    }
+    const res = game.readLevelCode(code);
+    if (res === null) {
+      alert("Invalid level code");
+      return;
+    }
+    game.level = res;
+    run();
+  };
+  menuBackground.classList.add("active");
+  loadingScreen.style.display = "none";
+  menuScreen.style.display = "block";
 
   if (location.search === "?run") {
     run();
@@ -233,7 +264,7 @@ function canPlay() {
 }
 
 function run() {
-  loadingContainerElement.style.display = "none";
+  menuContainer.style.display = "none";
   game.canvas.style.display = "block";
   game.start();
 }

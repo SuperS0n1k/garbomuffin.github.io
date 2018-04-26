@@ -15,7 +15,7 @@ export interface ITextSpriteOptions extends ISpriteOptions {
   color?: Color;
 }
 
-export class TextSprite extends AbstractSprite implements ITextSpriteOptions {
+export class TextSprite extends AbstractSprite {
   public text: string;
   public fontSize: number;
   public fontFamily: string;

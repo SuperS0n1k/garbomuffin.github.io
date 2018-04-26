@@ -21,11 +21,9 @@ const VIBRATE_TIMES = 20;
 // Makes blocks from the bottom fall before the ones on the top, which looks nice
 const FALL_DELAY_PER_Y = 0.25;
 
-export class FallingBlock extends SolidBlock {
-  private startingPosition: Vector;
-  private yv: number = 0;
-  private vibrateProgress: number = 0;
-  private frame: number = 0;
+export abstract class AbstractFallingBlock extends SolidBlock {
+  protected startingPosition: Vector;
+  protected yv: number = 0;
 
   constructor(opts: IBlockOptions) {
     super(opts);
@@ -38,9 +36,47 @@ export class FallingBlock extends SolidBlock {
     this.position = new Vector(this.startingPosition);
     this.solid = true;
     this.visible = true;
+    this.yv = 0;
+  }
+
+  public abstract trigger(): void;
+
+  protected playSound() {
+    this.runtime.playSound("blocks/smash");
+  }
+
+  protected fall(task: Task) {
+    this.solid = false;
+
+    const physicsResult = this.runBasicPhysics(0, this.yv, {
+      collision: false,
+    });
+    this.yv = physicsResult.yv;
+
+    if (this.y >= this.runtime.canvas.height) {
+      task.stop();
+    }
+  }
+}
+
+export class InstantFallingBlock extends AbstractFallingBlock {
+  public trigger() {
+    this.playSound();
+    this.addTask(new Task({
+      run: (task) => this.fall(task),
+      repeatEvery: 0,
+    }));
+  }
+}
+
+export class VibratingFallingBlock extends InstantFallingBlock {
+  private vibrateProgress: number = 0;
+  private frame: number = 0;
+
+  public resetState() {
+    super.resetState();
     this.vibrateProgress = 0;
     this.frame = 0;
-    this.yv = 0;
   }
 
   public trigger() {
@@ -74,23 +110,6 @@ export class FallingBlock extends SolidBlock {
       this.x -= VIBRATE_RANGE;
     } else {
       this.x += VIBRATE_RANGE;
-    }
-  }
-
-  private playSound() {
-    this.runtime.playSound("blocks/smash");
-  }
-
-  private fall(task: Task) {
-    this.solid = false;
-
-    const physicsResult = this.runBasicPhysics(0, this.yv, {
-      collision: false,
-    });
-    this.yv = physicsResult.yv;
-
-    if (this.y >= this.runtime.canvas.height) {
-      task.stop();
     }
   }
 }

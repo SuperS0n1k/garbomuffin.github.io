@@ -4,7 +4,7 @@ import { BlockSwitchSpawnerBlock } from "./sprites/blocks/blockswitchspawner";
 import { AboveLevelUpCoinSpawnerBlock, BelowLevelUpCoinSpawnerBlock } from "./sprites/blocks/coinspawner";
 import { CastleCornerBlock, RotatedCornerBlock } from "./sprites/blocks/corner";
 import { CrumblingBlock } from "./sprites/blocks/crumble";
-import { FallingBlock } from "./sprites/blocks/falling";
+import { InstantFallingBlock, VibratingFallingBlock } from "./sprites/blocks/falling";
 import { GrassBlock } from "./sprites/blocks/grass";
 import { DisabledLightBlock, EnabledLightBlock } from "./sprites/blocks/lightblock";
 import { LightSwitchBlock } from "./sprites/blocks/lightswitch";
@@ -55,7 +55,8 @@ export const blockMap: IBlockMap = {
   "t": special(CrumblingBlock, "blocks/crumble/1"),
   "u": special(BlockSwitchSpawnerBlock, "blocks/u"),
   "v": "blocks/v",
-  "w": special(FallingBlock, "blocks/w"),
+  "w": special(VibratingFallingBlock, "blocks/w"),
+  "[": special(InstantFallingBlock, "blocks/w"),
   "x": special(LightSwitchBlock, "blocks/lightbutton/1"),
   "y": special(DisabledLightBlock, "blocks/y"),
   "z": special(EnabledLightBlock, "blocks/z"),
