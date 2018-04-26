@@ -242,7 +242,7 @@ game.waitForAssets((progress) => {
 function canPlay() {
   playButton.onclick = () => run();
   loadCodeButton.onclick = () => {
-    const code = prompt("Please the level code:");
+    const code = prompt("Please enter the level code:");
     if (code === null) {
       return;
     }
