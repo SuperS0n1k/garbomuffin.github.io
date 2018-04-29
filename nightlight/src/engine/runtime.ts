@@ -58,13 +58,15 @@ export class GameRuntime extends TaskRunner {
     super();
 
     // make the main canvas and add it to the DOM
-    this.canvas = this.createCanvas({alpha: false});
-    this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    const {canvas, ctx} = this.createCanvas({alpha: false});
+    this.canvas = canvas;
+    this.ctx = ctx;
     container.appendChild(this.canvas);
 
     // init static rendering optimizations
-    this.staticCanvas = this.createCanvas({alpha: false});
-    this.staticCtx = this.staticCanvas.getContext("2d") as CanvasRenderingContext2D;
+    const {canvas: staticCanvas, ctx: staticCtx} = this.createCanvas({alpha: false});
+    this.staticCanvas = staticCanvas;
+    this.staticCtx = staticCtx;
 
     // mouse driver, support pc and mobile to some degree
     if (!isMobile()) {
@@ -290,15 +292,18 @@ export class GameRuntime extends TaskRunner {
     for (const sprite of this.sprites) {
       if (sprite.static) {
         sprite.render(this.staticCtx);
-
-        if (this._DEBUG_STATIC_OUTLINE) {
-          this.staticCtx.strokeStyle = "orange";
-          this.staticCtx.lineWidth = 1;
-          this.staticCtx.beginPath();
-          this.staticCtx.rect(sprite.x, sprite.y, sprite.width, sprite.height);
-          this.staticCtx.stroke();
-        }
       }
+    }
+
+    if (this._DEBUG_STATIC_OUTLINE) {
+      this.staticCtx.strokeStyle = "orange";
+      this.staticCtx.lineWidth = 1;
+      this.staticCtx.beginPath();
+      for (const sprite of this.sprites) {
+        this.staticCtx.rect(sprite.x, sprite.y, sprite.width, sprite.height);
+      }
+      this.staticCtx.closePath();
+      this.staticCtx.stroke();
     }
   }
 
@@ -316,15 +321,23 @@ export class GameRuntime extends TaskRunner {
       }
       if (!sprite.static) {
         sprite.render(this.ctx);
+      }
+    }
 
-        if (this._DEBUG_NON_STATIC_OUTLINE) {
-          this.ctx.strokeStyle = "red";
-          this.ctx.lineWidth = 1;
-          this.ctx.beginPath();
+    if (this._DEBUG_NON_STATIC_OUTLINE) {
+      this.ctx.strokeStyle = "red";
+      this.ctx.lineWidth = 1;
+      this.ctx.beginPath();
+      for (const sprite of this.sprites) {
+        if (sprite.gameState && !sprite.gameState.renderingEnabled) {
+          continue;
+        }
+        if (!sprite.static) {
           this.ctx.rect(sprite.x, sprite.y, sprite.width, sprite.height);
-          this.ctx.stroke();
         }
       }
+      this.ctx.closePath();
+      this.ctx.stroke();
     }
   }
 
@@ -364,7 +377,7 @@ export class GameRuntime extends TaskRunner {
     ctx.webkitImageSmoothingEnabled = false;
     ctx.mozImageSmoothingEnabled = false;
 
-    return canvas;
+    return {canvas, ctx};
   }
 
   ///

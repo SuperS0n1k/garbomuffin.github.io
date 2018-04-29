@@ -19,7 +19,7 @@ const SPIN_SIZE_CHANGE_RATE = 0.035;
 const SWIPE_ROTATION_SPEED = 10 / 2;
 const SWIPE_MOVE_SPEED = 12.5 / 2;
 const SWIPE_BASE_DELAY = 60;
-const SWIPE_SIZE_CHANGE_RATE = 0.115;
+const SWIPE_SIZE_CHANGE_RATE = 0.11;
 const SWIPE_ANIMATE_TIMES = 25;
 const SWIPE_ANIMATE_FRAME_LENGTH = 3;
 const SWIPE_TEXTURES = [
@@ -79,7 +79,7 @@ export class SwordBoss extends AbstractBoss {
       repeatEvery: COLLISION_INTERVAL,
     }));
 
-    this.rotationPoint = new Vector2D(0.5, 0.1);
+    this.rotationPoint = new Vector2D(0.5, 0.05);
   }
 
   //

@@ -16,10 +16,7 @@ import { ZIndexes } from "./sprites/zindex";
 import { clone, getRandomInt } from "./utils";
 
 const SPOTLIGHT_SIZE = 75;
-
 const TOTAL_BACKGROUND_STARS = 100;
-
-export const BLOCKS_PER_ROW = Math.ceil(CANVAS_WIDTH / config.BLOCK_HEIGHT);
 
 export class Nightlight extends GameRuntime {
   public level: number = 0;
@@ -126,8 +123,7 @@ export class Nightlight extends GameRuntime {
 
     if (this.darkLevel) {
       // https://stackoverflow.com/a/6271865
-      const coverCanvas = this.createCanvas();
-      const coverCtx = coverCanvas.getContext("2d") as CanvasRenderingContext2D;
+      const {canvas: coverCanvas, ctx: coverCtx} = this.createCanvas();
       coverCtx.fillStyle = "black";
       this.resetCanvas(coverCtx, "black");
       coverCtx.globalCompositeOperation = "xor";
@@ -148,7 +144,6 @@ export class Nightlight extends GameRuntime {
   //
 
   private destroyLevel() {
-    // a normal for loop won't work because we are modifying the list mid loop
     const sprites = clone(this.sprites);
     for (const sprite of sprites) {
       if (!sprite.persistent) {

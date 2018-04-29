@@ -17,7 +17,8 @@ const ANIMATION_LENGTH = 10;
 export class BackgroundStarsSprite extends AbstractSprite {
   private progress: number = 0;
   private direction: number = 1;
-  private path: Path2D;
+
+  private renderCache: HTMLCanvasElement[] = [];
 
   constructor(opts: ISpriteOptions, positions: Vector2D[]) {
     super(opts);
@@ -28,23 +29,22 @@ export class BackgroundStarsSprite extends AbstractSprite {
     }));
 
     const path = new Path2D();
-    this.path = path;
     for (const position of positions) {
       path.rect(position.x, position.y, this.width, this.height);
+    }
+
+    for (let i = 0; i <= ANIMATION_LENGTH; i++) {
+      const {canvas, ctx} = this.runtime.createCanvas({alpha: false});
+      this.renderStarPath(ctx, path, i / ANIMATION_LENGTH);
+      this.renderCache[i] = canvas;
     }
   }
 
   private animate() {
     this.progress += this.direction;
 
-    if (this.progress === 0 && this.direction === -1) {
-      this.direction = 1;
-      this.progress--;
-    }
-
-    if (this.progress === ANIMATION_LENGTH && this.direction === 1) {
-      this.direction = -1;
-      this.progress++;
+    if (this.progress === 0 || this.progress === 10) {
+      this.direction *= -1;
     }
   }
 
@@ -58,22 +58,22 @@ export class BackgroundStarsSprite extends AbstractSprite {
     }
   }
 
-  // Implement render as this extends AbstractSprite
+  public renderStarPath(ctx: CanvasRenderingContext2D, path: Path2D, alpha: number) {
+    if (!this.visible) {
+      return;
+    }
+
+    ctx.fillStyle = "white";
+    ctx.globalAlpha = alpha;
+    ctx.fill(path);
+  }
+
   public render(ctx: CanvasRenderingContext2D) {
     if (!this.visible) {
       return;
     }
 
-    const hex = (n: number) => {
-      const h = toHex(n);
-      if (h.length === 1) {
-        return "0" + h;
-      }
-      return h;
-    };
-
-    const animationProgress = this.clamp(this.progress / ANIMATION_LENGTH, 0, 1);
-    ctx.fillStyle = "#FFFFFF" + hex(Math.floor(animationProgress * 255));
-    ctx.fill(this.path);
+    const image = this.renderCache[this.progress];
+    ctx.drawImage(image, 0, 0);
   }
 }

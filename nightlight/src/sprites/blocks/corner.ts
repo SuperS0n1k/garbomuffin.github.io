@@ -43,6 +43,7 @@ abstract class CornerBlock extends Block {
         position,
         texture,
         rotation,
+        static: true,
       });
     }
   }
@@ -58,6 +59,7 @@ export class RotatedCornerBlock extends CornerBlock {
     new Block({
       texture: this.runtime.getImage("blocks/a"),
       position: new Vector(this.x, this.y, -1), // any corners placed on this should go on top
+      static: true,
     });
 
     const offset = this.width === BLOCK_WIDTH ? 0 : 1;

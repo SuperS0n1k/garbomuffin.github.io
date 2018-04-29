@@ -1,5 +1,6 @@
 import { BLOCK_HEIGHT } from "../../config";
 import { Block, IBlockOptions } from "./block";
+import { ZIndexes } from "../zindex";
 
 /*
  * It's a grass block.
@@ -9,10 +10,12 @@ import { Block, IBlockOptions } from "./block";
 
 export class GrassBlock extends Block {
   // there are a few visual bugs that come if you make this static
-  // public static: boolean = true;
+  public static: boolean = true;
 
   constructor(opts: IBlockOptions) {
     super(opts);
+
+    this.z = ZIndexes.Grass;
 
     // Move ourselves down
     this.y += BLOCK_HEIGHT;

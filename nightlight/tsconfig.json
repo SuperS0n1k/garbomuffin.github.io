@@ -4,6 +4,6 @@
     "removeComments": false,
     "strict": true,
     "allowJs": true,
-    "module": "es6"
+    "module": "es6",
   }
 }

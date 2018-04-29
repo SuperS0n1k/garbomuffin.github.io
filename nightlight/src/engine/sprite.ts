@@ -1,5 +1,4 @@
-import { BLOCK_WIDTH, FRICTION, GRAVITY, BLOCK_HEIGHT } from "../config";
-import { BLOCKS_PER_ROW } from "../game";
+import { BLOCK_WIDTH, FRICTION, GRAVITY, BLOCK_HEIGHT, LEVEL_WIDTH } from "../config";
 import { Block } from "../sprites/blocks/block";
 import { GameState } from "./state";
 import { TaskRunner } from "./task";
@@ -250,17 +249,17 @@ export abstract class AbstractSprite extends TaskRunner {
     const center = this.centerPosition;
     const blocksFromLeft = Math.floor(center.x / BLOCK_WIDTH);
     const blocksFromBottom = Math.floor((this.runtime.canvas.height - center.y) / BLOCK_HEIGHT);
-    const centerLevelIndex = blocksFromBottom * BLOCKS_PER_ROW + blocksFromLeft;
+    const centerLevelIndex = blocksFromBottom * LEVEL_WIDTH + blocksFromLeft;
 
     const ordereredBlocks = this.runtime.ordereredBlocks;
     const blocks = [
       ordereredBlocks[centerLevelIndex],
-      ordereredBlocks[centerLevelIndex + BLOCKS_PER_ROW],
-      ordereredBlocks[centerLevelIndex + BLOCKS_PER_ROW + 1],
-      ordereredBlocks[centerLevelIndex + BLOCKS_PER_ROW - 1],
-      ordereredBlocks[centerLevelIndex - BLOCKS_PER_ROW],
-      ordereredBlocks[centerLevelIndex - BLOCKS_PER_ROW + 1],
-      ordereredBlocks[centerLevelIndex - BLOCKS_PER_ROW - 1],
+      ordereredBlocks[centerLevelIndex + LEVEL_WIDTH],
+      ordereredBlocks[centerLevelIndex + LEVEL_WIDTH + 1],
+      ordereredBlocks[centerLevelIndex + LEVEL_WIDTH - 1],
+      ordereredBlocks[centerLevelIndex - LEVEL_WIDTH],
+      ordereredBlocks[centerLevelIndex - LEVEL_WIDTH + 1],
+      ordereredBlocks[centerLevelIndex - LEVEL_WIDTH - 1],
       ordereredBlocks[centerLevelIndex + 1],
       ordereredBlocks[centerLevelIndex - 1],
     ];
@@ -279,16 +278,14 @@ export abstract class AbstractSprite extends TaskRunner {
 
   // Tests if a "complex" (fancy rendering/non square) sprite is touching a simple (square) sprite
   public complexIntersectsSimple(sprite: AbstractSprite): boolean {
-    // Render ourselves on a canvas
-    const canvas = this.runtime.createCanvas();
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const {canvas, ctx} = this.runtime.createCanvas({alpha: false});
     this.render(ctx);
 
     const height = canvas.height;
     const width = canvas.width;
 
     const data = ctx.getImageData(0, 0, width, height).data;
-    // some browsers are funny
+    // some browsers are funny (specifically tor)
     // TODO: warning message?
     if (!data) {
       return false;
@@ -303,8 +300,8 @@ export abstract class AbstractSprite extends TaskRunner {
 
     for (let y = startingY; y < endingY; y++) {
       for (let x = startingX; x < endingX; x++) {
-        // if (this.canKill) debugger;
-        if (data[offsetOf(x, y) + 3]) {
+        const offset = offsetOf(x, y);
+        if (data[offset] || data[offset + 1] || data[offset + 2]) {
           return true;
         }
       }
