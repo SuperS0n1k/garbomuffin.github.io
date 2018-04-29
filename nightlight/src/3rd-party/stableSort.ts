@@ -9,9 +9,7 @@ interface Array<T> {
   stableSort(cmp?: Comparator<T>): T[];
 }
 
-let defaultCmp: Comparator<any> = (a, b) => {
-  return a - b;
-};
+const defaultCmp: Comparator<any> = (a, b) => a - b;
 
 Array.prototype.stableSort = function<T>(this: T[], cmp: Comparator<T> = defaultCmp): T[] {
   const stabilized = this.map((el, index) => (([el, index]) as [T, number]));

@@ -35,4 +35,12 @@ export class JumpLight extends Block {
       this.activate(this.runtime.player);
     }
   }
+
+  get needsReinstantiate() {
+    return true;
+  }
+
+  get type() {
+    return JumpLight;
+  }
 }

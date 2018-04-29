@@ -21,8 +21,8 @@ export abstract class LightBlock extends Block {
     }
   }
 
-  public resetState() {
-    this.setSolid(this.startingState);
+  get needsReinstantiate() {
+    return true;
   }
 
   public toggleSolid() {
@@ -36,6 +36,10 @@ export class EnabledLightBlock extends LightBlock {
     super(options);
     this.setSolid(this.startingState);
   }
+
+  get type() {
+    return EnabledLightBlock;
+  }
 }
 
 export class DisabledLightBlock extends LightBlock {
@@ -43,5 +47,9 @@ export class DisabledLightBlock extends LightBlock {
   constructor(options: IBlockOptions) {
     super(options);
     this.setSolid(this.startingState);
+  }
+
+  get type() {
+    return DisabledLightBlock;
   }
 }

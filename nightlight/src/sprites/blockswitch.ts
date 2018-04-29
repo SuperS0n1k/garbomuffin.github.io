@@ -25,19 +25,19 @@ export class BlockSwitch extends Block {
     this.startingPosition = new Vector(this.position);
     this.floorAlign();
     this.addTask(() => this.run());
+    this.spawner.texture = this.runtime.getImage("blocks/u");
   }
 
-  public resetState() {
-    this.triggered = false;
-    this.texture = this.runtime.getImage("blocks/button/red");
-    this.spawner.texture = this.runtime.getImage("blocks/u");
-    this.updateDimensions();
-    this.position = new Vector(this.startingPosition);
-    this.floorAlign();
+  get needsReinstantiate() {
+    return true;
+  }
+
+  get type() {
+    return BlockSwitch;
   }
 
   private trigger() {
-    const allSprites = this.runtime.sprites.sprites;
+    const allSprites = this.runtime.sprites;
     const fallingBlocks = allSprites.filter((sprite) => sprite instanceof FallingBlock) as FallingBlock[];
     for (const sprite of fallingBlocks) {
       sprite.trigger();

@@ -143,7 +143,7 @@ export class PlayerSprite extends ImageSprite {
   }
 
   public reset() {
-    const sprites = this.runtime.blocks.sprites.filter((s) => s.solid || s instanceof PseudoSolidBlock);
+    const sprites = this.runtime.blocks.filter((s) => s.solid || s instanceof PseudoSolidBlock);
 
     this.position.y = this.runtime.canvas.height - BLOCK_HEIGHT;
     if (this.runtime.randomSpawn) {
@@ -183,8 +183,14 @@ export class PlayerSprite extends ImageSprite {
       });
     }
 
-    for (const block of this.runtime.blocks) {
-      block.resetState();
+    const blocks = clone(this.runtime.blocks);
+    for (const block of blocks) {
+      if (block.needsReinstantiate) {
+        const opts = block.spawningOptions;
+        block.destroy();
+        const constructor = block.type;
+        new constructor(opts);
+      }
     }
 
     this.reset();

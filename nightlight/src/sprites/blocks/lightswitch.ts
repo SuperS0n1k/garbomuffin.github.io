@@ -33,10 +33,12 @@ export class LightSwitchBlock extends SolidBlock {
     this.show();
   }
 
-  public resetState() {
-    if (!this.visible) {
-      this.show();
-    }
+  get needsReinstantiate() {
+    return true;
+  }
+
+  get type() {
+    return LightSwitchBlock;
   }
 
   private show() {
@@ -71,7 +73,7 @@ export class LightSwitchBlock extends SolidBlock {
   private activate() {
     this.activated = true;
 
-    const sprites = this.runtime.sprites.sprites;
+    const sprites = this.runtime.sprites;
 
     const lightBlocks = sprites.filter((s) => s instanceof LightBlock) as LightBlock[];
     for (const block of lightBlocks) {

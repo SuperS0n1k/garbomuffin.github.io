@@ -1,41 +1,41 @@
-import "./stats.js";
-
 import { blockMap } from "./blockmap";
 import * as config from "./config";
-import { Container } from "./engine/container";
-import { GameRuntime } from "./engine/runtime";
+import { CANVAS_WIDTH, GameRuntime, CANVAS_HEIGHT } from "./engine/runtime";
+import { GameState } from "./engine/state";
 import { TBackground, TImage, TSound } from "./engine/types";
 import { Vector } from "./engine/vector";
+import { Vector2D } from "./engine/vector2d";
 import { getLevels, Level } from "./levels/levels";
 import { Block, IBlockOptions, StaticSolidBlock } from "./sprites/blocks/block";
 import { JumpLight } from "./sprites/jumplight";
-import { PlayerSprite } from "./sprites/player/player";
-import { BackgroundStarSprite } from "./sprites/star";
-import { ZIndexes } from "./sprites/zindex";
-import { getRandomInt } from "./utils";
-import { StaticNightlightTextSprite } from "./sprites/text/StaticNightlightTextSprite";
-import { GameState } from "./engine/state";
 import { PauseSprite } from "./sprites/pause/PauseSprite";
+import { PlayerSprite } from "./sprites/player/player";
+import { BackgroundStarsSprite } from "./sprites/stars";
+import { StaticNightlightTextSprite } from "./sprites/text/StaticNightlightTextSprite";
+import { ZIndexes } from "./sprites/zindex";
+import { clone, getRandomInt } from "./utils";
 
 const SPOTLIGHT_SIZE = 75;
 
 const TOTAL_BACKGROUND_STARS = 100;
+
+export const BLOCKS_PER_ROW = Math.ceil(CANVAS_WIDTH / config.BLOCK_HEIGHT);
 
 export class Nightlight extends GameRuntime {
   public level: number = 0;
   public levelData: string = "";
   public levels: Level[] = [];
   public player!: PlayerSprite;
+  public backgroundStars!: BackgroundStarsSprite;
   public background: TBackground = "black";
   public backgroundMusic: TSound[] = [];
   public darkLevel: boolean = false;
-  public blocks: Container<Block> = new Container();
+  public ordereredBlocks: Array<Block | undefined> = [];
+  public blocks: Block[] = [];
   public randomSpawn: boolean = false;
   public playState: GameState = this.defaultState;
   public pauseState: GameState = new GameState();
   public levelCode!: string;
-
-  private stats: Stats | null = null;
 
   constructor() {
     super(document.getElementById("container") as HTMLElement);
@@ -45,18 +45,7 @@ export class Nightlight extends GameRuntime {
       this.volume = volume / 100;
     };
 
-    // stats.js for fps monitoring
-    // this.stats = new Stats();
-    // this.stats.showPanel(0);
-    // document.body.appendChild(this.stats.dom);
-
     (window as any).runtime = this;
-  }
-
-  private testhash() {
-    if (location.hash === "#i-am-a-bad-person-who-just-wants-to-see-the-ending") {
-      this.renderLevel(20);
-    }
   }
 
   //
@@ -97,16 +86,19 @@ export class Nightlight extends GameRuntime {
   }
 
   private createStarBackground() {
+    const positions = [];
     for (let i = 0; i < TOTAL_BACKGROUND_STARS; i++) {
       const x = getRandomInt(0, this.canvas.width);
       const y = getRandomInt(0, this.canvas.height);
-      new BackgroundStarSprite({
-        position: new Vector(x, y, ZIndexes.Star),
-        width: 2,
-        height: 2,
-        persistent: true,
-      });
+      positions.push(new Vector2D(x, y));
     }
+
+    this.backgroundStars = new BackgroundStarsSprite({
+      position: new Vector(0, 0, ZIndexes.Stars),
+      width: 2,
+      height: 2,
+      persistent: true,
+    }, positions);
   }
 
   //
@@ -127,16 +119,9 @@ export class Nightlight extends GameRuntime {
     this.createPlayer();
     this.createStarBackground();
     this.renderLevel();
-
-    this.testhash();
-    window.onhashchange = () => this.testhash();
   }
 
   public render() {
-    if (this.stats) {
-      this.stats.begin();
-    }
-
     super.render();
 
     if (this.darkLevel) {
@@ -156,10 +141,6 @@ export class Nightlight extends GameRuntime {
 
       this.ctx.drawImage(coverCanvas, 0, 0);
     }
-
-    if (this.stats) {
-      this.stats.end();
-    }
   }
 
   //
@@ -168,11 +149,9 @@ export class Nightlight extends GameRuntime {
 
   private destroyLevel() {
     // a normal for loop won't work because we are modifying the list mid loop
-    for (let i = 0; i < this.sprites.length;) {
-      const sprite = this.sprites.sprites[i];
-      if (sprite.persistent) {
-        i++;
-      } else {
+    const sprites = clone(this.sprites);
+    for (const sprite of sprites) {
+      if (!sprite.persistent) {
         sprite.destroy();
       }
     }
@@ -257,10 +236,7 @@ export class Nightlight extends GameRuntime {
     }
 
     if (typeof level.stars !== "undefined") {
-      const sprites = this.sprites.sprites.filter((s) => s instanceof BackgroundStarSprite) as BackgroundStarSprite[];
-      for (const star of sprites) {
-        star.visible = level.stars;
-      }
+      this.backgroundStars.visible = level.stars;
     }
 
     // spawn text

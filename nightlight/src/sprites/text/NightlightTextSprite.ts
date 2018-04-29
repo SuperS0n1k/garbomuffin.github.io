@@ -25,6 +25,10 @@ export class NightlightTextSprite extends AbstractSprite {
   }
 
   public render(ctx: CanvasRenderingContext2D) {
+    if (!this.visible) {
+      return;
+    }
+
     for (let i = 0; i < this.text.length; i++) {
       const originalChar = this.text[i].toLowerCase();
       const char = CHAR_MAP[originalChar] || originalChar;

@@ -4,7 +4,6 @@ import { Vector } from "../engine/vector";
 import { Nightlight } from "../game";
 import { BASE_TEXTURE as nossTexture } from "../sprites/bosses/noss";
 import { SwordBoss } from "../sprites/bosses/sword/sword";
-import { BackgroundStarSprite } from "../sprites/star";
 import { FinalBoss } from "../sprites/bosses/final/finalboss";
 import { NossBoss } from "../sprites/bosses/noss/noss";
 import { INightlightTextSpriteOptions } from "../sprites/text/NightlightTextSprite";
@@ -13,11 +12,6 @@ import { EndingSprite } from "../sprites/ending/EndingSprite";
 
 /*
  * It's level data
- *
- * Levels can define:
- *  - new backgrounds
- *  - new music
- *  - functions to be called (to spawn things like bosses)
  */
 
 export type THandler = (game: Nightlight) => void;

@@ -3,7 +3,7 @@
 // Reminder: Static stuff renders at -1
 
 export enum ZIndexes {
-  Star = -10,
+  Stars = -10,
   Block = 0, // note: possibly static
   Grass = 1, // note: static
   Player = 10,

@@ -1,4 +1,5 @@
-import { Container } from "./container";
+import "../3rd-party/stableSort";
+
 import { AbstractKeyboard } from "./drivers/keyboard/base";
 import { Keyboard } from "./drivers/keyboard/keyboard";
 import { Mouse } from "./drivers/mouse/mouse";
@@ -17,8 +18,9 @@ import { GameState } from "./state";
  */
 
 // Dimensions of the canvas
-const CANVAS_WIDTH = 480;
-const CANVAS_HEIGHT = 360;
+// Please, use runtime.canvas.height or width instead when possible.
+export const CANVAS_WIDTH = 480;
+export const CANVAS_HEIGHT = 360;
 
 // Format of images
 // .jpg might work but don't, just don't
@@ -35,8 +37,7 @@ export class GameRuntime extends TaskRunner {
 
   public readonly images: Map<string, TImage> = new Map();
   public readonly sounds: Map<string, TSound> = new Map();
-  public sprites: Container;
-  public containers: Container[] = [];
+  public sprites: AbstractSprite[] = [];
   public mouse: Mouse;
   public keyboard: AbstractKeyboard;
   public frames: number = 0;
@@ -79,11 +80,9 @@ export class GameRuntime extends TaskRunner {
     // i dont want to do this but it works
     // FIXME: GameRuntime.instance instead of this.runtime
     AbstractSprite.runtime = this as any;
-    Container.runtime = this as any;
 
     // set inital variables that have to happen after other things here
     this.volume = 0.5;
-    this.sprites = new Container();
   }
 
   ///
@@ -330,7 +329,16 @@ export class GameRuntime extends TaskRunner {
   }
 
   protected sortSprites() {
-    this.sprites.sort();
+    // if the sprites list isn't sorted anymore, then sort it
+    const end = this.sprites.length - 1;
+    for (let i = 0; i < end; i++) {
+      const thisSprite = this.sprites[i];
+      const nextSprite = this.sprites[i + 1];
+      if (thisSprite.z > nextSprite.z) {
+        this.sprites.stableSort((a, b) => a.position.z - b.position.z);
+        break;
+      }
+    }
   }
 
   // clears the canvas and sets the background or makes it transparent
@@ -349,7 +357,9 @@ export class GameRuntime extends TaskRunner {
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
 
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const ctx = canvas.getContext("2d", {
+      alpha: false,
+    }) as CanvasRenderingContext2D;
     // makes images that are scaled still look pixelated, this is mainly for retro-style games
     // thanks web browsers for using vendor prefixed things
     ctx.imageSmoothingEnabled = false;

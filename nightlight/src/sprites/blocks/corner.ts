@@ -16,8 +16,6 @@ const AIR = [
 ];
 
 abstract class CornerBlock extends Block {
-  protected readonly levelIndex: number;
-
   constructor(opts: IBlockOptions) {
     super(opts);
 

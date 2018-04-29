@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Nightlight",
   "scripts": {
-    "bundle": "webpack",
+    "build": "webpack",
     "watch": "webpack --watch"
   },
   "author": "GarboMuffin",

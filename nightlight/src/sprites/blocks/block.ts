@@ -8,11 +8,21 @@ export interface IBlockOptions extends IImageSpriteOptions {
 
 export class Block extends ImageSprite {
   public solid: boolean = false;
+  public spawningOptions!: IBlockOptions;
+  public levelIndex: number;
 
   constructor(opts: IBlockOptions) {
     super(opts);
+    this.levelIndex = typeof opts.levelIndex !== "undefined" ? opts.levelIndex : -1;
 
     this.runtime.blocks.push(this);
+    if (opts.levelIndex) {
+      this.runtime.ordereredBlocks[opts.levelIndex] = this;
+    }
+
+    if (this.needsReinstantiate) {
+      this.spawningOptions = opts;
+    }
   }
 
   // Ugly duplication but it works
@@ -70,7 +80,22 @@ export class Block extends ImageSprite {
     return true;
   }
 
-  public resetState() {}
+  public destroy() {
+    super.destroy();
+    this._removeFromList(this.runtime.blocks);
+    if (this.levelIndex > -1) {
+      this.runtime.ordereredBlocks[this.levelIndex] = undefined;
+    }
+  }
+
+  get needsReinstantiate(): boolean {
+    return false;
+  }
+
+  get type(): typeof Block {
+    console.warn("unimplemented getType()?");
+    return Block;
+  }
 }
 
 // Block with solid = true by default

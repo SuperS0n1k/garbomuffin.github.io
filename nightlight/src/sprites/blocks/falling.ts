@@ -31,14 +31,6 @@ export abstract class AbstractFallingBlock extends SolidBlock {
     this.startingPosition = new Vector(this.position);
   }
 
-  public resetState() {
-    this.stopAllTasks();
-    this.position = new Vector(this.startingPosition);
-    this.solid = true;
-    this.visible = true;
-    this.yv = 0;
-  }
-
   public abstract trigger(): void;
 
   protected playSound() {
@@ -57,6 +49,10 @@ export abstract class AbstractFallingBlock extends SolidBlock {
       task.stop();
     }
   }
+
+  get needsReinstantiate() {
+    return true;
+  }
 }
 
 export class InstantFallingBlock extends AbstractFallingBlock {
@@ -67,16 +63,22 @@ export class InstantFallingBlock extends AbstractFallingBlock {
       repeatEvery: 0,
     }));
   }
+
+  get type() {
+    return InstantFallingBlock;
+  }
 }
 
 export class VibratingFallingBlock extends InstantFallingBlock {
   private vibrateProgress: number = 0;
   private frame: number = 0;
 
-  public resetState() {
-    super.resetState();
-    this.vibrateProgress = 0;
-    this.frame = 0;
+  get needsReinstantiate() {
+    return true;
+  }
+
+  get type() {
+    return VibratingFallingBlock;
   }
 
   public trigger() {

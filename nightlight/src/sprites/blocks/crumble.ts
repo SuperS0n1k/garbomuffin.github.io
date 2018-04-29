@@ -88,4 +88,12 @@ export class CrumblingBlock extends SolidBlock {
       }));
     }
   }
+
+  get needsReinstantiate() {
+    return true;
+  }
+
+  get type() {
+    return CrumblingBlock;
+  }
 }

@@ -1,12 +1,12 @@
-import { FRICTION, GRAVITY } from "../config";
+import { BLOCK_WIDTH, FRICTION, GRAVITY, BLOCK_HEIGHT } from "../config";
+import { BLOCKS_PER_ROW } from "../game";
 import { Block } from "../sprites/blocks/block";
-import { Container } from "./container";
+import { GameState } from "./state";
 import { TaskRunner } from "./task";
 import { Sprite, TGame } from "./types";
 import { degreeToRadians, getOrDefault } from "./utils";
 import { Vector } from "./vector";
 import { Vector2D } from "./vector2d";
-import { GameState } from "./state";
 
 export interface ISpriteOptions {
   position: Vector;
@@ -73,10 +73,7 @@ export abstract class AbstractSprite extends TaskRunner {
   }
 
   public destroy() {
-    this._removeFromContainer(this.runtime.sprites);
-    for (const container of this.runtime.containers) {
-      this._removeFromContainer(container);
-    }
+    this._removeFromList(this.runtime.sprites);
     this.resetTasks(); // stop all future things from running
 
     // removed from all lists, should be effectively invisible
@@ -84,15 +81,15 @@ export abstract class AbstractSprite extends TaskRunner {
     this.visible = false;
   }
 
-  private _removeFromContainer(container: Container) {
-    const index = container.sprites.indexOf(this);
+  protected _removeFromList(list: AbstractSprite[]) {
+    const index = list.indexOf(this);
     if (index > -1) {
-      container.sprites.splice(index, 1);
+      list.splice(index, 1);
     }
   }
 
   // TODO: rotation
-  public intersects(thing: Sprite | Container | Sprite[]): boolean {
+  public intersects(thing: Sprite | Sprite[]): boolean {
     if (thing instanceof AbstractSprite) {
       return this.x < thing.x + thing.width &&
         this.x + this.width > thing.x &&
@@ -250,21 +247,27 @@ export abstract class AbstractSprite extends TaskRunner {
       return true;
     }
 
-    // optimization: if we are consistently running into blocks above us then break early
-    // if 5 blocks in a row are definitely above us then we know we are probably done and stop
-    // this is a major performance improvement
-    let above = 0;
+    const center = this.centerPosition;
+    const blocksFromLeft = Math.floor(center.x / BLOCK_WIDTH);
+    const blocksFromBottom = Math.floor((this.runtime.canvas.height - center.y) / BLOCK_HEIGHT);
+    const centerLevelIndex = blocksFromBottom * BLOCKS_PER_ROW + blocksFromLeft;
 
-    for (const block of this.runtime.blocks) {
-      if (block.y + block.width < this.y) {
-        above++;
-        if (above > 5) {
-          break;
-        }
-      } else {
-        above = 0;
+    const ordereredBlocks = this.runtime.ordereredBlocks;
+    const blocks = [
+      ordereredBlocks[centerLevelIndex],
+      ordereredBlocks[centerLevelIndex + BLOCKS_PER_ROW],
+      ordereredBlocks[centerLevelIndex + BLOCKS_PER_ROW + 1],
+      ordereredBlocks[centerLevelIndex + BLOCKS_PER_ROW - 1],
+      ordereredBlocks[centerLevelIndex - BLOCKS_PER_ROW],
+      ordereredBlocks[centerLevelIndex - BLOCKS_PER_ROW + 1],
+      ordereredBlocks[centerLevelIndex - BLOCKS_PER_ROW - 1],
+      ordereredBlocks[centerLevelIndex + 1],
+      ordereredBlocks[centerLevelIndex - 1],
+    ];
+    for (const block of blocks) {
+      if (!block) {
+        continue;
       }
-
       if (intersects(block)) {
         self._lastSolidBlock = block;
         return true;

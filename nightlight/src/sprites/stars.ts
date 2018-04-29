@@ -1,11 +1,10 @@
 import { AbstractSprite, ISpriteOptions } from "../engine/sprite";
 import { Task } from "../engine/task";
 import { toHex } from "../engine/utils";
+import { Vector2D } from "../engine/vector2d";
 
 /*
  * The stars in the background.
- *
- * Spawned randomly when the game starts and are deleted when you enter the castle.
  */
 
 // How often to update opacity
@@ -15,17 +14,24 @@ const UPDATE_EVERY = 6;
 // One cycle is Dark -> Bright or Bright -> Dark, not both
 const ANIMATION_LENGTH = 10;
 
-export class BackgroundStarSprite extends AbstractSprite {
+export class BackgroundStarsSprite extends AbstractSprite {
   private progress: number = 0;
   private direction: number = 1;
+  private path: Path2D;
 
-  constructor(opts: ISpriteOptions) {
+  constructor(opts: ISpriteOptions, positions: Vector2D[]) {
     super(opts);
 
     this.addTask(new Task({
       repeatEvery: UPDATE_EVERY,
       run: () => this.animate(),
     }));
+
+    const path = new Path2D();
+    this.path = path;
+    for (const position of positions) {
+      path.rect(position.x, position.y, this.width, this.height);
+    }
   }
 
   private animate() {
@@ -57,11 +63,17 @@ export class BackgroundStarSprite extends AbstractSprite {
     if (!this.visible) {
       return;
     }
-    const animationProgress = this.clamp(this.progress / ANIMATION_LENGTH, 0, 1);
-    const color = Math.floor(255 * animationProgress);
-    const hexCode = toHex(color);
 
-    ctx.fillStyle = `#${hexCode}${hexCode}${hexCode}`;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    const hex = (n: number) => {
+      const h = toHex(n);
+      if (h.length === 1) {
+        return "0" + h;
+      }
+      return h;
+    };
+
+    const animationProgress = this.clamp(this.progress / ANIMATION_LENGTH, 0, 1);
+    ctx.fillStyle = "#FFFFFF" + hex(Math.floor(animationProgress * 255));
+    ctx.fill(this.path);
   }
 }
