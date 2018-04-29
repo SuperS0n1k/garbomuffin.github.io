@@ -58,12 +58,12 @@ export class GameRuntime extends TaskRunner {
     super();
 
     // make the main canvas and add it to the DOM
-    this.canvas = this.createCanvas();
+    this.canvas = this.createCanvas({alpha: false});
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     container.appendChild(this.canvas);
 
     // init static rendering optimizations
-    this.staticCanvas = this.createCanvas();
+    this.staticCanvas = this.createCanvas({alpha: false});
     this.staticCtx = this.staticCanvas.getContext("2d") as CanvasRenderingContext2D;
 
     // mouse driver, support pc and mobile to some degree
@@ -352,14 +352,12 @@ export class GameRuntime extends TaskRunner {
     ctx.fillRect(0, 0, width, height);
   }
 
-  public createCanvas() {
+  public createCanvas(options?: Canvas2DContextAttributes) {
     const canvas = document.createElement("canvas");
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
 
-    const ctx = canvas.getContext("2d", {
-      alpha: false,
-    }) as CanvasRenderingContext2D;
+    const ctx = canvas.getContext("2d", options) as CanvasRenderingContext2D;
     // makes images that are scaled still look pixelated, this is mainly for retro-style games
     // thanks web browsers for using vendor prefixed things
     ctx.imageSmoothingEnabled = false;
