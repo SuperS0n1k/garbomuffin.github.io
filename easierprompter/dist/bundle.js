@@ -44,6 +44,11 @@
 /******/ 		}
 /******/ 	};
 /******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -59,831 +64,167 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.ts");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ "./src/config/config.ts":
+/*!******************************!*\
+  !*** ./src/config/config.ts ***!
+  \******************************/
+/*! exports provided: ConfigManager */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["b"] = getElement;
-/* harmony export (immutable) */ __webpack_exports__["c"] = setDisplay;
-/* harmony export (immutable) */ __webpack_exports__["a"] = emptyElement;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__ = __webpack_require__(6);
-
-function getElement(id) {
-    var el = document.getElementById(id);
-    if (el === null) {
-        throw new __WEBPACK_IMPORTED_MODULE_0__error_idnotfound__["a" /* ElementIDNotFoundError */](id);
-    }
-    return el;
-}
-function setDisplay(el, show) {
-    el.style.display = show ? "block" : "none";
-}
-function emptyElement(el) {
-    while (el.firstChild) {
-        el.removeChild(el.firstChild);
-    }
-}
-
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ConfigManager\", function() { return ConfigManager; });\n/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./save */ \"./src/config/save.ts\");\n\r\nvar STORAGE_KEY = \"EasierPrompter_Config\";\r\nvar ConfigManager = (function () {\r\n    function ConfigManager() {\r\n        this.options = {};\r\n        this.configSaver = new _save__WEBPACK_IMPORTED_MODULE_0__[\"ConfigSaver\"](this);\r\n    }\r\n    Object.defineProperty(ConfigManager.prototype, \"speed\", {\r\n        get: function () {\r\n            return this.options.speed.get();\r\n        },\r\n        set: function (value) {\r\n            this.options.speed.set(value);\r\n        },\r\n        enumerable: true,\r\n        configurable: true\r\n    });\r\n    ConfigManager.prototype.save = function () {\r\n        var saveData = this.configSaver.save();\r\n    };\r\n    ConfigManager.prototype.load = function () {\r\n        this.configSaver.load();\r\n    };\r\n    ConfigManager.prototype.promptReset = function () {\r\n        var message = [\r\n            \"Are you sure you want to reset the settings?\",\r\n            \"This will reset your script, the config, and reload the page.\",\r\n        ];\r\n        if (confirm(message.join(\"\\n\\n\"))) {\r\n            this.configSaver.reset();\r\n        }\r\n    };\r\n    ConfigManager.prototype.hasChanged = function () {\r\n        var newData = this.configSaver.generateSaveData();\r\n        var oldData = this.configSaver.lastSaveData;\r\n        for (var _i = 0, _a = Object.keys(newData); _i < _a.length; _i++) {\r\n            var key = _a[_i];\r\n            if (newData[key] !== oldData[key]) {\r\n                return true;\r\n            }\r\n        }\r\n        return false;\r\n    };\r\n    return ConfigManager;\r\n}());\r\n\r\n\n\n//# sourceURL=webpack:///./src/config/config.ts?");
 
 /***/ }),
-/* 1 */
+
+/***/ "./src/config/option.ts":
+/*!******************************!*\
+  !*** ./src/config/option.ts ***!
+  \******************************/
+/*! exports provided: ConfigOption */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__email__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__polyfill__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__polyfill___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__polyfill__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sw__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sw___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__sw__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_prompterconfig__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__prompter_prompter__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils__ = __webpack_require__(0);
-
-
-
-
-
-
-function getConfig() {
-    return new __WEBPACK_IMPORTED_MODULE_3__config_prompterconfig__["a" /* PrompterConfigManager */]();
-}
-function getPrompter(cfg) {
-    return new __WEBPACK_IMPORTED_MODULE_4__prompter_prompter__["a" /* Prompter */](cfg);
-}
-var config = getConfig();
-config.load();
-config.save();
-Object(__WEBPACK_IMPORTED_MODULE_5__utils__["b" /* getElement */])("save-button").onclick = function () { return config.save(); };
-Object(__WEBPACK_IMPORTED_MODULE_5__utils__["b" /* getElement */])("reset-button").onclick = function () { return config.promptReset(); };
-var prompter = getPrompter(config);
-window.onbeforeunload = function (e) {
-    if (config.options.unsavedChangesWarning.get() && prompter.config.hasChanged()) {
-        var text = [
-            "You have unsaved changes to your config!",
-            "If you leave these changes will be reset!",
-            "(disable this warning by unchecking \"Unsaved changes warning\")",
-        ].join("\n");
-        e.returnValue = text;
-        return text;
-    }
-};
-
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ConfigOption\", function() { return ConfigOption; });\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ \"./src/config/utils.ts\");\n\r\nvar ConfigOption = (function () {\r\n    function ConfigOption(options) {\r\n        this.get = Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getterFrom\"])(options.el, options.type);\r\n        this.set = Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"setterFrom\"])(options.el, options.type || \"text\", options.setterOpts);\r\n        this.set(options.default);\r\n    }\r\n    return ConfigOption;\r\n}());\r\n\r\n\n\n//# sourceURL=webpack:///./src/config/option.ts?");
 
 /***/ }),
-/* 2 */
+
+/***/ "./src/config/prompterconfig.ts":
+/*!**************************************!*\
+  !*** ./src/config/prompterconfig.ts ***!
+  \**************************************/
+/*! exports provided: PrompterConfigManager */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PrompterConfigManager\", function() { return PrompterConfigManager; });\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils */ \"./src/utils.ts\");\n/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./config */ \"./src/config/config.ts\");\n/* harmony import */ var _option__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./option */ \"./src/config/option.ts\");\nvar __extends = (undefined && undefined.__extends) || (function () {\r\n    var extendStatics = Object.setPrototypeOf ||\r\n        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\r\n        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\r\n    return function (d, b) {\r\n        extendStatics(d, b);\r\n        function __() { this.constructor = d; }\r\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\r\n    };\r\n})();\r\n\r\n\r\n\r\nvar PrompterConfigManager = (function (_super) {\r\n    __extends(PrompterConfigManager, _super);\r\n    function PrompterConfigManager() {\r\n        var _this = _super.call(this) || this;\r\n        var prompterContainer = Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"prompter-lines-container\");\r\n        var prompterLines = Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"prompter-lines\");\r\n        var caret = Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"prompter-caret\");\r\n        _this.options.speed = new _option__WEBPACK_IMPORTED_MODULE_2__[\"ConfigOption\"]({\r\n            default: 1.5,\r\n            el: Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"options-current-speed\"),\r\n            type: \"number\",\r\n            setterOpts: {\r\n                transform: function (value) {\r\n                    if (value < 0) {\r\n                        value = 0;\r\n                    }\r\n                    return value.toFixed(2);\r\n                },\r\n            },\r\n        });\r\n        _this.options.fontSize = new _option__WEBPACK_IMPORTED_MODULE_2__[\"ConfigOption\"]({\r\n            default: 75,\r\n            el: Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"options-font-size\"),\r\n            type: \"number\",\r\n            setterOpts: {\r\n                onchange: true,\r\n                callback: function (value) {\r\n                    prompterContainer.style.fontSize = value + \"px\";\r\n                },\r\n            },\r\n        });\r\n        _this.options.fontFamily = new _option__WEBPACK_IMPORTED_MODULE_2__[\"ConfigOption\"]({\r\n            default: \"sans-serif\",\r\n            el: Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"options-font-family\"),\r\n            type: \"text\",\r\n            setterOpts: {\r\n                onchange: true,\r\n                callback: function (value) {\r\n                    prompterContainer.style.fontFamily = value + \", sans-serif\";\r\n                },\r\n            },\r\n        });\r\n        _this.options.boldText = new _option__WEBPACK_IMPORTED_MODULE_2__[\"ConfigOption\"]({\r\n            default: true,\r\n            el: Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"options-bold-text\"),\r\n            type: \"checkbox\",\r\n            setterOpts: {\r\n                onchange: true,\r\n                callback: function (value) {\r\n                    prompterLines.style.fontWeight = value ? \"bold\" : \"normal\";\r\n                },\r\n            },\r\n        });\r\n        _this.options.unsavedChangesWarning = new _option__WEBPACK_IMPORTED_MODULE_2__[\"ConfigOption\"]({\r\n            default: false,\r\n            el: Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"options-unsaved-changes-warning\"),\r\n            type: \"checkbox\",\r\n        });\r\n        _this.options.showCaret = new _option__WEBPACK_IMPORTED_MODULE_2__[\"ConfigOption\"]({\r\n            default: true,\r\n            el: Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"options-show-caret\"),\r\n            type: \"checkbox\",\r\n            setterOpts: {\r\n                onchange: true,\r\n                callback: function (value) {\r\n                    Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"setDisplay\"])(caret, value);\r\n                },\r\n            },\r\n        });\r\n        _this.options.endText = new _option__WEBPACK_IMPORTED_MODULE_2__[\"ConfigOption\"]({\r\n            default: \"[END]\",\r\n            el: Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"options-end-text\"),\r\n            type: \"text\",\r\n        });\r\n        _this.options.text = new _option__WEBPACK_IMPORTED_MODULE_2__[\"ConfigOption\"]({\r\n            default: \"Enter your script here!\",\r\n            el: Object(_utils__WEBPACK_IMPORTED_MODULE_0__[\"getElement\"])(\"text-input\"),\r\n            type: \"text\",\r\n        });\r\n        return _this;\r\n    }\r\n    return PrompterConfigManager;\r\n}(_config__WEBPACK_IMPORTED_MODULE_1__[\"ConfigManager\"]));\r\n\r\n\n\n//# sourceURL=webpack:///./src/config/prompterconfig.ts?");
+
+/***/ }),
+
+/***/ "./src/config/save.ts":
+/*!****************************!*\
+  !*** ./src/config/save.ts ***!
+  \****************************/
+/*! exports provided: ConfigSaver */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ConfigSaver\", function() { return ConfigSaver; });\nvar STORE_VERSION = \"0\";\r\nvar STORAGE_KEY = \"easierPrompter\" + STORE_VERSION + \"_configStore\";\r\nvar ConfigSaver = (function () {\r\n    function ConfigSaver(config) {\r\n        this.config = config;\r\n        this.lastSaveData = this.generateSaveData();\r\n    }\r\n    ConfigSaver.prototype.getOptions = function () {\r\n        var localConfig = localStorage.getItem(STORAGE_KEY);\r\n        if (localConfig === null) {\r\n            return {};\r\n        }\r\n        else {\r\n            return JSON.parse(localConfig);\r\n        }\r\n    };\r\n    ConfigSaver.prototype.generateSaveData = function () {\r\n        var res = {};\r\n        for (var _i = 0, _a = Object.keys(this.config.options); _i < _a.length; _i++) {\r\n            var key = _a[_i];\r\n            var value = this.config.options[key];\r\n            res[key] = value.get();\r\n        }\r\n        return res;\r\n    };\r\n    ConfigSaver.prototype.reset = function () {\r\n        localStorage.removeItem(STORAGE_KEY);\r\n        location.reload();\r\n    };\r\n    ConfigSaver.prototype.save = function () {\r\n        var data = this.generateSaveData();\r\n        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));\r\n        this.lastSaveData = data;\r\n    };\r\n    ConfigSaver.prototype.load = function () {\r\n        var options = this.getOptions();\r\n        for (var _i = 0, _a = Object.keys(options); _i < _a.length; _i++) {\r\n            var key = _a[_i];\r\n            var value = options[key];\r\n            var configOption = this.config.options[key];\r\n            if (typeof configOption === \"undefined\") {\r\n                console.warn(\"Unknown item in save:\", key, value);\r\n                continue;\r\n            }\r\n            this.config.options[key].set(value);\r\n        }\r\n    };\r\n    return ConfigSaver;\r\n}());\r\n\r\n\n\n//# sourceURL=webpack:///./src/config/save.ts?");
+
+/***/ }),
+
+/***/ "./src/config/utils.ts":
+/*!*****************************!*\
+  !*** ./src/config/utils.ts ***!
+  \*****************************/
+/*! exports provided: getterFrom, setterFrom */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"getterFrom\", function() { return getterFrom; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"setterFrom\", function() { return setterFrom; });\nfunction getterFrom(el, type) {\r\n    if (type === void 0) { type = \"text\"; }\r\n    var getter = function () { return el.textContent || \"\"; };\r\n    if (el instanceof HTMLTextAreaElement) {\r\n        getter = function () { return el.value; };\r\n    }\r\n    if (el instanceof HTMLInputElement) {\r\n        if (el.type === \"checkbox\") {\r\n            getter = function () { return el.checked; };\r\n        }\r\n        else {\r\n            getter = function () { return el.value; };\r\n        }\r\n    }\r\n    if (type === \"number\") {\r\n        return function () {\r\n            var val = getter().trim();\r\n            if (val === \"\") {\r\n                return 0;\r\n            }\r\n            else {\r\n                return Number(val);\r\n            }\r\n        };\r\n    }\r\n    return getter;\r\n}\r\nfunction setterFrom(el, type, opts) {\r\n    if (opts === void 0) { opts = {}; }\r\n    var getBaseSetter = function () {\r\n        if (el instanceof HTMLTextAreaElement) {\r\n            return function (value) { return el.value = value; };\r\n        }\r\n        if (el instanceof HTMLInputElement) {\r\n            if (type === \"text\") {\r\n                return function (value) { return el.value = value; };\r\n            }\r\n            else if (type === \"number\") {\r\n                return function (value) { return el.value = value.toString(); };\r\n            }\r\n            else if (type === \"checkbox\") {\r\n                return function (value) { return el.checked = value; };\r\n            }\r\n            else {\r\n                console.warn(\"Unsupported input type: \" + type);\r\n            }\r\n        }\r\n        return function (value) { return el.textContent = value; };\r\n    };\r\n    var setter = getBaseSetter();\r\n    var stack = [];\r\n    if (opts.transform) {\r\n        stack.push(opts.transform);\r\n    }\r\n    stack.push(setter);\r\n    if (opts.callback) {\r\n        stack.push(opts.callback);\r\n    }\r\n    var functionStack = createFunctionPipe(stack);\r\n    if (opts.onchange) {\r\n        var getter_1 = getterFrom(el);\r\n        el.onchange = function () {\r\n            functionStack(getter_1());\r\n        };\r\n    }\r\n    return functionStack;\r\n}\r\nfunction createFunctionPipe(functions) {\r\n    if (functions === void 0) { functions = []; }\r\n    return function (value) {\r\n        for (var _i = 0, functions_1 = functions; _i < functions_1.length; _i++) {\r\n            var func = functions_1[_i];\r\n            value = func(value);\r\n        }\r\n        return value;\r\n    };\r\n}\r\n\n\n//# sourceURL=webpack:///./src/config/utils.ts?");
+
+/***/ }),
+
+/***/ "./src/email.ts":
+/*!**********************!*\
+  !*** ./src/email.ts ***!
+  \**********************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var emailEncoded = [
-    "o", "m", "m", "y", "w", "e", "b", "e", "r", "3", "3", "@", "g", "m", "a", "i", "l", ".", "c", "o", "m", "t",
-].join("");
-var email = emailEncoded[emailEncoded.length - 1];
-for (var i = 0; i < emailEncoded.length - 1; i++) {
-    email += emailEncoded[i];
-}
-var els = document.getElementsByClassName("email");
-for (var i = 0; i < els.length; i++) {
-    var el = els[i];
-    el.textContent = email;
-    el.href = "mailto:" + email;
-}
-
+eval("\r\nvar emailEncoded = [\r\n    \"o\", \"m\", \"m\", \"y\", \"w\", \"e\", \"b\", \"e\", \"r\", \"3\", \"3\", \"@\", \"g\", \"m\", \"a\", \"i\", \"l\", \".\", \"c\", \"o\", \"m\", \"t\",\r\n].join(\"\");\r\nvar email = emailEncoded[emailEncoded.length - 1];\r\nfor (var i = 0; i < emailEncoded.length - 1; i++) {\r\n    email += emailEncoded[i];\r\n}\r\nvar els = document.getElementsByClassName(\"email\");\r\nfor (var i = 0; i < els.length; i++) {\r\n    var el = els[i];\r\n    el.textContent = email;\r\n    el.href = \"mailto:\" + email;\r\n}\r\n\n\n//# sourceURL=webpack:///./src/email.ts?");
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports) {
 
-/// Older browsers do not have requestAnimationFrame so a polyfill is needed
-/// Adds support for: IE 9
+/***/ "./src/error/idnotfound.ts":
+/*!*********************************!*\
+  !*** ./src/error/idnotfound.ts ***!
+  \*********************************/
+/*! exports provided: ElementIDNotFoundError */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-
-// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
-
-// MIT license
-
-(function() {
-  var lastTime = 0;
-  var vendors = ['ms', 'moz', 'webkit', 'o'];
-  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
-                                 || window[vendors[x]+'CancelRequestAnimationFrame'];
-  }
-
-  if (!window.requestAnimationFrame)
-      window.requestAnimationFrame = function(callback, element) {
-          var currTime = new Date().getTime();
-          var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-          var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
-            timeToCall);
-          lastTime = currTime + timeToCall;
-          return id;
-      };
-
-  if (!window.cancelAnimationFrame)
-      window.cancelAnimationFrame = function(id) {
-          clearTimeout(id);
-      };
-}());
-
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ElementIDNotFoundError\", function() { return ElementIDNotFoundError; });\nvar __extends = (undefined && undefined.__extends) || (function () {\r\n    var extendStatics = Object.setPrototypeOf ||\r\n        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\r\n        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\r\n    return function (d, b) {\r\n        extendStatics(d, b);\r\n        function __() { this.constructor = d; }\r\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\r\n    };\r\n})();\r\nvar ElementIDNotFoundError = (function (_super) {\r\n    __extends(ElementIDNotFoundError, _super);\r\n    function ElementIDNotFoundError(id) {\r\n        return _super.call(this, \"Element with id '\" + id + \"' not found.\") || this;\r\n    }\r\n    return ElementIDNotFoundError;\r\n}(Error));\r\n\r\n\n\n//# sourceURL=webpack:///./src/error/idnotfound.ts?");
 
 /***/ }),
-/* 4 */
+
+/***/ "./src/index.ts":
+/*!**********************!*\
+  !*** ./src/index.ts ***!
+  \**********************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _email__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./email */ \"./src/email.ts\");\n/* harmony import */ var _email__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_email__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _sw__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sw */ \"./src/sw.ts\");\n/* harmony import */ var _sw__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_sw__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _config_prompterconfig__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./config/prompterconfig */ \"./src/config/prompterconfig.ts\");\n/* harmony import */ var _prompter_prompter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./prompter/prompter */ \"./src/prompter/prompter.ts\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils */ \"./src/utils.ts\");\n\r\n\r\n\r\n\r\n\r\nfunction getConfig() {\r\n    return new _config_prompterconfig__WEBPACK_IMPORTED_MODULE_2__[\"PrompterConfigManager\"]();\r\n}\r\nfunction getPrompter(cfg) {\r\n    return new _prompter_prompter__WEBPACK_IMPORTED_MODULE_3__[\"Prompter\"](cfg);\r\n}\r\nvar config = getConfig();\r\nconfig.load();\r\nconfig.save();\r\nObject(_utils__WEBPACK_IMPORTED_MODULE_4__[\"getElement\"])(\"save-button\").onclick = function () { return config.save(); };\r\nObject(_utils__WEBPACK_IMPORTED_MODULE_4__[\"getElement\"])(\"reset-button\").onclick = function () { return config.promptReset(); };\r\nvar prompter = getPrompter(config);\r\nwindow.onbeforeunload = function (e) {\r\n    if (config.options.unsavedChangesWarning.get() && prompter.config.hasChanged()) {\r\n        var text = [\r\n            \"You have unsaved changes to your config!\",\r\n            \"If you leave these changes will be reset!\",\r\n            \"(disable this warning by unchecking \\\"Unsaved changes warning\\\")\",\r\n        ].join(\"\\n\");\r\n        e.returnValue = text;\r\n        return text;\r\n    }\r\n};\r\n\n\n//# sourceURL=webpack:///./src/index.ts?");
+
+/***/ }),
+
+/***/ "./src/keyboard/keyboard.ts":
+/*!**********************************!*\
+  !*** ./src/keyboard/keyboard.ts ***!
+  \**********************************/
+/*! exports provided: Keyboard */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Keyboard\", function() { return Keyboard; });\nvar Keyboard = (function () {\r\n    function Keyboard() {\r\n        this.handlers = [];\r\n        this.requirements = [];\r\n        this.keyDownHandlers = [];\r\n        this.keyPressHandlers = [];\r\n        this.keyUpHandlers = [];\r\n        document.addEventListener(\"keydown\", this._createEventHandler(this.keyDownHandlers));\r\n        document.addEventListener(\"keyup\", this._createEventHandler(this.keyUpHandlers));\r\n        document.addEventListener(\"keypress\", this._createEventHandler(this.keyPressHandlers));\r\n    }\r\n    Keyboard.prototype.require = function (func) {\r\n        this.requirements.push(func);\r\n    };\r\n    Keyboard.prototype.onKeyDown = function (keyCode, handler) {\r\n        this._addHandler(keyCode, handler, this.keyDownHandlers);\r\n    };\r\n    Keyboard.prototype.onKeyUp = function (keyCode, handler) {\r\n        this._addHandler(keyCode, handler, this.keyUpHandlers);\r\n    };\r\n    Keyboard.prototype.onKeyPress = function (keyCode, handler) {\r\n        this._addHandler(keyCode, handler, this.keyPressHandlers);\r\n    };\r\n    Keyboard.prototype.testRequirements = function (e) {\r\n        for (var _i = 0, _a = this.requirements; _i < _a.length; _i++) {\r\n            var func = _a[_i];\r\n            if (!func(e)) {\r\n                return false;\r\n            }\r\n        }\r\n        return true;\r\n    };\r\n    Keyboard.prototype._addHandler = function (keyCode, handler, eventHandlers) {\r\n        if (!eventHandlers[keyCode]) {\r\n            eventHandlers[keyCode] = [];\r\n        }\r\n        var existingHandlers = eventHandlers[keyCode];\r\n        existingHandlers.push(handler);\r\n    };\r\n    Keyboard.prototype._createEventHandler = function (eventHandlers) {\r\n        var _this = this;\r\n        return function (e) {\r\n            if (!_this.testRequirements(e)) {\r\n                return;\r\n            }\r\n            var keyCode = e.keyCode;\r\n            var handlers = eventHandlers[keyCode];\r\n            if (!handlers) {\r\n                return;\r\n            }\r\n            var preventDefault = false;\r\n            for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {\r\n                var handler = handlers_1[_i];\r\n                var result = handler();\r\n                if (result) {\r\n                    preventDefault = true;\r\n                    break;\r\n                }\r\n            }\r\n            if (preventDefault) {\r\n                e.preventDefault();\r\n            }\r\n        };\r\n    };\r\n    return Keyboard;\r\n}());\r\n\r\n\n\n//# sourceURL=webpack:///./src/keyboard/keyboard.ts?");
+
+/***/ }),
+
+/***/ "./src/prompter/abstract.ts":
+/*!**********************************!*\
+  !*** ./src/prompter/abstract.ts ***!
+  \**********************************/
+/*! exports provided: Direction, AbstractPrompter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Direction\", function() { return Direction; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"AbstractPrompter\", function() { return AbstractPrompter; });\nvar ONE_FRAME = 1000 / 60;\r\nvar Direction;\r\n(function (Direction) {\r\n    Direction[Direction[\"Up\"] = -1] = \"Up\";\r\n    Direction[Direction[\"Down\"] = 1] = \"Down\";\r\n})(Direction || (Direction = {}));\r\nvar AbstractPrompter = (function () {\r\n    function AbstractPrompter(config) {\r\n        this._scrollDistance = 0;\r\n        this.lastFrameTime = 0;\r\n        this.maxScrollDistance = Infinity;\r\n        this.direction = Direction.Down;\r\n        this.showing = false;\r\n        this.scrolling = false;\r\n        this.config = config;\r\n        this.loop = this.loop.bind(this);\r\n        this.loop(0);\r\n    }\r\n    AbstractPrompter.prototype.start = function () {\r\n        this.scrolling = true;\r\n    };\r\n    AbstractPrompter.prototype.stop = function () {\r\n        this.scrolling = false;\r\n    };\r\n    AbstractPrompter.prototype.show = function () {\r\n        this.showing = true;\r\n        this.scrollDistance = 0;\r\n        this.loadScript(this.getScript());\r\n    };\r\n    AbstractPrompter.prototype.hide = function () {\r\n        this.stop();\r\n        this.showing = false;\r\n    };\r\n    AbstractPrompter.prototype.reverseDirection = function () {\r\n        if (this.direction === Direction.Up) {\r\n            this.direction = Direction.Down;\r\n        }\r\n        else {\r\n            this.direction = Direction.Up;\r\n        }\r\n    };\r\n    AbstractPrompter.prototype.loop = function (currentTime) {\r\n        requestAnimationFrame(this.loop);\r\n        if (!this.showing) {\r\n            return;\r\n        }\r\n        var timeSinceLastFrame = currentTime - this.lastFrameTime;\r\n        if (this.scrolling) {\r\n            this.scroll(timeSinceLastFrame / ONE_FRAME);\r\n        }\r\n        this.lastFrameTime = currentTime;\r\n        this.render(Math.floor(this.scrollDistance));\r\n    };\r\n    AbstractPrompter.prototype.scroll = function (frames) {\r\n        this.scrollDistance += (this.config.speed * this.direction) * frames;\r\n    };\r\n    AbstractPrompter.prototype.toggleScrolling = function () {\r\n        if (this.scrolling) {\r\n            this.stop();\r\n        }\r\n        else {\r\n            this.start();\r\n        }\r\n    };\r\n    Object.defineProperty(AbstractPrompter.prototype, \"scrollDistance\", {\r\n        get: function () {\r\n            return this._scrollDistance;\r\n        },\r\n        set: function (scrollDistance) {\r\n            if (scrollDistance < 0) {\r\n                scrollDistance = 0;\r\n            }\r\n            if (scrollDistance > this.maxScrollDistance) {\r\n                scrollDistance = this.maxScrollDistance;\r\n            }\r\n            this._scrollDistance = scrollDistance;\r\n        },\r\n        enumerable: true,\r\n        configurable: true\r\n    });\r\n    return AbstractPrompter;\r\n}());\r\n\r\n\n\n//# sourceURL=webpack:///./src/prompter/abstract.ts?");
+
+/***/ }),
+
+/***/ "./src/prompter/prompter.ts":
+/*!**********************************!*\
+  !*** ./src/prompter/prompter.ts ***!
+  \**********************************/
+/*! exports provided: Prompter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Prompter\", function() { return Prompter; });\n/* harmony import */ var _keyboard_keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../keyboard/keyboard */ \"./src/keyboard/keyboard.ts\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils */ \"./src/utils.ts\");\n/* harmony import */ var _abstract__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./abstract */ \"./src/prompter/abstract.ts\");\nvar __extends = (undefined && undefined.__extends) || (function () {\r\n    var extendStatics = Object.setPrototypeOf ||\r\n        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\r\n        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\r\n    return function (d, b) {\r\n        extendStatics(d, b);\r\n        function __() { this.constructor = d; }\r\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\r\n    };\r\n})();\r\n\r\n\r\n\r\nvar SPEED_INCREMENT = 0.25;\r\nvar Prompter = (function (_super) {\r\n    __extends(Prompter, _super);\r\n    function Prompter(config) {\r\n        var _this = _super.call(this, config) || this;\r\n        _this.prompterLines = Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"prompter-lines\");\r\n        _this.prompterText = Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"prompter-lines-text\");\r\n        _this.prompterEndText = Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"prompter-lines-end-text\");\r\n        _this.addListeners();\r\n        _this.addKeyboardHandlers();\r\n        return _this;\r\n    }\r\n    Prompter.prototype.addListeners = function () {\r\n        var _this = this;\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"start-button\").addEventListener(\"click\", function (e) { return _this.show(); });\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"options-toggle-run\").addEventListener(\"click\", function (e) { return _this.toggleScrolling(); });\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"options-toggle-direction\").addEventListener(\"click\", function (e) { return _this.reverseDirection(); });\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"options-exit\").addEventListener(\"click\", function (e) { return _this.hide(); });\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"options-speed-up\").addEventListener(\"click\", function (e) { return _this.speedUp(); });\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"options-speed-down\").addEventListener(\"click\", function (e) { return _this.speedDown(); });\r\n        window.addEventListener(\"resize\", function (e) {\r\n            if (_this.showing) {\r\n                _this.maxScrollDistance = _this.getTextLength();\r\n            }\r\n        });\r\n    };\r\n    Prompter.prototype.addKeyboardHandlers = function () {\r\n        var _this = this;\r\n        var keyboard = new _keyboard_keyboard__WEBPACK_IMPORTED_MODULE_0__[\"Keyboard\"]();\r\n        keyboard.require(function () { return _this.showing; });\r\n        keyboard.onKeyDown(32, function () {\r\n            _this.toggleScrolling();\r\n            return true;\r\n        });\r\n        keyboard.onKeyDown(27, function () {\r\n            if (_this.scrollDistance === 0) {\r\n                _this.hide();\r\n            }\r\n            else {\r\n                _this.scrollDistance = 0;\r\n                _this.stop();\r\n            }\r\n        });\r\n        keyboard.onKeyDown(38, function () { return _this.speedUp(); });\r\n        keyboard.onKeyDown(40, function () { return _this.speedDown(); });\r\n        keyboard.onKeyDown(82, function () { return _this.setDirection(_abstract__WEBPACK_IMPORTED_MODULE_2__[\"Direction\"].Up); });\r\n        keyboard.onKeyUp(82, function () { return _this.setDirection(_abstract__WEBPACK_IMPORTED_MODULE_2__[\"Direction\"].Down); });\r\n    };\r\n    Prompter.prototype.reverseDirection = function () {\r\n        _super.prototype.reverseDirection.call(this);\r\n        if (this.direction === _abstract__WEBPACK_IMPORTED_MODULE_2__[\"Direction\"].Up) {\r\n            Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"options-toggle-direction\").textContent = \"Moving Up\";\r\n        }\r\n        else {\r\n            Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"options-toggle-direction\").textContent = \"Moving Down\";\r\n        }\r\n    };\r\n    Prompter.prototype.start = function () {\r\n        _super.prototype.start.call(this);\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"options-toggle-run\").textContent = \"Stop\";\r\n    };\r\n    Prompter.prototype.stop = function () {\r\n        _super.prototype.stop.call(this);\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"options-toggle-run\").textContent = \"Start\";\r\n    };\r\n    Prompter.prototype.show = function () {\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"setDisplay\"])(Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"main\"), false);\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"setDisplay\"])(Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"prompter\"), true);\r\n        _super.prototype.show.call(this);\r\n    };\r\n    Prompter.prototype.hide = function () {\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"setDisplay\"])(Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"main\"), true);\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"setDisplay\"])(Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"prompter\"), false);\r\n        _super.prototype.hide.call(this);\r\n    };\r\n    Prompter.prototype.render = function (distance) {\r\n        var lines = this.prompterLines;\r\n        lines.style.transform = \"translateY(-\" + distance + \"px)\";\r\n    };\r\n    Prompter.prototype.loadScript = function (script) {\r\n        this.resetScript();\r\n        var scriptLines = script.split(\"\\n\");\r\n        for (var _i = 0, scriptLines_1 = scriptLines; _i < scriptLines_1.length; _i++) {\r\n            var line = scriptLines_1[_i];\r\n            this.addLine(line);\r\n        }\r\n        this.maxScrollDistance = this.getTextLength();\r\n        this.addLine(this.config.options.endText.get(), Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"prompter-lines-end-text\"));\r\n    };\r\n    Prompter.prototype.getScript = function () {\r\n        return Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"getElement\"])(\"text-input\").value;\r\n    };\r\n    Prompter.prototype.getTextLength = function () {\r\n        return this.prompterText.scrollHeight;\r\n    };\r\n    Prompter.prototype.addLine = function (text, container) {\r\n        if (container === void 0) { container = this.prompterText; }\r\n        var item = document.createElement(\"p\");\r\n        item.textContent = text;\r\n        container.appendChild(item);\r\n    };\r\n    Prompter.prototype.resetScript = function () {\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"emptyElement\"])(this.prompterText);\r\n        Object(_utils__WEBPACK_IMPORTED_MODULE_1__[\"emptyElement\"])(this.prompterEndText);\r\n    };\r\n    Prompter.prototype.speedUp = function () {\r\n        if (this.showing) {\r\n            this.config.speed += SPEED_INCREMENT;\r\n        }\r\n    };\r\n    Prompter.prototype.speedDown = function () {\r\n        if (this.showing) {\r\n            this.config.speed -= SPEED_INCREMENT;\r\n        }\r\n    };\r\n    Prompter.prototype.setDirection = function (direction) {\r\n        this.direction = direction;\r\n    };\r\n    return Prompter;\r\n}(_abstract__WEBPACK_IMPORTED_MODULE_2__[\"AbstractPrompter\"]));\r\n\r\n\n\n//# sourceURL=webpack:///./src/prompter/prompter.ts?");
+
+/***/ }),
+
+/***/ "./src/sw.ts":
+/*!*******************!*\
+  !*** ./src/sw.ts ***!
+  \*******************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-        navigator.serviceWorker.register("sw.js").then(function () {
-            console.log("Registered Service Worker");
-        });
-    });
-}
-
+eval("\r\nif (\"serviceWorker\" in navigator) {\r\n    window.addEventListener(\"load\", function () {\r\n        navigator.serviceWorker.register(\"sw.js\").then(function () {\r\n            console.log(\"Registered Service Worker\");\r\n        });\r\n    });\r\n}\r\n\n\n//# sourceURL=webpack:///./src/sw.ts?");
 
 /***/ }),
-/* 5 */
+
+/***/ "./src/utils.ts":
+/*!**********************!*\
+  !*** ./src/utils.ts ***!
+  \**********************/
+/*! exports provided: getElement, setDisplay, emptyElement */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PrompterConfigManager; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__option__ = __webpack_require__(9);
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-
-
-
-var PrompterConfigManager = (function (_super) {
-    __extends(PrompterConfigManager, _super);
-    function PrompterConfigManager() {
-        var _this = _super.call(this) || this;
-        var prompterContainer = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("prompter-lines-container");
-        var prompterLines = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("prompter-lines");
-        var caret = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("prompter-caret");
-        _this.options.speed = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
-            default: 1.5,
-            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-current-speed"),
-            type: "number",
-            setterOpts: {
-                transform: function (value) {
-                    if (value < 0) {
-                        value = 0;
-                    }
-                    return value.toFixed(2);
-                },
-            },
-        });
-        _this.options.fontSize = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
-            default: 75,
-            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-font-size"),
-            type: "number",
-            setterOpts: {
-                onchange: true,
-                callback: function (value) {
-                    prompterContainer.style.fontSize = value + "px";
-                },
-            },
-        });
-        _this.options.fontFamily = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
-            default: "sans-serif",
-            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-font-family"),
-            type: "text",
-            setterOpts: {
-                onchange: true,
-                callback: function (value) {
-                    prompterContainer.style.fontFamily = value + ", sans-serif";
-                },
-            },
-        });
-        _this.options.boldText = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
-            default: true,
-            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-bold-text"),
-            type: "checkbox",
-            setterOpts: {
-                onchange: true,
-                callback: function (value) {
-                    prompterLines.style.fontWeight = value ? "bold" : "normal";
-                },
-            },
-        });
-        _this.options.unsavedChangesWarning = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
-            default: false,
-            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-unsaved-changes-warning"),
-            type: "checkbox",
-        });
-        _this.options.useLegacyScrolling = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
-            default: navigator.userAgent.indexOf("MSIE 9.0") > -1,
-            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-use-legacy-scrolling"),
-            type: "checkbox",
-        });
-        _this.options.showCaret = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
-            default: true,
-            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-show-caret"),
-            type: "checkbox",
-            setterOpts: {
-                onchange: true,
-                callback: function (value) {
-                    Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* setDisplay */])(caret, value);
-                },
-            },
-        });
-        _this.options.endText = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
-            default: "[END]",
-            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("options-end-text"),
-            type: "text",
-        });
-        _this.options.text = new __WEBPACK_IMPORTED_MODULE_2__option__["a" /* ConfigOption */]({
-            default: "Enter your script here!",
-            el: Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* getElement */])("text-input"),
-            type: "text",
-        });
-        return _this;
-    }
-    return PrompterConfigManager;
-}(__WEBPACK_IMPORTED_MODULE_1__config__["a" /* ConfigManager */]));
-
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ElementIDNotFoundError; });
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var ElementIDNotFoundError = (function (_super) {
-    __extends(ElementIDNotFoundError, _super);
-    function ElementIDNotFoundError(id) {
-        return _super.call(this, "Element with id '" + id + "' not found.") || this;
-    }
-    return ElementIDNotFoundError;
-}(Error));
-
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigManager; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__save__ = __webpack_require__(8);
-
-var STORAGE_KEY = "EasierPrompter_Config";
-var ConfigManager = (function () {
-    function ConfigManager() {
-        this.options = {};
-        this.configSaver = new __WEBPACK_IMPORTED_MODULE_0__save__["a" /* ConfigSaver */](this);
-    }
-    Object.defineProperty(ConfigManager.prototype, "speed", {
-        get: function () {
-            return this.options.speed.get();
-        },
-        set: function (value) {
-            this.options.speed.set(value);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ConfigManager.prototype.save = function () {
-        var saveData = this.configSaver.save();
-    };
-    ConfigManager.prototype.load = function () {
-        this.configSaver.load();
-    };
-    ConfigManager.prototype.promptReset = function () {
-        var message = [
-            "Are you sure you want to reset the settings?",
-            "This will reset your script, the config, and reload the page.",
-        ];
-        if (confirm(message.join("\n\n"))) {
-            this.configSaver.reset();
-        }
-    };
-    ConfigManager.prototype.hasChanged = function () {
-        var newData = this.configSaver.generateSaveData();
-        var oldData = this.configSaver.lastSaveData;
-        for (var _i = 0, _a = Object.keys(newData); _i < _a.length; _i++) {
-            var key = _a[_i];
-            if (newData[key] !== oldData[key]) {
-                return true;
-            }
-        }
-        return false;
-    };
-    return ConfigManager;
-}());
-
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigSaver; });
-var STORE_VERSION = "0";
-var STORAGE_KEY = "easierPrompter" + STORE_VERSION + "_configStore";
-var ConfigSaver = (function () {
-    function ConfigSaver(config) {
-        this.config = config;
-    }
-    ConfigSaver.prototype.getOptions = function () {
-        var localConfig = localStorage.getItem(STORAGE_KEY);
-        if (localConfig === null) {
-            return {};
-        }
-        else {
-            return JSON.parse(localConfig);
-        }
-    };
-    ConfigSaver.prototype.generateSaveData = function () {
-        var res = {};
-        for (var _i = 0, _a = Object.keys(this.config.options); _i < _a.length; _i++) {
-            var key = _a[_i];
-            var value = this.config.options[key];
-            res[key] = value.get();
-        }
-        return res;
-    };
-    ConfigSaver.prototype.reset = function () {
-        localStorage.removeItem(STORAGE_KEY);
-        location.reload();
-    };
-    ConfigSaver.prototype.save = function () {
-        var data = this.generateSaveData();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        this.lastSaveData = data;
-    };
-    ConfigSaver.prototype.load = function () {
-        var options = this.getOptions();
-        for (var _i = 0, _a = Object.keys(options); _i < _a.length; _i++) {
-            var key = _a[_i];
-            var value = options[key];
-            var configOption = this.config.options[key];
-            if (typeof configOption === "undefined") {
-                console.warn("Unknown item in save:", key, value);
-                continue;
-            }
-            this.config.options[key].set(value);
-        }
-    };
-    return ConfigSaver;
-}());
-
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigOption; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(10);
-
-var ConfigOption = (function () {
-    function ConfigOption(options) {
-        this.get = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* getterFrom */])(options.el, options.type);
-        this.set = Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* setterFrom */])(options.el, options.type || "text", options.setterOpts);
-        this.set(options.default);
-    }
-    return ConfigOption;
-}());
-
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getterFrom;
-/* harmony export (immutable) */ __webpack_exports__["b"] = setterFrom;
-function getterFrom(el, type) {
-    if (type === void 0) { type = "text"; }
-    var getter = function () { return el.textContent || ""; };
-    if (el instanceof HTMLTextAreaElement) {
-        getter = function () { return el.value; };
-    }
-    if (el instanceof HTMLInputElement) {
-        if (el.type === "checkbox") {
-            getter = function () { return el.checked; };
-        }
-        else {
-            getter = function () { return el.value; };
-        }
-    }
-    if (type === "number") {
-        return function () {
-            var val = getter().trim();
-            if (val === "") {
-                return 0;
-            }
-            else {
-                return Number(val);
-            }
-        };
-    }
-    return getter;
-}
-function setterFrom(el, type, opts) {
-    if (opts === void 0) { opts = {}; }
-    var getBaseSetter = function () {
-        if (el instanceof HTMLTextAreaElement) {
-            return function (value) { return el.value = value; };
-        }
-        if (el instanceof HTMLInputElement) {
-            if (type === "text") {
-                return function (value) { return el.value = value; };
-            }
-            else if (type === "number") {
-                return function (value) { return el.value = value.toString(); };
-            }
-            else if (type === "checkbox") {
-                return function (value) { return el.checked = value; };
-            }
-            else {
-                console.warn("Unsupported input type: " + type);
-            }
-        }
-        return function (value) { return el.textContent = value; };
-    };
-    var setter = getBaseSetter();
-    var stack = [];
-    if (opts.transform) {
-        stack.push(opts.transform);
-    }
-    stack.push(setter);
-    if (opts.callback) {
-        stack.push(opts.callback);
-    }
-    var functionStack = createFunctionPipe(stack);
-    if (opts.onchange) {
-        var getter_1 = getterFrom(el);
-        el.onchange = function () {
-            functionStack(getter_1());
-        };
-    }
-    return functionStack;
-}
-function createFunctionPipe(functions) {
-    if (functions === void 0) { functions = []; }
-    return function (value) {
-        for (var _i = 0, functions_1 = functions; _i < functions_1.length; _i++) {
-            var func = functions_1[_i];
-            value = func(value);
-        }
-        return value;
-    };
-}
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Prompter; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__keyboard_keyboard__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__abstract__ = __webpack_require__(13);
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-
-
-
-var SPEED_INCREMENT = 0.25;
-var Prompter = (function (_super) {
-    __extends(Prompter, _super);
-    function Prompter(config) {
-        var _this = _super.call(this, config) || this;
-        _this.prompterLines = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("prompter-lines");
-        _this.prompterText = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("prompter-lines-text");
-        _this.prompterEndText = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("prompter-lines-end-text");
-        _this.useLegacyScrolling = navigator.userAgent.indexOf("MSIE 9.0") > -1;
-        _this.addListeners();
-        _this.addKeyboardHandlers();
-        return _this;
-    }
-    Prompter.prototype.addListeners = function () {
-        var _this = this;
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("start-button").addEventListener("click", function (e) { return _this.show(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-run").addEventListener("click", function (e) { return _this.toggleScrolling(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-direction").addEventListener("click", function (e) { return _this.reverseDirection(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-exit").addEventListener("click", function (e) { return _this.hide(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-speed-up").addEventListener("click", function (e) { return _this.speedUp(); });
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-speed-down").addEventListener("click", function (e) { return _this.speedDown(); });
-        window.addEventListener("resize", function (e) {
-            if (_this.showing) {
-                _this.maxScrollDistance = _this.getTextLength();
-            }
-        });
-    };
-    Prompter.prototype.addKeyboardHandlers = function () {
-        var _this = this;
-        var keyboard = new __WEBPACK_IMPORTED_MODULE_0__keyboard_keyboard__["a" /* Keyboard */]();
-        keyboard.require(function () { return _this.showing; });
-        keyboard.onKeyDown(32, function () {
-            _this.toggleScrolling();
-            return true;
-        });
-        keyboard.onKeyDown(27, function () {
-            if (_this.scrollDistance === 0) {
-                _this.hide();
-            }
-            else {
-                _this.scrollDistance = 0;
-                _this.stop();
-            }
-        });
-        keyboard.onKeyDown(38, function () { return _this.speedUp(); });
-        keyboard.onKeyDown(40, function () { return _this.speedDown(); });
-        keyboard.onKeyDown(82, function () { return _this.setDirection(__WEBPACK_IMPORTED_MODULE_2__abstract__["b" /* Direction */].Up); });
-        keyboard.onKeyUp(82, function () { return _this.setDirection(__WEBPACK_IMPORTED_MODULE_2__abstract__["b" /* Direction */].Down); });
-    };
-    Prompter.prototype.reverseDirection = function () {
-        _super.prototype.reverseDirection.call(this);
-        if (this.direction === __WEBPACK_IMPORTED_MODULE_2__abstract__["b" /* Direction */].Up) {
-            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-direction").textContent = "Moving Up";
-        }
-        else {
-            Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-direction").textContent = "Moving Down";
-        }
-    };
-    Prompter.prototype.start = function () {
-        _super.prototype.start.call(this);
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-run").textContent = "Stop";
-    };
-    Prompter.prototype.stop = function () {
-        _super.prototype.stop.call(this);
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("options-toggle-run").textContent = "Start";
-    };
-    Prompter.prototype.show = function () {
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* setDisplay */])(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("main"), false);
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* setDisplay */])(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("prompter"), true);
-        _super.prototype.show.call(this);
-    };
-    Prompter.prototype.hide = function () {
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* setDisplay */])(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("main"), true);
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* setDisplay */])(Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("prompter"), false);
-        _super.prototype.hide.call(this);
-    };
-    Prompter.prototype.render = function (distance) {
-        var lines = this.prompterLines;
-        if (!this.config.options.useLegacyScrolling.get()) {
-            lines.style.transform = "translateY(-" + distance + "px)";
-        }
-        else {
-            lines.style.marginTop = "-" + distance + "px";
-        }
-    };
-    Prompter.prototype.loadScript = function (script) {
-        this.resetScript();
-        var scriptLines = script.split("\n");
-        for (var _i = 0, scriptLines_1 = scriptLines; _i < scriptLines_1.length; _i++) {
-            var line = scriptLines_1[_i];
-            this.addLine(line);
-        }
-        this.maxScrollDistance = this.getTextLength();
-        this.addLine(this.config.options.endText.get(), Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("prompter-lines-end-text"));
-    };
-    Prompter.prototype.getScript = function () {
-        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* getElement */])("text-input").value;
-    };
-    Prompter.prototype.getTextLength = function () {
-        return this.prompterText.scrollHeight;
-    };
-    Prompter.prototype.addLine = function (text, container) {
-        if (container === void 0) { container = this.prompterText; }
-        var item = document.createElement("p");
-        item.textContent = text;
-        container.appendChild(item);
-    };
-    Prompter.prototype.resetScript = function () {
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* emptyElement */])(this.prompterText);
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* emptyElement */])(this.prompterEndText);
-    };
-    Prompter.prototype.speedUp = function () {
-        if (this.showing) {
-            this.config.speed += SPEED_INCREMENT;
-        }
-    };
-    Prompter.prototype.speedDown = function () {
-        if (this.showing) {
-            this.config.speed -= SPEED_INCREMENT;
-        }
-    };
-    Prompter.prototype.setDirection = function (direction) {
-        this.direction = direction;
-    };
-    return Prompter;
-}(__WEBPACK_IMPORTED_MODULE_2__abstract__["a" /* AbstractPrompter */]));
-
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Keyboard; });
-var Keyboard = (function () {
-    function Keyboard() {
-        this.handlers = [];
-        this.requirements = [];
-        this.keyDownHandlers = [];
-        this.keyPressHandlers = [];
-        this.keyUpHandlers = [];
-        document.addEventListener("keydown", this._createEventHandler(this.keyDownHandlers));
-        document.addEventListener("keyup", this._createEventHandler(this.keyUpHandlers));
-        document.addEventListener("keypress", this._createEventHandler(this.keyPressHandlers));
-    }
-    Keyboard.prototype.require = function (func) {
-        this.requirements.push(func);
-    };
-    Keyboard.prototype.onKeyDown = function (keyCode, handler) {
-        this._addHandler(keyCode, handler, this.keyDownHandlers);
-    };
-    Keyboard.prototype.onKeyUp = function (keyCode, handler) {
-        this._addHandler(keyCode, handler, this.keyUpHandlers);
-    };
-    Keyboard.prototype.onKeyPress = function (keyCode, handler) {
-        this._addHandler(keyCode, handler, this.keyPressHandlers);
-    };
-    Keyboard.prototype.testRequirements = function (e) {
-        for (var _i = 0, _a = this.requirements; _i < _a.length; _i++) {
-            var func = _a[_i];
-            if (!func(e)) {
-                return false;
-            }
-        }
-        return true;
-    };
-    Keyboard.prototype._addHandler = function (keyCode, handler, eventHandlers) {
-        if (!eventHandlers[keyCode]) {
-            eventHandlers[keyCode] = [];
-        }
-        var existingHandlers = eventHandlers[keyCode];
-        existingHandlers.push(handler);
-    };
-    Keyboard.prototype._createEventHandler = function (eventHandlers) {
-        var _this = this;
-        return function (e) {
-            if (!_this.testRequirements(e)) {
-                return;
-            }
-            var keyCode = e.keyCode;
-            var handlers = eventHandlers[keyCode];
-            if (!handlers) {
-                return;
-            }
-            var preventDefault = false;
-            for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
-                var handler = handlers_1[_i];
-                var result = handler();
-                if (result) {
-                    preventDefault = true;
-                    break;
-                }
-            }
-            if (preventDefault) {
-                e.preventDefault();
-            }
-        };
-    };
-    return Keyboard;
-}());
-
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Direction; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AbstractPrompter; });
-var ONE_FRAME = 1000 / 60;
-var Direction;
-(function (Direction) {
-    Direction[Direction["Up"] = -1] = "Up";
-    Direction[Direction["Down"] = 1] = "Down";
-})(Direction || (Direction = {}));
-var AbstractPrompter = (function () {
-    function AbstractPrompter(config) {
-        this._scrollDistance = 0;
-        this.maxScrollDistance = Infinity;
-        this.direction = Direction.Down;
-        this.showing = false;
-        this.scrolling = false;
-        this.config = config;
-        this.loop = this.loop.bind(this);
-        this.loop(0);
-    }
-    AbstractPrompter.prototype.start = function () {
-        this.scrolling = true;
-    };
-    AbstractPrompter.prototype.stop = function () {
-        this.scrolling = false;
-    };
-    AbstractPrompter.prototype.show = function () {
-        this.showing = true;
-        this.scrollDistance = 0;
-        this.loadScript(this.getScript());
-    };
-    AbstractPrompter.prototype.hide = function () {
-        this.stop();
-        this.showing = false;
-    };
-    AbstractPrompter.prototype.reverseDirection = function () {
-        if (this.direction === Direction.Up) {
-            this.direction = Direction.Down;
-        }
-        else {
-            this.direction = Direction.Up;
-        }
-    };
-    AbstractPrompter.prototype.loop = function (currentTime) {
-        requestAnimationFrame(this.loop);
-        if (!this.showing) {
-            return;
-        }
-        var timeSinceLastFrame = currentTime - this.lastFrame;
-        if (this.scrolling) {
-            this.scroll(timeSinceLastFrame / ONE_FRAME);
-        }
-        this.lastFrame = currentTime;
-        this.render(Math.floor(this.scrollDistance));
-    };
-    AbstractPrompter.prototype.scroll = function (frames) {
-        this.scrollDistance += (this.config.speed * this.direction) * frames;
-    };
-    AbstractPrompter.prototype.toggleScrolling = function () {
-        if (this.scrolling) {
-            this.stop();
-        }
-        else {
-            this.start();
-        }
-    };
-    Object.defineProperty(AbstractPrompter.prototype, "scrollDistance", {
-        get: function () {
-            return this._scrollDistance;
-        },
-        set: function (scrollDistance) {
-            if (scrollDistance < 0) {
-                scrollDistance = 0;
-            }
-            if (scrollDistance > this.maxScrollDistance) {
-                scrollDistance = this.maxScrollDistance;
-            }
-            this._scrollDistance = scrollDistance;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return AbstractPrompter;
-}());
-
-
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"getElement\", function() { return getElement; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"setDisplay\", function() { return setDisplay; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"emptyElement\", function() { return emptyElement; });\n/* harmony import */ var _error_idnotfound__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./error/idnotfound */ \"./src/error/idnotfound.ts\");\n\r\nfunction getElement(id) {\r\n    var el = document.getElementById(id);\r\n    if (el === null) {\r\n        throw new _error_idnotfound__WEBPACK_IMPORTED_MODULE_0__[\"ElementIDNotFoundError\"](id);\r\n    }\r\n    return el;\r\n}\r\nfunction setDisplay(el, show) {\r\n    el.style.display = show ? \"block\" : \"none\";\r\n}\r\nfunction emptyElement(el) {\r\n    while (el.firstChild) {\r\n        el.removeChild(el.firstChild);\r\n    }\r\n}\r\n\n\n//# sourceURL=webpack:///./src/utils.ts?");
 
 /***/ })
-/******/ ]);
+
+/******/ });

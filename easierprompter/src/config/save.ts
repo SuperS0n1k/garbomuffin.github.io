@@ -16,6 +16,7 @@ export class ConfigSaver {
 
   constructor(config: ConfigManager) {
     this.config = config;
+    this.lastSaveData = this.generateSaveData();
   }
 
   private getOptions() {

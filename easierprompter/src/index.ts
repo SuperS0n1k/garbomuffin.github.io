@@ -1,5 +1,4 @@
 import "./email";
-import "./polyfill";
 import "./sw";
 
 import { ConfigManager } from "./config/config";

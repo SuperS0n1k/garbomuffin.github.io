@@ -16,7 +16,7 @@ export enum Direction {
 
 export abstract class AbstractPrompter implements IPrompter {
   private _scrollDistance: number = 0;
-  private lastFrame: number;
+  private lastFrameTime: number = 0;
   protected maxScrollDistance: number = Infinity;
   protected direction: Direction = Direction.Down;
   public showing: boolean = false;
@@ -77,18 +77,17 @@ export abstract class AbstractPrompter implements IPrompter {
   // Main loop - renders and scrolls
   protected loop(currentTime: number) {
     requestAnimationFrame(this.loop);
-    // console.log(arguments);
 
     if (!this.showing) {
       return;
     }
 
     // Scroll the screen proportional to the amount of lag
-    const timeSinceLastFrame = currentTime - this.lastFrame;
+    const timeSinceLastFrame = currentTime - this.lastFrameTime;
     if (this.scrolling) {
       this.scroll(timeSinceLastFrame / ONE_FRAME);
     }
-    this.lastFrame = currentTime;
+    this.lastFrameTime = currentTime;
 
     // Render it using Math.floor just so the number is a nice integer and not decimals
     this.render(Math.floor(this.scrollDistance));

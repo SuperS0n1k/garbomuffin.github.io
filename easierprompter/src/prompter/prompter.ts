@@ -10,8 +10,6 @@ export class Prompter extends AbstractPrompter {
   private prompterText = getElement("prompter-lines-text")!;
   private prompterEndText = getElement("prompter-lines-end-text")!;
 
-  private readonly useLegacyScrolling: boolean = navigator.userAgent.indexOf("MSIE 9.0") > -1;
-
   constructor(config: ConfigManager) {
     super(config);
 
@@ -121,17 +119,13 @@ export class Prompter extends AbstractPrompter {
   /// Implementations of abstract methods
   ///
 
-  // Applies the margin style to scroll the script
+  // Renders the scrolled distance into the DOM
   protected render(distance: number) {
-    // Scroll the text by applying the translateY transform
     const lines = this.prompterLines;
-    if (!this.config.options.useLegacyScrolling.get()) {
-      // anything except IE 9
-      // in modern browsers transform is faster because it skips a layout
-      lines.style.transform = `translateY(-${distance}px)`;
-    } else {
-      lines.style.marginTop = `-${distance}px`;
-    }
+    // Scroll the text by applying the translateY transform
+    // Transform seems to be the best way to do this because its very fast in nearly all browsers.
+    // (especially using will-change)
+    lines.style.transform = `translateY(-${distance}px)`;
   }
 
   // Inserts the script into the DOM

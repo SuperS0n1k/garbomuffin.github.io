@@ -66,12 +66,6 @@ export class PrompterConfigManager extends ConfigManager {
       type: "checkbox",
     });
 
-    this.options.useLegacyScrolling = new ConfigOption<boolean>({
-      default: navigator.userAgent.indexOf("MSIE 9.0") > -1,
-      el: getElement("options-use-legacy-scrolling"),
-      type: "checkbox",
-    });
-
     this.options.showCaret = new ConfigOption<boolean>({
       default: true,
       el: getElement("options-show-caret"),
