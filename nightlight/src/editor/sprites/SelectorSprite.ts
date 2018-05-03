@@ -100,9 +100,9 @@ export class SelectorSprite extends ImageSprite {
     const mouseX = this.runtime.mouse.position.x;
     const mouseY = this.runtime.mouse.position.y - this.runtime.blockOffsetY;
     const blockX = Math.floor(mouseX / BLOCK_WIDTH);
-    const blockY = Math.floor(mouseY / BLOCK_HEIGHT);
+    const blockY = Math.ceil(mouseY / BLOCK_HEIGHT);
     this.x = blockX * BLOCK_WIDTH;
-    this.y = blockY * BLOCK_HEIGHT + this.runtime.blockOffsetY;
+    this.y = blockY * BLOCK_HEIGHT - this.runtime.blockOffsetY;
 
     // block changing
     // up
