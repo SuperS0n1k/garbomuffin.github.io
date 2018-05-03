@@ -54,6 +54,9 @@ export class GameRuntime extends TaskRunner {
   public staticCanvas: HTMLCanvasElement;
   public staticCtx: CanvasRenderingContext2D;
 
+  public collisionCanvas: HTMLCanvasElement;
+  public collisionCtx: CanvasRenderingContext2D;
+
   constructor(container: HTMLElement) {
     super();
 
@@ -67,6 +70,11 @@ export class GameRuntime extends TaskRunner {
     const {canvas: staticCanvas, ctx: staticCtx} = this.createCanvas({alpha: false});
     this.staticCanvas = staticCanvas;
     this.staticCtx = staticCtx;
+
+    // collision canvas
+    const {canvas: collisionCanvas, ctx: collisionCtx} = this.createCanvas({alpha: false});
+    this.collisionCanvas = collisionCanvas;
+    this.collisionCtx = collisionCtx;
 
     // mouse driver, support pc and mobile to some degree
     if (!isMobile()) {
@@ -203,6 +211,7 @@ export class GameRuntime extends TaskRunner {
   public start() {
     console.log("starting loop");
     this.loop();
+    this.updateStatic();
 
     this.started = true;
 
@@ -311,7 +320,8 @@ export class GameRuntime extends TaskRunner {
     // clear the canvas
     this.resetCanvas(this.ctx, this.background);
 
-    // sort sprites by z TODO: perhaps only do this when we know something changed?
+
+    // sort sprites by z
     this.sortSprites();
 
     // render all non static sprites onto our canvas

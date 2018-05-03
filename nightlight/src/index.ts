@@ -1,4 +1,6 @@
-import { Nightlight } from "./game";
+import { Nightlight } from "./game/game";
+import { NightlightLevelEditor } from "./editor/editor";
+import { GameRuntime } from "./engine/runtime";
 
 /*
  * The loader.
@@ -6,7 +8,15 @@ import { Nightlight } from "./game";
  * It creates the game object, adds in assets, and starts the game.
  */
 
-const game = new Nightlight();
+function getRuntime(): GameRuntime {
+  if (location.search === "?leveleditor") {
+    return new NightlightLevelEditor();
+  } else {
+    return new Nightlight();
+  }
+}
+
+const game = getRuntime();
 
 // later made visibile in run()
 game.canvas.style.display = "none";
@@ -240,31 +250,35 @@ game.waitForAssets((progress) => {
 }).then(() => canPlay());
 
 function canPlay() {
-  playButton.onclick = () => run();
-  loadCodeButton.onclick = () => {
-    const code = prompt("Please enter the level code:");
-    if (code === null) {
-      return;
-    }
-    const res = game.readLevelCode(code);
-    if (res === null) {
-      alert("Invalid level code");
-      return;
-    }
-    game.level = res;
-    run();
-  };
-  menuBackground.classList.add("active");
-  loadingScreen.style.display = "none";
-  menuScreen.style.display = "block";
+  if (game instanceof Nightlight) {
+    playButton.onclick = () => run();
+    loadCodeButton.onclick = () => {
+      const code = prompt("Please enter the level code:");
+      if (code === null) {
+        return;
+      }
+      const res = game.readLevelCode(code);
+      if (res === null) {
+        alert("Invalid level code");
+        return;
+      }
+      game.level = res;
+      run();
+    };
+    menuBackground.classList.add("active");
+    loadingScreen.style.display = "none";
+    menuScreen.style.display = "block";
 
-  if (location.search === "?run") {
+    if (location.search === "?run") {
+      run();
+    }
+  } else {
     run();
   }
 }
 
 function run() {
   menuContainer.style.display = "none";
-  game.canvas.style.display = "block";
+  game.canvas.style.display = "";
   game.start();
 }

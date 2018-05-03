@@ -1,4 +1,4 @@
-import { Nightlight } from "../game";
+import { Nightlight } from "../game/game";
 import { AbstractSprite } from "./sprite";
 import { Task } from "./task";
 
@@ -10,8 +10,6 @@ export type TImage = HTMLImageElement;
 export type TSound = HTMLAudioElement;
 export type Runnable = () => void;
 export type TaskRunnable = (task: Task) => void;
-
-export type TGame = Nightlight;
 
 export type Sprite = AbstractSprite;
 

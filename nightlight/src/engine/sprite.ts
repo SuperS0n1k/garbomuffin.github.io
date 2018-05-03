@@ -1,8 +1,7 @@
-import { BLOCK_WIDTH, FRICTION, GRAVITY, BLOCK_HEIGHT, LEVEL_WIDTH } from "../config";
-import { Block } from "../sprites/blocks/block";
+import { GameRuntime } from "./runtime";
 import { GameState } from "./state";
 import { TaskRunner } from "./task";
-import { Sprite, TGame } from "./types";
+import { Sprite } from "./types";
 import { degreeToRadians, getOrDefault } from "./utils";
 import { Vector } from "./vector";
 import { Vector2D } from "./vector2d";
@@ -26,8 +25,8 @@ export interface ISpriteOptions {
 }
 
 export abstract class AbstractSprite extends TaskRunner {
-  public static runtime: TGame;
-  public runtime: TGame = AbstractSprite.runtime;
+  public static runtime: GameRuntime;
+  public runtime: GameRuntime = AbstractSprite.runtime;
 
   public position: Vector;
   public width: number;
@@ -179,162 +178,28 @@ export abstract class AbstractSprite extends TaskRunner {
     return new Vector(this.centerX, this.centerY);
   }
 
-  //
-  // Nightlight related code
-  //
-
-  protected runBasicPhysics(xv: number, yv: number, options: IPhysicsOptions = {}): IPhysicsResult {
-    options.collision = getOrDefault(options.collision, true);
-    options.restrictPositionValues = getOrDefault(options.restrictPositionValues, true);
-    options.friction = getOrDefault(options.friction, FRICTION);
-    options.midAirFriction = getOrDefault(options.midAirFriction, true);
-    options.roundValues = getOrDefault(options.roundValues, true);
-
-    this.x += xv;
-    if (options.collision && this.handleCollision(xv, true)) {
-      xv = 0;
-    }
-    if (options.restrictPositionValues) {
-      if (this.x < 0) {
-        this.x = 0;
-        xv = 0;
-      } else if (this.x + this.width > this.runtime.canvas.width) {
-        this.x = this.runtime.canvas.width - this.width;
-        xv = 0;
-      }
-    }
-
-    let onGround = false;
-
-    yv -= GRAVITY;
-    this.y -= yv;
-    if (options.collision && this.handleCollision(yv, false)) {
-      if (yv < 0) {
-        onGround = true;
-      }
-      yv = 0;
-    }
-
-    if (options.friction !== false) {
-      if (onGround || options.midAirFriction) {
-        xv *= (options.friction as number);
-      }
-    }
-
-    if (options.roundValues) {
-      this.x = Math.round(this.x);
-      this.y = Math.round(this.y);
-    }
-
-    return {
-      xv, yv, onGround,
-    };
-  }
-
-  private handleCollision(velocity: number, horizontal: boolean) {
-    const intersects = (block: Block) => block.solid &&
-                                         block.visible &&
-                                         this.intersects(block) &&
-                                         block.handleIntersect(this, velocity, horizontal) !== false;
-
-    const self = this as any as {_lastSolidBlock?: Block};
-
-    // optimization: if we are touching the same block as before (as when still)
-    // then we try that first instead of looping over everything
-    // this reduces the performance impact of running lots of physics, especially things that aren't moving
-    if (self._lastSolidBlock && intersects(self._lastSolidBlock)) {
-      return true;
-    }
-
-    const center = this.centerPosition;
-    const blocksFromLeft = Math.floor(center.x / BLOCK_WIDTH);
-    const blocksFromBottom = Math.floor((this.runtime.canvas.height - center.y) / BLOCK_HEIGHT);
-    const centerLevelIndex = blocksFromBottom * LEVEL_WIDTH + blocksFromLeft;
-
-    const ordereredBlocks = this.runtime.ordereredBlocks;
-    const blocks = [
-      ordereredBlocks[centerLevelIndex],
-      ordereredBlocks[centerLevelIndex + LEVEL_WIDTH],
-      ordereredBlocks[centerLevelIndex + LEVEL_WIDTH + 1],
-      ordereredBlocks[centerLevelIndex + LEVEL_WIDTH - 1],
-      ordereredBlocks[centerLevelIndex - LEVEL_WIDTH],
-      ordereredBlocks[centerLevelIndex - LEVEL_WIDTH + 1],
-      ordereredBlocks[centerLevelIndex - LEVEL_WIDTH - 1],
-      ordereredBlocks[centerLevelIndex + 1],
-      ordereredBlocks[centerLevelIndex - 1],
-    ];
-    for (const block of blocks) {
-      if (!block) {
-        continue;
-      }
-      if (intersects(block)) {
-        self._lastSolidBlock = block;
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   // Tests if a "complex" (fancy rendering/non square) sprite is touching a simple (square) sprite
   public complexIntersectsSimple(sprite: AbstractSprite): boolean {
-    const {canvas, ctx} = this.runtime.createCanvas({alpha: false});
+    const canvas = this.runtime.collisionCanvas;
+    const ctx = this.runtime.collisionCtx;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     this.render(ctx);
 
-    const height = canvas.height;
-    const width = canvas.width;
-
-    const data = ctx.getImageData(0, 0, width, height).data;
+    const data = ctx.getImageData(sprite.x, sprite.y, sprite.width, sprite.height).data;
     // some browsers are funny (specifically tor)
     // TODO: warning message?
     if (!data) {
       return false;
     }
 
-    const offsetOf = (x: number, y: number) => ((y * width) + x) * 4;
-
-    const startingX = Math.floor(sprite.x);
-    const startingY = Math.floor(sprite.y);
-    const endingX = startingX + Math.floor(sprite.width);
-    const endingY = startingY + Math.floor(sprite.height);
-
-    for (let y = startingY; y < endingY; y++) {
-      for (let x = startingX; x < endingX; x++) {
-        const offset = offsetOf(x, y);
-        if (data[offset] || data[offset + 1] || data[offset + 2]) {
-          return true;
-        }
+    const length = data.length;
+    // loop over the data and check for opacity >0
+    for (let i = 3; i < length; i += 4) {
+      if (data[i]) {
+        return true;
       }
     }
 
     return false;
   }
-}
-
-//
-// More Nightlight related code
-//
-
-interface IPhysicsResult {
-  yv: number;
-  xv: number;
-  onGround: boolean;
-}
-
-interface IPhysicsOptions {
-  // do collision checking?
-  collision?: boolean;
-
-  // restrict x values into 0 <= x <= CANVAS_WIDTH?
-  restrictPositionValues?: boolean;
-
-  // false: don't apply friction
-  // number: will be used as friction value instead of FRICTION in /config.ts
-  friction?: false | number;
-
-  // apply friction when in midair?
-  midAirFriction?: boolean;
-
-  // round coordinates?
-  roundValues?: boolean;
 }

@@ -5,9 +5,12 @@
     <title>Nightlight</title>
 
     <style>
-      /* easier canvas stuff */
       canvas {
         display: block;
+      }
+
+      img {
+        image-rendering: pixelated;
       }
 
       /* contains all the canvas elements and the starting menu */
@@ -77,6 +80,15 @@
         position: absolute;
         bottom: 0;
       }
+      #level-editor-ui {
+        display: none;
+      }
+      #main {
+        display: flex; /* as in the tape */
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+      }
     </style>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -97,21 +109,50 @@
 
     <p><a href="https://scratch.mit.edu/projects/150752251/">Play the original</a> by <a href="https://scratch.mit.edu/users/TriforceMayhem/">TriforceMayhem</a>. Assets are used with permission.</p>
 
-    <div id="container">
-      <div id="menu-container">
-        <div id="menu-background"><img src="assets/thumb.png" width="100%"></div>
-        <div id="loading-screen" class="menu">
-          <img src="assets/loading.png">
-        </div>
-        <div id="menu-screen" class="menu">
-          <div><button id="play-button">Start Game</button></div>
-          <div><button id="load-code-button">Load Level Code</button></div>
-        </div>
-        <div id="loading-screen-progress-bar" class="progress-bar">
-          <div class="progress-bar-inside" id="progress-bar"></div>
-        </div>
-      </div>
-    </div>
+    <table>
+      <tr>
+        <td id="container">
+          <div id="menu-container">
+            <div id="menu-background"><img src="assets/thumb.png" width="100%"></div>
+            <div id="loading-screen" class="menu">
+              <img src="assets/loading.png">
+            </div>
+            <div id="menu-screen" class="menu">
+              <div><button id="play-button">Start Game</button></div>
+              <div><button id="load-code-button">Load Level Code</button></div>
+            </div>
+            <div id="loading-screen-progress-bar" class="progress-bar">
+              <div class="progress-bar-inside" id="progress-bar"></div>
+            </div>
+          </div>
+        </td>
+
+        <td id="level-editor-ui">
+          <div>
+            <b>
+              This is very experimental and very broken.
+              Use Up/Down to change blocks.
+              Left mouse to place, right mouse to remove.
+              There are many problems.
+            </b>
+          </div>
+
+          <hr>
+
+          <div><b>Active block:</b></div>
+          <div><img id="level-editor-active-block-image" width="96px"></div>
+          (letter <span id="level-editor-active-block-char">A</span>)
+
+          <hr>
+
+          <div>
+            <button id="level-editor-get-code">Get Level Code</button>
+            <div><textarea id="level-editor-code-output"></textarea></div>
+          </div>
+        </td>
+      </tr>
+    </table>
+
     <div><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
 
     <div id="cb">
@@ -122,6 +163,10 @@
 
     <pre>
       <b>Changelog:</b>
+      v0.1.9:
+       * Made boss collision testing around 60% faster
+       * And a secret new feature...
+
       v0.1.8:
        * Around 50% performance gain (in average frame time on the first level)
        * Optimized star rendering (again, but its actually really fast this time)

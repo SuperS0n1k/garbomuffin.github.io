@@ -5,5 +5,9 @@
     "strict": true,
     "allowJs": true,
     "module": "es6",
+    "baseUrl": "src",
+    "paths": {
+      "engine/*": ["scr/engine/*"],
+    },
   }
 }

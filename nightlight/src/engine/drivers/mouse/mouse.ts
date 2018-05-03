@@ -12,21 +12,17 @@ enum Button {
 }
 
 class MouseButton extends BaseMouseButton implements IMouseButton {
-  private button: Button;
-
   constructor(mouse: Mouse, button: Button) {
     super(mouse); // It's a bird! It's a plane! No it's Supermouse!
 
-    this.button = button;
-
     document.addEventListener("mousedown", (e: any) => {
-      if (e.button === this.button) {
+      if (e.button === button) {
         this.isDown = true;
       }
     });
 
     document.addEventListener("mouseup", (e: any) => {
-      if (e.button === this.button) {
+      if (e.button === button) {
         this.isDown = false;
       }
     });
@@ -47,6 +43,10 @@ export class Mouse extends BaseMouse implements IMouse {
     });
 
     runtime.canvas.addEventListener("mousedown", (e: any) => {
+      e.preventDefault();
+    });
+
+    runtime.canvas.addEventListener("contextmenu", (e: any) => {
       e.preventDefault();
     });
   }
