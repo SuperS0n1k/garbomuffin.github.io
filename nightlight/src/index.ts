@@ -191,6 +191,11 @@ game.addImage("blocks/castlecorner/topleft");
 game.addImage("blocks/castlecorner/bottomright");
 game.addImage("blocks/castlecorner/bottomleft");
 
+// new blocks!
+game.addImage("blocks/capitala");
+game.addImage("blocks/capitalb");
+game.addImage("blocks/capitalc");
+
 // ending
 game.addImage("end/scene");
 game.addImage("thumb");

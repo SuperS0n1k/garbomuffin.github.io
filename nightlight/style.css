@@ -122,8 +122,8 @@ td {
   flex-wrap: wrap;
   justify-content: flex-start;
   align-content: flex-start;
-  height: calc(18px * 3);
-  width: calc(18px * 19);
+  height: calc(18px * 4);
+  width: calc(18px * 18);
 }
 
 #level-editor-block-gallery .level-editor-gallery-item {

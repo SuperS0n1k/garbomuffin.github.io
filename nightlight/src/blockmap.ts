@@ -96,4 +96,9 @@ export const blockMap: IBlockMap = {
   "=": solid("blocks/="),
   "+": solid("blocks/+"),
   "`": special(CastleCornerBlock, "blocks/grave"),
+
+  // New blocks!
+  "A": solid("blocks/capitala"),
+  "B": solid("blocks/capitalb"),
+  "C": solid("blocks/capitalc"),
 };

@@ -6,13 +6,20 @@ export const BLOCK_MAP_KEYS = [
   "b",
   "e",
   "g",
+  "empty",
+
   "c",
   "a",
   "h",
+  "empty",
+
   "d",
   "f",
   "i",
+  "empty",
+
   "v",
+  "A",
   "m",
   "]",
 
@@ -20,27 +27,40 @@ export const BLOCK_MAP_KEYS = [
   "1",
   "4",
   "6",
+  "empty",
+
   "2",
   "a",
   "7",
+  "empty",
+
   "3",
   "5",
   "8",
-  "9",
   "empty",
+  "C",
+  "B",
+  "9",
   "empty",
 
   // Castle Theme
   "&",
   ")",
   "_",
+  "empty",
+
   "*",
   "^",
   "=",
+  "empty",
+
   "(",
   "-",
   "+",
+  "empty",
+
   "`",
+  "empty",
   "empty",
   "empty",
 
