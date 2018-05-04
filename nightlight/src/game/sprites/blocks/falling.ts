@@ -1,7 +1,7 @@
 import { Task } from "../../../engine/task";
 import { Vector } from "../../../engine/vector";
-import { IBlockOptions, SolidBlock } from "./block";
 import { runBasicPhysics } from "../../physics";
+import { IBlockOptions, SolidBlock } from "./block";
 
 /*
  * A block that falls when you hit the switch.

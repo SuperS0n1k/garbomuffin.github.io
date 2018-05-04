@@ -1,6 +1,5 @@
 import { AbstractSprite, ISpriteOptions } from "../../engine/sprite";
 import { Task } from "../../engine/task";
-import { toHex } from "../../engine/utils";
 import { Vector2D } from "../../engine/vector2d";
 
 /*
@@ -34,7 +33,7 @@ export class BackgroundStarsSprite extends AbstractSprite {
     }
 
     for (let i = 0; i <= ANIMATION_LENGTH; i++) {
-      const {canvas, ctx} = this.runtime.createCanvas({alpha: false});
+      const {canvas, ctx} = this.runtime.createCanvas();
       this.renderStarPath(ctx, path, i / ANIMATION_LENGTH);
       this.renderCache[i] = canvas;
     }

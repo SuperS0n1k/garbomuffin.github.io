@@ -1,9 +1,8 @@
-import { Task } from "../../engine/task";
 import { Vector } from "../../engine/vector";
+import { Nightlight } from "../game";
 import { Block, IBlockOptions } from "./blocks/block";
 import { BlockSwitchSpawnerBlock } from "./blocks/blockswitchspawner";
 import { AbstractFallingBlock as FallingBlock } from "./blocks/falling";
-import { Nightlight } from "../game";
 
 /*
  * The switch that makes the FallingBlocks fall

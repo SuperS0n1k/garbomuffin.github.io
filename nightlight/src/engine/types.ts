@@ -1,4 +1,3 @@
-import { Nightlight } from "../game/game";
 import { AbstractSprite } from "./sprite";
 import { Task } from "./task";
 

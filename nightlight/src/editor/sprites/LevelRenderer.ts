@@ -1,9 +1,8 @@
-import { AbstractSprite, ISpriteOptions } from "../../engine/sprite";
-import { LevelEditorIndexes } from "./LevelEditorIndexes";
-import { Vector } from "../../engine/vector";
-import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
 import { blockMap } from "../../blockmap";
+import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
+import { AbstractSprite, ISpriteOptions } from "../../engine/sprite";
 import { NightlightLevelEditor } from "../editor";
+import { LevelEditorIndexes } from "./LevelEditorIndexes";
 
 export class LevelRenderer extends AbstractSprite {
   private levelCanvas!: HTMLCanvasElement;

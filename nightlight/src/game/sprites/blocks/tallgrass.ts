@@ -1,7 +1,7 @@
 import { Vector } from "../../../engine/vector";
+import { Nightlight } from "../../game";
 import { Block, IBlockOptions } from "./block";
 import { GrassBlock } from "./grass";
-import { Nightlight } from "../../game";
 
 /*
  * It's a tall grass block.

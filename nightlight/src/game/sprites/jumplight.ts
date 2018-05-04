@@ -1,8 +1,8 @@
 import { IImageSpriteOptions } from "../../engine/sprites/imagesprite";
 import { Task } from "../../engine/task";
+import { Nightlight } from "../game";
 import { Block } from "./blocks/block";
 import { PlayerSprite } from "./player/player";
-import { Nightlight } from "../game";
 
 /*
  * A light that will allow the player to jump again once while in the air.

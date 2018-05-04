@@ -2,10 +2,10 @@ import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../../../config";
 import { Task } from "../../../../engine/task";
 import { Vector } from "../../../../engine/vector";
 import { Vector2D } from "../../../../engine/vector2d";
+import { Nightlight } from "../../../game";
+import { runBasicPhysics } from "../../../physics";
 import { IBlockOptions } from "../../blocks/block";
 import { AbstractBoss } from "../boss";
-import { runBasicPhysics } from "../../../physics";
-import { Nightlight } from "../../../game";
 
 /*
  * The first boss: A Sword

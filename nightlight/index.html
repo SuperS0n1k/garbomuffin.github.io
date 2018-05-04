@@ -43,7 +43,7 @@
       <div id="level-editor-ui" class="level-editor-ui">
         <div><b>Active block:</b> (<span id="level-editor-active-block-description"></span>)</div>
         <div>
-          <img id="level-editor-active-block-image" width="96px">
+          <img id="level-editor-active-block-image">
         </div>
 
         <div id="level-editor-block-gallery"></div>
@@ -51,19 +51,25 @@
         <hr>
 
         <div>
-          <button id="level-editor-get-code">Get Level Code</button>
-          <button id="level-editor-import-code">Import Level Code</button>
-          <div><textarea id="level-editor-code-output" readonly></textarea></div>
+          <button id="level-editor-get-code">Get Code</button>
+          <button id="level-editor-get-json-code">Get JSON</button>
+          <button id="level-editor-import-code">Import</button>
+          <div><textarea id="level-editor-code-output" readonly onclick="this.focus();this.select();"></textarea></div>
         </div>
 
-        <!-- soon, but not yet -->
-        <div class="position-absolute-bottom" style="display: none">
-          <button id="level-editor-show-advanced">Advanced</button>
-        </div>
-      </div>
+        <hr>
 
-      <div id="level-editor-advanced-ui" class="level-editor-ui">
-        <p>"Advanced" options soon<sup>TM</sup></p>
+        <div><label>Dark: <input id="level-editor-option-dark" type="checkbox"></label></div>
+        <div><label>Stars: <input id="level-editor-option-stars" type="checkbox" checked></label></div>
+        <div>
+          <label>
+            Background:
+            <select id="level-editor-option-background">
+              <option selected value="black">Black</option>
+              <option value="castle">Castle</option>
+            </select>
+          </label>
+        </div>
       </div>
     </div>
 

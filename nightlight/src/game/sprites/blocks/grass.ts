@@ -1,6 +1,6 @@
 import { BLOCK_HEIGHT } from "../../../config";
-import { Block, IBlockOptions } from "./block";
 import { ZIndexes } from "../zindex";
+import { Block, IBlockOptions } from "./block";
 
 /*
  * It's a grass block.

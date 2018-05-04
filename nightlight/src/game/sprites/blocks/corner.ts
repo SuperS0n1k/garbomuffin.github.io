@@ -2,8 +2,8 @@ import { BLOCK_HEIGHT, BLOCK_WIDTH, LEVEL_WIDTH } from "../../../config";
 import { ImageSprite } from "../../../engine/sprites/imagesprite";
 import { TImage } from "../../../engine/types";
 import { Vector } from "../../../engine/vector";
-import { Block, IBlockOptions, SolidBlock } from "./block";
 import { Nightlight } from "../../game";
+import { Block, IBlockOptions, SolidBlock } from "./block";
 
 /*
  * A block that is in the corner

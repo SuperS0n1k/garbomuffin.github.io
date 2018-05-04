@@ -1,14 +1,14 @@
 import { ImageSprite } from "../engine/sprites/imagesprite";
 import { TBackground, TImage, TSound } from "../engine/types";
 import { Vector } from "../engine/vector";
-import { Nightlight } from "./game";
-import { BASE_TEXTURE as nossTexture } from "./sprites/bosses/noss";
-import { SwordBoss } from "./sprites/bosses/sword/sword";
-import { FinalBoss } from "./sprites/bosses/final/finalboss";
-import { NossBoss } from "./sprites/bosses/noss/noss";
-import { INightlightTextSpriteOptions } from "./sprites/text/NightlightTextSprite";
 import { scratchCoordinate } from "../utils";
+import { Nightlight } from "./game";
+import { FinalBoss } from "./sprites/bosses/final/finalboss";
+import { BASE_TEXTURE as nossTexture } from "./sprites/bosses/noss";
+import { NossBoss } from "./sprites/bosses/noss/noss";
+import { SwordBoss } from "./sprites/bosses/sword/sword";
 import { EndingSprite } from "./sprites/ending/EndingSprite";
+import { INightlightTextSpriteOptions } from "./sprites/text/NightlightTextSprite";
 
 /*
  * It's level data
@@ -164,7 +164,7 @@ export function getLevels(game: Nightlight): Level[] {
     // 13
     {
       levelData: "^^^-..........................^^^-..........................***(...t...................................t.............................................................................................t.....................................................................................t.......t................t..............................................................................u.......................................t.....%%%..........................%_=+%........................#_`^`+$.......................#)^^^-$.......................#&*n*($........%%%..............w.w.........._=+..............www..........)^-...........................)^-...........................)^-.",
-      background: game.ctx.createPattern(game.getImage("brick"), "repeat"),
+      background: "castle",
       backgroundMusic: [game.getSound("music/netherslament")],
       text: [{
         text: "Your final challenges.",

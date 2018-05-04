@@ -2,10 +2,9 @@
  * A sprite that is text
  */
 
-import { AbstractSprite, ISpriteOptions } from "../sprite";
-import { TImage } from "../types";
-import { getOrDefault } from "../utils";
 import { Color, NamedColor } from "../color";
+import { AbstractSprite, ISpriteOptions } from "../sprite";
+import { getOrDefault } from "../utils";
 
 export interface ITextSpriteOptions extends ISpriteOptions {
   text?: string;

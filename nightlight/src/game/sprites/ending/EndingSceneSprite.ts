@@ -1,7 +1,7 @@
 import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { Task } from "../../../engine/task";
-import { EndingSprite } from "./EndingSprite";
 import { Nightlight } from "../../game";
+import { EndingSprite } from "./EndingSprite";
 
 const MOVE_LENGTH = 368;
 

@@ -1,12 +1,9 @@
 import { blockMap } from "../../blockmap";
 import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
 import { IImageSpriteOptions, ImageSprite } from "../../engine/sprites/imagesprite";
-import { TImage } from "../../engine/types";
-import { Vector } from "../../engine/vector";
-import { BlackBlock } from "../../game/sprites/blocks/black";
-import { LevelEditorIndexes } from "./LevelEditorIndexes";
-import { NightlightLevelEditor } from "../editor";
 import { BLOCK_MAP_KEYS } from "../blockmapkeys";
+import { NightlightLevelEditor } from "../editor";
+import { LevelEditorIndexes } from "./LevelEditorIndexes";
 
 export class SelectorSprite extends ImageSprite {
   private selection: string = "a";
@@ -30,6 +27,7 @@ export class SelectorSprite extends ImageSprite {
     this.texture = texture;
     this.runtime.ui.activeBlockImage.src = texture.src;
     this.runtime.ui.activeBlockImage.height = this.texture.height * 6;
+    this.runtime.ui.activeBlockImage.width = this.texture.width * 6;
     this.runtime.ui.activeBlockDescription.textContent = blockDetails.type.name + ", " + this.selection.toUpperCase();
     this.updateDimensions();
   }

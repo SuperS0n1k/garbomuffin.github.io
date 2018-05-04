@@ -1,19 +1,19 @@
 import { blockMap } from "../blockmap";
 import * as config from "../config";
-import { CANVAS_WIDTH, GameRuntime, CANVAS_HEIGHT } from "../engine/runtime";
+import { GameRuntime } from "../engine/runtime";
 import { GameState } from "../engine/state";
-import { TBackground, TImage, TSound } from "../engine/types";
+import { TBackground, TSound } from "../engine/types";
 import { Vector } from "../engine/vector";
 import { Vector2D } from "../engine/vector2d";
-import { getLevels, Level } from "../game/levels";
-import { Block, IBlockOptions, StaticSolidBlock } from "./sprites/blocks/block";
+import { Level, getLevels } from "../game/levels";
+import { clone, getElementById, getRandomInt } from "../utils";
+import { Block, IBlockOptions } from "./sprites/blocks/block";
 import { JumpLight } from "./sprites/jumplight";
 import { PauseSprite } from "./sprites/pause/PauseSprite";
 import { PlayerSprite } from "./sprites/player/player";
 import { BackgroundStarsSprite } from "./sprites/stars";
 import { StaticNightlightTextSprite } from "./sprites/text/StaticNightlightTextSprite";
 import { ZIndexes } from "./sprites/zindex";
-import { clone, getRandomInt, getElementById } from "../utils";
 
 const SPOTLIGHT_SIZE = 75;
 const TOTAL_BACKGROUND_STARS = 100;
@@ -33,6 +33,7 @@ export class Nightlight extends GameRuntime {
   public playState: GameState = this.defaultState;
   public pauseState: GameState = new GameState();
   public levelCode!: string;
+  public castleBackground!: CanvasPattern;
 
   constructor() {
     super(getElementById("canvas"));
@@ -102,7 +103,7 @@ export class Nightlight extends GameRuntime {
   // Overrides
   //
 
-  public start() {
+  public start(levels?: Level[]) {
     super.start();
 
     new PauseSprite({
@@ -111,7 +112,12 @@ export class Nightlight extends GameRuntime {
       persistent: true,
     });
 
-    this.levels = getLevels(this);
+    this.castleBackground = this.ctx.createPattern(this.getImage("brick"), "repeat");
+    if (levels) {
+      this.levels = levels;
+    } else {
+      this.levels = getLevels(this);
+    }
 
     this.createPlayer();
     this.createStarBackground();
@@ -210,6 +216,9 @@ export class Nightlight extends GameRuntime {
 
     // if a level changes the background
     if (level.background) {
+      if (level.background === "castle") {
+        level.background = this.castleBackground;
+      }
       this.background = level.background;
     }
 

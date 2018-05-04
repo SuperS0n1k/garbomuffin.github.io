@@ -36,6 +36,9 @@ export class LevelUpCoinSprite extends Block {
     if (touchingPlayer) {
       this.runtime.playSound("blocks/coin");
       this.runtime.level++;
+      if (this.runtime.level === this.runtime.levels.length) {
+        this.runtime.level = 0;
+      }
       this.runtime.renderLevel();
     }
   }

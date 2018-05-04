@@ -1,9 +1,9 @@
 import { IImageSpriteOptions } from "../../../../engine/sprites/imagesprite";
 import { Task } from "../../../../engine/task";
 import { getRandomInt } from "../../../../utils";
+import { Nightlight } from "../../../game";
 import { ZIndexes } from "../../zindex";
 import { AbstractNossBoss, BASE_TEXTURE, HIT_ANIMATION_TOTAL_LENGTH } from "../noss";
-import { Nightlight } from "../../../game";
 
 const HEALTH = 3;
 

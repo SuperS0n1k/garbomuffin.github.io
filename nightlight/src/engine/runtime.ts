@@ -1,17 +1,16 @@
 import "../3rd-party/stableSort";
-
 import { AbstractKeyboard } from "./drivers/keyboard/base";
 import { Keyboard } from "./drivers/keyboard/keyboard";
 import { Mouse } from "./drivers/mouse/mouse";
 import { TouchscreenMouse } from "./drivers/mouse/touchscreen";
 import { ExitError } from "./errors/exit";
 import { AbstractSprite } from "./sprite";
+import { GameState } from "./state";
 import { StaticRendererSprite } from "./staticRenderer";
 import { TaskRunner } from "./task";
 import { TBackground, TImage, TSound } from "./types";
 import { isMobile } from "./utils";
 import { Vector } from "./vector";
-import { GameState } from "./state";
 
 /*
  * The main game runtime object

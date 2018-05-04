@@ -1,9 +1,9 @@
 import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { Task } from "../../../engine/task";
 import { Vector } from "../../../engine/vector";
+import { Nightlight } from "../../game";
 import { LevelUpCoinSprite } from "../coin";
 import { HitEffectSprite } from "./hiteffect";
-import { Nightlight } from "../../game";
 
 const PLAYER_JUMP_YV = 3;
 

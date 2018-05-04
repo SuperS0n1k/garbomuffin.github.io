@@ -1,8 +1,8 @@
 import { AbstractSprite } from "../../../engine/sprite";
 import { Task } from "../../../engine/task";
+import { runBasicPhysics } from "../../physics";
 import { PlayerSprite } from "../player/player";
 import { IBlockOptions, SolidBlock } from "./block";
-import { runBasicPhysics } from "../../physics";
 
 /*
  * A block that crumbles beneath you as you stand on it

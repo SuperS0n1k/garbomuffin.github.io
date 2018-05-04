@@ -1,7 +1,9 @@
-import { Nightlight } from "./game/game";
 import { NightlightLevelEditor } from "./editor/editor";
 import { GameRuntime } from "./engine/runtime";
-import { LEVEL_HEIGHT, LEVEL_WIDTH } from "./config";
+import { Nightlight } from "./game/game";
+import { Level } from "./game/levels";
+import { LEVEL_CODE_LENGTH, getLevelForCode } from "./levelcode";
+import { getSearchParam } from "./utils";
 
 /*
  * The loader.
@@ -254,17 +256,16 @@ function canPlay() {
   if (game instanceof Nightlight) {
     playButton.onclick = () => run();
     loadCodeButton.onclick = () => {
-      const code = prompt("Please enter the level code:");
+      const defaultValue = getSearchParam("level") || "";
+      const code = prompt("Please enter the level code:", defaultValue);
       if (code === null) {
         return;
       }
-      if (code.length === LEVEL_HEIGHT * LEVEL_WIDTH) {
-        // we got a full level data
-        // this is hacky but it works
-        run();
-        game.renderLevel({
-          levelData: code,
-        });
+      if (code.length === LEVEL_CODE_LENGTH || code.startsWith("{")) {
+        runLevel([getLevelForCode(code)]);
+        game.setBackgroundMusic([game.getSound("music/exploration")]);
+        location.hash = code;
+        history.pushState({}, "", "?level=" + code);
       } else {
         // we got a resume code
         const res = game.readLevelCode(code);
@@ -288,8 +289,17 @@ function canPlay() {
   }
 }
 
-function run() {
+function showCanvas() {
   menuContainer.style.display = "none";
   game.canvas.style.display = "";
+}
+
+function runLevel(levels: Level[]) {
+  showCanvas();
+  (game as Nightlight).start(levels);
+}
+
+function run() {
+  showCanvas();
   game.start();
 }

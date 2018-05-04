@@ -1,4 +1,4 @@
-import { BLOCK_HEIGHT, BLOCK_WIDTH, GRAVITY, LEVEL_WIDTH, FRICTION } from "../config";
+import { BLOCK_HEIGHT, BLOCK_WIDTH, FRICTION, GRAVITY, LEVEL_WIDTH } from "../config";
 import { AbstractSprite } from "../engine/sprite";
 import { getOrDefault } from "../engine/utils";
 import { Nightlight } from "./game";

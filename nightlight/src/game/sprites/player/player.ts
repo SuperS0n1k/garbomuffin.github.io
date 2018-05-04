@@ -2,10 +2,10 @@ import { BLOCK_HEIGHT } from "../../../config";
 import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { Vector } from "../../../engine/vector";
 import { clone, getRandomInt } from "../../../utils";
-import { PseudoSolidBlock } from "../blocks/block";
-import { PlayerFragmentSprite } from "./fragment";
 import { Nightlight } from "../../game";
 import { runBasicPhysics } from "../../physics";
+import { PseudoSolidBlock } from "../blocks/block";
+import { PlayerFragmentSprite } from "./fragment";
 
 /*
  * It's a player.
