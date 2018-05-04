@@ -1,4 +1,4 @@
-import { IImageSpriteOptions, ImageSprite } from "engine/sprites/imagesprite";
+import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { runBasicPhysics } from "../../physics";
 
 /*

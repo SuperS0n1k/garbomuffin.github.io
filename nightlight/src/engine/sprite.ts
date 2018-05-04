@@ -193,7 +193,6 @@ export abstract class AbstractSprite extends TaskRunner {
     }
 
     const length = data.length;
-    // loop over the data and check for opacity >0
     for (let i = 3; i < length; i += 4) {
       if (data[i]) {
         return true;

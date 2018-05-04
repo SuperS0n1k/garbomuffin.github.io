@@ -1,5 +1,5 @@
-import { Task } from "engine/task";
-import { Vector } from "engine/vector";
+import { Task } from "../../../engine/task";
+import { Vector } from "../../../engine/vector";
 import { IBlockOptions, SolidBlock } from "./block";
 import { runBasicPhysics } from "../../physics";
 

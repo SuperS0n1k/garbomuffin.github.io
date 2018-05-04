@@ -1,7 +1,7 @@
-import { ImageSprite, IImageSpriteOptions } from "engine/sprites/imagesprite";
+import { ImageSprite, IImageSpriteOptions } from "../../../engine/sprites/imagesprite";
 import { ZIndexes } from "../zindex";
 import { NightlightTextSprite, CHAR_WIDTH, CHAR_HEIGHT } from "../text/NightlightTextSprite";
-import { Vector } from "engine/vector";
+import { Vector } from "../../../engine/vector";
 import { Nightlight } from "../../game";
 
 class LevelCodeTextSprite extends NightlightTextSprite {

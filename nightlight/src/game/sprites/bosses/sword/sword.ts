@@ -1,7 +1,7 @@
 import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../../../config";
-import { Task } from "engine/task";
-import { Vector } from "engine/vector";
-import { Vector2D } from "engine/vector2d";
+import { Task } from "../../../../engine/task";
+import { Vector } from "../../../../engine/vector";
+import { Vector2D } from "../../../../engine/vector2d";
 import { IBlockOptions } from "../../blocks/block";
 import { AbstractBoss } from "../boss";
 import { runBasicPhysics } from "../../../physics";

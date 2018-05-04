@@ -1,5 +1,5 @@
 import { BLOCK_HEIGHT } from "../../../config";
-import { Vector } from "engine/vector";
+import { Vector } from "../../../engine/vector";
 import { LevelUpCoinSprite } from "../coin";
 import { IBlockOptions, SolidBlock } from "./block";
 

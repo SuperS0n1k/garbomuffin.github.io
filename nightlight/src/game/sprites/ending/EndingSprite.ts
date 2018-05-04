@@ -1,8 +1,7 @@
-import { AbstractSprite, ISpriteOptions } from "engine/sprite";
-import { Task } from "engine/task";
-import { toHex } from "engine/utils";
-import { Vector } from "engine/vector";
-
+import { AbstractSprite, ISpriteOptions } from "../../../engine/sprite";
+import { Task } from "../../../engine/task";
+import { toHex } from "../../../engine/utils";
+import { Vector } from "../../../engine/vector";
 import { scratchCoordinate } from "../../../utils";
 import { Nightlight } from "../../game";
 import { INightlightTextSpriteOptions } from "../text/NightlightTextSprite";

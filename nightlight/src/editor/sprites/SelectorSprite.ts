@@ -6,60 +6,7 @@ import { Vector } from "../../engine/vector";
 import { BlackBlock } from "../../game/sprites/blocks/black";
 import { LevelEditorIndexes } from "./LevelEditorIndexes";
 import { NightlightLevelEditor } from "../editor";
-
-const BLOCK_MAP_KEYS = [
-  "a",
-  "b",
-  "c",
-  "d",
-  "e",
-  "f",
-  "g",
-  "h",
-  "i",
-  "j",
-  "k",
-  "l",
-  "m",
-  "n",
-  "o",
-  "p",
-  "q",
-  "r",
-  "s",
-  "t",
-  "u",
-  "v",
-  "w",
-  "[",
-  "x",
-  "y",
-  "z",
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "@",
-  "!",
-  "#",
-  "$",
-  "%",
-  "^",
-  "&",
-  "*",
-  "(",
-  ")",
-  "-",
-  "_",
-  "=",
-  "+",
-  "`",
-];
+import { BLOCK_MAP_KEYS } from "../blockmapkeys";
 
 export class SelectorSprite extends ImageSprite {
   private selection: string = "a";
@@ -78,20 +25,27 @@ export class SelectorSprite extends ImageSprite {
 
   private updateSelection() {
     this.selection = BLOCK_MAP_KEYS[this.selectionIndex];
-    const texture = this.runtime.getImage(blockMap[this.selection].texture);
+    const blockDetails = blockMap[this.selection];
+    const texture = this.runtime.getImage(blockDetails.texture);
     this.texture = texture;
-    this.runtime.activeBlockImage.src = texture.src;
-    this.runtime.activeBlockChar.textContent = this.selection.toUpperCase();
+    this.runtime.ui.activeBlockImage.src = texture.src;
+    this.runtime.ui.activeBlockImage.height = this.texture.height * 6;
+    this.runtime.ui.activeBlockDescription.textContent = blockDetails.type.name + ", " + this.selection.toUpperCase();
     this.updateDimensions();
   }
 
   private setBlock(x: number, y: number, char: string) {
     const row = this.runtime.levelData[y];
-    if (row) {
-      row[x] = char;
-    } else {
-      console.warn("no row for y=" + y);
+    if (!row) {
+      console.warn(`no row for y=${y}`);
+      return;
     }
+    const existingChar = row[x];
+    if (!existingChar) {
+      console.warn(`no existing char for y=${y} x=${x}`);
+      return;
+    }
+    row[x] = char;
     this.runtime.levelRenderer.updateLevel();
   }
 
@@ -132,5 +86,15 @@ export class SelectorSprite extends ImageSprite {
     } else {
       this.opacity = 0.5;
     }
+  }
+
+  public setSelection(char: string) {
+    const index = BLOCK_MAP_KEYS.indexOf(char);
+    if (index === -1) {
+      throw new Error(char + " is not in BLOCK_MAP_KEYS");
+    }
+    this.selection = char;
+    this.selectionIndex = index;
+    this.updateSelection();
   }
 }

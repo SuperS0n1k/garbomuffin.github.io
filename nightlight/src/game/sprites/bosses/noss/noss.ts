@@ -1,6 +1,6 @@
-import { IImageSpriteOptions } from "engine/sprites/imagesprite";
-import { Task } from "engine/task";
-import { Vector } from "engine/vector";
+import { IImageSpriteOptions } from "../../../../engine/sprites/imagesprite";
+import { Task } from "../../../../engine/task";
+import { Vector } from "../../../../engine/vector";
 import { getRandomInt, scratchCoordinate } from "../../../../utils";
 import { AbstractNossBoss, BASE_TEXTURE, HIT_ANIMATION_TOTAL_LENGTH } from "../noss";
 import { MOVE_TIME as BULLET_MOVE_TIME, NossBossBulletSprite } from "./bullet";

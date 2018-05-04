@@ -1,6 +1,6 @@
-import { AbstractSprite } from "engine/sprite";
-import { Task } from "engine/task";
-import { Vector } from "engine/vector";
+import { AbstractSprite } from "../../../engine/sprite";
+import { Task } from "../../../engine/task";
+import { Vector } from "../../../engine/vector";
 import { PlayerSprite } from "../player/player";
 import { IBlockOptions, SolidBlock } from "./block";
 import { LightBlock } from "./lightblock";

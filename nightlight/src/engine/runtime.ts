@@ -67,12 +67,12 @@ export class GameRuntime extends TaskRunner {
     container.appendChild(this.canvas);
 
     // init static rendering optimizations
-    const {canvas: staticCanvas, ctx: staticCtx} = this.createCanvas({alpha: false});
+    const {canvas: staticCanvas, ctx: staticCtx} = this.createCanvas();
     this.staticCanvas = staticCanvas;
     this.staticCtx = staticCtx;
 
     // collision canvas
-    const {canvas: collisionCanvas, ctx: collisionCtx} = this.createCanvas({alpha: false});
+    const {canvas: collisionCanvas, ctx: collisionCtx} = this.createCanvas();
     this.collisionCanvas = collisionCanvas;
     this.collisionCtx = collisionCtx;
 
@@ -320,7 +320,6 @@ export class GameRuntime extends TaskRunner {
     // clear the canvas
     this.resetCanvas(this.ctx, this.background);
 
-
     // sort sprites by z
     this.sortSprites();
 
@@ -369,7 +368,6 @@ export class GameRuntime extends TaskRunner {
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
 
-    ctx.scale(1, 1);
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, width, height);
@@ -381,11 +379,7 @@ export class GameRuntime extends TaskRunner {
     canvas.height = CANVAS_HEIGHT;
 
     const ctx = canvas.getContext("2d", options) as CanvasRenderingContext2D;
-    // makes images that are scaled still look pixelated, this is mainly for retro-style games
-    // thanks web browsers for using vendor prefixed things
     ctx.imageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
 
     return {canvas, ctx};
   }

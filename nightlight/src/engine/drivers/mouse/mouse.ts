@@ -15,7 +15,9 @@ class MouseButton extends BaseMouseButton implements IMouseButton {
   constructor(mouse: Mouse, button: Button) {
     super(mouse); // It's a bird! It's a plane! No it's Supermouse!
 
-    document.addEventListener("mousedown", (e: any) => {
+    // The choice of adding listeners to canvas and document is very intentional
+
+    mouse.runtime.canvas.addEventListener("mousedown", (e: any) => {
       if (e.button === button) {
         this.isDown = true;
       }

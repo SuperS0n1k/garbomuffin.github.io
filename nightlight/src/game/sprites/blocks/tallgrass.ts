@@ -1,4 +1,4 @@
-import { Vector } from "engine/vector";
+import { Vector } from "../../../engine/vector";
 import { Block, IBlockOptions } from "./block";
 import { GrassBlock } from "./grass";
 import { Nightlight } from "../../game";
@@ -17,14 +17,10 @@ export class TallGrassBlock extends Block {
   constructor(opts: IBlockOptions) {
     super(opts);
 
-    const block = new GrassBlock({
+    new GrassBlock({
       position: new Vector(this.position),
       texture: this.runtime.getImage("blocks/k"),
     });
-    // dirty hack to fix an OOB bug
-    if (this.runtime.level === 4) {
-      block.solid = true;
-    }
 
     this.floorAlign();
   }

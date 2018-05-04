@@ -18,9 +18,6 @@ module.exports = {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
-    alias: {
-      engine: path.join(__dirname, "src/engine"),
-    }
   },
   output: {
     filename: "bundle.js",

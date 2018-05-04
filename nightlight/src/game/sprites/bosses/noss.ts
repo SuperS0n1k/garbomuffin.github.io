@@ -1,5 +1,5 @@
-import { IImageSpriteOptions, ImageSprite } from "engine/sprites/imagesprite";
-import { Task } from "engine/task";
+import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
+import { Task } from "../../../engine/task";
 import { AbstractBoss } from "./boss";
 
 const PARTICLE_LIFESPAN = 20;

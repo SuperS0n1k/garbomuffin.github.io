@@ -1,6 +1,6 @@
 import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../../config";
-import { AbstractSprite } from "engine/sprite";
-import { IImageSpriteOptions, ImageSprite } from "engine/sprites/imagesprite";
+import { AbstractSprite } from "../../../engine/sprite";
+import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { Nightlight } from "../../game";
 
 export interface IBlockOptions extends IImageSpriteOptions {

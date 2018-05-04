@@ -1,5 +1,5 @@
-import { Task } from "engine/task";
-import { Vector } from "engine/vector";
+import { Task } from "../../engine/task";
+import { Vector } from "../../engine/vector";
 import { Block, IBlockOptions } from "./blocks/block";
 
 /*

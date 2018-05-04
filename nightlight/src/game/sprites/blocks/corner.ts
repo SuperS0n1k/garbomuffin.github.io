@@ -1,8 +1,8 @@
 import { BLOCK_HEIGHT, BLOCK_WIDTH, LEVEL_WIDTH } from "../../../config";
-import { ImageSprite } from "engine/sprites/imagesprite";
-import { TImage } from "engine/types";
-import { Vector } from "engine/vector";
-import { Block, IBlockOptions } from "./block";
+import { ImageSprite } from "../../../engine/sprites/imagesprite";
+import { TImage } from "../../../engine/types";
+import { Vector } from "../../../engine/vector";
+import { Block, IBlockOptions, SolidBlock } from "./block";
 import { Nightlight } from "../../game";
 
 /*
@@ -95,5 +95,22 @@ export class CastleCornerBlock extends CornerBlock {
       this.testCorner(LEVEL_WIDTH + 1, this.runtime.getImage("blocks/castlecorner/topright"), 0, 0, 0);
       this.testCorner(-LEVEL_WIDTH + 1, this.runtime.getImage("blocks/castlecorner/bottomright"), 0, 0, 0);
     }
+  }
+}
+
+// I fix an OOB glitch in ONE level in the game!
+// So useful!
+export class SolidRotatedCornerBlock extends RotatedCornerBlock {
+  constructor(options: IBlockOptions) {
+    super(options);
+
+    const position = new Vector(this.position);
+    position.z = this.z - 1;
+    new SolidBlock({
+      texture: this.runtime.getImage("blocks/c"),
+      position,
+      static: true,
+      levelIndex: this.levelIndex,
+    });
   }
 }

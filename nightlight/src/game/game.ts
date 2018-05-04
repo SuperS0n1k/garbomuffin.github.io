@@ -1,10 +1,10 @@
 import { blockMap } from "../blockmap";
 import * as config from "../config";
-import { CANVAS_WIDTH, GameRuntime, CANVAS_HEIGHT } from "engine/runtime";
-import { GameState } from "engine/state";
-import { TBackground, TImage, TSound } from "engine/types";
-import { Vector } from "engine/vector";
-import { Vector2D } from "engine/vector2d";
+import { CANVAS_WIDTH, GameRuntime, CANVAS_HEIGHT } from "../engine/runtime";
+import { GameState } from "../engine/state";
+import { TBackground, TImage, TSound } from "../engine/types";
+import { Vector } from "../engine/vector";
+import { Vector2D } from "../engine/vector2d";
 import { getLevels, Level } from "../game/levels";
 import { Block, IBlockOptions, StaticSolidBlock } from "./sprites/blocks/block";
 import { JumpLight } from "./sprites/jumplight";
@@ -13,7 +13,7 @@ import { PlayerSprite } from "./sprites/player/player";
 import { BackgroundStarsSprite } from "./sprites/stars";
 import { StaticNightlightTextSprite } from "./sprites/text/StaticNightlightTextSprite";
 import { ZIndexes } from "./sprites/zindex";
-import { clone, getRandomInt } from "../utils";
+import { clone, getRandomInt, getElementById } from "../utils";
 
 const SPOTLIGHT_SIZE = 75;
 const TOTAL_BACKGROUND_STARS = 100;
@@ -35,7 +35,7 @@ export class Nightlight extends GameRuntime {
   public levelCode!: string;
 
   constructor() {
-    super(document.getElementById("container")!);
+    super(getElementById("canvas"));
 
     (document.getElementById("volume") as HTMLInputElement).oninput = (e) => {
       const volume = Number((e.target as HTMLInputElement).value);
@@ -180,10 +180,10 @@ export class Nightlight extends GameRuntime {
     return block;
   }
 
-  public renderLevel(num: number = this.level) {
+  public renderLevel(d: number | Level = this.level) {
     this.destroyLevel();
 
-    const level = this.levels[num];
+    const level = typeof d === "object" ? d : this.levels[d];
     const levelData = level.levelData;
 
     this.levelData = levelData;

@@ -1,5 +1,5 @@
-import { IImageSpriteOptions } from "engine/sprites/imagesprite";
-import { Task } from "engine/task";
+import { IImageSpriteOptions } from "../../engine/sprites/imagesprite";
+import { Task } from "../../engine/task";
 import { Block } from "./blocks/block";
 import { PlayerSprite } from "./player/player";
 import { Nightlight } from "../game";

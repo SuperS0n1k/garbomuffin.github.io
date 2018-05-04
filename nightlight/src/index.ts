@@ -1,6 +1,7 @@
 import { Nightlight } from "./game/game";
 import { NightlightLevelEditor } from "./editor/editor";
 import { GameRuntime } from "./engine/runtime";
+import { LEVEL_HEIGHT, LEVEL_WIDTH } from "./config";
 
 /*
  * The loader.
@@ -257,13 +258,23 @@ function canPlay() {
       if (code === null) {
         return;
       }
-      const res = game.readLevelCode(code);
-      if (res === null) {
-        alert("Invalid level code");
-        return;
+      if (code.length === LEVEL_HEIGHT * LEVEL_WIDTH) {
+        // we got a full level data
+        // this is hacky but it works
+        run();
+        game.renderLevel({
+          levelData: code,
+        });
+      } else {
+        // we got a resume code
+        const res = game.readLevelCode(code);
+        if (res === null) {
+          alert("Invalid level code");
+          return;
+        }
+        game.level = res;
+        run();
       }
-      game.level = res;
-      run();
     };
     menuBackground.classList.add("active");
     loadingScreen.style.display = "none";

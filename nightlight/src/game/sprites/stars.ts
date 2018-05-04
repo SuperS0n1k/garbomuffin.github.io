@@ -1,7 +1,7 @@
-import { AbstractSprite, ISpriteOptions } from "engine/sprite";
-import { Task } from "engine/task";
-import { toHex } from "engine/utils";
-import { Vector2D } from "engine/vector2d";
+import { AbstractSprite, ISpriteOptions } from "../../engine/sprite";
+import { Task } from "../../engine/task";
+import { toHex } from "../../engine/utils";
+import { Vector2D } from "../../engine/vector2d";
 
 /*
  * The stars in the background.
@@ -74,6 +74,6 @@ export class BackgroundStarsSprite extends AbstractSprite {
     }
 
     const image = this.renderCache[this.progress];
-    ctx.drawImage(image, 0, 0);
+    ctx.drawImage(image, 0, 0, image.width, image.height);
   }
 }

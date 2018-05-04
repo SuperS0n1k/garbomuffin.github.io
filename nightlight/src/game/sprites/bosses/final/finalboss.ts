@@ -1,5 +1,5 @@
-import { IImageSpriteOptions } from "engine/sprites/imagesprite";
-import { Task } from "engine/task";
+import { IImageSpriteOptions } from "../../../../engine/sprites/imagesprite";
+import { Task } from "../../../../engine/task";
 import { getRandomInt } from "../../../../utils";
 import { ZIndexes } from "../../zindex";
 import { AbstractNossBoss, BASE_TEXTURE, HIT_ANIMATION_TOTAL_LENGTH } from "../noss";

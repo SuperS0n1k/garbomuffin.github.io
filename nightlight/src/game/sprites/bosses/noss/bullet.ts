@@ -1,7 +1,7 @@
-import { IImageSpriteOptions, ImageSprite } from "engine/sprites/imagesprite";
-import { Task } from "engine/task";
-import { radiansToDegree } from "engine/utils";
-import { Vector } from "engine/vector";
+import { IImageSpriteOptions, ImageSprite } from "../../../../engine/sprites/imagesprite";
+import { Task } from "../../../../engine/task";
+import { radiansToDegree } from "../../../../engine/utils";
+import { Vector } from "../../../../engine/vector";
 import { clamp } from "../../../../utils";
 import { Nightlight } from "../../../game";
 

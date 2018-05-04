@@ -1,5 +1,5 @@
-import { IImageSpriteOptions, ImageSprite } from "engine/sprites/imagesprite";
-import { Vector } from "engine/vector";
+import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
+import { Vector } from "../../../engine/vector";
 
 /*
  * Health events for bosses

@@ -1,4 +1,4 @@
-import { AbstractSprite, ISpriteOptions } from "engine/sprite";
+import { AbstractSprite, ISpriteOptions } from "../../../engine/sprite";
 
 export interface INightlightTextSpriteOptions extends ISpriteOptions {
   text: string;

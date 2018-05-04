@@ -33,3 +33,20 @@ export function clamp(x: number, min: number, max: number) {
     return x;
   }
 }
+
+// https://stackoverflow.com/a/6259536
+export function splitToChunks(str: string, chunkSize: number): string[] {
+  const chunks = [];
+  for (let i = 0; i < str.length; i += chunkSize) {
+    chunks.push(str.substring(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+export function getElementById<T extends HTMLElement>(id: string): T {
+  const el = document.getElementById(id);
+  if (el === null) {
+    throw new Error("No element with id " + id);
+  }
+  return el as T;
+}

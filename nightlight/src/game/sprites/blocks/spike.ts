@@ -1,4 +1,4 @@
-import { AbstractSprite } from "engine/sprite";
+import { AbstractSprite } from "../../../engine/sprite";
 import { PlayerSprite } from "../player/player";
 import { IBlockOptions, SolidBlock } from "./block";
 

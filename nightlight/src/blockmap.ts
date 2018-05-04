@@ -2,7 +2,7 @@ import { BlackBlock } from "./game/sprites/blocks/black";
 import { Block, PseudoSolidBlock, StaticSolidBlock } from "./game/sprites/blocks/block";
 import { BlockSwitchSpawnerBlock } from "./game/sprites/blocks/blockswitchspawner";
 import { AboveLevelUpCoinSpawnerBlock, BelowLevelUpCoinSpawnerBlock } from "./game/sprites/blocks/coinspawner";
-import { CastleCornerBlock, RotatedCornerBlock } from "./game/sprites/blocks/corner";
+import { CastleCornerBlock, RotatedCornerBlock, SolidRotatedCornerBlock } from "./game/sprites/blocks/corner";
 import { CrumblingBlock } from "./game/sprites/blocks/crumble";
 import { InstantFallingBlock, VibratingFallingBlock } from "./game/sprites/blocks/falling";
 import { GrassBlock } from "./game/sprites/blocks/grass";
@@ -53,6 +53,7 @@ export const blockMap: IBlockMap = {
   "k": special(GrassBlock, "blocks/k"),
   "l": special(GrassBlock, "blocks/l"),
   "m": special(RotatedCornerBlock, "blocks/m"),
+  "]": special(SolidRotatedCornerBlock, "blocks/m"),
   "n": special(AboveLevelUpCoinSpawnerBlock, "blocks/n"),
   "o": special(UpSpikeBlock, "blocks/spikes/up"),
   "p": special(TallGrassBlock, "blocks/p"),

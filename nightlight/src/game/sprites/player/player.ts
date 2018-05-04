@@ -1,6 +1,6 @@
 import { BLOCK_HEIGHT } from "../../../config";
-import { IImageSpriteOptions, ImageSprite } from "engine/sprites/imagesprite";
-import { Vector } from "engine/vector";
+import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
+import { Vector } from "../../../engine/vector";
 import { clone, getRandomInt } from "../../../utils";
 import { PseudoSolidBlock } from "../blocks/block";
 import { PlayerFragmentSprite } from "./fragment";
@@ -141,6 +141,11 @@ export class PlayerSprite extends ImageSprite {
     if (this.y >= this.runtime.canvas.height) {
       this.kill();
     }
+
+    // if (this.runtime.mouse.isDown) {
+    //   this.x = this.runtime.mouse.position.x;
+    //   this.y = this.runtime.mouse.position.y;
+    // }
   }
 
   public reset() {
