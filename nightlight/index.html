@@ -45,12 +45,33 @@
       </div>
 
       <div id="level-editor-ui" class="level-editor-ui">
-        <div><b>Active block:</b> (<span id="level-editor-active-block-description"></span>)</div>
-        <div>
-          <img id="level-editor-active-block-image">
+        <label>
+          Mode:
+          <select id="level-editor-option-mode">
+            <option selected value="0">Block</option>
+            <option value="1">Jumpy Bois</option>
+            <option value="2" disabled>Text (maybe soon)</option>
+          </select>
+        </label>
+
+        <div id="level-editor-mode-block" class="level-editor-mode">
+          <div><b>Active block:</b> (<span id="level-editor-active-block-description"></span>)</div>
+          <div>
+            <img id="level-editor-active-block-image">
+          </div>
+  
+          <div id="level-editor-block-gallery"></div>
         </div>
 
-        <div id="level-editor-block-gallery"></div>
+        <div id="level-editor-mode-jump-lights" class="level-editor-mode">
+          <button id="level-editor-jump-lights-add">Add Light</button>
+          <button id="level-editor-jump-lights-move">Move Light</button>
+          <button id="level-editor-jump-lights-remove">Remove Light</button>
+        </div>
+
+        <div>
+          
+        </div>
 
         <hr>
 

@@ -3,9 +3,10 @@ import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
 import { IImageSpriteOptions, ImageSprite } from "../../engine/sprites/imagesprite";
 import { BLOCK_MAP_KEYS } from "../blockmapkeys";
 import { NightlightLevelEditor } from "../editor";
+import { LevelEditorMode } from "../mode";
 import { LevelEditorIndexes } from "./LevelEditorIndexes";
 
-export class SelectorSprite extends ImageSprite {
+export class BlockSelectorSprite extends ImageSprite {
   private selection: string = "a";
   private selectionIndex: number = 0;
   public runtime!: NightlightLevelEditor;
@@ -18,6 +19,12 @@ export class SelectorSprite extends ImageSprite {
     this.height = BLOCK_HEIGHT;
     this.texture = this.runtime.getImage(blockMap[this.selection].texture);
     this.updateSelection();
+
+    document.addEventListener("keydown", (e) => {
+      if (blockMap[e.key]) {
+        this.setSelection(e.key);
+      }
+    });
   }
 
   private updateSelection() {
@@ -25,10 +32,10 @@ export class SelectorSprite extends ImageSprite {
     const blockDetails = blockMap[this.selection];
     const texture = this.runtime.getImage(blockDetails.texture);
     this.texture = texture;
-    this.runtime.ui.activeBlockImage.src = texture.src;
-    this.runtime.ui.activeBlockImage.height = this.texture.height * 6;
-    this.runtime.ui.activeBlockImage.width = this.texture.width * 6;
-    this.runtime.ui.activeBlockDescription.textContent = blockDetails.type.name + ", " + this.selection;
+    this.runtime.ui.blocks.activeBlockImage.src = texture.src;
+    this.runtime.ui.blocks.activeBlockImage.height = this.texture.height * 6;
+    this.runtime.ui.blocks.activeBlockImage.width = this.texture.width * 6;
+    this.runtime.ui.blocks.activeBlockDescription.textContent = blockDetails.type.name + ", " + this.selection;
     this.updateDimensions();
   }
 
@@ -48,6 +55,12 @@ export class SelectorSprite extends ImageSprite {
   }
 
   private run() {
+    if (this.runtime.mode !== LevelEditorMode.Blocks) {
+      this.visible = false;
+      return;
+    }
+    this.visible = true;
+
     // get hovered block
     const mouseX = this.runtime.mouse.position.x;
     const mouseY = this.runtime.mouse.position.y - this.runtime.blockOffsetY;
@@ -55,24 +68,6 @@ export class SelectorSprite extends ImageSprite {
     const blockY = Math.ceil(mouseY / BLOCK_HEIGHT);
     this.x = blockX * BLOCK_WIDTH;
     this.y = blockY * BLOCK_HEIGHT - this.runtime.blockOffsetY;
-
-    // block changing
-    // up
-    if (this.runtime.keyboard.keys[38].justPressed) {
-      this.selectionIndex++;
-      if (this.selectionIndex >= BLOCK_MAP_KEYS.length) {
-        this.selectionIndex = 0;
-      }
-      this.updateSelection();
-    }
-    // down
-    if (this.runtime.keyboard.keys[40].justPressed) {
-      this.selectionIndex--;
-      if (this.selectionIndex < 0) {
-        this.selectionIndex = BLOCK_MAP_KEYS.length - 1;
-      }
-      this.updateSelection();
-    }
 
     // drawing
     if (this.runtime.mouse.left.isDown) {

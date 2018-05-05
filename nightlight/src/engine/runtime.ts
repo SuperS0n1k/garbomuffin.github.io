@@ -43,6 +43,7 @@ export class GameRuntime extends TaskRunner {
   public started: boolean = false;
   public background: TBackground = "white";
   public defaultState: GameState = new GameState();
+  public cursor: string = "default";
   private _volume: number = 0;
   private _assetPromises: Array<Promise<TImage>> = [];
 
@@ -244,6 +245,8 @@ export class GameRuntime extends TaskRunner {
   }
 
   public update() {
+    this.cursor = "default";
+
     // all non-core details should be implemented using this.addTask
     // the only core things right now are sprite ticking and rendering (partly due to ordering reasons)
     // all tasks added on here are executed BEFORE sprites
@@ -331,6 +334,8 @@ export class GameRuntime extends TaskRunner {
         sprite.render(this.ctx);
       }
     }
+
+    this.canvas.style.cursor = this.cursor;
 
     if (this._DEBUG_NON_STATIC_OUTLINE) {
       this.ctx.strokeStyle = "red";

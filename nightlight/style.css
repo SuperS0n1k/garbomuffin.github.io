@@ -114,6 +114,10 @@ td {
   /* TODO: lock the size of the thing at 96px or whatever */
 }
 
+.level-editor-mode {
+  display: none;
+}
+
 /* #region Block Gallery */
 
 #level-editor-block-gallery {
@@ -123,7 +127,7 @@ td {
   justify-content: flex-start;
   align-content: flex-start;
   height: calc(18px * 4);
-  width: calc(18px * 22);
+  width: calc(18px * 24);
 }
 
 #level-editor-block-gallery .level-editor-gallery-item {

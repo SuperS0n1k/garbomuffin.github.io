@@ -14,7 +14,7 @@ export abstract class LightBlock extends Block {
   public litTexture: string;
   public darkTexture: string;
 
-  constructor(options: IBlockOptions, group: number, lit: string, dark: string) {
+  constructor(options: IBlockOptions, group: number, lit: string, dark: string = "blocks/y") {
     super(options);
     this.litTexture = lit;
     this.darkTexture = dark;
@@ -39,13 +39,13 @@ export abstract class LightBlock extends Block {
   }
 }
 export abstract class AbstractEnabledLightBlock extends LightBlock {
-  constructor(options: IBlockOptions, group: number, lit: string, dark: string) {
+  constructor(options: IBlockOptions, group: number, lit: string, dark?: string) {
     super(options, group, lit, dark);
     this.setSolid(true);
   }
 }
 export abstract class AbstractDisabledLightBlock extends LightBlock {
-  constructor(options: IBlockOptions, group: number, lit: string, dark: string) {
+  constructor(options: IBlockOptions, group: number, lit: string, dark?: string) {
     super(options, group, lit, dark);
     this.setSolid(false);
   }
@@ -53,52 +53,52 @@ export abstract class AbstractDisabledLightBlock extends LightBlock {
 
 export class EnabledLightBlock1 extends AbstractEnabledLightBlock {
   constructor(opts: IBlockOptions) {
-    super(opts, LightBlockGroups.RedGreen, "blocks/z", "blocks/y");
+    super(opts, LightBlockGroups.RedGreen, "blocks/z");
   }
   get type() { return EnabledLightBlock1; }
 }
 export class DisabledLightBlock1 extends AbstractDisabledLightBlock {
   constructor(opts: IBlockOptions) {
-    super(opts, LightBlockGroups.RedGreen, "blocks/z", "blocks/y");
+    super(opts, LightBlockGroups.RedGreen, "blocks/z");
   }
   get type() { return DisabledLightBlock1; }
 }
 
 export class EnabledLightBlock2 extends AbstractEnabledLightBlock {
   constructor(opts: IBlockOptions) {
-    super(opts, LightBlockGroups.RedGreen, "blocks/capitalz", "blocks/capitaly");
+    super(opts, LightBlockGroups.RedGreen, "blocks/capitalz");
   }
   get type() { return EnabledLightBlock2; }
 }
 export class DisabledLightBlock2 extends AbstractDisabledLightBlock {
   constructor(opts: IBlockOptions) {
-    super(opts, LightBlockGroups.RedGreen, "blocks/capitalz", "blocks/capitaly");
+    super(opts, LightBlockGroups.RedGreen, "blocks/capitalz");
   }
   get type() { return DisabledLightBlock2; }
 }
 
 export class EnabledLightBlock3 extends AbstractEnabledLightBlock {
   constructor(opts: IBlockOptions) {
-    super(opts, LightBlockGroups.RedGreen, "blocks/capitalp", "blocks/capitalo");
+    super(opts, LightBlockGroups.RedGreen, "blocks/capitalp");
   }
   get type() { return EnabledLightBlock3; }
 }
 export class DisabledLightBlock3 extends AbstractDisabledLightBlock {
   constructor(opts: IBlockOptions) {
-    super(opts, LightBlockGroups.RedGreen, "blocks/capitalp", "blocks/capitalo");
+    super(opts, LightBlockGroups.RedGreen, "blocks/capitalp");
   }
   get type() { return DisabledLightBlock3; }
 }
 
 export class EnabledLightBlock4 extends AbstractEnabledLightBlock {
   constructor(opts: IBlockOptions) {
-    super(opts, LightBlockGroups.RedGreen, "blocks/capitalq", "blocks/capitalr");
+    super(opts, LightBlockGroups.RedGreen, "blocks/capitalq");
   }
   get type() { return EnabledLightBlock4; }
 }
 export class DisabledLightBlock4 extends AbstractDisabledLightBlock {
   constructor(opts: IBlockOptions) {
-    super(opts, LightBlockGroups.RedGreen, "blocks/capitalq", "blocks/capitalr");
+    super(opts, LightBlockGroups.RedGreen, "blocks/capitalq");
   }
   get type() { return DisabledLightBlock4; }
 }

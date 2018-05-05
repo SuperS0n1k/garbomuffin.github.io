@@ -7,6 +7,7 @@ import { CrumblingBlock } from "./game/sprites/blocks/crumble";
 // tslint:disable-next-line
 import { AquaOrangeInstantFallingBlock, AquaOrangeVibratingFallingBlock, RedGreenInstantFallingBlock, RedGreenVibratingFallingBlock } from "./game/sprites/blocks/falling";
 import { GrassBlock } from "./game/sprites/blocks/grass";
+// tslint:disable-next-line
 import { DisabledLightBlock1, DisabledLightBlock2, DisabledLightBlock3, DisabledLightBlock4, EnabledLightBlock1, EnabledLightBlock2, EnabledLightBlock3, EnabledLightBlock4 } from "./game/sprites/blocks/lightblock";
 import { RedGreenLightSwitchBlock } from "./game/sprites/blocks/lightswitch";
 import { OneWayBlock } from "./game/sprites/blocks/oneway";
@@ -70,12 +71,12 @@ export const blockMap: IBlockMap = {
   "[": special(RedGreenInstantFallingBlock, "blocks/w"),
   "{": special(AquaOrangeInstantFallingBlock, "blocks/capitalw"),
   "x": special(RedGreenLightSwitchBlock, "blocks/lightbutton/1"),
-  "y": special(EnabledLightBlock1, "blocks/y"),
-  "z": special(DisabledLightBlock1, "blocks/z"),
-  "Y": special(EnabledLightBlock2, "blocks/capitaly"),
-  "Z": special(DisabledLightBlock2, "blocks/capitalz"),
-  "O": special(EnabledLightBlock3, "blocks/capitalo"),
-  "P": special(DisabledLightBlock3, "blocks/capitalp"),
+  "y": special(DisabledLightBlock1, "blocks/editory"),
+  "z": special(EnabledLightBlock1, "blocks/z"),
+  "Y": special(DisabledLightBlock2, "blocks/capitaly"),
+  "Z": special(EnabledLightBlock2, "blocks/capitalz"),
+  "O": special(DisabledLightBlock3, "blocks/capitalo"),
+  "P": special(EnabledLightBlock3, "blocks/capitalp"),
   "Q": special(EnabledLightBlock4, "blocks/capitalq"),
   "R": special(DisabledLightBlock4, "blocks/capitalr"),
 

@@ -38,6 +38,7 @@ export const BLOCK_MAP_KEYS = [
   "5",
   "8",
   "empty",
+
   "C",
   "B",
   "9",
@@ -102,8 +103,8 @@ export const BLOCK_MAP_KEYS = [
   "Z",
   "O",
   "P",
-  "Q",
   "R",
+  "Q",
 
   "o",
   "%",
@@ -114,8 +115,6 @@ export const BLOCK_MAP_KEYS = [
   "@",
   "r",
   "s",
-  "empty",
-  "empty",
 
   "u",
   "w",

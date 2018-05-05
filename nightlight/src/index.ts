@@ -13,6 +13,11 @@ import { getSearchParam } from "./utils";
 
 function getRuntime(): GameRuntime {
   if (location.search === "?leveleditor") {
+    alert("The level editor URL has changed. You will be redirected, please adjust any bookmarks/etc.");
+    location.search = "?m=leveleditor";
+  }
+
+  if (getSearchParam("m") === "leveleditor") {
     return new NightlightLevelEditor();
   } else {
     return new Nightlight();
@@ -112,6 +117,7 @@ game.addImage("blocks/v");
 game.addImage("blocks/w");
 game.addImage("blocks/y");
 game.addImage("blocks/z");
+game.addImage("blocks/editory");
 game.addImage("blocks/capitaly");
 game.addImage("blocks/capitalz");
 game.addImage("blocks/capitalo");
@@ -172,6 +178,7 @@ game.addImage("blocks/lightbutton/2");
 game.addImage("blocks/lightbutton/down");
 
 game.addImage("jumplight");
+game.addImage("blackjumplight");
 
 // Noss
 game.addImage("boss/noss/noss");

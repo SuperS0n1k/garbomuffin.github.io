@@ -36,6 +36,11 @@ export class LevelRenderer extends AbstractSprite {
         this.levelCtx.drawImage(texture, blockX, blockY);
       }
     }
+
+    const jumpLightTexture = this.runtime.getImage("blackjumplight");
+    for (const position of this.runtime.jumpLights) {
+      this.levelCtx.drawImage(jumpLightTexture, position.x, position.y);
+    }
   }
 
   public render(ctx: CanvasRenderingContext2D) {

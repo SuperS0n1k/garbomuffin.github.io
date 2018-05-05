@@ -2,31 +2,47 @@ import { blockMap } from "../blockmap";
 import { BLOCK_HEIGHT, LEVEL_HEIGHT, LEVEL_WIDTH } from "../config";
 import { GameRuntime } from "../engine/runtime";
 import { Vector } from "../engine/vector";
+import { Vector2D } from "../engine/vector2d";
 import { getLevelForCode } from "../levelcode";
-import { clone, getElementById, splitToChunks } from "../utils";
+import { clone, getElementById, getSearchParam, splitToChunks } from "../utils";
 import { BLOCK_MAP_KEYS } from "./blockmapkeys";
+import { LevelEditorMode } from "./mode";
+import { BlockSelectorSprite } from "./sprites/BlockSelectorSprite";
+import { JumpLightSelectorSprite } from "./sprites/JumpLightSelectorSprite";
 import { LevelRenderer } from "./sprites/LevelRenderer";
-import { SelectorSprite } from "./sprites/SelectorSprite";
 
 export class NightlightLevelEditor extends GameRuntime {
   public levelData: string[][] = [];
+  public jumpLights: Vector2D[] = [];
   public levelRenderer!: LevelRenderer;
-  public selector!: SelectorSprite;
+  public blockSelector!: BlockSelectorSprite;
+  public jumpLightSelector!: JumpLightSelectorSprite;
   public blockOffsetY: number;
+  public mode: LevelEditorMode = LevelEditorMode.Blocks;
 
   public ui = {
     container: getElementById("level-editor-ui"),
-    activeBlockImage: getElementById<HTMLImageElement>("level-editor-active-block-image"),
-    activeBlockDescription: getElementById("level-editor-active-block-description"),
     getCodeButton: getElementById<HTMLButtonElement>("level-editor-get-code"),
     getJsonCodeButton: getElementById<HTMLButtonElement>("level-editor-get-json-code"),
     importCodeButton: getElementById<HTMLButtonElement>("level-editor-import-code"),
     codeOutput: getElementById<HTMLTextAreaElement>("level-editor-code-output"),
-    blockGallery: getElementById("level-editor-block-gallery"),
+    modeSelect: getElementById<HTMLSelectElement>("level-editor-option-mode"),
     options: {
       dark: getElementById<HTMLInputElement>("level-editor-option-dark"),
       stars: getElementById<HTMLInputElement>("level-editor-option-stars"),
       background: getElementById<HTMLSelectElement>("level-editor-option-background"),
+    },
+    jumpLights: {
+      container: getElementById("level-editor-mode-jump-lights"),
+      add: getElementById<HTMLButtonElement>("level-editor-jump-lights-add"),
+      move: getElementById<HTMLButtonElement>("level-editor-jump-lights-move"),
+      remove: getElementById<HTMLButtonElement>("level-editor-jump-lights-remove"),
+    },
+    blocks: {
+      container: getElementById("level-editor-mode-block"),
+      activeBlockImage: getElementById<HTMLImageElement>("level-editor-active-block-image"),
+      gallery: getElementById("level-editor-block-gallery"),
+      activeBlockDescription: getElementById("level-editor-active-block-description"),
     },
   };
 
@@ -39,6 +55,8 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.getCodeButton.addEventListener("click", () => this.handleGetCodeButton());
     this.ui.getJsonCodeButton.addEventListener("click", () => this.handleGetJsonCodeButton());
     this.ui.importCodeButton.addEventListener("click", () => this.handleImportLevelCodeButton());
+    this.ui.modeSelect.addEventListener("change", () => this.setMode(+this.ui.modeSelect.value));
+    this.setMode(this.mode);
 
     for (let y = 0; y < LEVEL_HEIGHT; y++) {
       const row = Array(LEVEL_WIDTH).fill(".");
@@ -58,12 +76,21 @@ export class NightlightLevelEditor extends GameRuntime {
     });
     this.levelRenderer.updateLevel();
 
-    this.selector = new SelectorSprite({
+    this.blockSelector = new BlockSelectorSprite({
       position: new Vector(0, 0),
-      texture: this.getImage("blocks/a"), // ignored
+      texture: this.getImage("blocks/a"),
+    });
+    this.jumpLightSelector = new JumpLightSelectorSprite({
+      position: new Vector(0, 0),
+      texture: this.getImage("blackjumplight"),
     });
 
     this.initGallery();
+
+    const levelSearchParam = getSearchParam("level");
+    if (levelSearchParam) {
+      this.importLevelCode(levelSearchParam);
+    }
   }
 
   public render() {
@@ -89,6 +116,7 @@ export class NightlightLevelEditor extends GameRuntime {
       dark,
       stars,
       background,
+      jumpLights: this.jumpLights,
     });
   }
 
@@ -113,13 +141,14 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.options.stars.checked = level.stars as boolean;
     this.ui.options.dark.checked = level.dark as boolean;
     this.ui.options.background.value = level.background as string;
+    this.jumpLights = level.jumpLights || [];
 
     this.levelData = splitToChunks(level.levelData, LEVEL_WIDTH).map((i) => i.split("")).reverse();
     this.levelRenderer.updateLevel();
   }
 
   private handleGallerySelection(char: string) {
-    this.selector.setSelection(char);
+    this.blockSelector.setSelection(char);
   }
 
   private initGallery() {
@@ -141,14 +170,20 @@ export class NightlightLevelEditor extends GameRuntime {
       if (key === "empty") {
         const el = document.createElement("div");
         el.className = "level-editor-gallery-item";
-        this.ui.blockGallery.appendChild(el);
+        this.ui.blocks.gallery.appendChild(el);
         continue;
       }
       const val = blockMap[key];
       const texture = this.getImage(val.texture);
       const image = getImage(texture.src);
       image.addEventListener("click", () => this.handleGallerySelection(key));
-      this.ui.blockGallery.appendChild(image);
+      this.ui.blocks.gallery.appendChild(image);
     }
+  }
+
+  public setMode(m: LevelEditorMode) {
+    this.mode = m;
+    this.ui.blocks.container.style.display = m === 0 ? "block" : "";
+    this.ui.jumpLights.container.style.display = m === 1 ? "block" : "";
   }
 }
