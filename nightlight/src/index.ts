@@ -195,6 +195,18 @@ game.addImage("blocks/castlecorner/bottomleft");
 game.addImage("blocks/capitala");
 game.addImage("blocks/capitalb");
 game.addImage("blocks/capitalc");
+game.addImage("blocks/capitald");
+game.addImage("blocks/capitale");
+game.addImage("blocks/capitalf");
+game.addImage("blocks/capitalg");
+game.addImage("blocks/capitalh");
+game.addImage("blocks/capitali");
+game.addImage("blocks/capitalj");
+game.addImage("blocks/capitalk");
+game.addImage("blocks/capitall");
+game.addImage("blocks/capitalm");
+game.addImage("blocks/capitaln");
+game.addImage("blocks/capitalw");
 
 // ending
 game.addImage("end/scene");

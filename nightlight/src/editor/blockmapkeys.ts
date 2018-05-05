@@ -64,6 +64,26 @@ export const BLOCK_MAP_KEYS = [
   "empty",
   "empty",
 
+  // Green Theme... hoorary
+  "L",
+  "D",
+  "F",
+  "empty",
+
+  "M",
+  "a",
+  "G",
+  "empty",
+  "N",
+  "E",
+  "H",
+  "empty",
+
+  "K",
+  "J",
+  "I",
+  "empty",
+
   // Grass
   "j",
   "k",
@@ -88,6 +108,7 @@ export const BLOCK_MAP_KEYS = [
   "t",
   "u",
   "w",
+  "W",
   "[",
   "!",
 ];

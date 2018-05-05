@@ -28,7 +28,7 @@ export class SelectorSprite extends ImageSprite {
     this.runtime.ui.activeBlockImage.src = texture.src;
     this.runtime.ui.activeBlockImage.height = this.texture.height * 6;
     this.runtime.ui.activeBlockImage.width = this.texture.width * 6;
-    this.runtime.ui.activeBlockDescription.textContent = blockDetails.type.name + ", " + this.selection.toUpperCase();
+    this.runtime.ui.activeBlockDescription.textContent = blockDetails.type.name + ", " + this.selection;
     this.updateDimensions();
   }
 
