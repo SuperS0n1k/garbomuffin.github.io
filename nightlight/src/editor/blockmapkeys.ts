@@ -91,10 +91,19 @@ export const BLOCK_MAP_KEYS = [
   // Tall grass
   "p",
   "q",
+  "t",
+  "!",
 
+  // Light blocks
   "x",
   "y",
   "z",
+  "Y",
+  "Z",
+  "O",
+  "P",
+  "Q",
+  "R",
 
   "o",
   "%",
@@ -105,8 +114,6 @@ export const BLOCK_MAP_KEYS = [
   "@",
   "r",
   "s",
-  "t",
-  "!",
   "empty",
   "empty",
 

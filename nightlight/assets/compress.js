@@ -4,8 +4,8 @@ const { exec } = require("child_process");
 function recurse(folder) {
   fs.readdir(folder, (err, files) => {
     if (err) {
-      console.log("failed to read " + folder);
-      throw err;
+      console.log("failed to read " + folder + ": " + err.stack);
+      return;
     }
 
     const folders = files.filter(i => i.indexOf(".") === -1);

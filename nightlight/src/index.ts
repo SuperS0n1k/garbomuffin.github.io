@@ -112,6 +112,12 @@ game.addImage("blocks/v");
 game.addImage("blocks/w");
 game.addImage("blocks/y");
 game.addImage("blocks/z");
+game.addImage("blocks/capitaly");
+game.addImage("blocks/capitalz");
+game.addImage("blocks/capitalo");
+game.addImage("blocks/capitalp");
+game.addImage("blocks/capitalq");
+game.addImage("blocks/capitalr");
 
 game.addImage("blocks/button/redgreen/button");
 game.addImage("blocks/button/redgreen/button2");
