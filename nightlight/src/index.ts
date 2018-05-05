@@ -108,12 +108,19 @@ game.addImage("blocks/p");
 game.addImage("blocks/q");
 game.addImage("blocks/r");
 game.addImage("blocks/s");
-game.addImage("blocks/u");
-game.addImage("blocks/u2");
 game.addImage("blocks/v");
 game.addImage("blocks/w");
 game.addImage("blocks/y");
 game.addImage("blocks/z");
+
+game.addImage("blocks/button/redgreen/button");
+game.addImage("blocks/button/redgreen/button2");
+game.addImage("blocks/button/redgreen/spawner");
+game.addImage("blocks/button/redgreen/spawner2");
+game.addImage("blocks/button/aquaorange/button");
+game.addImage("blocks/button/aquaorange/button2");
+game.addImage("blocks/button/aquaorange/spawner");
+game.addImage("blocks/button/aquaorange/spawner2");
 
 game.addImage("blocks/crumble/1");
 game.addImage("blocks/crumble/2");
@@ -124,9 +131,6 @@ game.addImage("blocks/crumble/6");
 game.addImage("blocks/crumble/7");
 game.addImage("blocks/crumble/8");
 game.addImage("blocks/crumble/9");
-
-game.addImage("blocks/button/red");
-game.addImage("blocks/button/on");
 
 game.addImage("blocks/spikes/up");
 game.addImage("blocks/spikes/down");

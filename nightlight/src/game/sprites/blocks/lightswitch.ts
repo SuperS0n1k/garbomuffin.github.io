@@ -4,7 +4,7 @@ import { Vector } from "../../../engine/vector";
 import { Nightlight } from "../../game";
 import { PlayerSprite } from "../player/player";
 import { IBlockOptions, SolidBlock } from "./block";
-import { LightBlock } from "./lightblock";
+import { LightBlock, LightBlockGroups } from "./lightblock";
 
 /*
  * A block that toggles the solidity of LightBlocks
@@ -22,25 +22,22 @@ const ANIMATION_FRAME_LENGTH = 5;
 // How long the switch will remaing as pressed before hiding
 const HIDE_DELAY = 30;
 
-export class LightSwitchBlock extends SolidBlock {
-  // see #show()
+export abstract class LightSwitchBlock extends SolidBlock {
   private activated: boolean = false;
   private animationProgress: number = 0;
   private startingPosition: Vector;
   public runtime!: Nightlight;
+  public group: number;
 
-  constructor(opts: IBlockOptions) {
+  constructor(opts: IBlockOptions, group: number) {
     super(opts);
+    this.group = group;
     this.startingPosition = new Vector(this.position);
     this.show();
   }
 
   get needsReinstantiate() {
     return true;
-  }
-
-  get type() {
-    return LightSwitchBlock;
   }
 
   private show() {
@@ -77,12 +74,16 @@ export class LightSwitchBlock extends SolidBlock {
 
     const sprites = this.runtime.sprites;
 
-    const lightBlocks = sprites.filter((s) => s instanceof LightBlock) as LightBlock[];
+    const lightBlocks = sprites
+      .filter((s) => s instanceof LightBlock)
+      .filter((s) => (s as LightBlock).group === this.group) as LightBlock[];
     for (const block of lightBlocks) {
       block.toggleSolid();
     }
 
-    const otherSwitches = sprites.filter((s) => s instanceof LightSwitchBlock && s !== this) as LightSwitchBlock[];
+    const otherSwitches = sprites
+      .filter((s) => s instanceof LightSwitchBlock && s !== this)
+      .filter((s) => (s as LightSwitchBlock).group === this.group) as LightSwitchBlock[];
     for (const block of otherSwitches) {
       if (block.activated) {
         block.show();
@@ -114,4 +115,12 @@ export class LightSwitchBlock extends SolidBlock {
     }
     return res;
   }
+}
+
+export class RedGreenLightSwitchBlock extends LightSwitchBlock {
+  constructor(opts: IBlockOptions) {
+    super(opts, LightBlockGroups.RedGreen);
+  }
+
+  get type() { return RedGreenLightSwitchBlock; }
 }

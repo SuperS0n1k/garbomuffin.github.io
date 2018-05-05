@@ -106,9 +106,16 @@ export const BLOCK_MAP_KEYS = [
   "r",
   "s",
   "t",
+  "!",
+  "empty",
+  "empty",
+
   "u",
   "w",
-  "W",
   "[",
-  "!",
+  "empty",
+
+  "U",
+  "W",
+  "{",
 ];

@@ -1,13 +1,14 @@
 import { BlackBlock } from "./game/sprites/blocks/black";
 import { Block, PseudoSolidBlock, StaticSolidBlock } from "./game/sprites/blocks/block";
-import { BlockSwitchSpawnerBlock } from "./game/sprites/blocks/blockswitchspawner";
+import { AquaOrangeBlockSwitchSpawner, RedGreenBlockSwitchSpawner } from "./game/sprites/blocks/blockswitchspawner";
 import { AboveLevelUpCoinSpawnerBlock, BelowLevelUpCoinSpawnerBlock } from "./game/sprites/blocks/coinspawner";
 import { CastleCornerBlock, RotatedCornerBlock, SolidRotatedCornerBlock } from "./game/sprites/blocks/corner";
 import { CrumblingBlock } from "./game/sprites/blocks/crumble";
-import { InstantFallingBlock, VibratingFallingBlock } from "./game/sprites/blocks/falling";
+// tslint:disable-next-line
+import { AquaOrangeInstantFallingBlock, AquaOrangeVibratingFallingBlock, RedGreenInstantFallingBlock, RedGreenVibratingFallingBlock } from "./game/sprites/blocks/falling";
 import { GrassBlock } from "./game/sprites/blocks/grass";
-import { DisabledLightBlock, EnabledLightBlock } from "./game/sprites/blocks/lightblock";
-import { LightSwitchBlock } from "./game/sprites/blocks/lightswitch";
+import { RedGreenDisabledLightBlock, RedGreenEnabledLightBlock } from "./game/sprites/blocks/lightblock";
+import { RedGreenLightSwitchBlock } from "./game/sprites/blocks/lightswitch";
 import { OneWayBlock } from "./game/sprites/blocks/oneway";
 import { DownSpikeBlock, LeftSpikeBlock, RightSpikeBlock, UpSpikeBlock } from "./game/sprites/blocks/spike";
 import { TallGrassBlock } from "./game/sprites/blocks/tallgrass";
@@ -61,14 +62,16 @@ export const blockMap: IBlockMap = {
   "r": solid("blocks/r"),
   "s": solid("blocks/s"),
   "t": special(CrumblingBlock, "blocks/crumble/1"),
-  "u": special(BlockSwitchSpawnerBlock, "blocks/u"),
+  "u": special(RedGreenBlockSwitchSpawner, "blocks/button/redgreen/spawner"),
+  "U": special(AquaOrangeBlockSwitchSpawner, "blocks/button/aquaorange/spawner"),
   "v": solid("blocks/v"),
-  "w": special(VibratingFallingBlock, "blocks/w"),
-  "W": special(VibratingFallingBlock, "blocks/capitalw"),
-  "[": special(InstantFallingBlock, "blocks/w"),
-  "x": special(LightSwitchBlock, "blocks/lightbutton/1"),
-  "y": special(DisabledLightBlock, "blocks/y"),
-  "z": special(EnabledLightBlock, "blocks/z"),
+  "w": special(RedGreenVibratingFallingBlock, "blocks/w"),
+  "W": special(AquaOrangeVibratingFallingBlock, "blocks/capitalw"),
+  "[": special(RedGreenInstantFallingBlock, "blocks/w"),
+  "{": special(AquaOrangeInstantFallingBlock, "blocks/capitalw"),
+  "x": special(RedGreenLightSwitchBlock, "blocks/lightbutton/1"),
+  "y": special(RedGreenDisabledLightBlock, "blocks/y"),
+  "z": special(RedGreenEnabledLightBlock, "blocks/z"),
 
   // Post sword
   "1": solid("blocks/1"),

@@ -4,12 +4,17 @@ import { Block, IBlockOptions } from "./block";
  * A block that is toggled solid/not solid when a switch is hit.
  */
 
+export enum LightBlockGroups {
+  RedGreen = 0,
+}
+
 export abstract class LightBlock extends Block {
   public solid: boolean = true;
-  public abstract startingState: boolean;
+  public group: number = 0;
 
-  constructor(options: IBlockOptions) {
+  constructor(options: IBlockOptions, group: number) {
     super(options);
+    this.group = group;
   }
 
   protected setSolid(solid: boolean) {
@@ -29,27 +34,28 @@ export abstract class LightBlock extends Block {
     this.setSolid(!this.solid);
   }
 }
-
-export class EnabledLightBlock extends LightBlock {
-  public startingState = true;
-  constructor(options: IBlockOptions) {
-    super(options);
-    this.setSolid(this.startingState);
+export abstract class EnabledLightBlock extends LightBlock {
+  constructor(options: IBlockOptions, group: number) {
+    super(options, group);
+    this.setSolid(true);
   }
-
-  get type() {
-    return EnabledLightBlock;
+}
+export abstract class DisabledLightBlock extends LightBlock {
+  constructor(options: IBlockOptions, group: number) {
+    super(options, group);
+    this.setSolid(false);
   }
 }
 
-export class DisabledLightBlock extends LightBlock {
-  public startingState = false;
-  constructor(options: IBlockOptions) {
-    super(options);
-    this.setSolid(this.startingState);
+export class RedGreenEnabledLightBlock extends EnabledLightBlock {
+  constructor(opts: IBlockOptions) {
+    super(opts, LightBlockGroups.RedGreen);
   }
-
-  get type() {
-    return DisabledLightBlock;
+  get type() { return RedGreenEnabledLightBlock; }
+}
+export class RedGreenDisabledLightBlock extends DisabledLightBlock {
+  constructor(opts: IBlockOptions) {
+    super(opts, LightBlockGroups.RedGreen);
   }
+  get type() { return RedGreenDisabledLightBlock; }
 }

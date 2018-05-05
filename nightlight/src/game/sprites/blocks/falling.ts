@@ -22,14 +22,20 @@ const VIBRATE_TIMES = 20;
 // Makes blocks from the bottom fall before the ones on the top, which looks nice
 const FALL_DELAY_PER_Y = 0.25;
 
+export enum FallingBlockGroups {
+  RedGreen = 0,
+  AquaOrange = 1,
+}
+
 export abstract class AbstractFallingBlock extends SolidBlock {
   protected startingPosition: Vector;
   public xv: number = 0;
   public yv: number = 0;
+  public group: number;
 
-  constructor(opts: IBlockOptions) {
+  constructor(opts: IBlockOptions, group: number) {
     super(opts);
-
+    this.group = group;
     this.startingPosition = new Vector(this.position);
   }
 
@@ -55,8 +61,7 @@ export abstract class AbstractFallingBlock extends SolidBlock {
     return true;
   }
 }
-
-export class InstantFallingBlock extends AbstractFallingBlock {
+export abstract class InstantFallingBlock extends AbstractFallingBlock {
   public trigger() {
     this.playSound();
     this.addTask(new Task({
@@ -64,22 +69,13 @@ export class InstantFallingBlock extends AbstractFallingBlock {
       repeatEvery: 0,
     }));
   }
-
-  get type() {
-    return InstantFallingBlock;
-  }
 }
-
-export class VibratingFallingBlock extends InstantFallingBlock {
+export abstract class VibratingFallingBlock extends InstantFallingBlock {
   private vibrateProgress: number = 0;
   private frame: number = 0;
 
   get needsReinstantiate() {
     return true;
-  }
-
-  get type() {
-    return VibratingFallingBlock;
   }
 
   public trigger() {
@@ -115,4 +111,32 @@ export class VibratingFallingBlock extends InstantFallingBlock {
       this.x += VIBRATE_RANGE;
     }
   }
+}
+
+export class RedGreenInstantFallingBlock extends InstantFallingBlock {
+  constructor(opts: IBlockOptions) {
+    super(opts, FallingBlockGroups.RedGreen);
+  }
+  get type() { return RedGreenInstantFallingBlock; }
+}
+export class RedGreenVibratingFallingBlock extends VibratingFallingBlock {
+  constructor(opts: IBlockOptions) {
+    super(opts, FallingBlockGroups.RedGreen);
+  }
+
+  get type() { return RedGreenVibratingFallingBlock; }
+}
+
+export class AquaOrangeInstantFallingBlock extends InstantFallingBlock {
+  constructor(opts: IBlockOptions) {
+    super(opts, FallingBlockGroups.AquaOrange);
+  }
+  get type() { return AquaOrangeInstantFallingBlock; }
+}
+export class AquaOrangeVibratingFallingBlock extends VibratingFallingBlock {
+  constructor(opts: IBlockOptions) {
+    super(opts, FallingBlockGroups.AquaOrange);
+  }
+
+  get type() { return AquaOrangeVibratingFallingBlock; }
 }
