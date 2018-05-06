@@ -62,3 +62,22 @@ export function getSearchParam(target: string): string | null {
   }
   return null;
 }
+
+export function setSearchParam(name: string, newVal: string) {
+  const map = new Map();
+  const allParams = location.search.substr(1).split("&");
+  for (const param of allParams) {
+    const k = param.substr(0, param.indexOf("="));
+    const v = param.substr(param.indexOf("=") + 1);
+    map.set(k, v);
+  }
+  map.set(name, escape(newVal));
+
+  let newSearch = "";
+  for (const key of map.keys()) {
+    const val = map.get(key) as string;
+    const divider = newSearch.length === 0 ? "?" : "&";
+    newSearch += `${divider}${key}=${val}`;
+  }
+  history.pushState({}, "", newSearch);
+}

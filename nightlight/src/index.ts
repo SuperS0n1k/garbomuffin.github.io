@@ -2,7 +2,7 @@ import { NightlightLevelEditor } from "./editor/editor";
 import { GameRuntime } from "./engine/runtime";
 import { Nightlight } from "./game/game";
 import { LEVEL_CODE_LENGTH, getLevelForCode, getLevelForContinueCode } from "./levelcode";
-import { getElementById, getSearchParam } from "./utils";
+import { getElementById, getSearchParam, setSearchParam } from "./utils";
 
 /*
  * The loader.
@@ -393,7 +393,8 @@ function runLevelCode(code: string) {
       return;
     }
   }
-  history.pushState({}, "", "?level=" + escape(code));
+  setSearchParam("level", code);
+  // history.pushState({}, "", "?level=" + escape(code));
 }
 
 function run() {
