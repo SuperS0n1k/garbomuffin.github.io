@@ -101,6 +101,10 @@ td {
   }
 }
 
+#load-code-url-button {
+  display: none;
+}
+
 /* #endregion */
 
 /* #region Level Editor */

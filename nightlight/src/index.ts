@@ -1,9 +1,8 @@
 import { NightlightLevelEditor } from "./editor/editor";
 import { GameRuntime } from "./engine/runtime";
 import { Nightlight } from "./game/game";
-import { Level } from "./game/levels";
 import { LEVEL_CODE_LENGTH, getLevelForCode } from "./levelcode";
-import { getSearchParam } from "./utils";
+import { getElementById, getSearchParam } from "./utils";
 
 /*
  * The loader.
@@ -267,53 +266,57 @@ game.addSound("music/finalboss/1");
 game.addSound("music/finalboss/2");
 
 // html elements
-const progressBar = document.getElementById("progress-bar") as HTMLProgressElement;
-
-const menuContainer = document.getElementById("menu-container")!;
-
-const loadingScreen = document.getElementById("loading-screen")!;
-const menuBackground = document.getElementById("menu-background")!;
-
-const menuScreen = document.getElementById("menu-screen")!;
-const playButton = document.getElementById("play-button") as HTMLButtonElement;
-const loadCodeButton = document.getElementById("load-code-button") as HTMLButtonElement;
+const progressBar = getElementById<HTMLProgressElement>("progress-bar");
+const menuContainer = getElementById("menu-container");
+const loadingScreen = getElementById("loading-screen");
+const menuBackground = getElementById("menu-background");
+const menuScreen = getElementById("menu-screen");
+const playButton = getElementById<HTMLButtonElement>("play-button");
+const loadCodeButton = getElementById<HTMLButtonElement>("load-code-button");
+const loadCodeFromUrlButton = getElementById("load-code-url-button");
 
 // wait for it to load then run our stuff
 game.waitForAssets((progress) => {
   // show a progress bar
-  // with the addition of sounds it can take a long time to download stuff and it was inevitable
   const value = progress * 100;
   progressBar.style.width = value + "%";
 }).then(() => canPlay());
 
 function canPlay() {
   if (game instanceof Nightlight) {
-    playButton.onclick = () => run();
-    loadCodeButton.onclick = () => {
-      const defaultValue = getSearchParam("level") || "";
-      const code = prompt("Please enter the level code:", defaultValue);
+    playButton.addEventListener("click", () => run());
+    loadCodeButton.addEventListener("click", () => {
+      // chrome (and probably others) limit prompt default value to 2000 characters
+      const TOO_LONG_TO_SHOW_MESSAGE = "(default too long to show. enter will still work as normal)";
+
+      const urlLevelParam = getSearchParam("level") || "";
+      let defaultValue;
+      if (urlLevelParam.length > 2000) {
+        defaultValue = TOO_LONG_TO_SHOW_MESSAGE;
+      } else {
+        defaultValue = urlLevelParam;
+      }
+
+      let code = prompt("Please enter the level code:", defaultValue);
+      if (code === TOO_LONG_TO_SHOW_MESSAGE) {
+        code = urlLevelParam;
+      }
       if (code === null) {
         return;
       }
-      if (code.length === LEVEL_CODE_LENGTH || code.startsWith("{")) {
-        runLevel([getLevelForCode(code)]);
-        game.setBackgroundMusic([game.getSound("music/exploration")]);
-        location.hash = code;
-        history.pushState({}, "", "?level=" + code);
-      } else {
-        // we got a resume code
-        const res = game.readLevelCode(code);
-        if (res === null) {
-          alert("Invalid level code");
-          return;
-        }
-        game.level = res;
-        run();
-      }
-    };
+      runLevelCode(code);
+    });
+    loadCodeFromUrlButton.addEventListener("click", () => {
+      runLevelCode(getSearchParam("level") as string);
+    });
+
     menuBackground.classList.add("active");
     loadingScreen.style.display = "none";
     menuScreen.style.display = "block";
+
+    if (getSearchParam("level") !== null) {
+      loadCodeFromUrlButton.style.display = "inline";
+    }
 
     if (location.search === "?run") {
       run();
@@ -328,9 +331,26 @@ function showCanvas() {
   game.canvas.style.display = "";
 }
 
-function runLevel(levels: Level[]) {
-  showCanvas();
-  (game as Nightlight).start(levels);
+function runLevelCode(code: string) {
+  if (!(game instanceof Nightlight)) {
+    throw new Error("not in game");
+  }
+
+  if (code.length === LEVEL_CODE_LENGTH || code.startsWith("{")) {
+    showCanvas();
+    game.start([getLevelForCode(code)]);
+    game.setBackgroundMusic([game.getSound("music/exploration")]);
+  } else {
+    // we got a resume code
+    const res = game.readLevelCode(code);
+    if (res === null) {
+      alert("Invalid level code");
+      return;
+    }
+    game.level = res;
+    run();
+  }
+  history.pushState({}, "", "?level=" + code);
 }
 
 function run() {

@@ -335,7 +335,9 @@ export class GameRuntime extends TaskRunner {
       }
     }
 
-    this.canvas.style.cursor = this.cursor;
+    if (this.canvas.style.cursor !== this.cursor) {
+      this.canvas.style.cursor = this.cursor;
+    }
 
     if (this._DEBUG_NON_STATIC_OUTLINE) {
       this.ctx.strokeStyle = "red";

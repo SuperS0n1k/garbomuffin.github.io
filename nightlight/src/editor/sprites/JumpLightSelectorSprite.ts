@@ -18,9 +18,9 @@ export class JumpLightSelectorSprite extends ImageSprite {
 
   constructor(opts: IImageSpriteOptions) {
     super(opts);
+    this.opacity = 0.5;
     this.z = LevelEditorIndexes.Selector;
     this.addTask(() => this.run());
-
     this.setMode(this.mode);
     this.runtime.ui.jumpLights.add.addEventListener("click", () => this.setMode(Mode.Add));
     this.runtime.ui.jumpLights.move.addEventListener("click", () => this.setMode(Mode.Move));

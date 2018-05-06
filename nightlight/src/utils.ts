@@ -51,13 +51,14 @@ export function getElementById<T extends HTMLElement>(id: string): T {
   return el as T;
 }
 
-export function getSearchParam(target: string): string | undefined {
+export function getSearchParam(target: string): string | null {
   const allParams = location.search.substr(1).split("&");
   for (const param of allParams) {
     const name = param.substr(0, param.indexOf("="));
     const val = param.substr(param.indexOf("=") + 1);
     if (name === target) {
-      return decodeURI(val);
+      return unescape(val);
     }
   }
+  return null;
 }
