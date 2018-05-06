@@ -20,8 +20,8 @@ const SLIDE_ATTACK_MAX = 7;
 const DROP_ATTACK_SCALE = 3;
 const DROP_ATTACK_GRAVITY = 14;
 const DROP_ATTACK_FALL_LENGTH = 23;
+const DROP_ATTACK_END = 264;
 const DROP_ATTACK_REPEAT = 4; // +1 for the last one where the boss becomes vulnerable
-const DROP_ATTACK_END = 280 + 1 / 3;
 
 const REST_TEXTURE = "boss/noss/rest";
 
@@ -30,6 +30,7 @@ export class FinalBoss extends AbstractNossBoss {
   private health: number = HEALTH;
   private wasHit: boolean = false;
   private animationProgress: number = 0;
+  private sizeScale: number = 1;
   public runtime!: Nightlight;
 
   constructor(opts: IImageSpriteOptions) {
@@ -45,7 +46,7 @@ export class FinalBoss extends AbstractNossBoss {
   }
 
   private testForPlayer() {
-    if (this.canKillPlayer && this.complexIntersectsSimple(this.runtime.player)) {
+    if (this.canKillPlayer && this.intersects(this.runtime.player)) {
       this.runtime.player.kill();
     }
   }
@@ -54,8 +55,7 @@ export class FinalBoss extends AbstractNossBoss {
     super.startRoutine();
     this.canKillPlayer = true;
     this.wasHit = false;
-    this.scale.x = 1;
-    this.scale.y = 1;
+    this.setScale(1, false);
     this.visible = false;
 
     const repeatSlideAttack = getRandomInt(SLIDE_ATTACK_MIN, SLIDE_ATTACK_MAX);
@@ -118,8 +118,7 @@ export class FinalBoss extends AbstractNossBoss {
   private prepareSlideAttack(direction: number) {
     this.runtime.playSound("boss/noss/shadow3");
     this.visible = false;
-    this.scale.x = (Math.abs(this.scale.x) + SLIDE_ATTACK_SIZE_CHANGE) * direction;
-    this.scale.y = (Math.abs(this.scale.y) + SLIDE_ATTACK_SIZE_CHANGE) * direction;
+    this.setScale((Math.abs(this.sizeScale) + SLIDE_ATTACK_SIZE_CHANGE) * direction);
     if (direction === 1) {
       this.x = 0;
     } else if (direction === -1) {
@@ -138,8 +137,7 @@ export class FinalBoss extends AbstractNossBoss {
   private prepareDropAttack() {
     this.visible = true;
     this.runtime.playSound("boss/noss/shadow2");
-    this.scale.x = DROP_ATTACK_SCALE;
-    this.scale.y = DROP_ATTACK_SCALE;
+    this.setScale(DROP_ATTACK_SCALE);
     this.y = -this.height;
     this.x = this.runtime.player.x - (this.width / 2);
   }
@@ -179,5 +177,26 @@ export class FinalBoss extends AbstractNossBoss {
   private dead() {
     this.spawnLevelUpCoin(this.position);
     this.destroy();
+  }
+
+  private setScale(s: number, center: boolean = true) {
+    const oldScale = this.sizeScale;
+    const oldHeight = this.height;
+    const oldWidth = this.width;
+    const as = Math.abs(s);
+    this.sizeScale = as;
+    this.width = this.texture.width * as;
+    this.height = this.texture.height * as;
+    if (center) {
+      const widthChange = this.width - oldWidth;
+      this.x -= (widthChange / 2);
+      const heightChange = this.height - oldHeight;
+      this.y -= (heightChange / 2);
+    }
+    if (s < 0) {
+      this.scale.x = -1;
+    } else {
+      this.scale.x = 1;
+    }
   }
 }

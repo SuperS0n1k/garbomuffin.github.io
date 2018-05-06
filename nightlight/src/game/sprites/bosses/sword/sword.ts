@@ -5,6 +5,7 @@ import { Vector2D } from "../../../../engine/vector2d";
 import { Nightlight } from "../../../game";
 import { runBasicPhysics } from "../../../physics";
 import { IBlockOptions } from "../../blocks/block";
+import { SwordBossLevelUpCoinSprite } from "../../coin";
 import { AbstractBoss } from "../boss";
 
 /*
@@ -36,6 +37,7 @@ const SWIPE_UP_SPEED = SWIPE_DOWN_SPEED / 2;
 const DAMAGED_FALL_SPEED = 5;
 const DAMAGED_RISE_SPEED = DAMAGED_FALL_SPEED / 2;
 const DAMAGED_ANIMATE_TIMES = 20;
+const DEAD_ANIMATE_TIMES = 35;
 const DAMAGED_TEXTURES = [
   "boss/sword/open",
   "boss/sword/hurt",
@@ -347,10 +349,14 @@ export class SwordBoss extends AbstractBoss {
 
     if (this.health === 0) {
       this.addPhase(new Task({
-        run: () => this.animate(DAMAGED_TEXTURES, DAMAGED_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH, () => {
+        run: () => this.animate(DAMAGED_TEXTURES, DEAD_ANIMATE_TIMES, DAMAGE_ANIMATE_FRAME_LENGTH, () => {
           this.rotation -= DEAD_ROTATION_SPEED;
         }),
-      }), DAMAGED_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
+      }), DEAD_ANIMATE_TIMES * DAMAGE_ANIMATE_FRAME_LENGTH);
+
+      this.addPhase(new Task({
+        run: () => this.runtime.setBackgroundMusic([]),
+      }));
 
       this.addPhase(new Task({
         run: (task) => this.deadPhysics(task),
@@ -399,8 +405,11 @@ export class SwordBoss extends AbstractBoss {
   private spawnCoin() {
     const texture = this.runtime.getImage("coin/1");
     const x = (this.runtime.canvas.width / 2) - (BLOCK_WIDTH / 2);
-    const y = (this.runtime.canvas.height / 2) - (BLOCK_WIDTH / 2);
-    this.spawnLevelUpCoin(new Vector(x, y));
+    const y = this.runtime.canvas.height;
+    new SwordBossLevelUpCoinSprite({
+      position: new Vector(x, y),
+      texture,
+    });
   }
 
   //

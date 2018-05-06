@@ -1,12 +1,7 @@
-import { ImageSprite } from "../engine/sprites/imagesprite";
-import { TBackground, TImage } from "../engine/types";
+import { TBackground } from "../engine/types";
 import { Vector } from "../engine/vector";
 import { scratchCoordinate } from "../utils";
 import { Nightlight } from "./game";
-import { FinalBoss } from "./sprites/bosses/final/finalboss";
-import { BASE_TEXTURE as nossTexture } from "./sprites/bosses/noss";
-import { NossBoss } from "./sprites/bosses/noss/noss";
-import { SwordBoss } from "./sprites/bosses/sword/sword";
 import { EndingSprite } from "./sprites/ending/EndingSprite";
 import { INightlightTextSpriteOptions } from "./sprites/text/NightlightTextSprite";
 
@@ -26,17 +21,7 @@ export interface Level {
   jumpLights?: Vector[];
   randomSpawn?: boolean;
   stars?: boolean;
-}
-
-function bossSpawner(bossType: typeof ImageSprite, texture: TImage) {
-  // Spawn the boss with the texture at 0,0
-  // The sprite should correct any values such as position
-  return () => {
-    new bossType({
-      position: new Vector(0, 0, 0),
-      texture,
-    });
-  };
+  boss?: "sword" | "noss1" | "noss2";
 }
 
 function goodbye() {
@@ -95,7 +80,7 @@ export function getLevels(game: Nightlight): Level[] {
     // 5
     {
       levelData: "aaaaaaaaaaafbccccdeaaaaaaaaaaaaaaaaaaaaaafooooooeaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaacccccccccccd......bccccccccccckkpppkkqpkkl......jkqkqkkpqqpp....................................................................................................................................................................................................................................................................................................................................................................................................................................",
-      handlers: [bossSpawner(SwordBoss, game.getImage("boss/sword/sword"))],
+      boss: "sword",
       backgroundMusic: ["music/boss/1", "music/boss/2"],
     },
     // 6
@@ -153,7 +138,7 @@ export function getLevels(game: Nightlight): Level[] {
     // 12
     {
       levelData: "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
-      handlers: [bossSpawner(NossBoss, game.getImage(nossTexture))],
+      boss: "noss1",
       backgroundMusic: ["music/boss/1", "music/boss/2"],
       jumpLights: [
         scratchCoordinate(0, -44),
@@ -217,7 +202,7 @@ export function getLevels(game: Nightlight): Level[] {
     {
       levelData: "..)^^^^^^^^^^^^^^^^^^^^^^^^-....)^^^^^^^^^^^^^^^^^^^^^^^^-....&************************(..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
       backgroundMusic: ["music/finalboss/1", "music/finalboss/2"],
-      handlers: [bossSpawner(FinalBoss, game.getImage(nossTexture))],
+      boss: "noss2",
       randomSpawn: true,
       background: "black",
       stars: true,

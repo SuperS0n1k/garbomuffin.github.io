@@ -39,6 +39,7 @@ export class NightlightLevelEditor extends GameRuntime {
       add: getElementById<HTMLButtonElement>("level-editor-jump-lights-add"),
       move: getElementById<HTMLButtonElement>("level-editor-jump-lights-move"),
       remove: getElementById<HTMLButtonElement>("level-editor-jump-lights-remove"),
+      snapToGrid: getElementById<HTMLInputElement>("level-editor-jump-lights-snap"),
     },
     blocks: {
       container: getElementById("level-editor-mode-block"),

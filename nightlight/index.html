@@ -52,6 +52,9 @@
             <option selected value="0">Block</option>
             <option value="1">Jumpy Bois</option>
             <option value="2" disabled>Text (maybe soon)</option>
+            <option value="3" disabled>Sword Boss (maybe soon)</option>
+            <option value="4" disabled>Noss Boss 1 (maybe soon)</option>
+            <option value="5" disabled>Noss Boss 2 (maybe soon)</option>
           </select>
         </label>
 
@@ -65,9 +68,14 @@
         </div>
 
         <div id="level-editor-mode-jump-lights" class="level-editor-mode">
-          <button id="level-editor-jump-lights-add">Add Light</button>
-          <button id="level-editor-jump-lights-move">Move Light</button>
-          <button id="level-editor-jump-lights-remove">Remove Light</button>
+          <div>
+            <button id="level-editor-jump-lights-add">Add Light</button>
+            <button id="level-editor-jump-lights-move">Move Light</button>
+            <button id="level-editor-jump-lights-remove">Remove Light</button>
+          </div>
+          <div>
+            <label>Snap to grid: <input id="level-editor-jump-lights-snap" type="checkbox" checked></label>
+          </div>
         </div>
 
         <div>
@@ -108,6 +116,17 @@
                 <option value="music/netherslament">Nether's Lament</option>
                 <option value="music/challenge">Challenge</option>
                 <option value="music/finalboss/1,music/finalboss/2">Final Boss</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>
+              Boss:
+              <select disabled>
+                <option value="" selected>None</option>
+                <option value="sword">Sword</option>
+                <option value="noss1">Noss 1</option>
+                <option value="noss2">Noss 2</option>
               </select>
             </label>
           </div>

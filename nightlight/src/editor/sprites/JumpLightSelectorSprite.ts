@@ -15,6 +15,7 @@ export class JumpLightSelectorSprite extends ImageSprite {
   public runtime!: NightlightLevelEditor;
   public mode: Mode = Mode.Add;
   public outlinePoint: Vector2D | null = null;
+  public snapToGrid: boolean = true;
 
   constructor(opts: IImageSpriteOptions) {
     super(opts);
@@ -25,6 +26,10 @@ export class JumpLightSelectorSprite extends ImageSprite {
     this.runtime.ui.jumpLights.add.addEventListener("click", () => this.setMode(Mode.Add));
     this.runtime.ui.jumpLights.move.addEventListener("click", () => this.setMode(Mode.Move));
     this.runtime.ui.jumpLights.remove.addEventListener("click", () => this.setMode(Mode.Remove));
+    this.runtime.ui.jumpLights.snapToGrid.addEventListener("change", () => {
+      this.snapToGrid = this.runtime.ui.jumpLights.snapToGrid.checked;
+    });
+    this.snapToGrid = this.runtime.ui.jumpLights.snapToGrid.checked;
   }
 
   private run() {
@@ -34,8 +39,16 @@ export class JumpLightSelectorSprite extends ImageSprite {
     }
     const mouseX = this.runtime.mouse.position.x;
     const mouseY = this.runtime.mouse.position.y;
-    this.x = mouseX - (this.width / 2);
-    this.y = mouseY - (this.height / 2);
+    if (this.snapToGrid) {
+      const distanceFromButton = this.runtime.canvas.height - mouseY;
+      this.x = Math.round(mouseX / 8) * 8;
+      this.y = this.runtime.canvas.height - (Math.round(distanceFromButton / 8) * 8);
+    } else {
+      this.x = mouseX;
+      this.y = mouseY;
+    }
+    this.x -= (this.width / 2);
+    this.y -= (this.height / 2);
 
     if (this.mode === Mode.Add || this.mode === Mode.AddMoved) {
       this.visible = true;

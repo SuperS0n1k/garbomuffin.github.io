@@ -1,5 +1,7 @@
+import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
 import { Task } from "../../engine/task";
 import { Vector } from "../../engine/vector";
+import { runBasicPhysics } from "../physics";
 import { Block, IBlockOptions } from "./blocks/block";
 
 /*
@@ -14,7 +16,8 @@ const TOTAL_FRAMES = 4;
 
 export class LevelUpCoinSprite extends Block {
   private animationFrame: number = 1;
-  private startingPosition: Vector;
+  protected startingPosition: Vector;
+  protected animated: boolean = true;
 
   constructor(opts: IBlockOptions) {
     super(opts);
@@ -44,6 +47,10 @@ export class LevelUpCoinSprite extends Block {
   }
 
   public animate() {
+    if (!this.animated) {
+      return;
+    }
+
     this.animationFrame++;
 
     if (this.animationFrame > TOTAL_FRAMES) {
@@ -55,5 +62,34 @@ export class LevelUpCoinSprite extends Block {
 
     this.position = new Vector(this.startingPosition);
     this.centerAlign();
+  }
+}
+
+export class SwordBossLevelUpCoinSprite extends LevelUpCoinSprite {
+  public yv: number = 9;
+  public xv: number = 0;
+  public endY: number = (this.runtime.canvas.height / 2) - (BLOCK_WIDTH / 2) + this.height;
+
+  constructor(options: IBlockOptions) {
+    super(options);
+    this.addTask((task) => this.fly(task));
+    this.animated = false;
+  }
+
+  private fly(task: Task) {
+    runBasicPhysics(this, {
+      collision: false,
+    });
+
+    if (this.y <= this.endY) {
+      this.y = this.endY;
+      this.animated = true;
+      const x = this.x - (BLOCK_WIDTH - this.width) / 2;
+      const y = this.y - (BLOCK_HEIGHT - this.height) / 2;
+      this.startingPosition = new Vector(x, y);
+      this.position = new Vector(x, y);
+      this.centerAlign();
+      task.stop();
+    }
   }
 }

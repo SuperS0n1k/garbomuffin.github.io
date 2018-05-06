@@ -9,6 +9,9 @@ import { Level, getLevels } from "../game/levels";
 import { getContinueCodeForLevel } from "../levelcode";
 import { clone, getElementById, getRandomInt } from "../utils";
 import { Block, IBlockOptions } from "./sprites/blocks/block";
+import { FinalBoss } from "./sprites/bosses/final/finalboss";
+import { NossBoss } from "./sprites/bosses/noss/noss";
+import { SwordBoss } from "./sprites/bosses/sword/sword";
 import { JumpLight } from "./sprites/jumplight";
 import { PauseSprite } from "./sprites/pause/PauseSprite";
 import { PlayerSprite } from "./sprites/player/player";
@@ -227,10 +230,25 @@ export class Nightlight extends GameRuntime {
       this.setBackgroundMusic(level.backgroundMusic.map((i) => this.getSound(i)));
     }
 
-    // if a level has any handlers that need to run
-    if (level.handlers) {
-      for (const handler of level.handlers) {
-        handler(this);
+    // if a level has a boss
+    if (typeof level.boss !== "undefined") {
+      if (level.boss === "sword") {
+        new SwordBoss({
+          texture: this.getImage("boss/sword/sword"),
+          position: new Vector(0, 0),
+        });
+      } else if (level.boss === "noss1") {
+        new NossBoss({
+          texture: this.getImage("boss/noss/noss"),
+          position: new Vector(0, 0),
+        });
+      } else if (level.boss === "noss2") {
+        new FinalBoss({
+          texture: this.getImage("boss/noss/noss"),
+          position: new Vector(0, 0),
+        });
+      } else {
+        throw new Error("Unknown boss");
       }
     }
 
