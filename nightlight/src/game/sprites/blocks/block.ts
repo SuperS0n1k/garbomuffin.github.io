@@ -18,7 +18,7 @@ export class Block extends ImageSprite {
     this.levelIndex = typeof opts.levelIndex !== "undefined" ? opts.levelIndex : -1;
 
     this.runtime.blocks.push(this);
-    if (opts.levelIndex) {
+    if (typeof opts.levelIndex !== "undefined") {
       this.runtime.ordereredBlocks[opts.levelIndex] = this;
     }
 

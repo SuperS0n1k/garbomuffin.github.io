@@ -370,7 +370,7 @@ function runLevelCode(code: string) {
       alert("Couldn't start game (invalid blocks?)\n\nPlease refresh.");
     }
   }
-  history.pushState({}, "", "?level=" + code);
+  history.pushState({}, "", "?level=" + escape(code));
 }
 
 function run() {
