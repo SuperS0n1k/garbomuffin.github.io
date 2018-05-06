@@ -5,7 +5,7 @@ import { GameState } from "../engine/state";
 import { TBackground, TSound } from "../engine/types";
 import { Vector } from "../engine/vector";
 import { Vector2D } from "../engine/vector2d";
-import { Level, getLevels } from "../game/levels";
+import { Level, TSpawnType, getLevels } from "../game/levels";
 import { getContinueCodeForLevel } from "../levelcode";
 import { clone, getElementById, getRandomInt } from "../utils";
 import { Block, IBlockOptions } from "./sprites/blocks/block";
@@ -33,7 +33,7 @@ export class Nightlight extends GameRuntime {
   public darkLevel: boolean = false;
   public ordereredBlocks: Array<Block | undefined> = [];
   public blocks: Block[] = [];
-  public randomSpawn: boolean = false;
+  public playerSpawn!: TSpawnType;
   public playState: GameState = this.defaultState;
   public pauseState: GameState = new GameState();
   public levelCode!: string;
@@ -278,8 +278,14 @@ export class Nightlight extends GameRuntime {
       this.spawnJumpLights(level.jumpLights);
     }
 
-    // random spawn
-    this.randomSpawn = typeof level.randomSpawn === "undefined" ? false : level.randomSpawn;
+    // custom spawn handling
+    if (level.spawn) {
+      this.playerSpawn = level.spawn;
+    } else {
+      this.playerSpawn = {
+        type: "default",
+      };
+    }
 
     // render static things that were just created
     this.updateStatic();

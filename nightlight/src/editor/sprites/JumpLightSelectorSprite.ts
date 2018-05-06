@@ -1,4 +1,5 @@
 import { IImageSpriteOptions, ImageSprite } from "../../engine/sprites/imagesprite";
+import { Vector } from "../../engine/vector";
 import { Vector2D } from "../../engine/vector2d";
 import { NightlightLevelEditor } from "../editor";
 import { LevelEditorMode } from "../mode";
@@ -53,7 +54,7 @@ export class JumpLightSelectorSprite extends ImageSprite {
     if (this.mode === Mode.Add || this.mode === Mode.AddMoved) {
       this.visible = true;
       if (this.runtime.mouse.isClick) {
-        this.addPoint(new Vector2D(this.x, this.y));
+        this.addPoint(new Vector(this.x, this.y));
         if (this.mode === Mode.AddMoved) {
           this.mode = Mode.Move;
         }
@@ -83,7 +84,7 @@ export class JumpLightSelectorSprite extends ImageSprite {
     }
   }
 
-  private findHovered(mx: number, my: number): Vector2D | null {
+  private findHovered(mx: number, my: number): Vector | null {
     const width = this.width;
     const height = this.height;
     for (const p of this.runtime.jumpLights) {
@@ -99,7 +100,7 @@ export class JumpLightSelectorSprite extends ImageSprite {
     return null;
   }
 
-  public movePoint(p: Vector2D) {
+  public movePoint(p: Vector) {
     // remove it and switch to add mode
     // yep.
     // it works.
@@ -107,7 +108,7 @@ export class JumpLightSelectorSprite extends ImageSprite {
     this.mode = Mode.AddMoved;
   }
 
-  public removePoint(p: Vector2D) {
+  public removePoint(p: Vector) {
     const index = this.runtime.jumpLights.indexOf(p);
     if (index === -1) {
       throw new Error("couldn't find point");
@@ -116,7 +117,7 @@ export class JumpLightSelectorSprite extends ImageSprite {
     this.runtime.levelRenderer.updateLevel();
   }
 
-  public addPoint(p: Vector2D) {
+  public addPoint(p: Vector) {
     this.runtime.jumpLights.push(p);
     this.runtime.levelRenderer.updateLevel();
   }

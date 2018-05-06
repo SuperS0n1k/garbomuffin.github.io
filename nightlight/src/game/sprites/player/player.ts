@@ -3,6 +3,7 @@ import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/images
 import { Vector } from "../../../engine/vector";
 import { clone, getRandomInt } from "../../../utils";
 import { Nightlight } from "../../game";
+import { IPointSpawnType, IRangeSpawnType } from "../../levels";
 import { runBasicPhysics } from "../../physics";
 import { PseudoSolidBlock } from "../blocks/block";
 import { PlayerFragmentSprite } from "./fragment";
@@ -152,15 +153,31 @@ export class PlayerSprite extends ImageSprite {
     const sprites = this.runtime.blocks.filter((s) => s.solid || s instanceof PseudoSolidBlock);
 
     this.position.y = this.runtime.canvas.height - BLOCK_HEIGHT;
-    if (this.runtime.randomSpawn) {
-      const minX = 0;
-      const maxX = this.runtime.canvas.width - this.width;
-      this.position.x = getRandomInt(minX, maxX);
-      while (!this.intersects(sprites)) {
-        this.position.x = getRandomInt(minX, maxX);
-      }
-    } else {
+
+    const spawnType = this.runtime.playerSpawn.type;
+    if (spawnType === "default") {
       this.position.x = 40;
+    } else if (spawnType === "range") {
+      const playerSpawn = this.runtime.playerSpawn as IRangeSpawnType;
+      const minX = playerSpawn.min;
+      const maxX = playerSpawn.max;
+      this.position.x = getRandomInt(minX, maxX);
+      // undefined or true act as true
+      if (playerSpawn.requireSolid !== false) {
+        let tries = 0;
+        while (!this.intersects(sprites)) {
+          tries++;
+          if (tries > 1000) {
+            alert("Invalid spawn range, can't find solid blocks.");
+            break;
+          }
+          this.position.x = getRandomInt(minX, maxX);
+        }
+      }
+    } else if (spawnType === "point") {
+      const playerSpawn = this.runtime.playerSpawn as IPointSpawnType;
+      this.position.x = playerSpawn.x;
+      this.position.y = playerSpawn.y;
     }
 
     this.xv = 0;

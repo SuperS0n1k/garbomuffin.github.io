@@ -1,3 +1,4 @@
+import { CANVAS_WIDTH } from "../engine/runtime";
 import { TBackground } from "../engine/types";
 import { Vector } from "../engine/vector";
 import { scratchCoordinate } from "../utils";
@@ -11,6 +12,11 @@ import { INightlightTextSpriteOptions } from "./sprites/text/NightlightTextSprit
 
 export type THandler = (game: Nightlight) => void;
 
+export interface IRangeSpawnType { type: "range"; min: number; max: number; requireSolid?: boolean; }
+export interface IPointSpawnType { type: "point"; x: number; y: number; }
+export interface IDefaultSpawnType { type: "default"; }
+export type TSpawnType = IRangeSpawnType | IPointSpawnType | IDefaultSpawnType;
+
 export interface Level {
   levelData: string;
   background?: TBackground;
@@ -19,7 +25,7 @@ export interface Level {
   dark?: boolean;
   text?: INightlightTextSpriteOptions[];
   jumpLights?: Vector[];
-  randomSpawn?: boolean;
+  spawn?: TSpawnType;
   stars?: boolean;
   boss?: "sword" | "noss1" | "noss2" | "";
 }
@@ -203,7 +209,11 @@ export function getLevels(game: Nightlight): Level[] {
       levelData: "..)^^^^^^^^^^^^^^^^^^^^^^^^-....)^^^^^^^^^^^^^^^^^^^^^^^^-....&************************(..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
       backgroundMusic: ["music/finalboss/1", "music/finalboss/2"],
       boss: "noss2",
-      randomSpawn: true,
+      spawn: {
+        type: "range",
+        min: 0,
+        max: CANVAS_WIDTH,
+      },
       background: "black",
       stars: true,
     },

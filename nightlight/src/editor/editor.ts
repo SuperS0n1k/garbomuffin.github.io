@@ -2,7 +2,7 @@ import { blockMap } from "../blockmap";
 import { BLOCK_HEIGHT, LEVEL_HEIGHT, LEVEL_WIDTH } from "../config";
 import { GameRuntime } from "../engine/runtime";
 import { Vector } from "../engine/vector";
-import { Vector2D } from "../engine/vector2d";
+import { Level } from "../game/levels";
 import { getLevelForCode } from "../levelcode";
 import { clone, getElementById, getSearchParam, splitToChunks } from "../utils";
 import { BLOCK_MAP_KEYS } from "./blockmapkeys";
@@ -11,17 +11,19 @@ import { BlockSelectorSprite } from "./sprites/BlockSelectorSprite";
 import { BossSelectorSprite } from "./sprites/BossSelectorSprite";
 import { JumpLightSelectorSprite } from "./sprites/JumpLightSelectorSprite";
 import { LevelRenderer } from "./sprites/LevelRenderer";
+import { PlayerSpawnSelectorSprite } from "./sprites/PlayerSpawnSelectorSprite";
 
 export class NightlightLevelEditor extends GameRuntime {
   public levelData: string[][] = [];
-  public jumpLights: Vector2D[] = [];
+  public jumpLights: Vector[] = [];
   public blockOffsetY: number;
   public mode: LevelEditorMode = LevelEditorMode.Blocks;
 
   public levelRenderer!: LevelRenderer;
   public blockSelector!: BlockSelectorSprite;
-  public bossSelector!: BossSelectorSprite;
   public jumpLightSelector!: JumpLightSelectorSprite;
+  public bossSelector!: BossSelectorSprite;
+  public playerSpawnSelector!: PlayerSpawnSelectorSprite;
 
   public ui = {
     container: getElementById("level-editor-ui"),
@@ -53,6 +55,23 @@ export class NightlightLevelEditor extends GameRuntime {
     boss: {
       container: getElementById("level-editor-mode-boss"),
       selection: getElementById<HTMLSelectElement>("level-editor-boss-selection"),
+    },
+    playerSpawn: {
+      container: getElementById("level-editor-mode-spawn"),
+      spawnSelect: getElementById<HTMLSelectElement>("level-editor-spawn-select"),
+      range: {
+        container: getElementById("level-editor-spawn-range"),
+        min: getElementById<HTMLInputElement>("level-editor-spawn-range-min"),
+        max: getElementById<HTMLInputElement>("level-editor-spawn-range-max"),
+        requireSolid: getElementById<HTMLInputElement>("level-editor-spawn-range-solid"),
+      },
+      point: {
+        container: getElementById("level-editor-spawn-point"),
+        x: getElementById<HTMLInputElement>("level-editor-spawn-point-x"),
+        y: getElementById<HTMLInputElement>("level-editor-spawn-point-y"),
+        select: getElementById<HTMLButtonElement>("level-editor-spawn-point-select"),
+        gridAlign: getElementById<HTMLInputElement>("level-editor-spawn-point-select-align"),
+      },
     },
   };
 
@@ -99,6 +118,10 @@ export class NightlightLevelEditor extends GameRuntime {
       position: new Vector(0, 0),
       texture: this.getImage("boss/noss/noss"), // overwritten
     });
+    this.playerSpawnSelector = new PlayerSpawnSelectorSprite({
+      position: new Vector(0, 0),
+      texture: this.getImage("player/idle"), // overwritten
+    });
 
     this.initGallery();
 
@@ -114,12 +137,13 @@ export class NightlightLevelEditor extends GameRuntime {
     return code;
   }
 
-  private getJsonLevelCode() {
+  private getJsonLevelCode(): Level {
     const dark = this.ui.options.dark.checked;
     const stars = this.ui.options.stars.checked;
     const background = this.ui.options.background.value;
     const music = this.ui.options.music.value.split(",");
     const boss = this.ui.boss.selection.value;
+    const spawn = this.playerSpawnSelector.selection;
 
     const levelData = clone(this.levelData);
     const code = levelData.reverse().map((s) => s.join("")).join("");
@@ -131,7 +155,8 @@ export class NightlightLevelEditor extends GameRuntime {
       background,
       jumpLights: this.jumpLights,
       backgroundMusic: music,
-      boss,
+      boss: boss as any,
+      spawn,
     };
   }
 
@@ -167,6 +192,7 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.options.music.value = (level.backgroundMusic || []).join(",");
     this.ui.boss.selection.value = level.boss || "";
     this.jumpLights = level.jumpLights || [];
+    this.playerSpawnSelector.selection = level.spawn || {type: "default"};
 
     this.levelData = splitToChunks(level.levelData, LEVEL_WIDTH).map((i) => i.split("")).reverse();
     this.levelRenderer.updateLevel();
@@ -211,6 +237,7 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.blocks.container.style.display = m === 0 ? "block" : "";
     this.ui.jumpLights.container.style.display = m === 1 ? "block" : "";
     this.ui.boss.container.style.display = m === 3 ? "block" : "";
+    this.ui.playerSpawn.container.style.display = m === 4 ? "block" : "";
   }
 
   private openLevelInNewTab() {

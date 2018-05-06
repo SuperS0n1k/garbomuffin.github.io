@@ -53,6 +53,7 @@
             <option value="1">Jumpy Bois</option>
             <option value="2" disabled>Text (maybe soon)</option>
             <option value="3">Boss</option>
+            <option value="4">Player Spawn</option>
           </select>
         </label>
 
@@ -88,6 +89,30 @@
           </label>
 
           <p><b>More options soon<sup>TM</sup>.</b></p>
+        </div>
+
+        <div id="level-editor-mode-spawn" class="level-editor-mode">
+          <label>
+            Spawn:
+            <select id="level-editor-spawn-select">
+              <option value="default" selected>Default</option>
+              <option value="range">Range</option>
+              <option value="point">Point</option>
+            </select>
+          </label>
+
+          <div id="level-editor-spawn-range">
+            <div><label>Min: <input type="number" value="0" min="0" max="480" id="level-editor-spawn-range-min"></label></div>
+            <div><label>Max: <input type="number" value="480" min="0" max="480" id="level-editor-spawn-range-max"></label></div>
+            <div><label>Require solid block: <input type="checkbox" checked id="level-editor-spawn-range-solid"></label></div>
+          </div>
+          
+          <div id="level-editor-spawn-point">
+            <div><label>X: <input type="number" value="0" min="0" max="480" id="level-editor-spawn-point-x"></label></div>
+            <div><label>Y: <input type="number" value="344" min="0" max="360" id="level-editor-spawn-point-y"></label></div>
+            <div><button id="level-editor-spawn-point-select">Select a point</button></div>
+            <div><label>Algin Selection <input type="checkbox" checked id="level-editor-spawn-point-select-align"></label></div>
+          </div>
         </div>
 
         <hr>
