@@ -25,6 +25,7 @@ export class NightlightLevelEditor extends GameRuntime {
     getCodeButton: getElementById<HTMLButtonElement>("level-editor-get-code"),
     getJsonCodeButton: getElementById<HTMLButtonElement>("level-editor-get-json-code"),
     importCodeButton: getElementById<HTMLButtonElement>("level-editor-import-code"),
+    openLevel: getElementById<HTMLButtonElement>("level-editor-open-level"),
     codeOutput: getElementById<HTMLTextAreaElement>("level-editor-code-output"),
     modeSelect: getElementById<HTMLSelectElement>("level-editor-option-mode"),
     options: {
@@ -56,6 +57,7 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.getCodeButton.addEventListener("click", () => this.handleGetCodeButton());
     this.ui.getJsonCodeButton.addEventListener("click", () => this.handleGetJsonCodeButton());
     this.ui.importCodeButton.addEventListener("click", () => this.handleImportLevelCodeButton());
+    this.ui.openLevel.addEventListener("click", () => this.openLevelInNewTab());
     this.ui.modeSelect.addEventListener("change", () => this.setMode(+this.ui.modeSelect.value));
     this.setMode(this.mode);
 
@@ -98,13 +100,13 @@ export class NightlightLevelEditor extends GameRuntime {
     super.render();
   }
 
-  private handleGetCodeButton() {
+  private getSimpleLevelCode() {
     const levelData = clone(this.levelData);
     const code = levelData.reverse().map((s) => s.join("")).join("");
-    this.ui.codeOutput.value = code;
+    return code;
   }
 
-  private handleGetJsonCodeButton() {
+  private getJsonLevelCode() {
     const dark = this.ui.options.dark.checked;
     const stars = this.ui.options.stars.checked;
     const background = this.ui.options.background.value;
@@ -113,14 +115,22 @@ export class NightlightLevelEditor extends GameRuntime {
     const levelData = clone(this.levelData);
     const code = levelData.reverse().map((s) => s.join("")).join("");
 
-    this.ui.codeOutput.value = JSON.stringify({
+    return {
       levelData: code,
       dark,
       stars,
       background,
       jumpLights: this.jumpLights,
       backgroundMusic: music,
-    });
+    };
+  }
+
+  private handleGetCodeButton() {
+    this.ui.codeOutput.value = this.getSimpleLevelCode();
+  }
+
+  private handleGetJsonCodeButton() {
+    this.ui.codeOutput.value = JSON.stringify(this.getJsonLevelCode());
   }
 
   private handleImportLevelCodeButton() {
@@ -189,5 +199,10 @@ export class NightlightLevelEditor extends GameRuntime {
     this.mode = m;
     this.ui.blocks.container.style.display = m === 0 ? "block" : "";
     this.ui.jumpLights.container.style.display = m === 1 ? "block" : "";
+  }
+
+  private openLevelInNewTab() {
+    const code = escape(JSON.stringify(this.getJsonLevelCode()));
+    window.open(`?autorun=1&level=${code}`, "_blank");
   }
 }

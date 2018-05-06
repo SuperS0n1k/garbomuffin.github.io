@@ -290,12 +290,28 @@ game.waitForAssets((progress) => {
 
 function canPlay() {
   if (game instanceof Nightlight) {
+    const autorun = !!getSearchParam("autorun");
+    const urlLevelParam = getSearchParam("level") || "";
+    const loadLevelFromUrl = () => runLevelCode(urlLevelParam as string);
+
+    if (autorun) {
+      try {
+        if (urlLevelParam) {
+          loadLevelFromUrl();
+        } else {
+          run();
+        }
+        return;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     playButton.addEventListener("click", () => run());
     loadCodeButton.addEventListener("click", () => {
       // chrome (and probably others) limit prompt default value to 2000 characters
       const TOO_LONG_TO_SHOW_MESSAGE = "(default too long to show. enter will still work as normal)";
 
-      const urlLevelParam = getSearchParam("level") || "";
       let defaultValue;
       if (urlLevelParam.length > 2000) {
         defaultValue = TOO_LONG_TO_SHOW_MESSAGE;
@@ -312,21 +328,14 @@ function canPlay() {
       }
       runLevelCode(code);
     });
-    loadCodeFromUrlButton.addEventListener("click", () => {
-      runLevelCode(getSearchParam("level") as string);
-    });
+    if (urlLevelParam) {
+      loadCodeFromUrlButton.addEventListener("click", () => loadLevelFromUrl());
+      loadCodeFromUrlButton.style.display = "inline";
+    }
 
     menuBackground.classList.add("active");
     loadingScreen.style.display = "none";
     menuScreen.style.display = "block";
-
-    if (getSearchParam("level") !== null) {
-      loadCodeFromUrlButton.style.display = "inline";
-    }
-
-    if (location.search === "?run") {
-      run();
-    }
   } else {
     run();
   }
@@ -342,32 +351,46 @@ function runLevelCode(code: string) {
     throw new Error("not in game");
   }
 
+  const alertError = (str: string, e: Error | string) => {
+    alert(`${str}\n\n${typeof e === "string" ? e : e.stack}`);
+  };
+
+  const invalidLevelCode = (e: Error | string) => {
+    alertError("Invalid level code (invalid format?)", e);
+  };
+
+  const couldntStartGame = (e: Error | string) => {
+    alertError("Couldn't start game (invalid blocks?)\n\nPlease refresh.", e);
+  };
+
   if (code.length === LEVEL_CODE_LENGTH || code.startsWith("{")) {
     let levels;
     try {
       levels = [getLevelForCode(code)];
     } catch (e) {
-      alert("Invalid level code (invalid format?)");
+      invalidLevelCode(e);
       return;
     }
     showCanvas();
     try {
       game.start(levels);
     } catch (e) {
-      alert("Couldn't start game (invalid blocks?)\n\nPlease refresh.");
+      couldntStartGame(e);
+      return;
     }
   } else {
     // we got a resume code
     const res = getLevelForContinueCode(code);
     if (res === null) {
-      alert("Invalid level code (invalid format?)");
+      invalidLevelCode("Probably a bad link.");
       return;
     }
     game.level = res;
     try {
       run();
     } catch (e) {
-      alert("Couldn't start game (invalid blocks?)\n\nPlease refresh.");
+      couldntStartGame(e);
+      return;
     }
   }
   history.pushState({}, "", "?level=" + escape(code));
