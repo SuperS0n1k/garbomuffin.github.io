@@ -230,6 +230,13 @@ export class Nightlight extends GameRuntime {
       this.setBackgroundMusic(level.backgroundMusic.map((i) => this.getSound(i)));
     }
 
+    // if a level has handlers
+    if (level.handlers) {
+      for (const handler of level.handlers) {
+        handler(this);
+      }
+    }
+
     // if a level has a boss
     if (typeof level.boss !== "undefined") {
       if (level.boss === "sword") {
