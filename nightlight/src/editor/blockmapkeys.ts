@@ -6,12 +6,12 @@ export const BLOCK_MAP_KEYS = [
   "b",
   "e",
   "g",
-  "empty",
+  "m",
 
   "c",
   "a",
   "h",
-  "empty",
+  "]",
 
   "d",
   "f",
@@ -20,14 +20,14 @@ export const BLOCK_MAP_KEYS = [
 
   "v",
   "A",
-  "m",
-  "]",
+  "}",
+  "empty",
 
   // Theme 2
   "1",
   "4",
   "6",
-  "empty",
+  "9",
 
   "2",
   "a",
@@ -41,14 +41,14 @@ export const BLOCK_MAP_KEYS = [
 
   "C",
   "B",
-  "9",
+  "'",
   "empty",
 
   // Castle Theme
   "&",
   ")",
   "_",
-  "empty",
+  "`",
 
   "*",
   "^",
@@ -60,16 +60,16 @@ export const BLOCK_MAP_KEYS = [
   "+",
   "empty",
 
-  "`",
-  "empty",
-  "empty",
+  "S",
+  "T",
+  "V",
   "empty",
 
   // Green Theme... hoorary
   "L",
   "D",
   "F",
-  "empty",
+  "I",
 
   "M",
   "a",
@@ -82,7 +82,7 @@ export const BLOCK_MAP_KEYS = [
 
   "K",
   "J",
-  "I",
+  "|",
   "empty",
 
   // Grass

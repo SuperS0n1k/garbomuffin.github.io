@@ -123,6 +123,7 @@ game.addImage("blocks/capitalo");
 game.addImage("blocks/capitalp");
 game.addImage("blocks/capitalq");
 game.addImage("blocks/capitalr");
+game.addImage("blocks/closingcurlybracket");
 
 game.addImage("blocks/button/redgreen/button");
 game.addImage("blocks/button/redgreen/button2");
@@ -171,6 +172,7 @@ game.addImage("blocks/7");
 game.addImage("blocks/8");
 game.addImage("blocks/9");
 game.addImage("blocks/!");
+game.addImage("blocks/singlequote");
 
 game.addImage("blocks/lightbutton/1");
 game.addImage("blocks/lightbutton/2");
@@ -201,13 +203,15 @@ game.addImage("blocks/underscore");
 game.addImage("blocks/=");
 game.addImage("blocks/+");
 game.addImage("blocks/grave");
+game.addImage("blocks/capitals");
+game.addImage("blocks/capitalt");
+game.addImage("blocks/capitalv");
 
 game.addImage("blocks/castlecorner/topright");
 game.addImage("blocks/castlecorner/topleft");
 game.addImage("blocks/castlecorner/bottomright");
 game.addImage("blocks/castlecorner/bottomleft");
 
-// new blocks!
 game.addImage("blocks/capitala");
 game.addImage("blocks/capitalb");
 game.addImage("blocks/capitalc");
@@ -223,6 +227,7 @@ game.addImage("blocks/capitall");
 game.addImage("blocks/capitalm");
 game.addImage("blocks/capitaln");
 game.addImage("blocks/capitalw");
+game.addImage("blocks/pipe");
 
 // ending
 game.addImage("end/scene");

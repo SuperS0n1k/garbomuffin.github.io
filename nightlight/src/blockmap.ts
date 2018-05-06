@@ -107,6 +107,13 @@ export const blockMap: IBlockMap = {
   "=": solid("blocks/="),
   "+": solid("blocks/+"),
   "`": special(CastleCornerBlock, "blocks/grave"),
+  "S": solid("blocks/capitals"),
+  "T": solid("blocks/capitalt"),
+  "V": solid("blocks/capitalv"),
+
+  "}": solid("blocks/closingcurlybracket"),
+  "|": solid("blocks/pipe"),
+  "'": solid("blocks/singlequote"),
 
   // New blocks!
   "A": solid("blocks/capitala"),
@@ -123,4 +130,17 @@ export const blockMap: IBlockMap = {
   "L": solid("blocks/capitall"),
   "M": solid("blocks/capitalm"),
   "N": solid("blocks/capitaln"),
+
+  // these are all of the remaining characters...
+  // yeah that's not many
+  // idea: use one of these characters to indicate that this is a 2 letter wide block, maybe?
+  // "\"": solid(""),
+  // ",": solid(""),
+  // "/": solid(""),
+  // "?": solid(""),
+  // ">": solid(""),
+  // "<": solid(""),
+  // "~": solid(""),
+  // " ": solid(""),
+  // "\\": solid(""),
 };
