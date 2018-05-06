@@ -1,5 +1,7 @@
+import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../../../config";
 import { IImageSpriteOptions } from "../../../../engine/sprites/imagesprite";
 import { Task } from "../../../../engine/task";
+import { Vector } from "../../../../engine/vector";
 import { getRandomInt } from "../../../../utils";
 import { Nightlight } from "../../../game";
 import { ZIndexes } from "../../zindex";
@@ -124,7 +126,7 @@ export class FinalBoss extends AbstractNossBoss {
     } else if (direction === -1) {
       this.x = this.runtime.canvas.width;
     }
-    this.y = this.runtime.player.y;
+    this.y = this.runtime.player.y - ((this.width - this.runtime.player.width) / 2);
   }
 
   private slideAttack(direction: number) {
@@ -139,7 +141,7 @@ export class FinalBoss extends AbstractNossBoss {
     this.runtime.playSound("boss/noss/shadow2");
     this.setScale(DROP_ATTACK_SCALE);
     this.y = -this.height;
-    this.x = this.runtime.player.x - (this.width / 2);
+    this.x = this.runtime.player.x - ((this.width - this.runtime.player.width) / 2);
   }
 
   private dropAttack() {
@@ -175,7 +177,8 @@ export class FinalBoss extends AbstractNossBoss {
   }
 
   private dead() {
-    this.spawnLevelUpCoin(this.position);
+    const position = new Vector(this.x - BLOCK_WIDTH, this.y - BLOCK_HEIGHT);
+    this.spawnLevelUpCoin(position);
     this.destroy();
   }
 

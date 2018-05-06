@@ -21,7 +21,7 @@ export interface Level {
   jumpLights?: Vector[];
   randomSpawn?: boolean;
   stars?: boolean;
-  boss?: "sword" | "noss1" | "noss2";
+  boss?: "sword" | "noss1" | "noss2" | "";
 }
 
 function goodbye() {

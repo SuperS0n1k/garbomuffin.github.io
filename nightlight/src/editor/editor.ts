@@ -8,17 +8,20 @@ import { clone, getElementById, getSearchParam, splitToChunks } from "../utils";
 import { BLOCK_MAP_KEYS } from "./blockmapkeys";
 import { LevelEditorMode } from "./mode";
 import { BlockSelectorSprite } from "./sprites/BlockSelectorSprite";
+import { BossSelectorSprite } from "./sprites/BossSelectorSprite";
 import { JumpLightSelectorSprite } from "./sprites/JumpLightSelectorSprite";
 import { LevelRenderer } from "./sprites/LevelRenderer";
 
 export class NightlightLevelEditor extends GameRuntime {
   public levelData: string[][] = [];
   public jumpLights: Vector2D[] = [];
-  public levelRenderer!: LevelRenderer;
-  public blockSelector!: BlockSelectorSprite;
-  public jumpLightSelector!: JumpLightSelectorSprite;
   public blockOffsetY: number;
   public mode: LevelEditorMode = LevelEditorMode.Blocks;
+
+  public levelRenderer!: LevelRenderer;
+  public blockSelector!: BlockSelectorSprite;
+  public bossSelector!: BossSelectorSprite;
+  public jumpLightSelector!: JumpLightSelectorSprite;
 
   public ui = {
     container: getElementById("level-editor-ui"),
@@ -46,6 +49,10 @@ export class NightlightLevelEditor extends GameRuntime {
       activeBlockImage: getElementById<HTMLImageElement>("level-editor-active-block-image"),
       gallery: getElementById("level-editor-block-gallery"),
       activeBlockDescription: getElementById("level-editor-active-block-description"),
+    },
+    boss: {
+      container: getElementById("level-editor-mode-boss"),
+      selection: getElementById<HTMLSelectElement>("level-editor-boss-selection"),
     },
   };
 
@@ -82,11 +89,15 @@ export class NightlightLevelEditor extends GameRuntime {
 
     this.blockSelector = new BlockSelectorSprite({
       position: new Vector(0, 0),
-      texture: this.getImage("blocks/a"),
+      texture: this.getImage("blocks/a"), // overwritten
     });
     this.jumpLightSelector = new JumpLightSelectorSprite({
       position: new Vector(0, 0),
       texture: this.getImage("blackjumplight"),
+    });
+    this.bossSelector = new BossSelectorSprite({
+      position: new Vector(0, 0),
+      texture: this.getImage("boss/noss/noss"), // overwritten
     });
 
     this.initGallery();
@@ -95,10 +106,6 @@ export class NightlightLevelEditor extends GameRuntime {
     if (levelSearchParam) {
       this.importLevelCode(levelSearchParam);
     }
-  }
-
-  public render() {
-    super.render();
   }
 
   private getSimpleLevelCode() {
@@ -112,6 +119,7 @@ export class NightlightLevelEditor extends GameRuntime {
     const stars = this.ui.options.stars.checked;
     const background = this.ui.options.background.value;
     const music = this.ui.options.music.value.split(",");
+    const boss = this.ui.boss.selection.value;
 
     const levelData = clone(this.levelData);
     const code = levelData.reverse().map((s) => s.join("")).join("");
@@ -123,6 +131,7 @@ export class NightlightLevelEditor extends GameRuntime {
       background,
       jumpLights: this.jumpLights,
       backgroundMusic: music,
+      boss,
     };
   }
 
@@ -156,6 +165,7 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.options.dark.checked = level.dark as boolean;
     this.ui.options.background.value = level.background as string;
     this.ui.options.music.value = (level.backgroundMusic || []).join(",");
+    this.ui.boss.selection.value = level.boss || "";
     this.jumpLights = level.jumpLights || [];
 
     this.levelData = splitToChunks(level.levelData, LEVEL_WIDTH).map((i) => i.split("")).reverse();
@@ -200,6 +210,7 @@ export class NightlightLevelEditor extends GameRuntime {
     this.mode = m;
     this.ui.blocks.container.style.display = m === 0 ? "block" : "";
     this.ui.jumpLights.container.style.display = m === 1 ? "block" : "";
+    this.ui.boss.container.style.display = m === 3 ? "block" : "";
   }
 
   private openLevelInNewTab() {

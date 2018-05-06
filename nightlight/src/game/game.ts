@@ -238,7 +238,7 @@ export class Nightlight extends GameRuntime {
     }
 
     // if a level has a boss
-    if (typeof level.boss !== "undefined") {
+    if (typeof level.boss !== "undefined" && level.boss !== "") {
       if (level.boss === "sword") {
         new SwordBoss({
           texture: this.getImage("boss/sword/sword"),
