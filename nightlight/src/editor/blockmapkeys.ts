@@ -60,9 +60,9 @@ export const BLOCK_MAP_KEYS = [
   "+",
   "empty",
 
-  "S",
   "T",
   "V",
+  "S",
   "empty",
 
   // Green Theme... hoorary
