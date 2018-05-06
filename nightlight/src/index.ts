@@ -1,7 +1,7 @@
 import { NightlightLevelEditor } from "./editor/editor";
 import { GameRuntime } from "./engine/runtime";
 import { Nightlight } from "./game/game";
-import { LEVEL_CODE_LENGTH, getLevelForCode } from "./levelcode";
+import { LEVEL_CODE_LENGTH, getLevelForCode, getLevelForContinueCode } from "./levelcode";
 import { getElementById, getSearchParam } from "./utils";
 
 /*
@@ -337,18 +337,33 @@ function runLevelCode(code: string) {
   }
 
   if (code.length === LEVEL_CODE_LENGTH || code.startsWith("{")) {
+    let levels;
+    try {
+      levels = [getLevelForCode(code)];
+    } catch (e) {
+      alert("Invalid level code (invalid format?)");
+      return;
+    }
     showCanvas();
-    game.start([getLevelForCode(code)]);
+    try {
+      game.start(levels);
+    } catch (e) {
+      alert("Couldn't start game (invalid blocks?)\n\nPlease refresh.");
+    }
     game.setBackgroundMusic([game.getSound("music/exploration")]);
   } else {
     // we got a resume code
-    const res = game.readLevelCode(code);
+    const res = getLevelForContinueCode(code);
     if (res === null) {
-      alert("Invalid level code");
+      alert("Invalid level code (invalid format?)");
       return;
     }
     game.level = res;
-    run();
+    try {
+      run();
+    } catch (e) {
+      alert("Couldn't start game (invalid blocks?)\n\nPlease refresh.");
+    }
   }
   history.pushState({}, "", "?level=" + code);
 }

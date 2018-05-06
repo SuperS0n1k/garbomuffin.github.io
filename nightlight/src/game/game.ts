@@ -6,6 +6,7 @@ import { TBackground, TSound } from "../engine/types";
 import { Vector } from "../engine/vector";
 import { Vector2D } from "../engine/vector2d";
 import { Level, getLevels } from "../game/levels";
+import { getContinueCodeForLevel } from "../levelcode";
 import { clone, getElementById, getRandomInt } from "../utils";
 import { Block, IBlockOptions } from "./sprites/blocks/block";
 import { JumpLight } from "./sprites/jumplight";
@@ -162,8 +163,7 @@ export class Nightlight extends GameRuntime {
     const blockType = blockMap[char];
 
     if (typeof blockType === "undefined") {
-      console.error(`Could not find block metadata for ${char}, skipping`);
-      return;
+      throw new Error(`Could not find block metadata for ${char}`);
     }
 
     const texture = this.getImage(blockType.texture);
@@ -259,43 +259,9 @@ export class Nightlight extends GameRuntime {
     // render static things that were just created
     this.updateStatic();
 
-    this.levelCode = this.createLevelCode();
+    this.levelCode = getContinueCodeForLevel(this.level);
 
     this.player.reset();
-  }
-
-  private createLevelCode(nlevel: number = this.level) {
-    let level = nlevel.toString();
-    if (level.length === 1) {
-      level = "0" + level;
-    }
-    let result = "";
-    result += getRandomInt(0, 9);
-    result += level[0];
-    result += getRandomInt(0, 9);
-    result += getRandomInt(0, 9);
-    result += level[1];
-    result += getRandomInt(0, 9);
-    result += getRandomInt(0, 9);
-    result += getRandomInt(0, 9);
-    return result;
-  }
-
-  public readLevelCode(code: string): number | null {
-    if (code.length !== 8) {
-      return null;
-    }
-    if (Math.floor(+code) !== +code) {
-      return null;
-    }
-    const level = +(code[1] + code[4]);
-    if (level < 0) {
-      return null;
-    }
-    if (!isFinite(level)) {
-      return null;
-    }
-    return level;
   }
 
   private spawnJumpLights(positions: Vector[]) {

@@ -21,7 +21,7 @@ export class BlockSelectorSprite extends ImageSprite {
     this.updateSelection();
 
     document.addEventListener("keydown", (e) => {
-      if (blockMap[e.key]) {
+      if (blockMap[e.key] && e.target === document.body) {
         this.setSelection(e.key);
       }
     });
@@ -42,12 +42,12 @@ export class BlockSelectorSprite extends ImageSprite {
   private setBlock(x: number, y: number, char: string) {
     const row = this.runtime.levelData[y];
     if (!row) {
-      console.warn(`no row for y=${y}`);
+      console.warn(`no row for y=${y} x=${x} (skipping)`);
       return;
     }
     const existingChar = row[x];
     if (!existingChar) {
-      console.warn(`no existing char for y=${y} x=${x}`);
+      console.warn(`no existing char for y=${y} x=${x} (skipping)`);
       return;
     }
     row[x] = char;
