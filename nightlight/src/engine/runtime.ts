@@ -144,7 +144,9 @@ export class GameRuntime extends TaskRunner {
       this.sounds.set(originalSrc, sound);
     });
 
-    this._assetPromises.push(promise);
+    // music doesn't need to load for the game to work
+    // it can load in the background when it starts to play
+    // this._assetPromises.push(promise);
     return promise;
   }
 

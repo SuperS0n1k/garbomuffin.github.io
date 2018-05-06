@@ -31,6 +31,7 @@ export class NightlightLevelEditor extends GameRuntime {
       dark: getElementById<HTMLInputElement>("level-editor-option-dark"),
       stars: getElementById<HTMLInputElement>("level-editor-option-stars"),
       background: getElementById<HTMLSelectElement>("level-editor-option-background"),
+      music: getElementById<HTMLSelectElement>("level-editor-option-music"),
     },
     jumpLights: {
       container: getElementById("level-editor-mode-jump-lights"),
@@ -107,6 +108,7 @@ export class NightlightLevelEditor extends GameRuntime {
     const dark = this.ui.options.dark.checked;
     const stars = this.ui.options.stars.checked;
     const background = this.ui.options.background.value;
+    const music = this.ui.options.music.value.split(",");
 
     const levelData = clone(this.levelData);
     const code = levelData.reverse().map((s) => s.join("")).join("");
@@ -117,6 +119,7 @@ export class NightlightLevelEditor extends GameRuntime {
       stars,
       background,
       jumpLights: this.jumpLights,
+      backgroundMusic: music,
     });
   }
 
@@ -141,6 +144,7 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.options.stars.checked = level.stars as boolean;
     this.ui.options.dark.checked = level.dark as boolean;
     this.ui.options.background.value = level.background as string;
+    this.ui.options.music.value = (level.backgroundMusic || []).join(",");
     this.jumpLights = level.jumpLights || [];
 
     this.levelData = splitToChunks(level.levelData, LEVEL_WIDTH).map((i) => i.split("")).reverse();

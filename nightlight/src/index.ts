@@ -350,7 +350,6 @@ function runLevelCode(code: string) {
     } catch (e) {
       alert("Couldn't start game (invalid blocks?)\n\nPlease refresh.");
     }
-    game.setBackgroundMusic([game.getSound("music/exploration")]);
   } else {
     // we got a resume code
     const res = getLevelForContinueCode(code);

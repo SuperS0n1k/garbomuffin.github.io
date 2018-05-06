@@ -224,7 +224,7 @@ export class Nightlight extends GameRuntime {
 
     // if a level has new background music
     if (level.backgroundMusic) {
-      this.setBackgroundMusic(level.backgroundMusic);
+      this.setBackgroundMusic(level.backgroundMusic.map((i) => this.getSound(i)));
     }
 
     // if a level has any handlers that need to run

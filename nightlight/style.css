@@ -122,7 +122,16 @@ td {
   display: none;
 }
 
-/* #region Block Gallery */
+#level-editor-options {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: -5px;
+}
+
+#level-editor-options * {
+  margin-left: 5px;
+}
 
 #level-editor-block-gallery {
   display: flex;
@@ -139,7 +148,5 @@ td {
   height: 16px;
   padding: 1px;
 }
-
-/* #endregion */
 
 /* #endregion */

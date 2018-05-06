@@ -85,16 +85,30 @@
 
         <hr>
 
-        <div><label>Dark: <input id="level-editor-option-dark" type="checkbox"></label></div>
-        <div><label>Stars: <input id="level-editor-option-stars" type="checkbox" checked></label></div>
-        <div>
-          <label>
-            Background:
-            <select id="level-editor-option-background">
-              <option selected value="black">Black</option>
-              <option value="castle">Castle</option>
-            </select>
-          </label>
+        <div id="level-editor-options">
+          <div><label>Dark: <input id="level-editor-option-dark" type="checkbox"></label></div>
+          <div><label>Stars: <input id="level-editor-option-stars" type="checkbox" checked></label></div>
+          <div>
+            <label>
+              Background:
+              <select id="level-editor-option-background">
+                <option selected value="black">Black</option>
+                <option value="castle">Castle</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>
+              Background Music:
+              <select id="level-editor-option-music">
+                <option selected value="music/exploration">Exploration</option>
+                <option value="music/blackroad/1,music/blackroad/2">Blackroad</option>
+                <option value="music/boss/1,music/boss/2">Boss</option>
+                <option value="music/netherslament">Nether's Lament</option>
+                <option value="music/finalboss/1,music/finalboss/2">Final Boss</option>
+              </select>
+            </label>
+          </div>
         </div>
       </div>
     </div>

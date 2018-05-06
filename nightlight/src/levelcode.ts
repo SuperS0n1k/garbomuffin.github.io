@@ -32,6 +32,7 @@ function getStringLevel(str: string): Level {
     stars: true,
     dark: false,
     background: "black",
+    backgroundMusic: ["music/exploration"],
   };
 }
 
