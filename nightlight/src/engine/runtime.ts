@@ -174,7 +174,7 @@ export class GameRuntime extends TaskRunner {
   public getImage(src: string): TImage {
     const image = this.images.get(src);
     if (!image) {
-      console.warn("Couldn't get image", src);
+      throw new Error(`Couldn't get image with name ${src}`);
     }
     return image as TImage;
   }

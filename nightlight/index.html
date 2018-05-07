@@ -88,6 +88,17 @@
             </select>
           </label>
 
+          <div id="level-editor-boss-sword">
+            <div>
+              <label>Health: <input id="level-editor-boss-sword-health" type="number" min="0" value="3"></label>
+            </div>
+            <div>
+              <label>Blocks from top: <input id="level-editor-boss-sword-blocks-from-top" type="number" min="0" max="23" value="14"></label>
+            </div>
+          </div>
+          <div id="level-editor-boss-noss1"></div>
+          <div id="level-editor-boss-noss2"></div>
+
           <p><b>More options soon<sup>TM</sup>.</b></p>
         </div>
 
@@ -96,17 +107,25 @@
             Spawn:
             <select id="level-editor-spawn-select">
               <option value="default" selected>Default</option>
+              <option value="random">Random</option>
               <option value="range">Range</option>
               <option value="point">Point</option>
             </select>
           </label>
 
+          <div id="level-editor-spawn-random">
+            <div><label>Min X: <input type="number" value="0" min="0" max="480" id="level-editor-spawn-random-min-x"></label></div>
+            <div><label>Max X: <input type="number" value="480" min="0" max="480" id="level-editor-spawn-random-max-x"></label></div>
+            <div><label>Min Y: <input type="number" value="0" min="0" max="360" id="level-editor-spawn-random-min-y"></label></div>
+            <div><label>Max Y: <input type="number" value="360" min="0" max="360" id="level-editor-spawn-random-max-y"></label></div>
+          </div>
+
           <div id="level-editor-spawn-range">
-            <div><label>Min: <input type="number" value="0" min="0" max="480" id="level-editor-spawn-range-min"></label></div>
-            <div><label>Max: <input type="number" value="480" min="0" max="480" id="level-editor-spawn-range-max"></label></div>
+            <div><label>Min X: <input type="number" value="0" min="0" max="480" id="level-editor-spawn-range-min-x"></label></div>
+            <div><label>Max X: <input type="number" value="480" min="0" max="480" id="level-editor-spawn-range-max-x"></label></div>
             <div><label>Require solid block: <input type="checkbox" checked id="level-editor-spawn-range-solid"></label></div>
           </div>
-          
+
           <div id="level-editor-spawn-point">
             <div><label>X: <input type="number" value="0" min="0" max="480" id="level-editor-spawn-point-x"></label></div>
             <div><label>Y: <input type="number" value="344" min="0" max="360" id="level-editor-spawn-point-y"></label></div>
@@ -166,6 +185,9 @@
 
     <pre>
       <b>Changelog:</b>
+      v0.1.9.3:
+       * Added back the "jump delay" <span style="color:white">that never existed</span>
+
       v0.1.9.2:
        * Game should load faster on slow connections
        * Sword boss: made the death animation longer

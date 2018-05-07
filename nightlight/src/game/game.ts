@@ -5,9 +5,10 @@ import { GameState } from "../engine/state";
 import { TBackground, TSound } from "../engine/types";
 import { Vector } from "../engine/vector";
 import { Vector2D } from "../engine/vector2d";
-import { Level, TSpawnType, getLevels } from "../game/levels";
+import { Level, TSpawnType } from "../level";
 import { getContinueCodeForLevel } from "../levelcode";
 import { clone, getElementById, getRandomInt } from "../utils";
+import { getLevels } from "./levels";
 import { Block, IBlockOptions } from "./sprites/blocks/block";
 import { FinalBoss } from "./sprites/bosses/final/finalboss";
 import { NossBoss } from "./sprites/bosses/noss/noss";
@@ -238,18 +239,18 @@ export class Nightlight extends GameRuntime {
     }
 
     // if a level has a boss
-    if (typeof level.boss !== "undefined" && level.boss !== "") {
-      if (level.boss === "sword") {
+    if (typeof level.boss !== "undefined" && level.boss.type !== "") {
+      if (level.boss.type === "sword") {
         new SwordBoss({
           texture: this.getImage("boss/sword/sword"),
           position: new Vector(0, 0),
-        });
-      } else if (level.boss === "noss1") {
+        }, level.boss);
+      } else if (level.boss.type === "noss1") {
         new NossBoss({
           texture: this.getImage("boss/noss/noss"),
           position: new Vector(0, 0),
         });
-      } else if (level.boss === "noss2") {
+      } else if (level.boss.type === "noss2") {
         new FinalBoss({
           texture: this.getImage("boss/noss/noss"),
           position: new Vector(0, 0),

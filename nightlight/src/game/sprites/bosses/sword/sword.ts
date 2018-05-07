@@ -14,8 +14,6 @@ import { AbstractBoss } from "../boss";
  * This code is terrible. Please do not try to maintain it. Rewrite it from the ground up.
  */
 
-const HEALTH = 3;
-
 // swipe and spin cycle
 const SPIN_ROTATION_SPEED = 5 / 2;
 const SPIN_SIZE_CHANGE_RATE = 0.035;
@@ -51,12 +49,19 @@ const DEAD_STARTING_VELOCITY = 2;
 
 const REST_PHASE_LENGTH = 180;
 
+export interface ISwordOptions {
+  health?: number;
+  blocksFromTop?: number;
+}
+
 export class SwordBoss extends AbstractBoss {
-  private health: number = HEALTH;
+  private health: number;
+  private startingHealth: number;
   private hitPlayer: boolean = false;
   private _sizeScale: number = 1;
   private spinDirection: number = 1;
   private testCollision: boolean = false;
+  private blocksFromTop: number;
   public yv: number = DEAD_STARTING_VELOCITY;
   public xv: number = 0;
   public runtime!: Nightlight;
@@ -64,9 +69,12 @@ export class SwordBoss extends AbstractBoss {
   private readonly startingHeight: number;
   private readonly startingWidth: number;
 
-  constructor(opts: IBlockOptions) {
+  constructor(opts: IBlockOptions, options: ISwordOptions = {}) {
     super(opts);
 
+    this.blocksFromTop = options.blocksFromTop || 14;
+    this.startingHealth = options.health || 3;
+    this.health = this.startingHealth;
     this.startingHeight = this.height;
     this.startingWidth = this.width;
 
@@ -105,7 +113,7 @@ export class SwordBoss extends AbstractBoss {
 
   private resetCoordinates() {
     this.recenter();
-    this.y = 14 * BLOCK_HEIGHT;
+    this.y = this.blocksFromTop * BLOCK_HEIGHT;
   }
 
   private recenter() {
@@ -277,9 +285,9 @@ export class SwordBoss extends AbstractBoss {
     if (this.hitPlayer) {
       this.texture = this.runtime.getImage("boss/sword/heal");
 
-      this.spawnHitEffect(this.health === HEALTH ? "+0" : "+1");
+      this.spawnHitEffect(this.health === this.startingHealth ? "+0" : "+1");
 
-      if (this.health < HEALTH) {
+      if (this.health < this.startingHealth) {
         this.health++;
       }
 

@@ -1,5 +1,5 @@
 import { IImageSpriteOptions, ImageSprite } from "../../engine/sprites/imagesprite";
-import { IPointSpawnType, IRangeSpawnType, TSpawnType } from "../../game/levels";
+import { IPointSpawnType, IRandomSpawnType, IRangeSpawnType, TSpawnType } from "../../level";
 import { NightlightLevelEditor } from "../editor";
 import { LevelEditorMode } from "../mode";
 import { LevelEditorIndexes } from "./LevelEditorIndexes";
@@ -64,22 +64,29 @@ export class PlayerSpawnSelectorSprite extends ImageSprite {
   private selectionChanged() {
     const type = this.ui.spawnSelect.value;
     this.ui.point.container.style.display = type === "point" ? "block" : "";
+    this.ui.random.container.style.display = type === "random" ? "block" : "";
     this.ui.range.container.style.display = type === "range" ? "block" : "";
   }
 
-  get selection(): TSpawnType {
+  get selection(): TSpawnType | undefined {
     const type = this.ui.spawnSelect.value;
     if (type === "default") {
+      return undefined;
+    } else if (type === "random") {
       return {
-        type: "default",
+        type: "random",
+        minX: +this.ui.random.minX.value,
+        maxX: +this.ui.random.maxX.value,
+        minY: +this.ui.random.minY.value,
+        maxY: +this.ui.random.maxY.value,
       };
     } else if (type === "range") {
       return {
         type: "range",
-        min: +this.ui.range.min.value,
-        max: +this.ui.range.max.value,
-        requireSolid: this.ui.range.requireSolid.checked,
-      };
+        minX: +this.ui.range.minX.value,
+        maxX: +this.ui.range.maxX.value,
+        requireSolid: this.ui.range.requireSolid.checked ? undefined : false,
+      }
     } else if (type === "point") {
       return {
         type: "point",
@@ -91,15 +98,23 @@ export class PlayerSpawnSelectorSprite extends ImageSprite {
     }
   }
 
-  set selection(selection: TSpawnType) {
+  set selection(selection: TSpawnType | undefined) {
+    if (typeof selection === "undefined") {
+      // default type, nothing to do
+      return;
+    }
     const type = selection.type;
     this.ui.spawnSelect.value = type;
-    if (type === "default") {
-      // nothing to do
+    if (type === "random") {
+      const s = selection as IRandomSpawnType;
+      this.ui.random.minX.value = s.minX.toString();
+      this.ui.random.maxX.value = s.maxX.toString();
+      this.ui.random.minY.value = s.minY.toString();
+      this.ui.random.maxY.value = s.maxY.toString();
     } else if (type === "range") {
       const s = selection as IRangeSpawnType;
-      this.ui.range.min.value = s.min.toString();
-      this.ui.range.max.value = s.max.toString();
+      this.ui.range.minX.value = s.minX.toString();
+      this.ui.range.maxX.value = s.maxX.toString();
       this.ui.range.requireSolid.checked = typeof s.requireSolid === "undefined" || s.requireSolid ? true : false;
     } else if (type === "point") {
       const s = selection as IPointSpawnType;

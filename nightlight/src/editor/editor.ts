@@ -2,7 +2,7 @@ import { blockMap } from "../blockmap";
 import { BLOCK_HEIGHT, LEVEL_HEIGHT, LEVEL_WIDTH } from "../config";
 import { GameRuntime } from "../engine/runtime";
 import { Vector } from "../engine/vector";
-import { Level } from "../game/levels";
+import { Level } from "../level";
 import { getLevelForCode } from "../levelcode";
 import { clone, getElementById, getSearchParam, splitToChunks } from "../utils";
 import { BLOCK_MAP_KEYS } from "./blockmapkeys";
@@ -55,14 +55,32 @@ export class NightlightLevelEditor extends GameRuntime {
     boss: {
       container: getElementById("level-editor-mode-boss"),
       selection: getElementById<HTMLSelectElement>("level-editor-boss-selection"),
+      sword: {
+        container: getElementById("level-editor-boss-sword"),
+        blocksFromTop: getElementById<HTMLInputElement>("level-editor-boss-sword-blocks-from-top"),
+        health: getElementById<HTMLInputElement>("level-editor-boss-sword-health"),
+      },
+      noss1: {
+        container: getElementById("level-editor-boss-noss1"),
+      },
+      noss2: {
+        container: getElementById("level-editor-boss-noss2"),
+      },
     },
     playerSpawn: {
       container: getElementById("level-editor-mode-spawn"),
       spawnSelect: getElementById<HTMLSelectElement>("level-editor-spawn-select"),
+      random: {
+        container: getElementById("level-editor-spawn-random"),
+        minX: getElementById<HTMLInputElement>("level-editor-spawn-random-min-x"),
+        maxX: getElementById<HTMLInputElement>("level-editor-spawn-random-max-x"),
+        minY: getElementById<HTMLInputElement>("level-editor-spawn-random-min-y"),
+        maxY: getElementById<HTMLInputElement>("level-editor-spawn-random-max-y"),
+      },
       range: {
         container: getElementById("level-editor-spawn-range"),
-        min: getElementById<HTMLInputElement>("level-editor-spawn-range-min"),
-        max: getElementById<HTMLInputElement>("level-editor-spawn-range-max"),
+        minX: getElementById<HTMLInputElement>("level-editor-spawn-range-min-x"),
+        maxX: getElementById<HTMLInputElement>("level-editor-spawn-range-max-x"),
         requireSolid: getElementById<HTMLInputElement>("level-editor-spawn-range-solid"),
       },
       point: {
@@ -142,7 +160,7 @@ export class NightlightLevelEditor extends GameRuntime {
     const stars = this.ui.options.stars.checked;
     const background = this.ui.options.background.value;
     const music = this.ui.options.music.value.split(",");
-    const boss = this.ui.boss.selection.value;
+    const boss = this.bossSelector.selection;
     const spawn = this.playerSpawnSelector.selection;
 
     const levelData = clone(this.levelData);
@@ -153,9 +171,9 @@ export class NightlightLevelEditor extends GameRuntime {
       dark,
       stars,
       background,
-      jumpLights: this.jumpLights,
+      jumpLights: this.jumpLights.length > 0 ? this.jumpLights : undefined,
       backgroundMusic: music,
-      boss: boss as any,
+      boss: boss,
       spawn,
     };
   }
@@ -190,8 +208,8 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.options.dark.checked = level.dark as boolean;
     this.ui.options.background.value = level.background as string;
     this.ui.options.music.value = (level.backgroundMusic || []).join(",");
-    this.ui.boss.selection.value = level.boss || "";
     this.jumpLights = level.jumpLights || [];
+    this.bossSelector.selection = level.boss;
     this.playerSpawnSelector.selection = level.spawn || {type: "default"};
 
     this.levelData = splitToChunks(level.levelData, LEVEL_WIDTH).map((i) => i.split("")).reverse();

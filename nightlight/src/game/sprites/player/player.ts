@@ -1,9 +1,9 @@
 import { BLOCK_HEIGHT } from "../../../config";
 import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { Vector } from "../../../engine/vector";
+import { IPointSpawnType, IRandomSpawnType, IRangeSpawnType } from "../../../level";
 import { clone, getRandomInt } from "../../../utils";
 import { Nightlight } from "../../game";
-import { IPointSpawnType, IRangeSpawnType } from "../../levels";
 import { runBasicPhysics } from "../../physics";
 import { PseudoSolidBlock } from "../blocks/block";
 import { PlayerFragmentSprite } from "./fragment";
@@ -153,15 +153,22 @@ export class PlayerSprite extends ImageSprite {
     const sprites = this.runtime.blocks.filter((s) => s.solid || s instanceof PseudoSolidBlock);
 
     this.position.y = this.runtime.canvas.height - BLOCK_HEIGHT;
-
     const spawnType = this.runtime.playerSpawn.type;
     if (spawnType === "default") {
       this.position.x = 40;
+    } else if (spawnType === "random") {
+      const playerSpawn = this.runtime.playerSpawn as IRandomSpawnType;
+      var minX = playerSpawn.minX;
+      var maxX = playerSpawn.maxX;
+      var minY = spawnType === "random" ? playerSpawn.minY : this.y;
+      var maxY = spawnType === "random" ? playerSpawn.maxY : this.y;
+      this.position.x = getRandomInt(minX, maxX);
+      this.position.y = getRandomInt(minY, maxY);
     } else if (spawnType === "range") {
       const playerSpawn = this.runtime.playerSpawn as IRangeSpawnType;
-      const minX = playerSpawn.min;
-      const maxX = playerSpawn.max;
-      this.position.x = getRandomInt(minX, maxX);
+      var minX = playerSpawn.minX;
+      var maxX = playerSpawn.maxX;
+      this.x = getRandomInt(minX, maxX);
       // undefined or true act as true
       if (playerSpawn.requireSolid !== false) {
         let tries = 0;
@@ -171,7 +178,7 @@ export class PlayerSprite extends ImageSprite {
             alert("Invalid spawn range, can't find solid blocks.");
             break;
           }
-          this.position.x = getRandomInt(minX, maxX);
+          this.x = getRandomInt(minX, maxX);
         }
       }
     } else if (spawnType === "point") {

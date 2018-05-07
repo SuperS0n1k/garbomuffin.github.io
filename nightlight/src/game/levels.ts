@@ -1,34 +1,13 @@
 import { CANVAS_WIDTH } from "../engine/runtime";
-import { TBackground } from "../engine/types";
 import { Vector } from "../engine/vector";
+import { Level } from "../level";
 import { scratchCoordinate } from "../utils";
 import { Nightlight } from "./game";
 import { EndingSprite } from "./sprites/ending/EndingSprite";
-import { INightlightTextSpriteOptions } from "./sprites/text/NightlightTextSprite";
 
 /*
  * It's level data
  */
-
-export type THandler = (game: Nightlight) => void;
-
-export interface IRangeSpawnType { type: "range"; min: number; max: number; requireSolid?: boolean; }
-export interface IPointSpawnType { type: "point"; x: number; y: number; }
-export interface IDefaultSpawnType { type: "default"; }
-export type TSpawnType = IRangeSpawnType | IPointSpawnType | IDefaultSpawnType;
-
-export interface Level {
-  levelData: string;
-  background?: TBackground;
-  backgroundMusic?: string[];
-  handlers?: THandler[];
-  dark?: boolean;
-  text?: INightlightTextSpriteOptions[];
-  jumpLights?: Vector[];
-  spawn?: TSpawnType;
-  stars?: boolean;
-  boss?: "sword" | "noss1" | "noss2" | "";
-}
 
 function goodbye() {
   new EndingSprite({
@@ -86,7 +65,9 @@ export function getLevels(game: Nightlight): Level[] {
     // 5
     {
       levelData: "aaaaaaaaaaafbccccdeaaaaaaaaaaaaaaaaaaaaaafooooooeaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaaaaaaaaaaaaaf......eaaaaaaaaaaacccccccccccd......bccccccccccckkpppkkqpkkl......jkqkqkkpqqpp....................................................................................................................................................................................................................................................................................................................................................................................................................................",
-      boss: "sword",
+      boss: {
+        type: "sword"
+      },
       backgroundMusic: ["music/boss/1", "music/boss/2"],
     },
     // 6
@@ -144,7 +125,9 @@ export function getLevels(game: Nightlight): Level[] {
     // 12
     {
       levelData: "2222222222229aaaa9222222222222............4aaaa5........................4aaaa5........................122223......................................._=+...........................)^-...........................)^-...........................)^-......6778.................)^-......1223.................)^-...........................)^-...........................)^-...........................)^-.......................6777)^-.......................1222)^-...........................)^-...........................)^-...67778...................)^-...12223...................)^-...........................)^-.........................._`^-..........................&**(..............................",
-      boss: "noss1",
+      boss: {
+        type: "noss1"
+      },
       backgroundMusic: ["music/boss/1", "music/boss/2"],
       jumpLights: [
         scratchCoordinate(0, -44),
@@ -208,11 +191,13 @@ export function getLevels(game: Nightlight): Level[] {
     {
       levelData: "..)^^^^^^^^^^^^^^^^^^^^^^^^-....)^^^^^^^^^^^^^^^^^^^^^^^^-....&************************(..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
       backgroundMusic: ["music/finalboss/1", "music/finalboss/2"],
-      boss: "noss2",
+      boss: {
+        type: "noss2",
+      },
       spawn: {
         type: "range",
-        min: 0,
-        max: CANVAS_WIDTH,
+        minX: 0,
+        maxX: CANVAS_WIDTH,
       },
       background: "black",
       stars: true,

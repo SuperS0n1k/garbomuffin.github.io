@@ -150,7 +150,11 @@ td {
 }
 
 #level-editor-spawn-point,
-#level-editor-spawn-range {
+#level-editor-spawn-random,
+#level-editor-spawn-range,
+#level-editor-boss-sword,
+#level-editor-boss-noss1,
+#level-editor-boss-noss2 {
   display: none;
 }
 

@@ -68,7 +68,8 @@ export class LevelUpCoinSprite extends Block {
 export class SwordBossLevelUpCoinSprite extends LevelUpCoinSprite {
   public yv: number = 9;
   public xv: number = 0;
-  public endY: number = (this.runtime.canvas.height / 2) - (BLOCK_WIDTH / 2) + this.height;
+  private endY: number = (this.runtime.canvas.height / 2) - (BLOCK_WIDTH / 2) + this.height;
+  private hasGoneAbove: boolean = false;
 
   constructor(options: IBlockOptions) {
     super(options);
@@ -81,15 +82,21 @@ export class SwordBossLevelUpCoinSprite extends LevelUpCoinSprite {
       collision: false,
     });
 
-    if (this.y <= this.endY) {
-      this.y = this.endY;
-      this.animated = true;
-      const x = this.x - (BLOCK_WIDTH - this.width) / 2;
-      const y = this.y - (BLOCK_HEIGHT - this.height) / 2;
-      this.startingPosition = new Vector(x, y);
-      this.position = new Vector(x, y);
-      this.centerAlign();
-      task.stop();
+    if (this.hasGoneAbove) {
+      if (this.y >= this.endY) {
+        this.y = this.endY;
+        this.animated = true;
+        const x = this.x - (BLOCK_WIDTH - this.width) / 2;
+        const y = this.y - (BLOCK_HEIGHT - this.height) / 2;
+        this.startingPosition = new Vector(x, y);
+        this.position = new Vector(x, y);
+        this.centerAlign();
+        task.stop();
+      }
+    } else {
+      if (this.y <= this.endY) {
+        this.hasGoneAbove = true;
+      }
     }
   }
 }

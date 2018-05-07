@@ -1,5 +1,5 @@
 import { LEVEL_HEIGHT, LEVEL_WIDTH } from "./config";
-import { Level } from "./game/levels";
+import { Level } from "./level";
 import { getRandomInt } from "./utils";
 
 export const LEVEL_CODE_LENGTH = LEVEL_HEIGHT * LEVEL_WIDTH;
