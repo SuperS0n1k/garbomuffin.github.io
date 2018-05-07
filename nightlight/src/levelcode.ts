@@ -7,13 +7,21 @@ export const LEVEL_CODE_LENGTH = LEVEL_HEIGHT * LEVEL_WIDTH;
 export function getLevelForCode(str: string): Level {
   const isJson = str.startsWith("{");
   if (isJson) {
-    return getJsonLevel(JSON.parse(str));
+    try {
+      var json = JSON.parse(str);
+    } catch (e) {
+      throw new Error("Invalid JSON input");
+    }
+    return getJsonLevel(json);
   } else {
     return getStringLevel(str);
   }
 }
 
 function getJsonLevel(json: any): Level {
+  if (typeof json.levelData === "undefined" || json.levelData.length !== LEVEL_CODE_LENGTH) {
+    throw new Error("Invalid level data in JSON input");
+  }
   if (typeof json.dark === "undefined") {
     json.dark = false;
   }
@@ -27,6 +35,10 @@ function getJsonLevel(json: any): Level {
 }
 
 function getStringLevel(str: string): Level {
+  if (str.length !== LEVEL_CODE_LENGTH) {
+    throw new Error(`Invalid input`);
+  }
+
   return {
     levelData: str,
     stars: true,
@@ -36,19 +48,19 @@ function getStringLevel(str: string): Level {
   };
 }
 
-export function getLevelForContinueCode(code: string): number | null {
+export function getLevelForContinueCode(code: string): number {
   if (code.length !== 8) {
-    return null;
+    throw new Error("Invalid input");
   }
   if (Math.floor(+code) !== +code) {
-    return null;
+    throw new Error("Invalid input");
   }
   const level = +(code[1] + code[4]);
   if (level < 0) {
-    return null;
+    throw new Error("Invalid input");
   }
   if (!isFinite(level)) {
-    return null;
+    throw new Error("Invalid input");
   }
   return level;
 }

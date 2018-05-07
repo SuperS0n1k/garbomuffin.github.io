@@ -169,7 +169,7 @@ export class NightlightLevelEditor extends GameRuntime {
   }
 
   private handleImportLevelCodeButton() {
-    const code = prompt("Please paste the level code here:");
+    const code = prompt("Please enter the level code:");
     if (code === null) {
       return;
     }
@@ -177,7 +177,7 @@ export class NightlightLevelEditor extends GameRuntime {
     try {
     this.importLevelCode(code);
     } catch (e) {
-      alert("Bad level code. Importing aborted.\n\n" + e.stack);
+      alert(`Error: ${e.message}\n\nDebug Information:\n${e.stack}`);
       this.levelData = levelDataBackup;
       this.levelRenderer.updateLevel();
     }

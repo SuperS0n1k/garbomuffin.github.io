@@ -1,7 +1,7 @@
 import { NightlightLevelEditor } from "./editor/editor";
 import { GameRuntime } from "./engine/runtime";
 import { Nightlight } from "./game/game";
-import { LEVEL_CODE_LENGTH, getLevelForCode, getLevelForContinueCode } from "./levelcode";
+import { getLevelForCode, getLevelForContinueCode } from "./levelcode";
 import { getElementById, getSearchParam, setSearchParam } from "./utils";
 
 /*
@@ -351,50 +351,26 @@ function runLevelCode(code: string) {
     throw new Error("not in game");
   }
 
-  const alertError = (str: string, e: Error | string) => {
-    alert(`${str}\n\n${typeof e === "string" ? e : e.stack}`);
-  };
-
-  const invalidLevelCode = (e: Error | string) => {
-    alertError("Invalid level code (invalid format?)", e);
-  };
-
-  const couldntStartGame = (e: Error | string) => {
-    alertError("Couldn't start game (invalid blocks?)\n\nPlease refresh.", e);
-  };
-
-  if (code.length === LEVEL_CODE_LENGTH || code.startsWith("{")) {
-    let levels;
-    try {
-      levels = [getLevelForCode(code)];
-    } catch (e) {
-      invalidLevelCode(e);
-      return;
-    }
-    showCanvas();
-    try {
-      game.start(levels);
-    } catch (e) {
-      couldntStartGame(e);
-      return;
-    }
-  } else {
-    // we got a resume code
-    const res = getLevelForContinueCode(code);
-    if (res === null) {
-      invalidLevelCode("Probably a bad link.");
-      return;
-    }
-    game.level = res;
-    try {
+  const importCode = (str: string) => {
+    if (code.length === 8) {
+      // resume code
+      const level = getLevelForContinueCode(str);
+      game.level = level;
       run();
-    } catch (e) {
-      couldntStartGame(e);
-      return;
+    } else {
+      // probably a full level code
+      const level = getLevelForCode(code);
+      showCanvas();
+      game.start([level]);
     }
+  };
+
+  try {
+    importCode(code);
+  } catch (e) {
+    alert(`Error: ${e.message}\n\nDebug Information:\n${e.stack}`);
   }
   setSearchParam("level", code);
-  // history.pushState({}, "", "?level=" + escape(code));
 }
 
 function run() {
