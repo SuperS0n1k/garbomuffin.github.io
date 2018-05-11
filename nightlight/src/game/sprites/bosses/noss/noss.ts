@@ -58,7 +58,6 @@ export class NossBoss extends AbstractNossBoss {
 
   protected startRoutine() {
     super.startRoutine();
-    this.shouldEndRoutine = false;
     this.alreadyHit = false;
 
     this.addPhase(new Task({
@@ -117,9 +116,10 @@ export class NossBoss extends AbstractNossBoss {
   }
 
   private rest(task: Task) {
-    if (this.shouldEndRoutine || task.repeatCount >= 300) {
+    if (this.shouldEndRoutine || (!this.alreadyHit && task.repeatCount >= 300)) {
       this.endRoutine();
       task.stop();
+      return;
     }
 
     if (!this.alreadyHit && this.playerJumpedOn()) {
@@ -158,6 +158,7 @@ export class NossBoss extends AbstractNossBoss {
 
   private afterSpawnBullets() {
     this.runtime.playSound("boss/noss/shadow4");
+    this.shouldEndRoutine = false;
   }
 
   protected poof(newVisibility: boolean = !this.visible) {

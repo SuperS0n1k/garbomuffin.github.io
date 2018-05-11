@@ -41,7 +41,6 @@ export interface INoss2BossType {
 export interface INoBossType {
   type: "";
 }
-
 export type TBossType = ISwordBossType | INoss1BossType | INoss2BossType | INoBossType;
 
 export interface Level {
