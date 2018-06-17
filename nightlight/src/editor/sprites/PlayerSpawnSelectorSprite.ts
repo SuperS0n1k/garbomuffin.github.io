@@ -105,7 +105,9 @@ export class PlayerSpawnSelectorSprite extends ImageSprite {
     }
     const type = selection.type;
     this.ui.spawnSelect.value = type;
-    if (type === "random") {
+    if (type === "default") {
+      // do nothing???
+    } else if (type === "random") {
       const s = selection as IRandomSpawnType;
       this.ui.random.minX.value = s.minX.toString();
       this.ui.random.maxX.value = s.maxX.toString();

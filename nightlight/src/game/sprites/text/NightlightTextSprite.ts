@@ -8,7 +8,7 @@ export const CHAR_WIDTH = 8;
 export const CHAR_HEIGHT = CHAR_WIDTH;
 const TEXTURE_FOLDER = "text/";
 
-const CHAR_MAP: {[s: string]: string | undefined} = {
+export const CHAR_MAP: {[s: string]: string | undefined} = {
   ".": "period",
   " ": "skip",
   "'": "singlequote",

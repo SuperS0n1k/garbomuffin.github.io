@@ -133,6 +133,7 @@ body {
 
 #level-editor-ui {
   text-align: left;
+  min-width: 320px;
 }
 
 .level-editor-ui {

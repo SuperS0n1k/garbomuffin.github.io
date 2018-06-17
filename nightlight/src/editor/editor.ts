@@ -2,6 +2,7 @@ import { blockMap } from "../blockmap";
 import { BLOCK_HEIGHT, LEVEL_HEIGHT, LEVEL_WIDTH } from "../config";
 import { GameRuntime } from "../engine/runtime";
 import { Vector } from "../engine/vector";
+import { INightlightTextSpriteOptions } from "../game/sprites/text/NightlightTextSprite";
 import { Level } from "../level";
 import { getLevelForCode } from "../levelcode";
 import { clone, getElementById, getSearchParam, splitToChunks } from "../utils";
@@ -12,10 +13,12 @@ import { BossSelectorSprite } from "./sprites/BossSelectorSprite";
 import { JumpLightSelectorSprite } from "./sprites/JumpLightSelectorSprite";
 import { LevelRenderer } from "./sprites/LevelRenderer";
 import { PlayerSpawnSelectorSprite } from "./sprites/PlayerSpawnSelectorSprite";
+import { TextSelectorSprite } from "./sprites/TextSelectorSprite";
 
 export class NightlightLevelEditor extends GameRuntime {
   public levelData: string[][] = [];
   public jumpLights: Vector[] = [];
+  public text: INightlightTextSpriteOptions[] = [];
   public blockOffsetY: number;
   public mode: LevelEditorMode = LevelEditorMode.Blocks;
 
@@ -24,6 +27,7 @@ export class NightlightLevelEditor extends GameRuntime {
   public jumpLightSelector!: JumpLightSelectorSprite;
   public bossSelector!: BossSelectorSprite;
   public playerSpawnSelector!: PlayerSpawnSelectorSprite;
+  public textSelector!: TextSelectorSprite;
 
   public ui = {
     container: getElementById("level-editor-ui"),
@@ -41,9 +45,6 @@ export class NightlightLevelEditor extends GameRuntime {
     },
     jumpLights: {
       container: getElementById("level-editor-mode-jump-lights"),
-      add: getElementById<HTMLButtonElement>("level-editor-jump-lights-add"),
-      move: getElementById<HTMLButtonElement>("level-editor-jump-lights-move"),
-      remove: getElementById<HTMLButtonElement>("level-editor-jump-lights-remove"),
       snapToGrid: getElementById<HTMLInputElement>("level-editor-jump-lights-snap"),
     },
     blocks: {
@@ -51,6 +52,10 @@ export class NightlightLevelEditor extends GameRuntime {
       activeBlockImage: getElementById<HTMLImageElement>("level-editor-active-block-image"),
       gallery: getElementById("level-editor-block-gallery"),
       activeBlockDescription: getElementById("level-editor-active-block-description"),
+    },
+    text: {
+      container: getElementById("level-editor-mode-text"),
+      snapToGrid: getElementById<HTMLInputElement>("level-editor-text-snap"),
     },
     boss: {
       container: getElementById("level-editor-mode-boss"),
@@ -104,6 +109,7 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.importCodeButton.addEventListener("click", () => this.handleImportLevelCodeButton());
     this.ui.openLevel.addEventListener("click", () => this.openLevelInNewTab());
     this.ui.modeSelect.addEventListener("change", () => this.setMode(+this.ui.modeSelect.value));
+    document.getElementById("volume-container")!.style.display = "none";
     this.setMode(this.mode);
 
     for (let y = 0; y < LEVEL_HEIGHT; y++) {
@@ -112,6 +118,7 @@ export class NightlightLevelEditor extends GameRuntime {
     }
 
     (window as any).editor = this;
+    
   }
 
   public start() {
@@ -140,6 +147,10 @@ export class NightlightLevelEditor extends GameRuntime {
       position: new Vector(0, 0),
       texture: this.getImage("player/idle"), // overwritten
     });
+    this.textSelector = new TextSelectorSprite({
+      position: new Vector(0, 0),
+      texture: this.getImage("text/a"),
+    });
 
     this.initGallery();
 
@@ -162,6 +173,7 @@ export class NightlightLevelEditor extends GameRuntime {
     const music = this.ui.options.music.value.split(",");
     const boss = this.bossSelector.selection;
     const spawn = this.playerSpawnSelector.selection;
+    const text = this.text;
 
     const levelData = clone(this.levelData);
     const code = levelData.reverse().map((s) => s.join("")).join("");
@@ -175,6 +187,7 @@ export class NightlightLevelEditor extends GameRuntime {
       backgroundMusic: music,
       boss: boss,
       spawn,
+      text: text.length > 0 ? this.text : undefined,
     };
   }
 
@@ -193,7 +206,7 @@ export class NightlightLevelEditor extends GameRuntime {
     }
     const levelDataBackup = this.levelData;
     try {
-    this.importLevelCode(code);
+      this.importLevelCode(code);
     } catch (e) {
       alert(`Error: ${e.message}\n\nDebug Information:\n${e.stack}`);
       this.levelData = levelDataBackup;
@@ -211,6 +224,7 @@ export class NightlightLevelEditor extends GameRuntime {
     this.jumpLights = level.jumpLights || [];
     this.bossSelector.selection = level.boss;
     this.playerSpawnSelector.selection = level.spawn || {type: "default"};
+    this.text = level.text || [];
 
     this.levelData = splitToChunks(level.levelData, LEVEL_WIDTH).map((i) => i.split("")).reverse();
     this.levelRenderer.updateLevel();
@@ -252,10 +266,11 @@ export class NightlightLevelEditor extends GameRuntime {
 
   public setMode(m: LevelEditorMode) {
     this.mode = m;
-    this.ui.blocks.container.style.display = m === 0 ? "block" : "";
-    this.ui.jumpLights.container.style.display = m === 1 ? "block" : "";
-    this.ui.boss.container.style.display = m === 3 ? "block" : "";
-    this.ui.playerSpawn.container.style.display = m === 4 ? "block" : "";
+    this.ui.blocks.container.style.display = m === LevelEditorMode.Blocks ? "block" : "";
+    this.ui.jumpLights.container.style.display = m === LevelEditorMode.JumpLights ? "block" : "";
+    this.ui.text.container.style.display = m === LevelEditorMode.Text ? "block" : "";
+    this.ui.boss.container.style.display = m === LevelEditorMode.Boss ? "block" : "";
+    this.ui.playerSpawn.container.style.display = m === LevelEditorMode.PlayerSpawn ? "block" : "";
   }
 
   private openLevelInNewTab() {

@@ -5,28 +5,17 @@ import { NightlightLevelEditor } from "../editor";
 import { LevelEditorMode } from "../mode";
 import { LevelEditorIndexes } from "./LevelEditorIndexes";
 
-enum Mode {
-  Add,
-  AddMoved,
-  Move,
-  Remove,
-}
-
 export class JumpLightSelectorSprite extends ImageSprite {
   public runtime!: NightlightLevelEditor;
-  public mode: Mode = Mode.Add;
   public outlinePoint: Vector2D | null = null;
   public snapToGrid: boolean = true;
+  private moving: boolean = false;
 
   constructor(opts: IImageSpriteOptions) {
     super(opts);
     this.opacity = 0.5;
     this.z = LevelEditorIndexes.Selector;
     this.addTask(() => this.run());
-    this.setMode(this.mode);
-    this.runtime.ui.jumpLights.add.addEventListener("click", () => this.setMode(Mode.Add));
-    this.runtime.ui.jumpLights.move.addEventListener("click", () => this.setMode(Mode.Move));
-    this.runtime.ui.jumpLights.remove.addEventListener("click", () => this.setMode(Mode.Remove));
     this.runtime.ui.jumpLights.snapToGrid.addEventListener("change", () => {
       this.snapToGrid = this.runtime.ui.jumpLights.snapToGrid.checked;
     });
@@ -51,35 +40,27 @@ export class JumpLightSelectorSprite extends ImageSprite {
     this.x -= (this.width / 2);
     this.y -= (this.height / 2);
 
-    if (this.mode === Mode.Add || this.mode === Mode.AddMoved) {
-      this.visible = true;
+    const hovered = this.findHovered(mouseX, mouseY);
+
+    if (hovered) {
+      this.visible = false;
+      this.outlinePoint = hovered;
+      this.runtime.cursor = "pointer";
       if (this.runtime.mouse.isClick) {
+        this.removePoint(hovered);
+        this.moving = true;
+      } else if (this.runtime.mouse.right.isClick) {
+        this.removePoint(hovered);
+        this.outlinePoint = null;
+      }
+    } else {
+      this.visible = true;
+      if (!this.moving) {
+        this.outlinePoint = null;
+      }
+      if (this.runtime.mouse.isClick) {
+        this.moving = false;
         this.addPoint(new Vector(this.x, this.y));
-        if (this.mode === Mode.AddMoved) {
-          this.mode = Mode.Move;
-        }
-      }
-    } else if (this.mode === Mode.Move) {
-      this.visible = false;
-      const hovered = this.findHovered(mouseX, mouseY);
-      this.outlinePoint = hovered;
-      if (hovered) {
-        this.runtime.cursor = "pointer";
-        this.outlinePoint = hovered;
-        if (this.runtime.mouse.isClick) {
-          this.movePoint(hovered);
-        }
-      }
-    } else if (this.mode === Mode.Remove) {
-      this.visible = false;
-      const hovered = this.findHovered(mouseX, mouseY);
-      this.outlinePoint = hovered;
-      if (hovered) {
-        this.runtime.cursor = "pointer";
-        this.outlinePoint = hovered;
-        if (this.runtime.mouse.isClick) {
-          this.removePoint(hovered);
-        }
       }
     }
   }
@@ -100,14 +81,6 @@ export class JumpLightSelectorSprite extends ImageSprite {
     return null;
   }
 
-  public movePoint(p: Vector) {
-    // remove it and switch to add mode
-    // yep.
-    // it works.
-    this.removePoint(p);
-    this.mode = Mode.AddMoved;
-  }
-
   public removePoint(p: Vector) {
     const index = this.runtime.jumpLights.indexOf(p);
     if (index === -1) {
@@ -120,13 +93,6 @@ export class JumpLightSelectorSprite extends ImageSprite {
   public addPoint(p: Vector) {
     this.runtime.jumpLights.push(p);
     this.runtime.levelRenderer.updateLevel();
-  }
-
-  public setMode(mode: Mode) {
-    this.mode = mode;
-    this.runtime.ui.jumpLights.add.style.fontWeight = mode === Mode.Add ? "bold" : "";
-    this.runtime.ui.jumpLights.move.style.fontWeight = mode === Mode.Move || mode === Mode.AddMoved ? "bold" : "";
-    this.runtime.ui.jumpLights.remove.style.fontWeight = mode === Mode.Remove ? "bold" : "";
   }
 
   public render(ctx: CanvasRenderingContext2D) {

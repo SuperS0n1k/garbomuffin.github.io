@@ -64,7 +64,7 @@ export function getSearchParam(target: string): string | null {
 }
 
 export function setSearchParam(name: string, newVal: string) {
-  const map = new Map();
+  const map = new Map<string, string>();
   const allParams = location.search.substr(1).split("&");
   for (const param of allParams) {
     const k = param.substr(0, param.indexOf("="));
@@ -75,7 +75,10 @@ export function setSearchParam(name: string, newVal: string) {
 
   let newSearch = "";
   for (const key of map.keys()) {
-    const val = map.get(key) as string;
+    if (key === "") {
+      continue;
+    }
+    const val = map.get(key);
     const divider = newSearch.length === 0 ? "?" : "&";
     newSearch += `${divider}${key}=${val}`;
   }

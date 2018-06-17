@@ -50,7 +50,7 @@
           <select id="level-editor-option-mode">
             <option selected value="0">Block</option>
             <option value="1">Jumpy Bois</option>
-            <option value="2" disabled>Text (maybe soon)</option>
+            <option value="2">Text</option>
             <option value="3">Boss</option>
             <option value="4">Player Spawn</option>
           </select>
@@ -65,12 +65,13 @@
           <div id="level-editor-block-gallery"></div>
         </div>
 
-        <div id="level-editor-mode-jump-lights" class="level-editor-mode">
+        <div id="level-editor-mode-text" class="level-editor-mode">
           <div>
-            <button id="level-editor-jump-lights-add">Add Light</button>
-            <button id="level-editor-jump-lights-move">Move Light</button>
-            <button id="level-editor-jump-lights-remove">Remove Light</button>
+            <label>Snap to grid: <input id="level-editor-text-snap" type="checkbox" checked></label>
           </div>
+        </div>
+
+        <div id="level-editor-mode-jump-lights" class="level-editor-mode">
           <div>
             <label>Snap to grid: <input id="level-editor-jump-lights-snap" type="checkbox" checked></label>
           </div>
@@ -174,7 +175,7 @@
       </div>
     </div>
 
-    <div><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
+    <div id="volume-container"><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
 
     <div id="cb">
       <button onclick="runtime.level++;runtime.renderLevel();">Next level</button>
