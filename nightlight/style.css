@@ -1,4 +1,15 @@
-/* #region Basic Element and Class Styles */
+/* #region Make it look nice */
+
+/* link styles - colors from bootstrap because they look nice */
+a {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #23527c;
+  text-decoration: underline;
+}
 
 canvas {
   display: block;
@@ -12,14 +23,24 @@ td {
   vertical-align: top;
 }
 
+#changelog {
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+body {
+  font-family: sans-serif;
+  text-align: center;
+  align-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 480px;
+}
+
 .position-absolute-bottom {
   position: absolute;
   bottom: 0;
 }
-
-/* #endregion */
-
-/* #region Core Styles */
 
 #canvas {
   position: relative;
@@ -32,6 +53,7 @@ td {
 #container {
   display: flex/*tape*/;
   flex-direction: row;
+  justify-content: center;
 }
 
 .flex-item {
@@ -109,13 +131,14 @@ td {
 
 /* #region Level Editor */
 
+#level-editor-ui {
+  text-align: left;
+}
+
 .level-editor-ui {
   display: none;
   position: relative;
-}
-
-#level-editor-active-block-image-container {
-  /* TODO: lock the size of the thing at 96px or whatever */
+  text-justify: initial;
 }
 
 .level-editor-mode {

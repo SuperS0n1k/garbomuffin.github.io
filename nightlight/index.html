@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="/core.css">
     <link rel="stylesheet" href="style.css">
     <title>Nightlight</title>
 
@@ -19,7 +18,7 @@
   </head>
 
   <body>
-    <h1>Nightlight</h1>
+    <img src="assets/site/nightlight.png" height="32" alt="Nightlight">
 
     <p>
       <a href="https://scratch.mit.edu/projects/150752251/">Play the original</a>
@@ -32,7 +31,7 @@
         <div id="menu-container">
           <div id="menu-background"><img src="assets/thumb.png" width="100%"></div>
           <div id="loading-screen" class="menu">
-            <img src="assets/loading.png">
+            <img src="assets/site/loading.png">
           </div>
           <div id="menu-screen" class="menu">
             <div><button id="play-button">Start Game</button></div>
@@ -183,8 +182,11 @@
     </div>
     <script>document.getElementById("cb").style.display=location.hash==="#cheaty-boi"?"block":"none"</script>
 
-    <pre>
+    <pre id="changelog">
       <b>Changelog:</b>
+      6/16/2018:
+       * Made the site less ugly
+
       v0.1.9.3:
        * Added back the "jump delay" <span style="color:white">that never existed</span>
 
@@ -309,6 +311,13 @@
       Pre v0.0.9:
        * no one knows
     </pre>
+    <script>
+      (function() {
+        const el = document.getElementById("changelog");
+        const replace = /^ {6}/giu;
+        el.innerHTML = el.innerHTML.split("\n").map((i) => i.replace(replace, "")).join("\n");
+      }());
+    </script>
     <script src="dist/bundle.js"></script>
   </body>
 </html>

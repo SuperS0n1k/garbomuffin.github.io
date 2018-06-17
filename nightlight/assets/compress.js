@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { exec } = require("child_process");
+const { execSync } = require("child_process");
 
 function recurse(folder) {
   fs.readdir(folder, (err, files) => {
@@ -15,7 +15,7 @@ function recurse(folder) {
       const f = folder + i;
       const command = `magick convert -strip -interpolate Nearest -filter point ${f} ${f}`;
       console.log("converting " + f);
-      exec(command);
+      execSync(command);
     });
 
     folders.forEach(i => {
