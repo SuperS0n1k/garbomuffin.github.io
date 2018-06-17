@@ -13,12 +13,14 @@ export class PlayerSpawnSelectorSprite extends ImageSprite {
   public runtime!: NightlightLevelEditor;
   private mode: Mode = Mode.None;
   private ui = this.runtime.ui.playerSpawn;
+  private alwaysShow: boolean = this.ui.alwaysShow.checked;
 
   constructor(options: IImageSpriteOptions) {
     super(options);
     this.z = LevelEditorIndexes.Selector;
     this.opacity = 0.5;
     this.ui.spawnSelect.addEventListener("change", () => this.selectionChanged());
+    this.ui.alwaysShow.addEventListener("change", () => this.alwaysShow = this.ui.alwaysShow.checked);
     this.ui.point.select.addEventListener("click", () => this.mode = Mode.SelectingSpawnPoint);
     this.addTask(() => this.run());
   }
@@ -126,5 +128,35 @@ export class PlayerSpawnSelectorSprite extends ImageSprite {
       throw new Error(`${type} is not a valid spawn or whatever`);
     }
     this.selectionChanged();
+  }
+
+  public render(ctx: CanvasRenderingContext2D) {
+    if (this.runtime.mode !== LevelEditorMode.PlayerSpawn && !this.alwaysShow) {
+      return;
+    }
+
+    const fillRect = (x: number, y: number, x2: number, y2: number) => {
+      ctx.globalAlpha = 0.25;
+      ctx.fillStyle = "aqua";
+      ctx.fillRect(x, y, x2 - x, y2 - y);
+      ctx.globalAlpha = 1;
+    };
+
+    const selection = this.selection;
+    if (selection === undefined || selection.type === "default") {
+      // do nothing
+    } else if (selection.type === "point") {
+      if (this.mode === Mode.SelectingSpawnPoint) {
+        // do nothing
+      } else {
+        this.x = selection.x;
+        this.y = selection.y;
+      }
+      super.render(ctx);
+    } else if (selection.type === "random") {
+      fillRect(selection.minX, selection.minY, selection.maxX, selection.maxY);
+    } else if (selection.type === "range") {
+      fillRect(selection.minX, 0, selection.maxX, ctx.canvas.height);
+    }
   }
 }

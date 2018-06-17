@@ -1,7 +1,7 @@
 import { IImageSpriteOptions, ImageSprite } from "../../engine/sprites/imagesprite";
 import { TImage } from "../../engine/types";
 import { Vector } from "../../engine/vector";
-import { CHAR_HEIGHT, CHAR_WIDTH, INightlightTextSpriteOptions } from "../../game/sprites/text/NightlightTextSprite";
+import { CHAR_HEIGHT, CHAR_MAP, CHAR_WIDTH, INightlightTextSpriteOptions } from "../../game/sprites/text/NightlightTextSprite";
 import { NightlightLevelEditor } from "../editor";
 import { LevelEditorMode } from "../mode";
 import { LevelEditorIndexes } from "./LevelEditorIndexes";
@@ -35,15 +35,15 @@ export class TextSelectorSprite extends ImageSprite {
     const mouseX = this.runtime.mouse.position.x;
     const mouseY = this.runtime.mouse.position.y;
     if (this.snapToGrid) {
-      const distanceFromButton = this.runtime.canvas.height - mouseY;
-      this.x = Math.round(mouseX / 8) * 8;
-      this.y = this.runtime.canvas.height - (Math.round(distanceFromButton / 8) * 8);
+      const distanceFromBottom = this.runtime.canvas.height - mouseY;
+      const x = Math.floor(mouseX / 8) * 8;
+      const y = Math.floor(mouseY / 8) * 8;
+      this.x = x;
+      this.y = y;
     } else {
-      this.x = mouseX;
-      this.y = mouseY;
+      this.x = mouseX - (this.width / 2);
+      this.y = mouseY - (this.height / 2);
     }
-    this.x -= (this.width / 2);
-    this.y -= (this.height / 2);
 
     const hovered = this.getHovered();
 
@@ -107,7 +107,11 @@ export class TextSelectorSprite extends ImageSprite {
   private isValidText(text: string) {
     for (const c of text) {
       try {
-        this.runtime.getImage("text/" + c);
+        const char = CHAR_MAP[c] || c;
+        if (char === "skip") {
+          continue;
+        }
+        this.runtime.getImage("text/" + char);
       } catch (e) {
         return false;
       }

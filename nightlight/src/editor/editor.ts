@@ -75,6 +75,7 @@ export class NightlightLevelEditor extends GameRuntime {
     playerSpawn: {
       container: getElementById("level-editor-mode-spawn"),
       spawnSelect: getElementById<HTMLSelectElement>("level-editor-spawn-select"),
+      alwaysShow: getElementById<HTMLInputElement>("level-editor-spawn-always-show"),
       random: {
         container: getElementById("level-editor-spawn-random"),
         minX: getElementById<HTMLInputElement>("level-editor-spawn-random-min-x"),

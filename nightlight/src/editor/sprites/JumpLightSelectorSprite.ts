@@ -30,9 +30,9 @@ export class JumpLightSelectorSprite extends ImageSprite {
     const mouseX = this.runtime.mouse.position.x;
     const mouseY = this.runtime.mouse.position.y;
     if (this.snapToGrid) {
-      const distanceFromButton = this.runtime.canvas.height - mouseY;
+      const distanceFromBottom = this.runtime.canvas.height - mouseY;
       this.x = Math.round(mouseX / 8) * 8;
-      this.y = this.runtime.canvas.height - (Math.round(distanceFromButton / 8) * 8);
+      this.y = this.runtime.canvas.height - (Math.round(distanceFromBottom / 8) * 8);
     } else {
       this.x = mouseX;
       this.y = mouseY;
