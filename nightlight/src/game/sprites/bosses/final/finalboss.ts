@@ -176,8 +176,8 @@ export class FinalBoss extends AbstractNossBoss {
     }
   }
 
-  private dead() {
-    const position = new Vector(this.x - BLOCK_WIDTH, this.y - BLOCK_HEIGHT);
+  protected kill() {
+    const position = new Vector(this.x + BLOCK_WIDTH, this.y + BLOCK_HEIGHT);
     this.spawnLevelUpCoin(position);
     this.destroy();
   }

@@ -66,7 +66,7 @@ export class CrumblingBlock extends SolidBlock {
     this.crumbleProgress++;
     this.updateVisual();
 
-    this.runtime.playSound("blocks/break");
+    this.runtime.playSound("blocks/break", true);
 
     if (this.crumbleProgress === CRUMBLE_FRAMES) {
       task.stop();

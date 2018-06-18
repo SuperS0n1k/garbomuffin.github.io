@@ -195,7 +195,7 @@ game.addImage("boss/noss/dust");
 game.addImage("brick");
 game.addImage("blocks/caret");
 game.addImage("blocks/ampersand");
-game.addImage("blocks/asterisk"); // IT WOULDN'T LET ME SAVE IT OTHERWISE
+game.addImage("blocks/asterisk");
 game.addImage("blocks/(");
 game.addImage("blocks/)");
 game.addImage("blocks/-");

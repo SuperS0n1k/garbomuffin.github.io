@@ -16,7 +16,13 @@ canvas {
 }
 
 img {
+  /* make images appear pixelated. at least one of these should work for nearly any browser. */
   image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -o-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
 }
 
 td {

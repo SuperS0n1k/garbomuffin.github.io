@@ -180,14 +180,22 @@ export class GameRuntime extends TaskRunner {
   }
 
   // get a sound with a name
-  public getSound(src: string): TSound {
-    return this.sounds.get(src) as TSound;
+  public getSound(src: string, clone: boolean = false): TSound {
+    const val = this.sounds.get(src);
+    if (!val) {
+      throw new Error(`Couldn't get audio with name ${src}`);
+    }
+    if (clone) {
+      return val.cloneNode() as TSound;
+    } else {
+      return val;
+    }
   }
 
   // plays a sound and resets its currentTime to 0
-  public playSound(src: string | TSound) {
+  public playSound(src: string | TSound, clone: boolean = false) {
     if (typeof src === "string") {
-      src = this.getSound(src);
+      src = this.getSound(src, clone);
     }
     src.currentTime = 0;
     src.volume = this.volume;
