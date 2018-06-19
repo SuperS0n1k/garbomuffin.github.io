@@ -34,6 +34,7 @@ export class GameRuntime extends TaskRunner {
   private readonly _DEBUG_NON_STATIC_OUTLINE = false;
   private readonly _DEBUG_STATIC_OUTLINE = false;
 
+  public readonly isMobile: boolean = isMobile();
   public readonly images: Map<string, TImage> = new Map();
   public readonly sounds: Map<string, TSound> = new Map();
   public sprites: AbstractSprite[] = [];
@@ -77,10 +78,10 @@ export class GameRuntime extends TaskRunner {
     this.collisionCtx = collisionCtx;
 
     // mouse driver, support pc and mobile to some degree
-    if (!isMobile()) {
-      this.mouse = new Mouse(this);
-    } else {
+    if (this.isMobile) {
       this.mouse = new TouchscreenMouse(this);
+    } else {
+      this.mouse = new Mouse(this);
     }
     this.addTask(() => this.mouse.update());
 

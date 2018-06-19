@@ -72,37 +72,44 @@ export class PlayerSprite extends ImageSprite {
     this.addTask(() => this.updateGraphic());
   }
 
-  private handleInputs() {
+  private getInputs(): {rightDown: boolean, leftDown: boolean, upDown: boolean} {
+    if (this.runtime.isMobile) {
+      return this.getMobileInputs();
+    } else {
+      return this.getComputerInputs();
+    }
+  }
+
+  private getComputerInputs() {
     const keys = this.runtime.keyboard.keys;
     const rightDown = keys[39].isPressed;
     const leftDown = keys[37].isPressed;
     const upDown = keys[38].isPressed;
-    const upJustPressed = keys[38].justPressed;
-    this.moving = false;
-
-    if (rightDown && !leftDown) {
-      this.xv += PLAYER_WALK_SPEED;
-      this.lastMovementDirection = MovementDirection.Right;
-      this.moving = true;
-    }
-
-    if (leftDown && !rightDown) {
-      this.xv -= PLAYER_WALK_SPEED;
-      this.lastMovementDirection = MovementDirection.Left;
-      this.moving = true;
-    }
-
-    if ((upDown && this.onGround) || (upJustPressed && this.hasJumpLight)) {
-      this.runtime.playSound("player/jump");
-      this.hasJumpLight = false;
-      this.yv = JUMP_HEIGHT;
-    } else if (!upDown && this.yv > 3) {
-      this.yv = 3;
-    }
 
     return {
       rightDown, leftDown, upDown,
     };
+  }
+
+  private getMobileInputs() {
+    const mouseX = this.runtime.mouse.position.x;
+    const mouseY = this.runtime.mouse.position.y;
+    const mouseDown = this.runtime.mouse.isDown;
+
+    const grace = this.runtime.canvas.width / 10;
+    const moveLeftMax = this.runtime.canvas.width / 3 + grace;
+    const moveRightMin = this.runtime.canvas.width / 3 * 2 - grace;
+    const moveUpMax = this.runtime.canvas.height / 2;
+
+    const leftDown = mouseDown && mouseX <= moveLeftMax;
+    const rightDown = mouseDown && mouseX >= moveRightMin;
+    const upDown = mouseDown && mouseY <= moveUpMax;
+
+    return {
+      leftDown,
+      rightDown,
+      upDown,
+    }
   }
 
   private run() {
@@ -127,7 +134,28 @@ export class PlayerSprite extends ImageSprite {
     if (this.onGround) {
       this.hasJumpLight = false;
     }
-    const inputs = this.handleInputs();
+    const inputs = this.getInputs();
+
+    this.moving = false;
+    if (inputs.rightDown && !inputs.leftDown) {
+      this.xv += PLAYER_WALK_SPEED;
+      this.lastMovementDirection = MovementDirection.Right;
+      this.moving = true;
+    }
+
+    if (inputs.leftDown && !inputs.rightDown) {
+      this.xv -= PLAYER_WALK_SPEED;
+      this.lastMovementDirection = MovementDirection.Left;
+      this.moving = true;
+    }
+
+    if ((inputs.upDown && this.onGround) || (this.runtime.mouse.isClick && this.hasJumpLight)) {
+      this.runtime.playSound("player/jump");
+      this.hasJumpLight = false;
+      this.yv = JUMP_HEIGHT;
+    } else if (!inputs.upDown && this.yv > 3) {
+      this.yv = 3;
+    }
 
     if ((!inputs.leftDown && !inputs.rightDown) || (inputs.leftDown && inputs.rightDown)) {
       if (this.xv > 0) {
