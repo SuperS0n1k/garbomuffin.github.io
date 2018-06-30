@@ -149,7 +149,7 @@ export class PlayerSprite extends ImageSprite {
       this.moving = true;
     }
 
-    if ((inputs.upDown && this.onGround) || (this.runtime.mouse.isClick && this.hasJumpLight)) {
+    if ((inputs.upDown && this.onGround) || (inputs.upDown && this.hasJumpLight)) {
       this.runtime.playSound("player/jump");
       this.hasJumpLight = false;
       this.yv = JUMP_HEIGHT;
