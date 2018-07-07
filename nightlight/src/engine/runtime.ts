@@ -79,8 +79,10 @@ export class GameRuntime extends TaskRunner {
 
     // mouse driver, support pc and mobile to some degree
     if (this.isMobile) {
+      console.log("mobile");
       this.mouse = new TouchscreenMouse(this);
     } else {
+      console.log("pc");
       this.mouse = new Mouse(this);
     }
     this.addTask(() => this.mouse.update());
@@ -90,7 +92,7 @@ export class GameRuntime extends TaskRunner {
     // set the current runtime on some objects
     // i dont want to do this but it works
     // FIXME: GameRuntime.instance instead of this.runtime
-    AbstractSprite.runtime = this as any;
+    AbstractSprite.runtime = this;
 
     // set inital variables that have to happen after other things here
     this.volume = 0.5;

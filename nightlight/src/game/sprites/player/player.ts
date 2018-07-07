@@ -72,7 +72,7 @@ export class PlayerSprite extends ImageSprite {
     this.addTask(() => this.updateGraphic());
   }
 
-  private getInputs(): {rightDown: boolean, leftDown: boolean, upDown: boolean} {
+  private getInputs(): {rightDown: boolean, leftDown: boolean, upDown: boolean, upJustPressed: boolean} {
     if (this.runtime.isMobile) {
       return this.getMobileInputs();
     } else {
@@ -85,9 +85,13 @@ export class PlayerSprite extends ImageSprite {
     const rightDown = keys[39].isPressed;
     const leftDown = keys[37].isPressed;
     const upDown = keys[38].isPressed;
+    const upJustPressed = keys[38].justPressed;
 
     return {
-      rightDown, leftDown, upDown,
+      rightDown,
+      leftDown,
+      upDown,
+      upJustPressed,
     };
   }
 
@@ -104,36 +108,20 @@ export class PlayerSprite extends ImageSprite {
     const leftDown = mouseDown && mouseX <= moveLeftMax;
     const rightDown = mouseDown && mouseX >= moveRightMin;
     const upDown = mouseDown && mouseY <= moveUpMax;
+    const upJustPressed = this.runtime.mouse.isClick;
 
     return {
       leftDown,
       rightDown,
       upDown,
+      upJustPressed,
     }
   }
 
   private run() {
-    if (this.xv > PLAYER_MAX_SPEED) {
-      this.xv = PLAYER_MAX_SPEED;
-    } else if (this.xv < -PLAYER_MAX_SPEED) {
-      this.xv = -PLAYER_MAX_SPEED;
-    }
-
     const prevXv = this.xv;
     const prevYv = this.yv;
 
-    const physicsResult = runBasicPhysics(this, {
-      friction: false,
-    });
-    this.onGround = physicsResult;
-
-    if (this.onGround && prevYv < -1.6) {
-      this.runtime.playSound("player/ding");
-    }
-
-    if (this.onGround) {
-      this.hasJumpLight = false;
-    }
     const inputs = this.getInputs();
 
     this.moving = false;
@@ -149,7 +137,7 @@ export class PlayerSprite extends ImageSprite {
       this.moving = true;
     }
 
-    if ((inputs.upDown && this.onGround) || (inputs.upDown && this.hasJumpLight)) {
+    if ((inputs.upDown && this.onGround) || (inputs.upJustPressed && this.hasJumpLight)) {
       this.runtime.playSound("player/jump");
       this.hasJumpLight = false;
       this.yv = JUMP_HEIGHT;
@@ -165,6 +153,25 @@ export class PlayerSprite extends ImageSprite {
         this.xv += PLAYER_FRICTION;
         this.xv = Math.min(this.xv, 0);
       }
+    }
+
+    if (this.xv > PLAYER_MAX_SPEED) {
+      this.xv = PLAYER_MAX_SPEED;
+    } else if (this.xv < -PLAYER_MAX_SPEED) {
+      this.xv = -PLAYER_MAX_SPEED;
+    }
+
+    const physicsResult = runBasicPhysics(this, {
+      friction: false,
+    });
+    this.onGround = physicsResult;
+
+    if (this.onGround && prevYv < -1.6) {
+      this.runtime.playSound("player/ding");
+    }
+
+    if (this.onGround) {
+      this.hasJumpLight = false;
     }
 
     if (this.y >= this.runtime.canvas.height) {
