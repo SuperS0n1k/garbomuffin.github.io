@@ -111,7 +111,7 @@ export class EndingThumbSprite extends ImageSprite {
 
       this.addTask(new Task({
         run: () => resolve(),
-        delay: (TEXT.length + 1) * TEXT_DELAY,
+        delay: TEXT.length * TEXT_DELAY,
       }));
     })
   }
@@ -127,7 +127,7 @@ export class EndingThumbSprite extends ImageSprite {
         task.stop();
         this.z = 0;
         this.fadeIn().then(() => {
-          location.search = "?m=leveleditor";
+          location.search = "?m=leveleditor&newuser=1";
         });
       }
     });

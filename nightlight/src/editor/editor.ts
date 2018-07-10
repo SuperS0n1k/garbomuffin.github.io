@@ -5,7 +5,7 @@ import { Vector } from "../engine/vector";
 import { INightlightTextSpriteOptions } from "../game/sprites/text/NightlightTextSprite";
 import { Level } from "../level";
 import { getLevelForCode } from "../levelcode";
-import { clone, getElementById, getSearchParam, splitToChunks } from "../utils";
+import { clone, getElementById, getSearchParam, splitToChunks, setSearchParam } from "../utils";
 import { BLOCK_MAP_KEYS } from "./blockmapkeys";
 import { LevelEditorMode } from "./mode";
 import { BlockSelectorSprite } from "./sprites/BlockSelectorSprite";
@@ -113,7 +113,11 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.modeSelect.addEventListener("change", () => this.setMode(+this.ui.modeSelect.value));
     document.getElementById("volume-container")!.style.display = "none";
     this.setMode(this.mode);
-    this.ui.welcome.style.display = "block";
+
+    if (getSearchParam("newuser")) {
+      this.ui.welcome.style.display = "block";
+      setSearchParam("newuser", "");
+    }
 
     for (let y = 0; y < LEVEL_HEIGHT; y++) {
       const row = Array(LEVEL_WIDTH).fill(".");
@@ -121,7 +125,6 @@ export class NightlightLevelEditor extends GameRuntime {
     }
 
     (window as any).editor = this;
-    
   }
 
   public start() {

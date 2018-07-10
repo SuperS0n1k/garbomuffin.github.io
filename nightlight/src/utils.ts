@@ -79,6 +79,9 @@ export function setSearchParam(name: string, newVal: string) {
       continue;
     }
     const val = map.get(key);
+    if (val === "") {
+      continue;
+    }
     const divider = newSearch.length === 0 ? "?" : "&";
     newSearch += `${divider}${key}=${val}`;
   }
