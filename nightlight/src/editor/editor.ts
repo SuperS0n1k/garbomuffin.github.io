@@ -37,7 +37,11 @@ export class NightlightLevelEditor extends GameRuntime {
     openLevel: getElementById<HTMLButtonElement>("level-editor-open-level"),
     codeOutput: getElementById<HTMLTextAreaElement>("level-editor-code-output"),
     modeSelect: getElementById<HTMLSelectElement>("level-editor-option-mode"),
-    welcome: getElementById("level-editor-welcome"),
+    welcome: {
+      container: getElementById("level-editor-welcome"),
+      content: getElementById("level-editor-welcome-content"),
+      toggleButton: getElementById("level-editor-welcome-toggle"),
+    },
     options: {
       dark: getElementById<HTMLInputElement>("level-editor-option-dark"),
       stars: getElementById<HTMLInputElement>("level-editor-option-stars"),
@@ -114,10 +118,9 @@ export class NightlightLevelEditor extends GameRuntime {
     document.getElementById("volume-container")!.style.display = "none";
     this.setMode(this.mode);
 
-    if (getSearchParam("newuser")) {
-      this.ui.welcome.style.display = "block";
-      setSearchParam("newuser", "");
-    }
+    this.ui.welcome.container.style.display = "block";
+    this.ui.welcome.toggleButton.addEventListener("click", () => this.toggleWelcomeTextVisibility());
+    this.setWelcomeTextVisibility(!!getSearchParam("welcome"));
 
     for (let y = 0; y < LEVEL_HEIGHT; y++) {
       const row = Array(LEVEL_WIDTH).fill(".");
@@ -206,7 +209,7 @@ export class NightlightLevelEditor extends GameRuntime {
   }
 
   private handleImportLevelCodeButton() {
-    const code = prompt("Please enter the level code:");
+    const code = prompt("Enter the level code:");
     if (code === null) {
       return;
     }
@@ -282,5 +285,17 @@ export class NightlightLevelEditor extends GameRuntime {
   private openLevelInNewTab() {
     const code = escape(JSON.stringify(this.getJsonLevelCode()));
     window.open(`?autorun=1&level=${code}`, "_blank");
+  }
+
+  private setWelcomeTextVisibility(visible: boolean) {
+    this.ui.welcome.content.style.display = visible ? "block" : "none";
+    this.ui.welcome.toggleButton.textContent = (visible ? "hide" : "show") + " welcome text";
+    setSearchParam("welcome", visible ? "1" : "");
+  }
+
+  private toggleWelcomeTextVisibility() {
+    const isVisible = this.ui.welcome.content.style.display === "block";
+    this.setWelcomeTextVisibility(!isVisible);
+    return false;
   }
 }

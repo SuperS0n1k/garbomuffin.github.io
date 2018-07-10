@@ -11,11 +11,6 @@ import { getElementById, getSearchParam, setSearchParam } from "./utils";
  */
 
 function getRuntime(): GameRuntime {
-  if (location.search === "?leveleditor") {
-    alert("The level editor URL has changed. You will be redirected, please adjust any bookmarks/etc.");
-    location.search = "?m=leveleditor";
-  }
-
   if (getSearchParam("m") === "leveleditor") {
     return new NightlightLevelEditor();
   } else {
@@ -321,7 +316,7 @@ function canPlay() {
         defaultValue = urlLevelParam;
       }
 
-      let code = prompt("Please enter the level code:", defaultValue);
+      let code = prompt("Enter the level code:", defaultValue);
       if (code === TOO_LONG_TO_SHOW_MESSAGE) {
         code = urlLevelParam;
       }

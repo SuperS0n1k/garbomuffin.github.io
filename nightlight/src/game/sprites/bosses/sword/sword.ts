@@ -10,8 +10,6 @@ import { AbstractBoss } from "../boss";
 
 /*
  * The first boss: A Sword
- *
- * This code is terrible. Please do not try to maintain it. Rewrite it from the ground up.
  */
 
 // swipe and spin cycle

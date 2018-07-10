@@ -170,8 +170,8 @@
         <hr>
 
         <div id="level-editor-options">
-          <div><label>Dark: <input id="level-editor-option-dark" type="checkbox"></label></div>
-          <div><label>Stars: <input id="level-editor-option-stars" type="checkbox" checked></label></div>
+          <div><label>Dark:<input id="level-editor-option-dark" type="checkbox"></label></div>
+          <div><label>Stars:<input id="level-editor-option-stars" type="checkbox" checked></label></div>
           <div>
             <label>
               Background:
@@ -183,7 +183,7 @@
           </div>
           <div>
             <label>
-              Background Music:
+              Music:
               <select id="level-editor-option-music">
                 <option selected value="music/exploration">Exploration</option>
                 <option value="music/blackroad/1,music/blackroad/2">Black Road</option>
@@ -200,9 +200,25 @@
 
     <div id="volume-container"><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
 
-    <p id="level-editor-welcome" style="display: none;">
-      <b>Welcome to the level editor!</b>
-    </p>
+    <div id="level-editor-welcome" style="display: none;">
+      <div id="level-editor-welcome-content">
+        <div>
+          <b>Welcome to the level editor!</b>
+        </div>
+        <div>
+          <small>Further documentation may be written at a later date.</small>
+        </div>
+        <br>
+        <div>
+          Save your levels with the "Get JSON" button <small>(save the stuff in the textbox somewhere)</small>
+          and can be imported using the "Import" button.
+        </div>
+      </div>
+
+      <div>
+        <small><a id="level-editor-welcome-toggle" href="#" onclick="return false;">hide welcome text</a></small>
+      </div>
+    </div>
 
     <div id="cb">
       <button onclick="runtime.level++;runtime.renderLevel();">Next level</button>
@@ -212,6 +228,9 @@
 
     <pre id="changelog">
       <b>Changelog:</b>
+      7/10/2018:
+       * <span title="doot doot">🎺🎺</span>
+
       7/9/2018:
        * <a onclick="alert('Maybe something will happen if you beat the game and click at the very end?');return false;" href="#">🤔</a>
 

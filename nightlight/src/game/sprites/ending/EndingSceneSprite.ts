@@ -35,7 +35,6 @@ export class EndingSceneSprite extends ImageSprite {
     this.y = Math.max(this.y, this.endY);
 
     if (this.x === this.endX && this.y === this.endY) {
-      const sprites = this.runtime.sprites;
       this.parent.sceneMoveEnd();
       task.stop();
     }

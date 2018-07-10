@@ -17,7 +17,6 @@ import { Vector } from "./vector";
  */
 
 // Dimensions of the canvas
-// Please, use runtime.canvas.height or width instead when possible.
 export const CANVAS_WIDTH = 480;
 export const CANVAS_HEIGHT = 360;
 
@@ -79,10 +78,10 @@ export class GameRuntime extends TaskRunner {
 
     // mouse driver, support pc and mobile to some degree
     if (this.isMobile) {
-      console.log("mobile");
+      // console.log("mobile");
       this.mouse = new TouchscreenMouse(this);
     } else {
-      console.log("pc");
+      // console.log("pc");
       this.mouse = new Mouse(this);
     }
     this.addTask(() => this.mouse.update());
@@ -114,7 +113,7 @@ export class GameRuntime extends TaskRunner {
       src += "." + IMAGE_FORMAT;
     }
 
-    console.log("adding image", src);
+    // console.log("adding image", src);
 
     const promise = new Promise<TImage>((resolve, reject) => {
       const image = new Image();
@@ -137,7 +136,7 @@ export class GameRuntime extends TaskRunner {
       src += "." + SOUND_FORMAT;
     }
 
-    console.log("adding sound", src);
+    // console.log("adding sound", src);
 
     const promise = new Promise<TImage>((resolve: any, reject: any) => {
       const sound = new Audio(src);
@@ -168,7 +167,7 @@ export class GameRuntime extends TaskRunner {
     // the actual loading stuff
     return Promise.all(this._assetPromises)
       .then(() => {
-        console.log("loaded assets");
+        // console.log("loaded assets");
         this._assetPromises = [];
       });
   }
@@ -222,7 +221,7 @@ export class GameRuntime extends TaskRunner {
 
   // resets things and starts the loop
   public start() {
-    console.log("starting loop");
+    // console.log("starting loop");
     this.loop();
     this.updateStatic();
 

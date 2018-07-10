@@ -85,14 +85,14 @@ export class EndingThumbSprite extends ImageSprite {
     // haha yes
     this.parent.endingScene.destroy();
     this.parent.destroy();
+
+    // remove all text sprites
     this.runtime.sprites.filter((i) => i instanceof NightlightTextSprite).forEach((i) => i.destroy());
     this.runtime.updateStatic();
+
     this.runtime.background = "black";
+    this.z = -2; // static renders at -1, we want to be below it for this part
 
-    this.z = -2; // static renders at -1, we want to be below it
-
-    // these are probably one of 3 promises used in the entire program
-    // really tho these are pretty dope and i shouldve used them more often
     this.fadeOut(0.75)
       .then(() => this.lastSurpriseText())
       .then(() => this.loadLevelEditor());
@@ -127,7 +127,7 @@ export class EndingThumbSprite extends ImageSprite {
         task.stop();
         this.z = 0;
         this.fadeIn().then(() => {
-          location.search = "?m=leveleditor&newuser=1";
+          location.search = "?m=leveleditor&welcome=1";
         });
       }
     });
