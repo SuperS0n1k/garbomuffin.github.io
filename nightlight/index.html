@@ -5,6 +5,7 @@
     <title>Nightlight</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77118590-7"></script>
@@ -199,6 +200,11 @@
 
     <div id="volume-container"><label>Volume: <input type="range" min="0" max="100" id="volume"></label><span id="volume-level"></span></div>
 
+    <p id="level-editor-welcome" style="display: none;">
+      <b>Welcome to the level editor!</b><br>
+      That's the "secret"
+    </p>
+
     <div id="cb">
       <button onclick="runtime.level++;runtime.renderLevel();">Next level</button>
       <button onclick="runtime.level--;runtime.renderLevel();">Prev level</button>
@@ -207,6 +213,9 @@
 
     <pre id="changelog">
       <b>Changelog:</b>
+      7/9/2018:
+       * <a onclick="alert('Maybe something will happen if you beat the game and click at the very end?');return false;" href="#">🤔</a>
+
       v0.1.9.4 (6/17/2018):
        * Fix some firefox issues
        * Make castle background brick darker to better contrast regular bricks

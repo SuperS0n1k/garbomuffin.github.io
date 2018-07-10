@@ -11,10 +11,12 @@ export class EndingSceneSprite extends ImageSprite {
   private readonly moveX: number;
   private readonly moveY: number;
   public runtime!: Nightlight;
+  private parent: EndingSprite;
 
-  constructor(options: IImageSpriteOptions) {
+  constructor(parent: EndingSprite, options: IImageSpriteOptions) {
     super(options);
 
+    this.parent = parent;
     this.endX = 0;
     this.endY = this.runtime.canvas.height - this.height + 4;
     const xDistance = Math.abs(this.endX - this.x);
@@ -34,8 +36,7 @@ export class EndingSceneSprite extends ImageSprite {
 
     if (this.x === this.endX && this.y === this.endY) {
       const sprites = this.runtime.sprites;
-      const endingSprite = sprites.filter((sprite) => sprite instanceof EndingSprite)[0] as EndingSprite;
-      endingSprite.sceneMoveEnd();
+      this.parent.sceneMoveEnd();
       task.stop();
     }
   }

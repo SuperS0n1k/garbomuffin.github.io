@@ -8,11 +8,13 @@ export const CHAR_WIDTH = 8;
 export const CHAR_HEIGHT = CHAR_WIDTH;
 const TEXTURE_FOLDER = "text/";
 
+// map of specially treated letters to their real path or behavior
 export const CHAR_MAP: {[s: string]: string | undefined} = {
-  ".": "period",
   " ": "skip",
+  ".": "period",
   "'": "singlequote",
   ":": "colon",
+  "?": "question",
 };
 
 export class NightlightTextSprite extends AbstractSprite {

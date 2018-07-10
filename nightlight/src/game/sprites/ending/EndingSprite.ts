@@ -17,7 +17,6 @@ const BACKGROUND_COLOR_RED = 0x2F;
 const BACKGROUND_COLOR_GREEN = 0xB3;
 const BACKGROUND_COLOR_BLUE = 0xFF;
 
-const TEXT_PHASE_INITIAL_DELAY = 60;
 const TEXT_PHASE_LINE_DELAY = 120;
 const TEXT: INightlightTextSpriteOptions[] = [
   {
@@ -38,11 +37,14 @@ const FADE_OUT_PHASE_DELAY = 600;
 
 export class EndingSprite extends AbstractSprite {
   public runtime!: Nightlight;
+  public endingScene!: EndingSceneSprite;
 
   constructor(options: ISpriteOptions) {
     super(options);
 
-    console.log("Goodbye");
+    /**
+     * Well, that's the end.
+     */
 
     // get rid of the player
     this.runtime.player.destroy();
@@ -104,7 +106,7 @@ export class EndingSprite extends AbstractSprite {
     const image = this.runtime.getImage("end/scene");
     const x = -image.width * 2;
     const y = this.runtime.canvas.height;
-    new EndingSceneSprite({
+    this.endingScene = new EndingSceneSprite(this, {
       position: new Vector(x, y),
       width: image.width * 8,
       height: image.height * 8,
@@ -120,7 +122,7 @@ export class EndingSprite extends AbstractSprite {
   }
 
   private goodbye() {
-    new EndingThumbSprite({
+    new EndingThumbSprite(this, {
       texture: this.runtime.getImage("thumb"),
       position: new Vector(0, 0),
     });

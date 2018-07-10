@@ -37,6 +37,7 @@ export class NightlightLevelEditor extends GameRuntime {
     openLevel: getElementById<HTMLButtonElement>("level-editor-open-level"),
     codeOutput: getElementById<HTMLTextAreaElement>("level-editor-code-output"),
     modeSelect: getElementById<HTMLSelectElement>("level-editor-option-mode"),
+    welcome: getElementById("level-editor-welcome"),
     options: {
       dark: getElementById<HTMLInputElement>("level-editor-option-dark"),
       stars: getElementById<HTMLInputElement>("level-editor-option-stars"),
@@ -112,6 +113,7 @@ export class NightlightLevelEditor extends GameRuntime {
     this.ui.modeSelect.addEventListener("change", () => this.setMode(+this.ui.modeSelect.value));
     document.getElementById("volume-container")!.style.display = "none";
     this.setMode(this.mode);
+    this.ui.welcome.style.display = "block";
 
     for (let y = 0; y < LEVEL_HEIGHT; y++) {
       const row = Array(LEVEL_WIDTH).fill(".");
@@ -209,7 +211,7 @@ export class NightlightLevelEditor extends GameRuntime {
     try {
       this.importLevelCode(code);
     } catch (e) {
-      alert(`Error: ${e.message}\n\nDebug Information:\n${e.stack}`);
+      alert(`Error: ${e.message}`);
       this.levelData = levelDataBackup;
       this.levelRenderer.updateLevel();
     }

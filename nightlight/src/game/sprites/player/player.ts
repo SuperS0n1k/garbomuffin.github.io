@@ -2,7 +2,7 @@ import { BLOCK_HEIGHT } from "../../../config";
 import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { Vector } from "../../../engine/vector";
 import { IPointSpawnType, IRandomSpawnType, IRangeSpawnType } from "../../../level";
-import { clone, getRandomInt } from "../../../utils";
+import { clone, getRandomInt, getElementById } from "../../../utils";
 import { Nightlight } from "../../game";
 import { runBasicPhysics } from "../../physics";
 import { PseudoSolidBlock } from "../blocks/block";

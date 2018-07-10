@@ -78,6 +78,7 @@ game.addImage("text/7");
 game.addImage("text/8");
 game.addImage("text/9");
 game.addImage("text/period");
+game.addImage("text/question");
 game.addImage("text/,");
 game.addImage("text/!");
 game.addImage("text/singlequote");
@@ -303,14 +304,15 @@ function canPlay() {
         }
         return;
       } catch (e) {
-        console.error(e);
+        // TODO: handle this
+        throw e;
       }
     }
 
     playButton.addEventListener("click", () => run());
     loadCodeButton.addEventListener("click", () => {
-      // chrome (and probably others) limit prompt default value to 2000 characters
-      const TOO_LONG_TO_SHOW_MESSAGE = "(default too long to show. enter will still work as normal)";
+      // chrome (and probably others) limit prompt default value to 2000 or so characters
+      const TOO_LONG_TO_SHOW_MESSAGE = "(too long to safely show in this box, but enter will still work as expected)";
 
       let defaultValue;
       if (urlLevelParam.length > 2000) {
@@ -328,6 +330,7 @@ function canPlay() {
       }
       runLevelCode(code);
     });
+
     if (urlLevelParam) {
       loadCodeFromUrlButton.addEventListener("click", () => loadLevelFromUrl());
       loadCodeFromUrlButton.style.display = "inline";
@@ -368,7 +371,7 @@ function runLevelCode(code: string) {
   try {
     importCode(code);
   } catch (e) {
-    alert(`Error: ${e.message}\n\nDebug Information:\n${e.stack}`);
+    alert(`Error: ${e.message}`);
   }
   setSearchParam("level", code);
 }
