@@ -190,7 +190,7 @@
   // supports the "material" youtube design
   class MaterialHandler extends VideoHandler {
     isVideoBlocked() {
-      const el = document.getElementsByTagName("ytd-playability-error-supported-renderers")[0];
+      const el = document.getElementsByTagName("yt-player-error-message-renderer")[0];
       if (!el) {
         return false;
       }
