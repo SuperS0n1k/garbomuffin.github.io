@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ytembed
 // @namespace    https://garbomuffin.github.io/ytembed/
-// @version      0.0.3
+// @version      0.0.4
 // @author       GarboMuffin
 // @match        https://www.youtube.com/*
 // @match        https://garbomuffin.github.io/ytembed/userscript/config.html
