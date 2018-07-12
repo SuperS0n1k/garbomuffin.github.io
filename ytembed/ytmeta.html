@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      pre {
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+
+  <body>
+    <p>oh my god this is terrible</p>
+    <input id="id-input" type="text">
+    <button id="button">get me some metadata</button>
+
+    <div>
+      <div>
+        <b>Title:</b>
+        <code id="title-out"></code>
+      </div>
+
+      <div>
+        <b>Description:</b>
+        <pre id="description-out"></pre>
+      </div>
+
+      <div>
+        <b>Thumbnail:</b>
+        <a id="thumb-out"></a>
+      </div>
+
+      <div>
+        <b>Tags:</b>
+        <code id="tags-out"></code>
+      </div>
+
+      <div>
+        <b>Channel:</b>
+        <a id="channel-out"></a>
+      </div>
+
+    </div>
+
+
+    <script>
+      const idInput = document.getElementById("id-input");
+
+      document.getElementById("button").addEventListener("click", (e) => {
+        const id = idInput.value;
+        fetch("https://api.garbomuffin.com/api/v0/get/" + id)
+          .then((r) => r.json())
+          .then((data) => {
+            document.getElementById("description-out").textContent = data.snippet.description;
+
+            document.getElementById("title-out").textContent = data.snippet.title;
+
+            document.getElementById("thumb-out").href = data.snippet.thumbnails.maxres.url;
+            document.getElementById("thumb-out").textContent = data.snippet.thumbnails.maxres.url;
+
+            document.getElementById("channel-out").textContent = data.snippet.channelTitle;
+            document.getElementById("channel-out").href = "https://youtube.com/channel/" + data.snippet.channelId;
+
+            document.getElementById("tags-out").textContent = data.snippet.tags.join(", ");
+          });
+      });
+    </script>
+  </body>
+</html>
