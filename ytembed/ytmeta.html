@@ -43,26 +43,62 @@
 
 
     <script>
-      const idInput = document.getElementById("id-input");
+      (function() {
+        "use strict";
+        const idInput = document.getElementById("id-input");
+        const button = document.getElementById("button");
+        const descriptionOut = document.getElementById("description-out");
 
-      document.getElementById("button").addEventListener("click", (e) => {
-        const id = idInput.value;
-        fetch("https://api.garbomuffin.com/api/v0/get/" + id)
-          .then((r) => r.json())
-          .then((data) => {
-            document.getElementById("description-out").textContent = data.snippet.description;
+        button.addEventListener("click", (e) => {
+          const id = idInput.value;
 
-            document.getElementById("title-out").textContent = data.snippet.title;
+          fetch("https://api.garbomuffin.com/api/v0/get/" + id)
+            .then((r) => r.json())
+            .then((data) => {
+              document.getElementById("description-out").textContent = data.snippet.description;
+              descriptionOut.textContent = "";
+              for (const l of data.snippet.description.split("\n")) {
+                for (const i of l.split(" ")) {
+                  if (isUrl(i)) {
+                    const el = document.createElement("a");
+                    el.href = i;
+                    el.textContent = i;
+                    el.target = "_blank";
+                    descriptionOut.appendChild(el);
+                  } else {
+                    descriptionOut.appendChild(document.createTextNode(i));
+                  }
+                  descriptionOut.appendChild(document.createTextNode(" "));
+                }
+                descriptionOut.appendChild(document.createTextNode("\n"));
+              }
 
-            document.getElementById("thumb-out").href = data.snippet.thumbnails.maxres.url;
-            document.getElementById("thumb-out").textContent = data.snippet.thumbnails.maxres.url;
+              document.getElementById("title-out").textContent = data.snippet.title;
 
-            document.getElementById("channel-out").textContent = data.snippet.channelTitle;
-            document.getElementById("channel-out").href = "https://youtube.com/channel/" + data.snippet.channelId;
+              document.getElementById("thumb-out").href = data.snippet.thumbnails.maxres.url;
+              document.getElementById("thumb-out").textContent = data.snippet.thumbnails.maxres.url;
 
-            document.getElementById("tags-out").textContent = data.snippet.tags.join(", ");
-          });
-      });
+              document.getElementById("channel-out").textContent = data.snippet.channelTitle;
+              document.getElementById("channel-out").href = "https://youtube.com/channel/" + data.snippet.channelId;
+
+              document.getElementById("tags-out").textContent = data.snippet.tags.join(", ") || "none";
+            });
+        });
+
+        if (location.hash) {
+          idInput.value = location.hash.substr(1);
+          button.click();
+        }
+
+        function isUrl(str) {
+          try {
+            const url = new URL(str);
+            return url.protocol === "https:" || url.protocol === "http:";
+          } catch (e) {
+            return false;
+          }
+        }
+      }());
     </script>
   </body>
 </html>
