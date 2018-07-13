@@ -1,21 +1,16 @@
-// Changes in v2.2:
-//  * Refactoring
-//   * Filter updates
-// Changes in v2.1.2:
-//  * Disabled loading thumbnails of blocked projects
-//  * You may notice significant speed improvements
-// Changes in v2.1.1:
-//  * Filter updates
-// Changes in v2.1:
-//  * Improved support for the home page
-//    Sliding things no longer break
-//  * Filter updates
-//
-// See this in action: https://scratch.mit.edu/search/projects?q=meme
-//
+/*
+ * v2.2.1 changelog: Major filter updates
+ * 
+ * See this in action:
+ * https://scratch.mit.edu/search/projects?q=meme
+ * https://scratch.mit.edu/search/projects?q=fursona
+ * https://scratch.mit.edu/search/projects?q=furry
+ * 
+ * satire (noun): the use of irony, sarcasm, ridicule, or the like, in exposing, denouncing, or deriding vice, folly, etc.
+ */
 // ==UserScript==
 // @name         NO MORE FURRIES
-// @version      2.2
+// @version      2.2.1
 // @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
 // @description  FURRIES AREN'T MEMES
 // @author       GarboMuffin
@@ -25,16 +20,19 @@
 // @updateURL    https://garbomuffin.github.io/userscripts/no-more-furries/no-more-furries.user.js
 // ==/UserScript==
 
-const DEBUG: boolean = true;
+const DEBUG: boolean = false;
 
 ///
 /// Filters
 ///
 
-// The actual functions that use these lists are in isFiltered() below
+// The filters are used in isFiltered()
 
-// List of users that have a history of making furries and are blocked globally
-// Links above user are relevant scratch projects
+// List of users that have a history of making furries and are thus blocked globally
+// Links above each user are relevant scratch projects
+
+// I like to imagine that someday people on this list, or people who know them, will search for their name on GitHub and find this.
+// That would be quite funny.
 const BLOCKED_CREATORS: string[] = [
   // https://scratch.mit.edu/projects/123751084/
   // https://scratch.mit.edu/projects/124715889/
@@ -408,6 +406,109 @@ const BLOCKED_CREATORS: string[] = [
   // https://scratch.mit.edu/projects/142359902/
   // moved to https://scratch.mit.edu/users/scentedsope/, no furries yet on that account (as of now)
   "NyanSpells",
+
+  // https://scratch.mit.edu/projects/235763172/
+  // https://scratch.mit.edu/projects/228284052/
+  "TheGamingKitten",
+  
+  // https://scratch.mit.edu/projects/132800012/
+  // https://scratch.mit.edu/projects/171754876/
+  "-magpie-",
+
+  // https://scratch.mit.edu/projects/234775554/
+  // https://scratch.mit.edu/projects/228279171/
+  "Starri_Dragoonie",
+
+  // https://scratch.mit.edu/projects/164197018/
+  // https://scratch.mit.edu/projects/201306756/
+  "Kittydog098",
+
+  // https://scratch.mit.edu/projects/230192353/
+  // https://scratch.mit.edu/projects/224267099/
+  "firepaw_rusty",
+  
+  // https://scratch.mit.edu/projects/167027025/
+  // https://scratch.mit.edu/projects/170272284/
+  "chai_tea",
+
+  // https://scratch.mit.edu/projects/201041708/
+  // https://scratch.mit.edu/projects/218241595/
+  "Greninja714",
+
+  // https://scratch.mit.edu/projects/181410477/
+  // https://scratch.mit.edu/projects/196706671/
+  "hashtagPROSKILLZ21",
+
+  // https://scratch.mit.edu/projects/208496836/
+  // https://scratch.mit.edu/projects/217515361/
+  "Chociily",
+
+  // https://scratch.mit.edu/projects/225879169/
+  // https://scratch.mit.edu/projects/216229529/
+  "diinosaurr",
+
+  // https://scratch.mit.edu/projects/173602233/
+  // https://scratch.mit.edu/projects/174252194/
+  "mint_soap",
+
+  // https://scratch.mit.edu/projects/86124700/
+  // https://scratch.mit.edu/projects/86129074/
+  "Flowerfang",
+
+  // https://scratch.mit.edu/projects/51357582/
+  // https://scratch.mit.edu/projects/30600180/
+  "Foxgirlgamer",
+
+  // https://scratch.mit.edu/projects/25082008/
+  // https://scratch.mit.edu/projects/23551330/
+  "Evroshka",
+
+  // https://scratch.mit.edu/projects/1755264/
+  // https://scratch.mit.edu/projects/1624228/
+  "hollyice14",
+
+  // https://scratch.mit.edu/projects/230443955/
+  // https://scratch.mit.edu/projects/235239361/
+  "-CloudJump-",
+
+  // https://scratch.mit.edu/projects/188288906/
+  // https://scratch.mit.edu/projects/197648526/
+  "ashlynsh88",
+
+  // https://scratch.mit.edu/projects/124088158/
+  // https://scratch.mit.edu/projects/144732703/
+  "starcub",
+
+  // https://scratch.mit.edu/projects/235643589/
+  // https://scratch.mit.edu/projects/235779436/
+  "munny766",
+
+  // this guy shows up in the search results for "furry" like 20 times in a row
+  // https://scratch.mit.edu/projects/160789963/
+  // https://scratch.mit.edu/projects/165543398/
+  // https://scratch.mit.edu/projects/177736682/
+  // https://scratch.mit.edu/projects/210914547/
+  // https://scratch.mit.edu/projects/166175509/
+  // https://scratch.mit.edu/projects/171549402/
+  // https://scratch.mit.edu/projects/167745934/
+  // https://scratch.mit.edu/projects/214510519/
+  "kirtmew",
+
+  // https://scratch.mit.edu/projects/224941038/
+  // https://scratch.mit.edu/projects/219112535/
+  "bluemoonfishy",
+
+  // https://scratch.mit.edu/projects/24546482/
+  // https://scratch.mit.edu/projects/26013777/
+  "kaotheroogoncreator",
+
+  // https://scratch.mit.edu/projects/187740881/
+  // https://scratch.mit.edu/projects/186492965/
+  "ll_turtledove_ll",
+
+  // https://scratch.mit.edu/projects/173182897/
+  // https://scratch.mit.edu/projects/172794424/
+  "chiimera",
 ];
 
 // Strings that can't be in titles or else the project is hidden
@@ -444,6 +545,39 @@ const BLOCKED_TITLE_PARTS: string[] = [
   // https://scratch.mit.edu/projects/116075128/
   "original meme",
 
+  // https://scratch.mit.edu/projects/164086819/
+  // https://scratch.mit.edu/projects/173182897/
+  // https://scratch.mit.edu/projects/163182327/
+  // https://scratch.mit.edu/projects/169641236/
+  // https://scratch.mit.edu/projects/175705777/
+  "add your oc",
+  "draw your oc",
+
+  // This one has a large amount of false positives, but is very effective.
+  // https://scratch.mit.edu/projects/99524301/
+  // https://scratch.mit.edu/projects/92689750/
+  // https://scratch.mit.edu/projects/68005926/
+  // https://scratch.mit.edu/projects/160789963/
+  // https://scratch.mit.edu/search/projects?q=furry
+  "furry",
+
+  // https://scratch.mit.edu/projects/2452235/
+  // https://scratch.mit.edu/projects/14903220/
+  // https://scratch.mit.edu/projects/117850621/
+  // https://scratch.mit.edu/projects/197761706/
+  // https://scratch.mit.edu/projects/156887428/
+  // https://scratch.mit.edu/projects/73857810/
+  // https://scratch.mit.edu/projects/80057540/
+  // https://scratch.mit.edu/projects/117431969/
+  // https://scratch.mit.edu/projects/1169042/
+  // https://scratch.mit.edu/projects/117255678/
+  // https://scratch.mit.edu/projects/69244012/
+  // https://scratch.mit.edu/projects/196710485/
+  // https://scratch.mit.edu/projects/87337446/
+  // https://scratch.mit.edu/projects/114632998/
+  // https://scratch.mit.edu/search/projects?q=fursona
+  "fursona",
+
   // https://scratch.mit.edu/projects/78985318/
   // https://scratch.mit.edu/projects/83195632/
   // https://scratch.mit.edu/projects/26140290/
@@ -457,6 +591,11 @@ const BLOCKED_TITLE_PARTS: string[] = [
   // https://scratch.mit.edu/projects/57097926/
   // https://scratch.mit.edu/search/projects?q=warrior%20cats
   "warrior cat",
+
+  // names of clans/cats from the warrior cats serious
+  // very incomprehensive, doesn't seem to do very much
+  "tigerclaw",
+  "thunderclan",
 ];
 
 // BLOCKED_TITLE_PARTS but for things that are case sensitive
