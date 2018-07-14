@@ -52,12 +52,13 @@
         button.addEventListener("click", (e) => {
           const id = idInput.value;
 
-          fetch("https://api.garbomuffin.com/api/v0/get/" + id)
+          fetch(`https://garbomuffin.com/api/youtube/video/${id}/meta`)
             .then((r) => r.json())
             .then((data) => {
-              document.getElementById("description-out").textContent = data.snippet.description;
+              data = data.data;
+              document.getElementById("description-out").textContent = data.description;
               descriptionOut.textContent = "";
-              for (const l of data.snippet.description.split("\n")) {
+              for (const l of data.description.split("\n")) {
                 for (const i of l.split(" ")) {
                   if (isUrl(i)) {
                     const el = document.createElement("a");
@@ -73,15 +74,15 @@
                 descriptionOut.appendChild(document.createTextNode("\n"));
               }
 
-              document.getElementById("title-out").textContent = data.snippet.title;
+              document.getElementById("title-out").textContent = data.title;
 
-              document.getElementById("thumb-out").href = data.snippet.thumbnails.maxres.url;
-              document.getElementById("thumb-out").textContent = data.snippet.thumbnails.maxres.url;
+              document.getElementById("thumb-out").href = data.thumbnails.maxres.url;
+              document.getElementById("thumb-out").textContent = data.thumbnails.maxres.url;
 
-              document.getElementById("channel-out").textContent = data.snippet.channelTitle;
-              document.getElementById("channel-out").href = "https://youtube.com/channel/" + data.snippet.channelId;
+              document.getElementById("channel-out").textContent = data.channelTitle;
+              document.getElementById("channel-out").href = "https://youtube.com/channel/" + data.channelId;
 
-              document.getElementById("tags-out").textContent = data.snippet.tags.join(", ") || "none";
+              document.getElementById("tags-out").textContent = data.tags.join(", ") || "none";
             });
         });
 
