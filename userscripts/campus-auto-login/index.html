@@ -234,11 +234,13 @@
         // tampermonkey opens its install prompt and leaves the old window as an empty tab
         var w = window.open("campus-auto-login.user.js");
         if (w) {
-          // wait 50 ms before closing just to be sure that the install prompt had time to open
-          // probably a better way to do this
-          setTimeout(function () {
-            w.close();
-          }, 50);
+          // wait 500 ms after onload fires to automatically close the window
+          // that's a long time, but it should work consistenly on all browsers and computers
+          w.onload = function() {
+            setTimeout(function() {
+              w.close();
+            }, 500);
+          }
         } else {
           // some popup blockers make it fail, so provide alternative link
           alert("Couldn't open popup. Do you have them disabled?\n\nTry alternative link.");
