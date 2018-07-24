@@ -4,8 +4,12 @@
     <title>Ping</title>
     <link rel="stylesheet" href="/core.css">
     <style>
+      /* make the image pixelated as it should be */
       img {
-        image-rendering: pixelated;
+        image-rendering: -moz-crisp-edges; /* firefox */
+        image-rendering: pixelated; /* chrome */
+        -ms-interpolation-mode: nearest-neighbor; /* ie */
+        /* ... and edge doesn't support it ... */
       }
       .download {
         text-align: center;
@@ -27,7 +31,7 @@
 
     <div class="download">
       <h1><a href="Ping.jar">Click To Download</a></h1>
-      <small>(Any Minecraft version)</small>
+      <small>(Any Minecraft version, <b>works in 1.13</b>)</small>
     </div>
 
     <hr>
@@ -39,7 +43,7 @@
       <li>Permission support</li>
       <li>Config support for just about everything</li>
       <li>Will show a warning when getting the ping of a player joined very recently because it can be very inaccurate. <small>(configurable and disableable)</small></li>
-      <li><b>Works with just about any version of Bukkit/Spigot/Paper</b> <small>(tested in 1.12.2 and 1.10.2 but should work in any. If not see contact below)</small></li>
+      <li><b>Works with just about any version of Bukkit/Spigot/Paper</b> <small>(tested in 1.13, 1.12.2, and 1.10.2 but should work in any version)</small></li>
     </ul>
 
     <hr>
@@ -54,19 +58,17 @@
     <p>There is one permission - <code>ping.command</code>. It allows access to /ping. It is given to everyone by default.</p>
 
     <hr>
-    <h2>Source / Bugs / Contact</h2>
+    <h2>GitHub</h2>
     <p>
       <a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/mc/ping/src">View the source code on GitHub</a>
       and <a href="https://github.com/GarboMuffin/garbomuffin.github.io/issues/new">report bugs on GitHub.</a>
     </p>
 
-    <p>My email is tommyweber33 at gmail dot com. <small>(futile attempt to avoid spambots)</small></p>
-
     <hr>
 
     <div class="download">
       <h1><a href="Ping.jar">Click To Download</a></h1>
-      <small>(Any Minecraft version)</small>
+      <small>(Any Minecraft version, <b>works in 1.13</b>)</small>
     </div>
   </body>
 </html>
