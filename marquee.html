@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>&lt;marquee&gt;obsolete&lt;marquee&gt;</title>
+
+    <style>
+      html, body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .rainbow {
+        animation: rainbow 10s linear 0s infinite;
+      }
+
+      @keyframes rainbow {
+        0% {
+          color: #F00;
+        }
+        17% {
+          color: #FF0;
+        }
+        33% {
+          color: #0F0;
+        }
+        50% {
+          color: #0FF;
+        }
+        67% {
+          color: #00F;
+        }
+        84% {
+          color: #F0F;
+        }
+        100% {
+          color: #F00;
+        }
+      }
+
+      .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        font-family: sans-serif;
+        opacity: 0.33;
+        z-index: 1;
+      }
+
+      h1 {
+        margin: 0;
+        padding: 0;
+      }
+
+      a {
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .center h1 {
+        font-size: 10em;
+      }
+      @media only screen and (max-width: 850px) {
+        .center h1 {
+          font-size: 7.5em;
+        }
+      }
+      @media only screen and (max-width: 700px) {
+        .center h1 {
+          font-size: 5em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="center">
+      <h1><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/marquee" class="rainbow">OBSOLETE</a></h1>
+    </div>
+    <div id="marquees">
+      <noscript></noscript>
+    </div>
+
+    <script>
+      (function(){
+        "use strict";
+
+        function getHeight(el) {
+          return parseInt(window.getComputedStyle(document.body).height)
+        }
+
+        function addMarquee(parent, direction) {
+          var el = document.createElement("marquee");
+          el.innerHTML = "MARQUEES ARE <span class='rainbow'>OBSOLETE</span>";
+          el.setAttribute("behavior", "alternate");
+          el.setAttribute("direction", direction);
+          parent.appendChild(el);
+        }
+
+        var container = document.getElementById("marquees");
+        for (var i = 0; getHeight(container) < screen.height; i++) {
+          addMarquee(container, i % 2 === 0 ? "right" : "left");
+          if (i > 10000) {
+            break;
+          }
+        }
+      }());
+    </script>
+  </body>
+</html>
