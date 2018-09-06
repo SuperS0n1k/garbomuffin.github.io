@@ -100,7 +100,7 @@ export abstract class AbstractPrompter implements IPrompter {
   // Move the current scroll distance according to the speed
   // Also use the "time since last frame" to move slower or faster during periods of lag
   protected scroll(frames: number) {
-    this.scrollDistance += (this.config.speed * this.direction) * frames;
+    this.scrollDistance += this.config.options.speed.get() * this.direction * frames;
   }
 
   protected toggleScrolling() {

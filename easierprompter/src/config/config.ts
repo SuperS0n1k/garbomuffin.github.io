@@ -14,16 +14,8 @@ export class ConfigManager {
   public options: Config = {};
   private configSaver: ConfigSaver = new ConfigSaver(this);
 
-  get speed() {
-    return this.options.speed.get();
-  }
-
-  set speed(value) {
-    this.options.speed.set(value);
-  }
-
   public save() {
-    const saveData = this.configSaver.save();
+    return this.configSaver.save();
   }
 
   public load() {

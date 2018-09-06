@@ -20,3 +20,13 @@ export function emptyElement(el: HTMLElement) {
     el.removeChild(el.firstChild);
   }
 }
+
+export function clamp(i: number, min: number, max: number): number {
+  if (i > max) {
+    return max;
+  } else if (i < min) {
+    return min;
+  } else {
+    return i;
+  }
+}

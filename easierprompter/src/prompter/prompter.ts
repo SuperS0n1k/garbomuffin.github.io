@@ -1,9 +1,11 @@
 import { ConfigManager } from "../config/config";
 import { Keyboard } from "../keyboard/keyboard";
-import { emptyElement, getElement, setDisplay } from "../utils";
+import { emptyElement, getElement, setDisplay, clamp } from "../utils";
 import { AbstractPrompter, Direction } from "./abstract";
 
 const SPEED_INCREMENT = 0.25;
+const MIN_SPEED = 0;
+const MAX_SPEED = 10;
 
 export class Prompter extends AbstractPrompter {
   private prompterLines = getElement("prompter-lines")!;
@@ -170,17 +172,21 @@ export class Prompter extends AbstractPrompter {
     emptyElement(this.prompterEndText);
   }
 
+  private setSpeed(speed: number) {
+    this.config.options.speed.set(clamp(speed, MIN_SPEED, MAX_SPEED));
+  }
+
   // Speed Up
   private speedUp() {
     if (this.showing) {
-      this.config.speed += SPEED_INCREMENT;
+      this.setSpeed(this.config.options.speed.get() + SPEED_INCREMENT);
     }
   }
 
   // Speed Down
   private speedDown() {
     if (this.showing) {
-      this.config.speed -= SPEED_INCREMENT;
+      this.setSpeed(this.config.options.speed.get() - SPEED_INCREMENT);
     }
   }
 
