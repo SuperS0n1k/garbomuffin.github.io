@@ -82,8 +82,12 @@ export abstract class AbstractPrompter implements IPrompter {
       return;
     }
 
+    // Determine the time since last frame, capping at 1000 ms
+    // A frame should never take more than 1000 ms unless requestAnimationFrame() is blocked by something
+    // (like being on a different tab)
+    // If the user tabs out for a minute we don't want the prompter to suddenly finish when they return.
+    const timeSinceLastFrame = Math.min(currentTime - this.lastFrameTime, 1000);
     // Scroll the screen proportional to the amount of lag
-    const timeSinceLastFrame = currentTime - this.lastFrameTime;
     if (this.scrolling) {
       this.scroll(timeSinceLastFrame / ONE_FRAME);
     }

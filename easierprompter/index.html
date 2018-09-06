@@ -68,7 +68,7 @@
         font-weight: bold;
       }
 
-      #prompter-caret-text {
+      #prompter-caret {
         margin: 0;
       }
 
@@ -206,6 +206,7 @@
       <hr>
 
       <p>Easier Prompter: The easiest teleprompter. Enter your script and press start. It just works.</p>
+      <p><b>New:</b> the caret shown in the prompter has changed. If you hate it you can just uncheck "Show caret".</p>
 
       <div id="editor">
         <table>
@@ -283,7 +284,11 @@
       <table id="prompter-lines-container">
         <tr>
           <th id="prompter-caret">
-            <p id="prompter-caret-text">&gt;</p>
+            <svg width="50" height="60">
+              <path
+                d="M 50,35 5,55 5,15 Z"
+                style="fill:#ffffff" />
+            </svg>
           </th>
 
           <th>
