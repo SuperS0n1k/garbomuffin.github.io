@@ -1,7 +1,7 @@
 import { BLOCK_HEIGHT, BLOCK_WIDTH } from "../../config";
 import { Task } from "../../engine/task";
 import { Vector } from "../../engine/vector";
-import { runBasicPhysics } from "../physics";
+import { runPhysics } from "../physics";
 import { Block, IBlockOptions } from "./blocks/block";
 
 /*
@@ -78,7 +78,7 @@ export class SwordBossLevelUpCoinSprite extends LevelUpCoinSprite {
   }
 
   private fly(task: Task) {
-    runBasicPhysics(this, {
+    runPhysics(this, {
       collision: false,
     });
 

@@ -3,13 +3,14 @@ import { AbstractSprite } from "../engine/sprite";
 import { getOrDefault } from "../engine/utils";
 import { Nightlight } from "./game";
 import { Block } from "./sprites/blocks/block";
+import { UpSpikeBlock } from "./sprites/blocks/spike";
 
 interface IVelocity {
   xv: number;
   yv: number;
 }
 
-export function runBasicPhysics(sprite: AbstractSprite & IVelocity, opts: IPhysicsOptions = {}): boolean {
+export function runPhysics(sprite: AbstractSprite & IVelocity, opts: IPhysicsOptions = {}): boolean {
   opts.collision = getOrDefault(opts.collision, true);
   opts.restrictPositionValues = getOrDefault(opts.restrictPositionValues, true);
   opts.friction = getOrDefault(opts.friction, FRICTION);
@@ -74,10 +75,42 @@ function handleCollision(sprite: AbstractSprite & IVelocity, horizontal: boolean
 
     /*
     X X X
+    X X X
+    O X X
+    */
+    ordereredBlocks[centerLevelIndex - LEVEL_WIDTH - 1],
+    /*
+    X X X
+    X X X
+    X O X
+    */
+    ordereredBlocks[centerLevelIndex - LEVEL_WIDTH],
+    /*
+    X X X
+    X X X
+    X X O
+    */
+    ordereredBlocks[centerLevelIndex - LEVEL_WIDTH + 1],
+
+    /*
+    X X X
+    X X O
+    X X X
+    */
+    ordereredBlocks[centerLevelIndex + 1],
+    /*
+    X X X
     X O X
     X X X
     */
     ordereredBlocks[centerLevelIndex],
+    /*
+    X X X
+    O X X
+    X X X
+    */
+    ordereredBlocks[centerLevelIndex - 1],
+
     /*
     X O X
     X X X
@@ -96,36 +129,6 @@ function handleCollision(sprite: AbstractSprite & IVelocity, horizontal: boolean
     X X X
     */
     ordereredBlocks[centerLevelIndex + LEVEL_WIDTH - 1],
-    /*
-    X X X
-    X X X
-    X O X
-    */
-    ordereredBlocks[centerLevelIndex - LEVEL_WIDTH],
-    /*
-    X X X
-    X X X
-    X X O
-    */
-    ordereredBlocks[centerLevelIndex - LEVEL_WIDTH + 1],
-    /*
-    X X X
-    X X X
-    O X X
-    */
-    ordereredBlocks[centerLevelIndex - LEVEL_WIDTH - 1],
-    /*
-    X X X
-    X X O
-    X X X
-    */
-    ordereredBlocks[centerLevelIndex + 1],
-    /*
-    X X X
-    O X X
-    X X X
-    */
-    ordereredBlocks[centerLevelIndex - 1],
   ];
 
   for (const block of blocks) {

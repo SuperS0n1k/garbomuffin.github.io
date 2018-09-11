@@ -214,10 +214,15 @@
       <button onclick="runtime.level++;runtime.renderLevel();">Next level</button>
       <button onclick="runtime.level--;runtime.renderLevel();">Prev level</button>
     </div>
-    <script>document.getElementById("cb").style.display=location.hash==="#cheaty-boi"?"":"none"</script>
+    <script>document.getElementById("cb").style.display=location.hash.includes("cheats")?"":"none"</script>
 
     <pre id="changelog">
+      <b>The <a onclick="alert('Statement makes more sense if you click the 🤔 in the changelog');return false;" href="">base game</a> is (and has been for a while now) "effectively done".</b>
+
       <b>Changelog:</b>
+      9/10/2018:
+       * Modified collision detection order to fix some bugs
+
       7/10/2018:
        * <span title="doot doot">🎺🎺</span>
 
@@ -357,6 +362,8 @@
 
       Pre v0.0.9:
        * no one knows
+
+      <i>Did you know?</i> Appending "#cheats,mousetp" to the URL gives you sUpEr PoWeRs! <span style="color: gray;">It's a fun little surprise for people who read to the bottom of the changelog.</span>
     </pre>
     <script>
       (function() {

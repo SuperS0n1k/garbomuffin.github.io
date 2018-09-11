@@ -1,6 +1,6 @@
 import { AbstractSprite } from "../../../engine/sprite";
 import { Task } from "../../../engine/task";
-import { runBasicPhysics } from "../../physics";
+import { runPhysics } from "../../physics";
 import { PlayerSprite } from "../player/player";
 import { IBlockOptions, SolidBlock } from "./block";
 
@@ -77,7 +77,7 @@ export class CrumblingBlock extends SolidBlock {
   }
 
   private fall(task: Task) {
-    const physicsResult = runBasicPhysics(this, {
+    const physicsResult = runPhysics(this, {
       collision: false,
     });
 

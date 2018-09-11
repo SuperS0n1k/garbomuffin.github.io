@@ -1,6 +1,6 @@
 import { Task } from "../../../engine/task";
 import { Vector } from "../../../engine/vector";
-import { runBasicPhysics } from "../../physics";
+import { runPhysics } from "../../physics";
 import { IBlockOptions, SolidBlock } from "./block";
 
 /*
@@ -48,7 +48,7 @@ export abstract class AbstractFallingBlock extends SolidBlock {
   protected fall(task: Task) {
     this.solid = false;
 
-    const physicsResult = runBasicPhysics(this, {
+    const physicsResult = runPhysics(this, {
       collision: false,
     });
 

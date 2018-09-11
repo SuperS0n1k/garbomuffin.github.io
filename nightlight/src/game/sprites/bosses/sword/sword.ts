@@ -3,7 +3,7 @@ import { Task } from "../../../../engine/task";
 import { Vector } from "../../../../engine/vector";
 import { Vector2D } from "../../../../engine/vector2d";
 import { Nightlight } from "../../../game";
-import { runBasicPhysics } from "../../../physics";
+import { runPhysics } from "../../../physics";
 import { IBlockOptions } from "../../blocks/block";
 import { SwordBossLevelUpCoinSprite } from "../../coin";
 import { AbstractBoss } from "../boss";
@@ -394,7 +394,7 @@ export class SwordBoss extends AbstractBoss {
   //
 
   private deadPhysics(task: Task) {
-    const physicsResult = runBasicPhysics(this, {
+    const physicsResult = runPhysics(this, {
       collision: false,
     });
 

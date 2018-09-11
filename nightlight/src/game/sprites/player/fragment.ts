@@ -1,5 +1,5 @@
 import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
-import { runBasicPhysics } from "../../physics";
+import { runPhysics } from "../../physics";
 
 /*
  * Fragments of the player that will fly everywhere you when the player dies
@@ -55,7 +55,7 @@ export class PlayerFragmentSprite extends ImageSprite {
   private run() {
     this.lifespan++;
 
-    const physicsResult = runBasicPhysics(this, {
+    const physicsResult = runPhysics(this, {
       midAirFriction: false,
       roundValues: false,
     });

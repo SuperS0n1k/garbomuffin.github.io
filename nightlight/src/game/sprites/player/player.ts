@@ -4,7 +4,7 @@ import { Vector } from "../../../engine/vector";
 import { IPointSpawnType, IRandomSpawnType, IRangeSpawnType } from "../../../level";
 import { clone, getRandomInt, getElementById } from "../../../utils";
 import { Nightlight } from "../../game";
-import { runBasicPhysics } from "../../physics";
+import { runPhysics } from "../../physics";
 import { PseudoSolidBlock } from "../blocks/block";
 import { PlayerFragmentSprite } from "./fragment";
 
@@ -50,6 +50,8 @@ const WALK_ANIMATION_FRAMES = 4;
 // Length of each frame
 const WALK_ANIMATION_LENGTH = 4;
 
+const DEBUG_TELEPORT_TO_MOUSE = location.hash.includes("mousetp");
+
 enum MovementDirection {
   Right = 1, Left = -1,
 }
@@ -70,6 +72,19 @@ export class PlayerSprite extends ImageSprite {
 
     this.addTask(() => this.run());
     this.addTask(() => this.updateGraphic());
+
+    if (DEBUG_TELEPORT_TO_MOUSE) {
+      this.addTask(() => this.debugTeleport());
+    }
+  }
+
+  private debugTeleport() {
+    if (this.runtime.mouse.isDown) {
+      const position = new Vector(this.runtime.mouse.position);
+      position.x -= this.width / 2;
+      position.y -= this.height / 2;
+      this.position = position;
+    }
   }
 
   private getInputs(): {rightDown: boolean, leftDown: boolean, upDown: boolean, upJustPressed: boolean} {
@@ -161,7 +176,7 @@ export class PlayerSprite extends ImageSprite {
       this.xv = -PLAYER_MAX_SPEED;
     }
 
-    const physicsResult = runBasicPhysics(this, {
+    const physicsResult = runPhysics(this, {
       friction: false,
     });
     this.onGround = physicsResult;
