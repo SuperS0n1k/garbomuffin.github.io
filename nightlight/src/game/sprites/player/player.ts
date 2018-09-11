@@ -83,6 +83,7 @@ export class PlayerSprite extends ImageSprite {
       const position = new Vector(this.runtime.mouse.position);
       position.x -= this.width / 2;
       position.y -= this.height / 2;
+      position.z = this.z;
       this.position = position;
     }
   }
