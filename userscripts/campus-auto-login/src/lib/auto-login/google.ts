@@ -1,7 +1,4 @@
-import { EncodedCredentials } from "../credentials";
-import { AutoLogin, EmptyAutoLogin } from "./auto-login";
-import { KeyNames } from "../keys";
-import { PageState } from "../page";
+import { EmptyAutoLogin } from "./auto-login";
 
 /// <reference path="../gm.ts" />
 
@@ -19,22 +16,33 @@ export class GoogleChooseAccountManager extends EmptyAutoLogin {
   private user: number;
 
   onload() {
-    const site = document.getElementsByClassName("uBOgn")[0].textContent;
+    const el = document.querySelector("#headingSubtext > content:nth-child(1) > a:nth-child(1)");
+    const site = el && el.textContent;
     if (site === "Empower") {
-      const users = document.getElementsByClassName("C5uAFc w6VTHd");
+      const users = document.getElementsByClassName("M8HEDc cd29Sd bxPAYd W7Aapd znIWoc");
       const user = users[this.user];
       const button = user.getElementsByTagName("div")[0];
-      button.click();
+      window.addEventListener("load", () => {
+        const interval = setInterval(() => {
+          if (location.href.indexOf("oauthchooseaccount") > -1) {
+            clearInterval(interval);
+            button.click();
+          }
+        }, 50);
+      })
     }
   }
 }
 
 export class GoogleConsentManager extends EmptyAutoLogin {
   onload() {
-    const site = document.getElementsByClassName("uBOgn")[0].textContent;
+    const developer = document.getElementById("developer_info_glif");
+    const site = developer && developer.textContent;
     if (site === "Empower") {
       const buttons = document.getElementsByClassName("RveJvd snByac");
-      (buttons[1] as HTMLSpanElement).click()
+      window.addEventListener("load", () => {
+        (buttons[0] as HTMLSpanElement).click();
+      });
     }
   }
 }

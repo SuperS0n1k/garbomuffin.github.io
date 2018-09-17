@@ -1,4 +1,4 @@
-import { base64encode, base64decode } from "./base64";
+import { base64decode } from "./base64";
 
 export class EncodedCredentials {
   constructor(username: string, password: string) {

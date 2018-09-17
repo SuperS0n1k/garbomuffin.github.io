@@ -1,5 +1,4 @@
 import { EmptyAutoLogin } from "./auto-login/auto-login";
-import { log, LogSeverity } from "./log";
 
 /// <reference path="../gm.ts" />
 

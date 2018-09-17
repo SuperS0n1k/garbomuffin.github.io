@@ -12,7 +12,6 @@ export enum PageType {
   Empower,
   GoogleChooseAccount,
   GoogleConsent,
-
   Config,
 }
 
@@ -29,7 +28,7 @@ export function getPageType(): PageType | null {
     return PageType.Empower;
   } else if (location.href.indexOf("accounts.google.com/signin/oauth/consent") > -1) {
     return PageType.GoogleConsent;
-  } else if (location.href.indexOf("accounts.google.com/signin/oauth/oauthchooseaccount") > -1) {
+  } else if (location.href.indexOf("accounts.google.com/signin/oauth") > -1) {
     return PageType.GoogleChooseAccount;
   } else if (location.href.indexOf("userscripts/campus-auto-login/config.html") > -1) {
     return PageType.Config;

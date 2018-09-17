@@ -1,9 +1,5 @@
-import { EncodedCredentials } from "../credentials";
-import { AutoLogin, EmptyAutoLogin } from "./auto-login";
-import { KeyNames } from "../keys";
-import { PageState } from "../page";
-import { base64encode } from "../base64";
-import { log, LogSeverity } from "../log";
+import { EmptyAutoLogin } from "./auto-login";
+import { log } from "../log";
 
 /// <reference path="../gm.ts" />
 

@@ -1,5 +1,5 @@
-/* === CAMPUS AUTO LOGIN v3.5.3 ===
- * v3.5.3: Google auto sign in works again!
+/* === CAMPUS AUTO LOGIN v3.5.4 ===
+ * v3.5.4: Google auto sign in works again!
  * 
  * Supported sites:
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp

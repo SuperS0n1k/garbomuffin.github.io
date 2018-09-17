@@ -1,5 +1,5 @@
-/* === CAMPUS AUTO LOGIN v3.5.3 ===
- * v3.5.3: Google auto sign in works again!
+/* === CAMPUS AUTO LOGIN v3.5.4 ===
+ * v3.5.4: Google auto sign in works again!
  *
  * Supported sites:
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
@@ -51,7 +51,7 @@ function getPageType() {
     else if (location.href.indexOf("accounts.google.com/signin/oauth/consent") > -1) {
         return PageType.GoogleConsent;
     }
-    else if (location.href.indexOf("accounts.google.com/signin/oauth/oauthchooseaccount") > -1) {
+    else if (location.href.indexOf("accounts.google.com/signin/oauth") > -1) {
         return PageType.GoogleChooseAccount;
     }
     else if (location.href.indexOf("userscripts/campus-auto-login/config.html") > -1) {
@@ -378,23 +378,11 @@ class EmptyAutoLogin {
     }
 }
 
-/// <reference path="../gm.ts" />
-const EMPOWER_CONSTS = {
-    POPUP: "Please enable popups!\nSee: https://youtu.be/PdQLOfaAReQ",
-};
-function getPopups() {
-    // temporary until i find a better way that doesn't involve actually testing it
-    return true;
-}
 class EmpowerAutoLogin extends EmptyAutoLogin {
     onload() {
-        if (getPopups()) {
+        {
             log("popups allowed");
             OpenGoogleLogin(); // global method in empower
-        }
-        else {
-            log("popups blocked");
-            alert(EMPOWER_CONSTS.POPUP);
         }
     }
 }
@@ -405,21 +393,32 @@ class GoogleChooseAccountManager extends EmptyAutoLogin {
         this.user = options.GOOGLE.USER;
     }
     onload() {
-        const site = document.getElementsByClassName("uBOgn")[0].textContent;
+        const el = document.querySelector("#headingSubtext > content:nth-child(1) > a:nth-child(1)");
+        const site = el && el.textContent;
         if (site === "Empower") {
-            const users = document.getElementsByClassName("C5uAFc w6VTHd");
+            const users = document.getElementsByClassName("M8HEDc cd29Sd bxPAYd W7Aapd znIWoc");
             const user = users[this.user];
             const button = user.getElementsByTagName("div")[0];
-            button.click();
+            window.addEventListener("load", () => {
+                const interval = setInterval(() => {
+                    if (location.href.indexOf("oauthchooseaccount") > -1) {
+                        clearInterval(interval);
+                        button.click();
+                    }
+                }, 50);
+            });
         }
     }
 }
 class GoogleConsentManager extends EmptyAutoLogin {
     onload() {
-        const site = document.getElementsByClassName("uBOgn")[0].textContent;
+        const developer = document.getElementById("developer_info_glif");
+        const site = developer && developer.textContent;
         if (site === "Empower") {
             const buttons = document.getElementsByClassName("RveJvd snByac");
-            buttons[1].click();
+            window.addEventListener("load", () => {
+                buttons[0].click();
+            });
         }
     }
 }
@@ -578,9 +577,7 @@ const CONFIG$1 = CONFIG;
         }
     }
     const credentials = loginManager.getCredentials();
-    if (credentials === null) {
-        // non set, don't do anything
-    }
+    if (credentials === null) ;
     else {
         loginManager.setDocumentCredentials(credentials);
         // if the user just signed out and we can detect that easily don't sign in again
@@ -595,7 +592,7 @@ const CONFIG$1 = CONFIG;
 })();
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.5.3
+// @version      3.5.4
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
