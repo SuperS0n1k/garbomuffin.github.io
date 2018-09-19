@@ -12,6 +12,7 @@ export enum PageType {
   Empower,
   GoogleChooseAccount,
   GoogleConsent,
+  WordPlay,
   Config,
 }
 
@@ -30,6 +31,8 @@ export function getPageType(): PageType | null {
     return PageType.GoogleConsent;
   } else if (location.href.indexOf("accounts.google.com/signin/oauth") > -1) {
     return PageType.GoogleChooseAccount;
+  } else if (location.href.indexOf("wordplay.com/login") > -1) {
+    return PageType.WordPlay;
   } else if (location.href.indexOf("userscripts/campus-auto-login/config.html") > -1) {
     return PageType.Config;
   } else {

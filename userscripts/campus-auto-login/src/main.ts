@@ -3,7 +3,6 @@ DUMMY_VAR_TO_PUT_HEADER_AT_TOP_OF_FILE.toString();
 
 import { EncodedCredentials } from "./lib/credentials";
 import { PageType, PageState, getPageType } from "./lib/page";
-import { KeyNames } from "./lib/keys";
 import { LogSeverity, log } from "./lib/log";
 
 import { AutoLogin } from "./lib/auto-login/auto-login";
@@ -13,6 +12,7 @@ import * as BIM from "./lib/auto-login/bim";
 import * as Empower from "./lib/auto-login/empower";
 import * as Google from "./lib/auto-login/google";
 import * as ConfigPage from "./lib/config";
+import * as WordPlay from "./lib/auto-login/wordplay";
 
 const CONFIG = ConfigPage.CONFIG;
 
@@ -57,6 +57,13 @@ const CONFIG = ConfigPage.CONFIG;
         return;
       }
       loginManager = new Empower.EmpowerAutoLogin();
+      break;
+
+    case PageType.WordPlay:
+      if (!CONFIG.SUPPORT_WORDPLAY) {
+        return;
+      }
+      loginManager = new WordPlay.WordPlayLogin();
       break;
 
     case PageType.GoogleChooseAccount:
@@ -116,7 +123,7 @@ const CONFIG = ConfigPage.CONFIG;
 
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.5.4
+// @version      3.6
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -127,6 +134,7 @@ const CONFIG = ConfigPage.CONFIG;
 // @match        https://accounts.google.com/signin/oauth?*
 // @match        https://accounts.google.com/signin/oauth/consent?*
 // @match        https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
+// @match        https://wordplay.com/login*
 // @namespace    https://garbomuffin.github.io/userscripts/campus-auto-login/
 // @downloadURL  https://garbomuffin.github.io/userscripts/campus-auto-login/campus-auto-login.user.js
 // @run-at       document-idle

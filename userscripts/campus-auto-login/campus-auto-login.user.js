@@ -30,7 +30,8 @@ var PageType;
     PageType[PageType["Empower"] = 4] = "Empower";
     PageType[PageType["GoogleChooseAccount"] = 5] = "GoogleChooseAccount";
     PageType[PageType["GoogleConsent"] = 6] = "GoogleConsent";
-    PageType[PageType["Config"] = 7] = "Config";
+    PageType[PageType["WordPlay"] = 7] = "WordPlay";
+    PageType[PageType["Config"] = 8] = "Config";
 })(PageType || (PageType = {}));
 function getPageType() {
     if (location.href.indexOf("student.teachtci.com/student/sign_in") > -1) {
@@ -53,6 +54,9 @@ function getPageType() {
     }
     else if (location.href.indexOf("accounts.google.com/signin/oauth") > -1) {
         return PageType.GoogleChooseAccount;
+    }
+    else if (location.href.indexOf("wordplay.com/login") > -1) {
+        return PageType.WordPlay;
     }
     else if (location.href.indexOf("userscripts/campus-auto-login/config.html") > -1) {
         return PageType.Config;
@@ -110,6 +114,8 @@ var KeyNames;
     KeyNames["TCI_USERNAME"] = "TCI_USERNAME";
     KeyNames["TCI_PASSWORD"] = "TCI_PASSWORD";
     KeyNames["TCI_TEACHER"] = "TCI_TEACHER";
+    KeyNames["WP_USERNAME"] = "WP_USERNAME";
+    KeyNames["WP_PASSWORD"] = "WP_PASSWORD";
     KeyNames["BIM_USERNAME"] = "BIM_USERNAME";
     KeyNames["BIM_PASSWORD"] = "BIM_PASSWORD";
 })(KeyNames || (KeyNames = {}));
@@ -464,6 +470,12 @@ GM_config.init({
             title: "Should it run on Empower?",
             default: true,
         },
+        WordPlaySupport: {
+            label: "Support wordplay",
+            type: "checkbox",
+            title: "Should it run on wordplay?",
+            default: true,
+        },
         GoogleUser: {
             label: "Which spot are you in in your Google user list? This can click that for you. -1 to disable. The first user is 0, second is 1, third is 2 etc. https://i.imgur.com/tqafElG.png",
             type: "int",
@@ -486,6 +498,7 @@ const CONFIG = {
     SUPPORT_TCI: getOrDefault("TCISupport", true),
     SUPPORT_BIM: getOrDefault("BIMSupport", true),
     SUPPORT_EMPOWER: getOrDefault("EmpowerSupport", true),
+    SUPPORT_WORDPLAY: getOrDefault("WordPlaySupport", true),
     GOOGLE: {
         USER: getOrDefault("GoogleUser", -1),
         CONSENT: getOrDefault("GoogleGrantPermissions", true),
@@ -504,6 +517,99 @@ function getOrDefault(key, def) {
 }
 if (foundMissing) {
     GM_config.save();
+}
+
+/// <reference path="../gm.ts" />
+class WordPlayLogin {
+    constructor() {
+        this.loadQueue = [];
+        this.loaded = false;
+        this.loop();
+    }
+    loop() {
+        const isLoaded = !!document.getElementById("username");
+        if (!isLoaded) {
+            requestAnimationFrame(() => this.loop());
+            return;
+        }
+        this.loaded = true;
+        for (const func of this.loadQueue) {
+            func();
+        }
+    }
+    executeOnLoad(func) {
+        this.loadQueue.push(func);
+    }
+    resetCredentials() {
+        GM_deleteValue(KeyNames.WP_PASSWORD);
+        GM_deleteValue(KeyNames.WP_USERNAME);
+    }
+    submit() {
+        if (!this.loaded) {
+            return;
+        }
+        var button = document.querySelector("button.btn.btn-primary.center-block");
+        if (button instanceof HTMLButtonElement) {
+            button.click();
+        }
+    }
+    setDocumentCredentials(credentials) {
+        this.executeOnLoad(() => {
+            const usernameInput = document.getElementById("username");
+            const passwordInput = document.getElementById("password");
+            if (!usernameInput || !passwordInput) {
+                return;
+            }
+            // Wordplay uses react, so the normal set .value does not work
+            var nativeInputValueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set;
+            nativeInputValueSetter.call(usernameInput, credentials.username);
+            usernameInput.dispatchEvent(new Event("input", { bubbles: true }));
+            nativeInputValueSetter.call(passwordInput, credentials.password);
+            passwordInput.dispatchEvent(new Event("input", { bubbles: true }));
+            this.submit();
+        });
+    }
+    setCredentials(username, password) {
+        GM_setValue(KeyNames.WP_USERNAME, base64encode(username));
+        GM_setValue(KeyNames.WP_PASSWORD, base64encode(password));
+    }
+    storeCredentials() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        this.setCredentials(username, password);
+    }
+    onload() {
+        var el = document.createElement("a");
+        el.textContent = "Remember Me";
+        el.href = "#";
+        el.className = "center sm";
+        el.onclick = () => {
+            this.storeCredentials();
+            this.submit();
+            return false;
+        };
+        this.executeOnLoad(() => {
+            var container = document.querySelector("form div.center");
+            if (container) {
+                container.appendChild(document.createElement("br"));
+                container.appendChild(el);
+            }
+        });
+    }
+    shouldSignIn() {
+        return this.getState() === PageState.Normal;
+    }
+    getState() {
+        return PageState.Normal;
+    }
+    getCredentials() {
+        const username = GM_getValue(KeyNames.WP_USERNAME, null);
+        const password = GM_getValue(KeyNames.WP_PASSWORD, null);
+        if (username === null || password === null) {
+            return null;
+        }
+        return new EncodedCredentials(username, password);
+    }
 }
 
 const CONFIG$1 = CONFIG;
@@ -541,6 +647,12 @@ const CONFIG$1 = CONFIG;
                 return;
             }
             loginManager = new EmpowerAutoLogin();
+            break;
+        case PageType.WordPlay:
+            if (!CONFIG$1.SUPPORT_WORDPLAY) {
+                return;
+            }
+            loginManager = new WordPlayLogin();
             break;
         case PageType.GoogleChooseAccount:
             if (CONFIG$1.GOOGLE.USER === -1) {
@@ -592,7 +704,7 @@ const CONFIG$1 = CONFIG;
 })();
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.5.4
+// @version      3.6
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -603,6 +715,7 @@ const CONFIG$1 = CONFIG;
 // @match        https://accounts.google.com/signin/oauth?*
 // @match        https://accounts.google.com/signin/oauth/consent?*
 // @match        https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
+// @match        https://wordplay.com/login*
 // @namespace    https://garbomuffin.github.io/userscripts/campus-auto-login/
 // @downloadURL  https://garbomuffin.github.io/userscripts/campus-auto-login/campus-auto-login.user.js
 // @run-at       document-idle

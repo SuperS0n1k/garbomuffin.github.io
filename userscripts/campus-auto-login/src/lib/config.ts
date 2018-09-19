@@ -52,6 +52,13 @@ GM_config.init({
       default: true,
     },
 
+    WordPlaySupport: {
+      label: "Support wordplay",
+      type: "checkbox",
+      title: "Should it run on wordplay?",
+      default: true,
+    },
+
     GoogleUser: {
       label: "Which spot are you in in your Google user list? This can click that for you. -1 to disable. The first user is 0, second is 1, third is 2 etc. https://i.imgur.com/tqafElG.png",
       type: "int",
@@ -77,6 +84,7 @@ export const CONFIG = {
   SUPPORT_TCI: getOrDefault("TCISupport", true),
   SUPPORT_BIM: getOrDefault("BIMSupport", true),
   SUPPORT_EMPOWER: getOrDefault("EmpowerSupport", true),
+  SUPPORT_WORDPLAY: getOrDefault("WordPlaySupport", true),
   GOOGLE: {
     USER: getOrDefault("GoogleUser", -1),
     CONSENT: getOrDefault("GoogleGrantPermissions", true),

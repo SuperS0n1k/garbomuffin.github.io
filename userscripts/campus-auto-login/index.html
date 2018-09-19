@@ -19,7 +19,7 @@
   </head>
 
   <body>
-    <h1>Campus Auto Login (v3.5.4)</h1>
+    <h1>Campus Auto Login (v3.6)</h1>
     <hr>
 
     <img src="pic.png">
@@ -37,7 +37,7 @@
 
     <button onclick="return openScript();"><b>Click here to install it</b> (after reading the above and preferably the below)</button>
     <p class="gray">Button doesn't work? <a href="campus-auto-login.user.js">Click here instead.</a></p>
-    <p class="gray">Want to see the source? <a href="https://bitbucket.org/GarboMuffin/garbomuffin.bitbucket.org/src/master/userscripts/campus-auto-login/src/">Here you go.</a></p>
+    <p class="gray">Want to see the source? <a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/userscripts/campus-auto-login/src">Here you go.</a></p>
 
     <hr>
 
@@ -83,6 +83,13 @@
       </li>
 
       <li>
+        <a href="https://wordplay.com/login">Wordplay</a>
+        <ul>
+            <li>See <a href="#basic">basic usage</a>.</li>
+        </ul>
+      </li>
+
+      <li>
         <a href="https://empower.district112.org">Empower</a> (although very limited)
         <ul>
           <li><b><a href="https://youtu.be/PdQLOfaAReQ">Enable popups</a>.</b> (that button will show up if the popups were blocked, if you're on a school chromebook they're already enabled)</li>
@@ -117,6 +124,13 @@
     <hr>
 
     <h3>Changelog</h3>
+    <p class="no-margin" id="v3.6">
+      <b>v3.6</b>:
+      <ul class="no-margin">
+        <li>Add support for <a href="https://wordplay.com/login">wordplay</a>.</li>
+      </ul>
+    </p>
+
     <p class="no-margin" id="v3.5.4">
       <b>v3.5.4</b>:
       <ul class="no-margin">
@@ -217,21 +231,6 @@
     <p id="v2.2"><b>v2.2</b>: added support for the new portal AND the old. should work as you would expect.</p>
 
     <hr>
-    
-    <h3>Bugs</h3>
-    <ul>
-      <li>Sometimes it doesn't pick a Google user</li>
-    </ul>
-
-    <hr>
-
-    <h3>Security</h3>
-    <p>This script has to store your credentials somewhere for the auto login part of it to work. There's no other way.</p>
-    <p>Admittedly, the way this stores your information is not the most secure thing ever.</p>
-    <p>Just don't be a moron, don't enable sync, and don't let someone who knows base64 steal your chromebook and you're safe.</p>
-    <p>I am considering more secure ways to store credentials, but nothing is much more secure than this. (to my knowledge)</p>
-
-    <hr>
 
     <p>By GarboMuffin - use at your own risk</p>
 
@@ -252,7 +251,7 @@
           // some popup blockers make it fail, so provide alternative link
           alert("Couldn't open popup. Do you have them disabled?\n\nTry alternative link.");
         }
-      }      
+      }
     </script>
   </body>
 </html>
