@@ -1,17 +1,18 @@
 /*
- * v2.2.2 changelog: minor filter updates
+ * v2.2.3 changelog: filter updates, most notably anything with the world "OC" in the title is blocked and "MAP" will likely be added in a future filter update
  * 
  * See this in action:
  * https://scratch.mit.edu/search/projects?q=meme
  * https://scratch.mit.edu/search/projects?q=fursona
  * https://scratch.mit.edu/search/projects?q=furry
+ * https://scratch.mit.edu/search/projects?q=OC
  * 
  * satire (noun): the use of irony, sarcasm, ridicule, or the like, in exposing, denouncing, or deriding vice, folly, etc.
  */
 
 // ==UserScript==
 // @name         NO MORE FURRIES
-// @version      2.2.2
+// @version      2.2.3
 // @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
 // @description  FURRIES AREN'T MEMES
 // @author       GarboMuffin
@@ -543,13 +544,75 @@ const BLOCKED_CREATORS = [
   // https://scratch.mit.edu/projects/109800398/
   // https://scratch.mit.edu/projects/112823240/
   "-Rainbow-345",
+
+  // https://scratch.mit.edu/projects/241335602/
+  // https://scratch.mit.edu/projects/229521802/
+  "CocoChco",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/230517653/
+  // https://scratch.mit.edu/projects/239295165/
+  // https://scratch.mit.edu/projects/245942753/
+  "Doodle-Chan",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/235682581/
+  // https://scratch.mit.edu/projects/238861101/
+  // https://scratch.mit.edu/projects/239555587/
+  "-CinnamonSticks-",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/230514697/
+  // https://scratch.mit.edu/projects/228643485/
+  // https://scratch.mit.edu/projects/226519095/
+  "Heuky",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/
+  // https://scratch.mit.edu/projects/244292053/
+  // https://scratch.mit.edu/projects/239459982/
+  "FlookBunn",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/230797447/
+  // https://scratch.mit.edu/projects/236064348/
+  // https://scratch.mit.edu/projects/206706659/
+  "Sophie-o-",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/236876388/
+  // https://scratch.mit.edu/projects/235945383/
+  // https://scratch.mit.edu/projects/239890847/
+  "3Dmension",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/236351644/
+  // https://scratch.mit.edu/projects/236429146/
+  // https://scratch.mit.edu/projects/230411202/
+  "TheMustachePony2",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/230691517/
+  // https://scratch.mit.edu/projects/246619359/
+  // https://scratch.mit.edu/projects/246818412/
+  "circolair",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/236302245/
+  // https://scratch.mit.edu/projects/223938544/
+  // https://scratch.mit.edu/projects/223353230/
+  "ECLYPSA",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/244086608/
+  // https://scratch.mit.edu/projects/229033770/
+  // https://scratch.mit.edu/projects/229509272/
+  "-_happiness_-",
+
+  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/245191235/
+  // https://scratch.mit.edu/projects/238407547/
+  // https://scratch.mit.edu/projects/238233844/
+  "Olivegreensky",
+
+  // https://scratch.mit.edu/projects/229834583/
+  // https://scratch.mit.edu/projects/235972666/
+  "kittencat15",
 ];
 
-// Strings that can't be in titles or else the project is hidden
-// TODO: examples
+// Strings that can't be in titles or else the project is blocked
 const BLOCKED_TITLE_PARTS = [
   // I don't know why but "meme" creators like to declare that their furry is a meme
-
+  // TODO: examples
   // https://scratch.mit.edu/projects/110440079/
   // https://scratch.mit.edu/projects/92782806/
   // https://scratch.mit.edu/projects/105717454/
@@ -560,6 +623,20 @@ const BLOCKED_TITLE_PARTS = [
   "(meme)",
   "- meme",
   "-meme",
+
+  // names of clans/cats from the warrior cats serious
+  // very incomprehensive, doesn't seem to do very much
+  "tigerclaw",
+  "thunderclan",
+];
+
+// Regular expressions that will block projects whose titles it matches
+const BLOCKED_TITLE_REGEX = [
+  // https://scratch.mit.edu/search/projects?q=OC
+  // https://scratch.mit.edu/projects/139255469/
+  // https://scratch.mit.edu/projects/159107612/
+  // some amount of false positives can be accepted
+  /\bOC\b/i,
 
   // Declaring that you made the "original" meme is aparently very important
   // https://scratch.mit.edu/projects/117843402/
@@ -577,23 +654,7 @@ const BLOCKED_TITLE_PARTS = [
   // https://scratch.mit.edu/projects/169501759/
   // https://scratch.mit.edu/projects/117552646/
   // https://scratch.mit.edu/projects/116075128/
-  "original meme",
-
-  // https://scratch.mit.edu/projects/164086819/
-  // https://scratch.mit.edu/projects/173182897/
-  // https://scratch.mit.edu/projects/163182327/
-  // https://scratch.mit.edu/projects/169641236/
-  // https://scratch.mit.edu/projects/175705777/
-  "add your oc",
-  "draw your oc",
-
-  // This one has a large amount of false positives, but is very effective.
-  // https://scratch.mit.edu/projects/99524301/
-  // https://scratch.mit.edu/projects/92689750/
-  // https://scratch.mit.edu/projects/68005926/
-  // https://scratch.mit.edu/projects/160789963/
-  // https://scratch.mit.edu/search/projects?q=furry
-  "furry",
+  /\boriginal\bmeme\b/i,
 
   // https://scratch.mit.edu/projects/2452235/
   // https://scratch.mit.edu/projects/14903220/
@@ -610,7 +671,14 @@ const BLOCKED_TITLE_PARTS = [
   // https://scratch.mit.edu/projects/87337446/
   // https://scratch.mit.edu/projects/114632998/
   // https://scratch.mit.edu/search/projects?q=fursona
-  "fursona",
+  /\bfursona\b/i,
+
+  // https://scratch.mit.edu/projects/99524301/
+  // https://scratch.mit.edu/projects/92689750/
+  // https://scratch.mit.edu/projects/68005926/
+  // https://scratch.mit.edu/projects/160789963/
+  // https://scratch.mit.edu/search/projects?q=furry
+  /\bfurry\b/i,
 
   // https://scratch.mit.edu/projects/78985318/
   // https://scratch.mit.edu/projects/83195632/
@@ -624,24 +692,7 @@ const BLOCKED_TITLE_PARTS = [
   // https://scratch.mit.edu/projects/41985086/
   // https://scratch.mit.edu/projects/57097926/
   // https://scratch.mit.edu/search/projects?q=warrior%20cats
-  "warrior cat",
-
-  // names of clans/cats from the warrior cats serious
-  // very incomprehensive, doesn't seem to do very much
-  "tigerclaw",
-  "thunderclan",
-];
-
-// BLOCKED_TITLE_PARTS but for things that are case sensitive
-const BLOCKED_TITLE_PARTS_SENSITIVE = [
-  // Weird variations of words
-  "mEmE",
-  "MeMe",
-];
-
-// TODO: use regex to be more accurate with blocking based on titles
-const BLOCKED_TITLE_REGEX = [
-
+  /\bwarrior\bcat\b/i
 ];
 
 ///
@@ -754,16 +805,6 @@ function isFiltered(title, creator) {
     return false;
   }
 
-  function caseSensitiveTitleFilter(title) {
-    // titleFilter() but case sensitive
-    for (const i of BLOCKED_TITLE_PARTS_SENSITIVE) {
-      if (title.indexOf(i) > -1) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   function regexTitleFilter(title) {
     // titleFilter() but for regular expressions
     for (const i of BLOCKED_TITLE_REGEX) {
@@ -776,7 +817,6 @@ function isFiltered(title, creator) {
 
   return creatorFilter(creator) ||
          titleFilter(title) ||
-         caseSensitiveTitleFilter(title) ||
          regexTitleFilter(title);
 }
 
@@ -807,7 +847,7 @@ function handleProject(project) {
   if (blocked) {
     if (DEBUG) {
       // Console outputting what is blocked when DEBUG is on
-      console.log(`blocked '${title}' by ${creator} (${getProjectLink(project)})`);
+      console.log(`blocked '${title}' by ${creator}: ${getProjectLink(project)}`);
     }
 
     blockProject(project);
