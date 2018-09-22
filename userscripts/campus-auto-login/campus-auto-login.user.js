@@ -9,6 +9,7 @@
  * BIM: https://www.bigideasmath.com/BIM/login
  * Empower: https://empower.district112.org
  * Wordplay: https://wordplay.com/
+ * My PLTW: https://my.pltw.org/ (actually pltw.auth0.com)
  * VHL Central: https://vhlcentral.com/
  *
  * Config: https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
