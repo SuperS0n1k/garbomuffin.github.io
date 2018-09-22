@@ -19,7 +19,7 @@
   </head>
 
   <body>
-    <h1>Campus Auto Login (v3.7)</h1>
+    <h1>Campus Auto Login</h1>
     <hr>
 
     <img src="pic.png">
@@ -135,123 +135,6 @@
 
     <h3>Config</h3>
     <p>After installing the script you can visit <a href="https://garbomuffin.github.io/userscripts/campus-auto-login/config.html">this site</a> to edit the config.</p>
-
-    <hr>
-
-    <h3>Changelog</h3>
-    <p class="no-margin" id="v3.7">
-      <b>v3.7</b>:
-      <ul class="no-margin">
-        <li>Add support for <a href="https://vhlcentral.com/">vhlcentral</a>.</li>
-        <li>Add support for <a href="https://my.pltw.org/">my.pltw.org</a>.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.6">
-      <b>v3.6</b>:
-      <ul class="no-margin">
-        <li>Add support for <a href="https://wordplay.com/login">wordplay</a>.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.5.4">
-      <b>v3.5.4</b>:
-      <ul class="no-margin">
-        <li>Fixed Google auto login... again.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.5.3">
-      <b>v3.5.3</b>:
-      <ul class="no-margin">
-        <li>Fixed Google auto login.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.5.2">
-      <b>v3.5.2</b>:
-      <ul class="no-margin">
-        <li>Remove some code that is no longer needed due to changes by Empower.</li>
-        <li>Fix some other small bugs.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.5.1">
-      <b>v3.5.1</b>:
-      <ul class="no-margin">
-        <li>Transition to GitHub</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.5">
-      <b>v3.5</b>:
-      <ul class="no-margin">
-        <li>Added a config page <a href="https://garbomuffin.github.io/userscripts/campus-auto-login/config.html">found here</a></li>
-        <li>It no longer requires editing the source to change the config.</li>
-        <li>Config changes last between updates.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.4">
-      <b>v3.4</b>:
-      <ul class="no-margin">
-        <li>Rewrote it in a much more modular way using rollup.</li>
-        <li>Removed ALWAYS_SUBMIT.</li>
-        <li>Fixed TCI.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.3.1">
-      <b>v3.3.1</b>:
-      <ul class="no-margin">
-        <li>Set the default option of ALWAYS_SUBMIT to false. Setting this to true could result it many bad things.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.3">
-      <b>v3.3</b>:
-      <ul class="no-margin">
-        <li>Added very basic support for <a href="https://empower.district112.org">Empower</a></li>
-        <li>It will automatically click a couple buttons.</li>
-        <li>It can be configured to automatically pick a Google account.</li>
-        <li><b><a href="https://youtu.be/PdQLOfaAReQ">You must enable popups for it to work.</a></b></li>
-        <li>I'll add some more documentation on it at a later date.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.2">
-      <b>v3.2</b>:
-      <ul class="no-margin">
-        <li>Added support for <a href="https://www.bigideasmath.com/BIM/login">Big Ideas Math (BIM)</a></li>
-        <li>It works the same as the others. Credentials are not shared with campus or TCI.</li>
-        <li>Removes a couple more old storage locations from older scripts. (it used cookies back then, man!)</li>
-        <li>Start of rebranding from "Campus Auto Login" to "District 112 Auto Login"</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.1">
-      <b>v3.1</b>:
-      <ul class="no-margin">
-        <li><b>How your information is stored has changed. You will have to re-enter your credentials for any site this supports.</b></li>
-        <li>Added support for <a href="https://student.teachtci.com/student/sign_in">TCI</a></li>
-        <li>It works the same but now you must also enter a teacher name. Credentials are NOT shared between Portal and TCI.</li>
-        <li>Added usage and license info in the source.</li>
-        <li>Fixed the config. Previously it did nothing. Now it can disable support for any sites this supports.</li>
-        <li>In the code find a line saying <code>// CONFIG</code>. Below it is the config. From there you can change <code>const SUPPORT_TCI = true;</code> to <code>const SUPPORT_TCI = false;</code> to disable support for TCI. (case sensitive)</li>
-        <li>Lots of changes on the code level.</li>
-      </ul>
-    </p>
-
-    <p class="no-margin" id="v3.0">
-      <b>v3.0</b>:
-      <ul class="no-margin">
-        <li>Complete rewrite in typescript instead of javascript. (transpiles to javascript)</li>
-        <li>The method of saving passwords has changed. You now enter your passwords into the boxes then click "Remember Me"</li>
-        <li>Your passwords should (in theory) be stored between restarts. This is really big.</li>
-        <li>You now only need to set your stuff on one version of portal. The credentials are shared.</li>
-      </ul>
-    </p>
-    <p id="v2.2"><b>v2.2</b>: added support for the new portal AND the old. should work as you would expect.</p>
 
     <hr>
 
