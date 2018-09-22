@@ -13,6 +13,8 @@ import * as Empower from "./lib/auto-login/empower";
 import * as Google from "./lib/auto-login/google";
 import * as ConfigPage from "./lib/config";
 import * as WordPlay from "./lib/auto-login/wordplay";
+import * as PLTW from "./lib/auto-login/PLTW";
+import * as VHL from "./lib/auto-login/vhlcentral";
 
 const CONFIG = ConfigPage.CONFIG;
 
@@ -64,6 +66,20 @@ const CONFIG = ConfigPage.CONFIG;
         return;
       }
       loginManager = new WordPlay.WordPlayLogin();
+      break;
+
+    case PageType.PLTW:
+      if (!CONFIG.SUPPORT_PLTW) {
+        return;
+      }
+      loginManager = new PLTW.PLTWLogin();
+      break;
+
+    case PageType.VHL:
+      if (!CONFIG.SUPPORT_VHL) {
+        return;
+      }
+      loginManager = new VHL.VHLLogin();
       break;
 
     case PageType.GoogleChooseAccount:
@@ -123,7 +139,7 @@ const CONFIG = ConfigPage.CONFIG;
 
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.6
+// @version      3.7
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -135,6 +151,8 @@ const CONFIG = ConfigPage.CONFIG;
 // @match        https://accounts.google.com/signin/oauth/consent?*
 // @match        https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
 // @match        https://wordplay.com/login*
+// @match        https://pltw.auth0.com/login*
+// @match        https://www.vhlcentral.com/*
 // @namespace    https://garbomuffin.github.io/userscripts/campus-auto-login/
 // @downloadURL  https://garbomuffin.github.io/userscripts/campus-auto-login/campus-auto-login.user.js
 // @run-at       document-idle

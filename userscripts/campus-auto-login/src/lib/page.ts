@@ -14,6 +14,8 @@ export enum PageType {
   GoogleConsent,
   WordPlay,
   Config,
+  VHL,
+  PLTW,
 }
 
 export function getPageType(): PageType | null {
@@ -33,6 +35,10 @@ export function getPageType(): PageType | null {
     return PageType.GoogleChooseAccount;
   } else if (location.href.indexOf("wordplay.com/login") > -1) {
     return PageType.WordPlay;
+  } else if (location.href.indexOf("pltw.auth0.com") > -1) {
+    return PageType.PLTW;
+  } else if (location.href.indexOf("vhlcentral.com") > -1 && (location.pathname === "/" || location.pathname === "/user_session")) {
+    return PageType.VHL;
   } else if (location.href.indexOf("userscripts/campus-auto-login/config.html") > -1) {
     return PageType.Config;
   } else {

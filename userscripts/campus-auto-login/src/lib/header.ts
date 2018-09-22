@@ -1,5 +1,6 @@
-/* === CAMPUS AUTO LOGIN v3.5.4 ===
- * v3.5.4: Google auto sign in works again!
+/* === CAMPUS AUTO LOGIN v3.7 ===
+ * v3.7: Added support for my.pltw.org (actually pltw.auth0.com) and vhlcentral.com
+ * v3.6: Added support for wordplay.com
  * 
  * Supported sites:
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
@@ -7,6 +8,8 @@
  * TCI: https://student.teachtci.com/student/sign_in
  * BIM: https://www.bigideasmath.com/BIM/login
  * Empower: https://empower.district112.org
+ * Wordplay: https://wordplay.com/
+ * VHL Central: https://vhlcentral.com/
  *
  * Config: https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
  *
@@ -16,7 +19,7 @@
  */
 
 /*
-Copyright (c) 2017 GarboMuffin
+Copyright (c) 2018 GarboMuffin
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

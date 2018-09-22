@@ -14,48 +14,69 @@ export class ConfigManager extends EmptyAutoLogin {
 
 GM_config.init({
   id: "CampusAutoLoginConfig",
-  title: "Campus Auto Login Config (beta)",
+  title: "Campus Auto Login Config",
   fields: {
     OldPortalSupport: {
-      label: "Support old portal",
+      label: "Support old portal auto login",
       type: "checkbox",
-      title: "Should it run on the old portal?",
+      title: "Support auto login on campus.district112.org",
       section: "Site Support",
       default: true,
     },
 
     NewPortalSupport: {
-      label: "Support new portal",
+      label: "Support new portal auto login",
       type: "checkbox",
-      title: "Should it run on the new portal?",
+      title: "Support auto login on campus.district112.org (new portal which is deprecated)",
       default: true,
     },
 
     BIMSupport: {
-      label: "Support BIM",
+      label: "Support BIM auto login",
       type: "checkbox",
-      title: "Should it run on BIM?",
+      title: "Support auto login on bigideasmath.com",
       default: true,
     },
 
     TCISupport: {
-      label: "Support TCI",
+      label: "Support TCI auto login",
       type: "checkbox",
-      title: "Should it run on TCI?",
+      title: "Support auto login on teachtci.com",
       default: true,
     },
 
     EmpowerSupport: {
-      label: "Support Empower",
+      label: "Support Empower auto login",
       type: "checkbox",
-      title: "Should it run on Empower?",
+      title: "Support auto login to empower.district112.org",
       default: true,
     },
 
     WordPlaySupport: {
-      label: "Support wordplay",
+      label: "Support wordplay auto login",
       type: "checkbox",
-      title: "Should it run on wordplay?",
+      title: "Support auto login to wordplay.com",
+      default: true,
+    },
+
+    pltwSupport: {
+      label: "Support PLTW auto login",
+      type: "checkbox",
+      title: "Support auto login to my.pltw.org",
+      default: true,
+    },
+    
+    pltwSupportAutoStudent: {
+      label: "Support PLTW - Automatically select 'I Am a Student'",
+      type: "checkbox",
+      title: "Automatically hit 'I Am a Student' for my.pltw.org",
+      default: false,
+    },
+
+    vhlSupport: {
+      label: "Support VHL Central auto login",
+      type: "checkbox",
+      title: "Support auto login to vhlcentral.com",
       default: true,
     },
 
@@ -85,6 +106,9 @@ export const CONFIG = {
   SUPPORT_BIM: getOrDefault("BIMSupport", true),
   SUPPORT_EMPOWER: getOrDefault("EmpowerSupport", true),
   SUPPORT_WORDPLAY: getOrDefault("WordPlaySupport", true),
+  SUPPORT_PLTW: getOrDefault("pltwSupport", true),
+  SUPPORT_PLTW_AUTO_STUDENT: getOrDefault("pltwSupportAutoStudent", true),
+  SUPPORT_VHL: getOrDefault("vhlSupport", true),
   GOOGLE: {
     USER: getOrDefault("GoogleUser", -1),
     CONSENT: getOrDefault("GoogleGrantPermissions", true),

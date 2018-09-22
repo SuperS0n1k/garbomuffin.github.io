@@ -1,5 +1,6 @@
-/* === CAMPUS AUTO LOGIN v3.5.4 ===
- * v3.5.4: Google auto sign in works again!
+/* === CAMPUS AUTO LOGIN v3.7 ===
+ * v3.7: Added support for my.pltw.org (actually pltw.auth0.com) and vhlcentral.com
+ * v3.6: Added support for wordplay.com
  *
  * Supported sites:
  * Old Portal: https://campus.district112.org/campus/portal/isd112.jsp
@@ -7,6 +8,8 @@
  * TCI: https://student.teachtci.com/student/sign_in
  * BIM: https://www.bigideasmath.com/BIM/login
  * Empower: https://empower.district112.org
+ * Wordplay: https://wordplay.com/
+ * VHL Central: https://vhlcentral.com/
  *
  * Config: https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
  *
@@ -32,6 +35,8 @@ var PageType;
     PageType[PageType["GoogleConsent"] = 6] = "GoogleConsent";
     PageType[PageType["WordPlay"] = 7] = "WordPlay";
     PageType[PageType["Config"] = 8] = "Config";
+    PageType[PageType["VHL"] = 9] = "VHL";
+    PageType[PageType["PLTW"] = 10] = "PLTW";
 })(PageType || (PageType = {}));
 function getPageType() {
     if (location.href.indexOf("student.teachtci.com/student/sign_in") > -1) {
@@ -57,6 +62,12 @@ function getPageType() {
     }
     else if (location.href.indexOf("wordplay.com/login") > -1) {
         return PageType.WordPlay;
+    }
+    else if (location.href.indexOf("pltw.auth0.com") > -1) {
+        return PageType.PLTW;
+    }
+    else if (location.href.indexOf("vhlcentral.com") > -1 && (location.pathname === "/" || location.pathname === "/user_session")) {
+        return PageType.VHL;
     }
     else if (location.href.indexOf("userscripts/campus-auto-login/config.html") > -1) {
         return PageType.Config;
@@ -118,6 +129,10 @@ var KeyNames;
     KeyNames["WP_PASSWORD"] = "WP_PASSWORD";
     KeyNames["BIM_USERNAME"] = "BIM_USERNAME";
     KeyNames["BIM_PASSWORD"] = "BIM_PASSWORD";
+    KeyNames["PLTW_USERNAME"] = "PLTW_USERNAME";
+    KeyNames["PLTW_PASSWORD"] = "PLTW_PASSWORD";
+    KeyNames["VHL_USERNAME"] = "VHL_USERNAME";
+    KeyNames["VHL_PASSWORD"] = "VHL_PASSWORD";
 })(KeyNames || (KeyNames = {}));
 
 /// <reference path="../gm.ts" />
@@ -437,43 +452,61 @@ class ConfigManager extends EmptyAutoLogin {
 }
 GM_config.init({
     id: "CampusAutoLoginConfig",
-    title: "Campus Auto Login Config (beta)",
+    title: "Campus Auto Login Config",
     fields: {
         OldPortalSupport: {
-            label: "Support old portal",
+            label: "Support old portal auto login",
             type: "checkbox",
-            title: "Should it run on the old portal?",
+            title: "Support auto login on campus.district112.org",
             section: "Site Support",
             default: true,
         },
         NewPortalSupport: {
-            label: "Support new portal",
+            label: "Support new portal auto login",
             type: "checkbox",
-            title: "Should it run on the new portal?",
+            title: "Support auto login on campus.district112.org (new portal which is deprecated)",
             default: true,
         },
         BIMSupport: {
-            label: "Support BIM",
+            label: "Support BIM auto login",
             type: "checkbox",
-            title: "Should it run on BIM?",
+            title: "Support auto login on bigideasmath.com",
             default: true,
         },
         TCISupport: {
-            label: "Support TCI",
+            label: "Support TCI auto login",
             type: "checkbox",
-            title: "Should it run on TCI?",
+            title: "Support auto login on teachtci.com",
             default: true,
         },
         EmpowerSupport: {
-            label: "Support Empower",
+            label: "Support Empower auto login",
             type: "checkbox",
-            title: "Should it run on Empower?",
+            title: "Support auto login to empower.district112.org",
             default: true,
         },
         WordPlaySupport: {
-            label: "Support wordplay",
+            label: "Support wordplay auto login",
             type: "checkbox",
-            title: "Should it run on wordplay?",
+            title: "Support auto login to wordplay.com",
+            default: true,
+        },
+        pltwSupport: {
+            label: "Support PLTW auto login",
+            type: "checkbox",
+            title: "Support auto login to my.pltw.org",
+            default: true,
+        },
+        pltwSupportAutoStudent: {
+            label: "Support PLTW - Automatically select 'I Am a Student'",
+            type: "checkbox",
+            title: "Automatically hit 'I Am a Student' for my.pltw.org",
+            default: false,
+        },
+        vhlSupport: {
+            label: "Support VHL Central auto login",
+            type: "checkbox",
+            title: "Support auto login to vhlcentral.com",
             default: true,
         },
         GoogleUser: {
@@ -499,6 +532,9 @@ const CONFIG = {
     SUPPORT_BIM: getOrDefault("BIMSupport", true),
     SUPPORT_EMPOWER: getOrDefault("EmpowerSupport", true),
     SUPPORT_WORDPLAY: getOrDefault("WordPlaySupport", true),
+    SUPPORT_PLTW: getOrDefault("pltwSupport", true),
+    SUPPORT_PLTW_AUTO_STUDENT: getOrDefault("pltwSupportAutoStudent", true),
+    SUPPORT_VHL: getOrDefault("vhlSupport", true),
     GOOGLE: {
         USER: getOrDefault("GoogleUser", -1),
         CONSENT: getOrDefault("GoogleGrantPermissions", true),
@@ -612,6 +648,142 @@ class WordPlayLogin {
     }
 }
 
+/// <reference path="../gm.ts" />
+class PLTWLogin {
+    resetCredentials() {
+        GM_deleteValue(KeyNames.PLTW_PASSWORD);
+        GM_deleteValue(KeyNames.PLTW_USERNAME);
+    }
+    submit() {
+        document.querySelector("button[type=submit]").click();
+    }
+    setDocumentCredentials(credentials) {
+        document.getElementById("login_username").value = credentials.username;
+        document.getElementById("login_password").value = credentials.password;
+    }
+    setCredentials(username, password) {
+        GM_setValue(KeyNames.PLTW_USERNAME, base64encode(username));
+        GM_setValue(KeyNames.PLTW_PASSWORD, base64encode(password));
+    }
+    storeCredentials() {
+        const username = document.getElementById("login_username").value;
+        const password = document.getElementById("login_password").value;
+        this.setCredentials(username, password);
+    }
+    isStudentLogin() {
+        const el = document.getElementsByClassName("student-header")[0];
+        if (el) {
+            return el.style.display !== "none";
+        }
+        else {
+            return false;
+        }
+    }
+    gotoStudentLogin() {
+        document.getElementById("student-login").click();
+    }
+    onload() {
+        if (this.isStudentLogin()) {
+            const el = document.createElement("a");
+            el.textContent = "Remember Me";
+            el.href = "#";
+            el.onclick = () => {
+                this.storeCredentials();
+                this.submit();
+                return false;
+            };
+            document.querySelectorAll(".buttonRow")[1].appendChild(el);
+        }
+        else {
+            if (CONFIG.SUPPORT_PLTW_AUTO_STUDENT) {
+                this.gotoStudentLogin();
+            }
+            else {
+                const el = document.createElement("div");
+                el.style.cssText = "background-color: yellow; border-left: 10px solid orange; padding-left: 10px;";
+                el.innerHTML = `
+        <h2 style="margin-bottom: 0;">Did you mean to go to the student login?</h2>
+        <p>Campus Auto Login can be <a href="https://garbomuffin.github.io/userscripts/campus-auto-login/config.html">configured</a> to do this automatically.</p>
+        `;
+                document.querySelector(".authCenter").insertAdjacentElement("afterbegin", el);
+            }
+        }
+    }
+    shouldSignIn() {
+        return this.getState() === PageState.Normal;
+    }
+    getState() {
+        return PageState.Normal;
+    }
+    getCredentials() {
+        const username = GM_getValue(KeyNames.PLTW_USERNAME, null);
+        const password = GM_getValue(KeyNames.PLTW_PASSWORD, null);
+        if (username === null || password === null) {
+            return null;
+        }
+        return new EncodedCredentials(username, password);
+    }
+}
+
+/// <reference path="../gm.ts" />
+class VHLLogin {
+    resetCredentials() {
+        GM_deleteValue(KeyNames.VHL_USERNAME);
+        GM_deleteValue(KeyNames.VHL_PASSWORD);
+    }
+    submit() {
+        document.querySelector("input[type=submit]").click();
+    }
+    setDocumentCredentials(credentials) {
+        document.getElementById("user_session_username").value = credentials.username;
+        document.getElementById("user_session_password").value = credentials.password;
+    }
+    setCredentials(username, password) {
+        GM_setValue(KeyNames.VHL_USERNAME, base64encode(username));
+        GM_setValue(KeyNames.VHL_PASSWORD, base64encode(password));
+    }
+    storeCredentials() {
+        const username = document.getElementById("user_session_username").value;
+        const password = document.getElementById("user_session_password").value;
+        this.setCredentials(username, password);
+    }
+    onload() {
+        const el = document.createElement("a");
+        el.textContent = "Remember Me";
+        el.href = "#";
+        el.onclick = () => {
+            this.storeCredentials();
+            this.submit();
+            return false;
+        };
+        document.querySelector("section[aria-labelledby=login-head]").appendChild(el);
+    }
+    shouldSignIn() {
+        return this.getState() === PageState.Normal && !this.recentlyLoggedOut();
+    }
+    recentlyLoggedOut() {
+        const el = document.getElementById("flash_notice");
+        return el && el.innerText.toLowerCase().trim().indexOf("logout successful") > -1;
+    }
+    getState() {
+        const el = document.getElementById("flash_error");
+        if (el) {
+            if (el.innerText.toLowerCase().trim().indexOf("login is not valid") > -1) {
+                return PageState.Error;
+            }
+        }
+        return PageState.Normal;
+    }
+    getCredentials() {
+        const username = GM_getValue(KeyNames.VHL_USERNAME, null);
+        const password = GM_getValue(KeyNames.VHL_PASSWORD, null);
+        if (username === null || password === null) {
+            return null;
+        }
+        return new EncodedCredentials(username, password);
+    }
+}
+
 const CONFIG$1 = CONFIG;
 (function () {
     log("loaded");
@@ -653,6 +825,18 @@ const CONFIG$1 = CONFIG;
                 return;
             }
             loginManager = new WordPlayLogin();
+            break;
+        case PageType.PLTW:
+            if (!CONFIG$1.SUPPORT_PLTW) {
+                return;
+            }
+            loginManager = new PLTWLogin();
+            break;
+        case PageType.VHL:
+            if (!CONFIG$1.SUPPORT_VHL) {
+                return;
+            }
+            loginManager = new VHLLogin();
             break;
         case PageType.GoogleChooseAccount:
             if (CONFIG$1.GOOGLE.USER === -1) {
@@ -704,7 +888,7 @@ const CONFIG$1 = CONFIG;
 })();
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.6
+// @version      3.7
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -716,6 +900,8 @@ const CONFIG$1 = CONFIG;
 // @match        https://accounts.google.com/signin/oauth/consent?*
 // @match        https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
 // @match        https://wordplay.com/login*
+// @match        https://pltw.auth0.com/login*
+// @match        https://www.vhlcentral.com/*
 // @namespace    https://garbomuffin.github.io/userscripts/campus-auto-login/
 // @downloadURL  https://garbomuffin.github.io/userscripts/campus-auto-login/campus-auto-login.user.js
 // @run-at       document-idle
