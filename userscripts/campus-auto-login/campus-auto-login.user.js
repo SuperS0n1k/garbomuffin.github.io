@@ -1,5 +1,6 @@
-/* === CAMPUS AUTO LOGIN v3.7.1 ===
- * v3.7.1: Added support for GreaseMonkey
+/* === CAMPUS AUTO LOGIN v3.7.2 ===
+ * v3.7.2: Improve wordplay support (shouldn't need to refresh the login page to make the buttons appear anymore)
+ * v3.7.2: Added support for GreaseMonkey
  * v3.7: Added support for my.pltw.org (actually pltw.auth0.com) and vhlcentral.com
  * v3.6: Added support for wordplay.com
  *
@@ -565,7 +566,7 @@ class WordPlayLogin {
         this.loop();
     }
     loop() {
-        const isLoaded = !!document.getElementById("username");
+        const isLoaded = !!(document.getElementById("username") && document.getElementById("password") && location.pathname === "/login");
         if (!isLoaded) {
             requestAnimationFrame(() => this.loop());
             return;
@@ -924,7 +925,7 @@ else {
 }
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.7.1
+// @version      3.7.2
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -935,7 +936,7 @@ else {
 // @match        https://accounts.google.com/signin/oauth?*
 // @match        https://accounts.google.com/signin/oauth/consent?*
 // @match        https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
-// @match        https://wordplay.com/login*
+// @match        https://wordplay.com/*
 // @match        https://pltw.auth0.com/login*
 // @match        https://www.vhlcentral.com/*
 // @namespace    https://garbomuffin.github.io/userscripts/campus-auto-login/

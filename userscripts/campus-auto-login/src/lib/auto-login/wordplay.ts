@@ -15,7 +15,7 @@ export class WordPlayLogin implements AutoLogin {
   }
 
   private loop() {
-    const isLoaded = !!document.getElementById("username");
+    const isLoaded = !!(document.getElementById("username") && document.getElementById("password") && location.pathname === "/login");
     if (!isLoaded) {
       requestAnimationFrame(() => this.loop());
       return;

@@ -189,7 +189,7 @@ if (typeof GM_setValue === "function") {
 // @match        https://accounts.google.com/signin/oauth?*
 // @match        https://accounts.google.com/signin/oauth/consent?*
 // @match        https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
-// @match        https://wordplay.com/login*
+// @match        https://wordplay.com/*
 // @match        https://pltw.auth0.com/login*
 // @match        https://www.vhlcentral.com/*
 // @namespace    https://garbomuffin.github.io/userscripts/campus-auto-login/
