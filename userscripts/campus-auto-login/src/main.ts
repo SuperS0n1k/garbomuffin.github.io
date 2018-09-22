@@ -178,7 +178,7 @@ if (typeof GM_setValue === "function") {
 
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.7.1
+// @version      3.7.3
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
