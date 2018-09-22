@@ -37,7 +37,7 @@ export function getPageType(): PageType | null {
     return PageType.WordPlay;
   } else if (location.host === "pltw.auth0.com") {
     return PageType.PLTW;
-  } else if (location.host === "vhlcentral.com" && (location.pathname === "/" || location.pathname === "/user_session")) {
+  } else if (location.host === "www.vhlcentral.com" && (location.pathname === "/" || location.pathname === "/user_session")) {
     return PageType.VHL;
   } else if (location.host === "garbomuffin.github.io" && location.href.indexOf("userscripts/campus-auto-login/config.html") > -1) {
     return PageType.Config;

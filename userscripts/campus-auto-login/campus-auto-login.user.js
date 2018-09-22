@@ -1,5 +1,5 @@
 /* === CAMPUS AUTO LOGIN v3.7.3 ===
- * v3.7.2 & 3.7.3: Improve wordplay.com support so you don't need to refresh the login page & other internal improvements
+ * v3.7.2 & 3.7.3: Improve wordplay.com support so you don't need to refresh the login page
  * v3.7.1: Added basic support for GreaseMonkey (config page broken)
  * v3.7: Added support for my.pltw.org (actually pltw.auth0.com) and vhlcentral.com
  * v3.6: Added support for wordplay.com
@@ -69,7 +69,7 @@ function getPageType() {
     else if (location.host === "pltw.auth0.com") {
         return PageType.PLTW;
     }
-    else if (location.host === "vhlcentral.com" && (location.pathname === "/" || location.pathname === "/user_session")) {
+    else if (location.host === "www.vhlcentral.com" && (location.pathname === "/" || location.pathname === "/user_session")) {
         return PageType.VHL;
     }
     else if (location.host === "garbomuffin.github.io" && location.href.indexOf("userscripts/campus-auto-login/config.html") > -1) {
