@@ -1,4 +1,5 @@
-/* === CAMPUS AUTO LOGIN v3.7 ===
+/* === CAMPUS AUTO LOGIN v3.7.1 ===
+ * v3.7.1: Added support for GreaseMonkey
  * v3.7: Added support for my.pltw.org (actually pltw.auth0.com) and vhlcentral.com
  * v3.6: Added support for wordplay.com
  * 
@@ -41,7 +42,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Don't touch anything below this line!
-// Real source: https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/userscripts/campus-auto-login/src
+// Source Code: https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/userscripts/campus-auto-login/src
 
 export var DUMMY_VAR_TO_PUT_HEADER_AT_TOP_OF_FILE = "";

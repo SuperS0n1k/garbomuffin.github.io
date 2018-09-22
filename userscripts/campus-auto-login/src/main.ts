@@ -18,7 +18,7 @@ import * as VHL from "./lib/auto-login/vhlcentral";
 
 const CONFIG = ConfigPage.CONFIG;
 
-(function () {
+function start() {
   log("loaded");
 
   const pageType = getPageType();
@@ -135,11 +135,50 @@ const CONFIG = ConfigPage.CONFIG;
       log("skipping submit");
     }
   }
-})();
+}
+
+// Polyfil GM_* methods when using GreaseMonkey (which only grants GM.* methods, which return Promises)
+async function initGMCompat() {
+  const map = new Map();
+
+  const values = await GM.listValues();
+  for (const key of values) {
+    const value = await GM.getValue(key);
+    map.set(key, value);
+  }
+
+  function GM_getValue<T>(key: string, def?: T): GM_Value | T | undefined {
+    if (map.has(key)) {
+      return map.get(key);
+    } else {
+      return def;
+    }
+  }
+
+  function GM_setValue(key: string, value: GM_Value) {
+    map.set(key, value);
+    GM.setValue(key, value);
+  }
+
+  function GM_deleteValue(key: string) {
+    map.delete(key);
+    GM.deleteValue(key);
+  }
+
+  (window as any).GM_getValue = GM_getValue;
+  (window as any).GM_setValue = GM_setValue;
+  (window as any).GM_deleteValue = GM_deleteValue;
+}
+
+if (typeof GM_setValue === "function") {
+  start();
+} else {
+  initGMCompat().then(() => start());
+}
 
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.7
+// @version      3.7.1
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -159,5 +198,9 @@ const CONFIG = ConfigPage.CONFIG;
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
+// @grant        GM.getValue
+// @grant        GM.setValue
+// @grant        GM.deleteValue
+// @grant        GM.listValues
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // ==/UserScript==

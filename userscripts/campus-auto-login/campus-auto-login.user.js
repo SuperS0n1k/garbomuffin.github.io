@@ -1,4 +1,5 @@
-/* === CAMPUS AUTO LOGIN v3.7 ===
+/* === CAMPUS AUTO LOGIN v3.7.1 ===
+ * v3.7.1: Added support for GreaseMonkey
  * v3.7: Added support for my.pltw.org (actually pltw.auth0.com) and vhlcentral.com
  * v3.6: Added support for wordplay.com
  *
@@ -786,7 +787,7 @@ class VHLLogin {
 }
 
 const CONFIG$1 = CONFIG;
-(function () {
+function start() {
     log("loaded");
     const pageType = getPageType();
     var loginManager = null;
@@ -886,10 +887,44 @@ const CONFIG$1 = CONFIG;
             log("skipping submit");
         }
     }
-})();
+}
+// Polyfil GM_* methods when using GreaseMonkey (which only grants GM.* methods, which return Promises)
+async function initGMCompat() {
+    const map = new Map();
+    const values = await GM.listValues();
+    for (const key of values) {
+        const value = await GM.getValue(key);
+        map.set(key, value);
+    }
+    function GM_getValue(key, def) {
+        if (map.has(key)) {
+            return map.get(key);
+        }
+        else {
+            return def;
+        }
+    }
+    function GM_setValue(key, value) {
+        map.set(key, value);
+        GM.setValue(key, value);
+    }
+    function GM_deleteValue(key) {
+        map.delete(key);
+        GM.deleteValue(key);
+    }
+    window.GM_getValue = GM_getValue;
+    window.GM_setValue = GM_setValue;
+    window.GM_deleteValue = GM_deleteValue;
+}
+if (typeof GM_setValue === "function") {
+    start();
+}
+else {
+    initGMCompat().then(() => start());
+}
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.7
+// @version      3.7.1
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
@@ -909,5 +944,9 @@ const CONFIG$1 = CONFIG;
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
+// @grant        GM.getValue
+// @grant        GM.setValue
+// @grant        GM.deleteValue
+// @grant        GM.listValues
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // ==/UserScript==
