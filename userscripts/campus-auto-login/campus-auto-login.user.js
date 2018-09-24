@@ -1,4 +1,5 @@
-/* === CAMPUS AUTO LOGIN v3.7.3 ===
+/* === CAMPUS AUTO LOGIN v3.7.4 ===
+ * v3.7.4: Disable auto login on teacher login for my.pltw.org & improve browser support
  * v3.7.2 & 3.7.3: Improve wordplay.com support so you don't need to refresh the login page
  * v3.7.1: Added basic support for GreaseMonkey (config page broken)
  * v3.7: Added support for my.pltw.org (actually pltw.auth0.com) and vhlcentral.com
@@ -11,7 +12,7 @@
  * BIM: https://www.bigideasmath.com/BIM/login
  * Empower: https://empower.district112.org
  * Wordplay: https://wordplay.com/
- * My PLTW: https://my.pltw.org/ (actually pltw.auth0.com)
+ * My PLTW (Student): https://my.pltw.org/ (actually pltw.auth0.com)
  * VHL Central: https://vhlcentral.com/
  *
  * Config: https://garbomuffin.github.io/userscripts/campus-auto-login/config.html
@@ -713,7 +714,7 @@ class PLTWLogin {
         }
     }
     shouldSignIn() {
-        return this.getState() === PageState.Normal;
+        return this.isStudentLogin() && this.getState() === PageState.Normal;
     }
     getState() {
         return PageState.Normal;
@@ -889,33 +890,58 @@ function start() {
         }
     }
 }
-// Polyfil GM_* methods when using GreaseMonkey (which only grants GM.* methods, which return Promises)
-async function initGMCompat() {
-    const map = new Map();
-    const values = await GM.listValues();
-    for (const key of values) {
-        const value = await GM.getValue(key);
-        map.set(key, value);
-    }
+// Polyfill GM_* methods when using GreaseMonkey (which only grants GM.* methods, which return Promises)
+function initGMCompat() {
+    const backingMap = new Map();
+    let ready = false;
     function GM_getValue(key, def) {
-        if (map.has(key)) {
-            return map.get(key);
+        if (!ready) {
+            console.warn("GM_getValue() before ready");
+            return undefined;
+        }
+        if (backingMap.has(key)) {
+            return backingMap.get(key);
         }
         else {
             return def;
         }
     }
     function GM_setValue(key, value) {
-        map.set(key, value);
+        if (!ready) {
+            console.warn("GM_setValue() before ready");
+            return;
+        }
+        backingMap.set(key, value);
         GM.setValue(key, value);
     }
     function GM_deleteValue(key) {
-        map.delete(key);
+        if (!ready) {
+            console.warn("GM_deleteValue() before ready");
+            return;
+        }
+        backingMap.delete(key);
         GM.deleteValue(key);
     }
     window.GM_getValue = GM_getValue;
     window.GM_setValue = GM_setValue;
     window.GM_deleteValue = GM_deleteValue;
+    return GM.listValues()
+        .then((values) => {
+        const promises = [];
+        for (const i of values) {
+            promises.push(new Promise((resolve) => {
+                return GM.getValue(i)
+                    .then((value) => resolve([i, value]));
+            }));
+        }
+        return Promise.all(promises);
+    })
+        .then((values) => {
+        for (const i of values) {
+            backingMap.set(i[0], i[1]);
+        }
+        ready = true;
+    });
 }
 if (typeof GM_setValue === "function") {
     start();
@@ -925,7 +951,7 @@ else {
 }
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.7.3
+// @version      3.7.4
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*

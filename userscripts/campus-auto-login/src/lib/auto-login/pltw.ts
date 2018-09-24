@@ -73,7 +73,7 @@ export class PLTWLogin implements AutoLogin {
   }
 
   shouldSignIn() {
-    return this.getState() === PageState.Normal;
+    return this.isStudentLogin() && this.getState() === PageState.Normal;
   }
 
   getState() {

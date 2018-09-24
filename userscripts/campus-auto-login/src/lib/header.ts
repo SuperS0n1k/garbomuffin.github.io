@@ -1,4 +1,5 @@
-/* === CAMPUS AUTO LOGIN v3.7.3 ===
+/* === CAMPUS AUTO LOGIN v3.7.4 ===
+ * v3.7.4: Disable auto login on teacher login for my.pltw.org & improve browser support
  * v3.7.2 & 3.7.3: Improve wordplay.com support so you don't need to refresh the login page
  * v3.7.1: Added basic support for GreaseMonkey (config page broken)
  * v3.7: Added support for my.pltw.org (actually pltw.auth0.com) and vhlcentral.com
@@ -11,7 +12,7 @@
  * BIM: https://www.bigideasmath.com/BIM/login
  * Empower: https://empower.district112.org
  * Wordplay: https://wordplay.com/
- * My PLTW: https://my.pltw.org/ (actually pltw.auth0.com)
+ * My PLTW (Student): https://my.pltw.org/ (actually pltw.auth0.com)
  * VHL Central: https://vhlcentral.com/
  *
  * Config: https://garbomuffin.github.io/userscripts/campus-auto-login/config.html

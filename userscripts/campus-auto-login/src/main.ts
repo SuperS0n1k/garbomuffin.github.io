@@ -137,37 +137,62 @@ function start() {
   }
 }
 
-// Polyfil GM_* methods when using GreaseMonkey (which only grants GM.* methods, which return Promises)
-async function initGMCompat() {
-  const map = new Map();
-
-  const values = await GM.listValues();
-  for (const key of values) {
-    const value = await GM.getValue(key);
-    map.set(key, value);
-  }
+// Polyfill GM_* methods when using GreaseMonkey (which only grants GM.* methods, which return Promises)
+function initGMCompat() {
+  const backingMap = new Map();
+  let ready = false;
 
   function GM_getValue<T>(key: string, def?: T): GM_Value | T | undefined {
-    if (map.has(key)) {
-      return map.get(key);
+    if (!ready) {
+      console.warn("GM_getValue() before ready");
+      return undefined;
+    }
+    if (backingMap.has(key)) {
+      return backingMap.get(key);
     } else {
       return def;
     }
   }
 
   function GM_setValue(key: string, value: GM_Value) {
-    map.set(key, value);
+    if (!ready) {
+      console.warn("GM_setValue() before ready");
+      return;
+    }
+    backingMap.set(key, value);
     GM.setValue(key, value);
   }
 
   function GM_deleteValue(key: string) {
-    map.delete(key);
+    if (!ready) {
+      console.warn("GM_deleteValue() before ready");
+      return;
+    }
+    backingMap.delete(key);
     GM.deleteValue(key);
   }
 
   (window as any).GM_getValue = GM_getValue;
   (window as any).GM_setValue = GM_setValue;
   (window as any).GM_deleteValue = GM_deleteValue;
+
+  return GM.listValues()
+    .then((values) => {
+      const promises: Promise<[string, GM_Value]>[] = [];
+      for (const i of values) {
+        promises.push(new Promise((resolve) => {
+          return GM.getValue(i)
+            .then((value) => resolve([i, value]));
+        }));
+      }
+      return Promise.all(promises);
+    })
+    .then((values) => {
+      for (const i of values) {
+        backingMap.set(i[0], i[1]);
+      }
+      ready = true;
+    });
 }
 
 if (typeof GM_setValue === "function") {
@@ -178,7 +203,7 @@ if (typeof GM_setValue === "function") {
 
 // ==UserScript==
 // @name         Campus Auto Login
-// @version      3.7.3
+// @version      3.7.4
 // @description  Auto log-in to campus portal and other related sites including TCI, BIM, Empower, and even Google (requires config)!
 // @author       GarboMuffin
 // @match        https://campus.district112.org/campus/portal/isd112.jsp*
