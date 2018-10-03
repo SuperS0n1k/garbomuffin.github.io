@@ -162,6 +162,19 @@
       #about-questions * {
         margin-top: 0;
       }
+
+      #sw-support.maybe {
+        color: #dd8100;
+        content: "might be";
+      }
+      #sw-support.no {
+        color: #c61403;
+        content: "is not";
+      }
+      #sw-support.yes {
+        color: #097200;
+        content: "is";
+      }
     </style>
 
     <!-- Inital State -->
@@ -238,7 +251,7 @@
             <li>No account.</li>
             <li>No ads.</li>
             <li>Does not depend on Flash or Unity.</li>
-            <li>Page loads <b>offline</b> in modern browsers if you load the page once. (Chrome 45+, Firefox 44+, Edge 17+)</li>
+            <li>Page loads <b>offline</b> in modern browsers if you load the page once. Your browser <span id="sw-support" class="maybe">might be</span> supported.</li>
             <li><a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/easierprompter">Open source</a>.</li>
           </ul>
         </div>

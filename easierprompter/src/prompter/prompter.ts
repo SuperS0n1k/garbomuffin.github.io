@@ -47,13 +47,11 @@ export class Prompter extends AbstractPrompter {
     keyboard.require(() => this.showing);
 
     // 32 = space = start/stop
-    keyboard.onKeyDown(32, () => {
-      this.toggleScrolling();
-
-      // disable browser from using space as a way to press buttons
-      // you can still use enter as an alternative
-      return true;
-    });
+    keyboard.onKeyDown(32, () => this.toggleScrolling());
+    // prevent the default actions for space while in the prompter
+    // enter can still be used if accessibility is a problem
+    keyboard.onKeyPress(32, () => this.showing);
+    keyboard.onKeyUp(32, () => this.showing);
 
     // 27 = esc = stop & go back to start or leave if already at start
     keyboard.onKeyDown(27, () => {
