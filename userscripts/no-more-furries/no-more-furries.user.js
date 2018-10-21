@@ -1,5 +1,5 @@
 /*
- * v2.2.3 changelog: filter updates, most notably anything with the world "OC" in the title is blocked and "MAP" will likely be added in a future filter update
+ * v2.2.4 changelog: filter updates
  * 
  * See this in action:
  * https://scratch.mit.edu/search/projects?q=meme
@@ -12,7 +12,7 @@
 
 // ==UserScript==
 // @name         NO MORE FURRIES
-// @version      2.2.3
+// @version      2.2.4
 // @namespace    https://garbomuffin.github.io/userscripts/no-more-furries/
 // @description  FURRIES AREN'T MEMES
 // @author       GarboMuffin
@@ -28,13 +28,18 @@ const DEBUG = false;
 /// Filters
 ///
 
-// The filters are used in isFiltered()
-
-// List of users that have a history of making furries and are thus blocked globally
-// Links above each user are relevant scratch projects
+// In the context of Scratch, I am roughly defining a furry as anything that is related to:
+// a) actual IRL furries
+// b) the warrior cats series
+// c) cat-like OCs
+// d) just OCs in general
+// e) anything I decide is a furry when I look at their projects page
 
 // I like to imagine that someday people on this list, or people who know them, will search for their name on GitHub and find this.
 // That would be quite funny.
+
+// List of users that have a history of making or remixing furries
+// Note: for the projects listed I went to their project list and picked a few projects with thumbnails of furries
 const BLOCKED_CREATORS = [
   // https://scratch.mit.edu/projects/123751084/
   // https://scratch.mit.edu/projects/124715889/
@@ -412,7 +417,7 @@ const BLOCKED_CREATORS = [
   // https://scratch.mit.edu/projects/235763172/
   // https://scratch.mit.edu/projects/228284052/
   "TheGamingKitten",
-  
+
   // https://scratch.mit.edu/projects/132800012/
   // https://scratch.mit.edu/projects/171754876/
   "-magpie-",
@@ -428,7 +433,7 @@ const BLOCKED_CREATORS = [
   // https://scratch.mit.edu/projects/230192353/
   // https://scratch.mit.edu/projects/224267099/
   "firepaw_rusty",
-  
+
   // https://scratch.mit.edu/projects/167027025/
   // https://scratch.mit.edu/projects/170272284/
   "chai_tea",
@@ -574,32 +579,32 @@ const BLOCKED_CREATORS = [
   // https://scratch.mit.edu/projects/206706659/
   "Sophie-o-",
 
-  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/236876388/
+  // contributed to https://scratch.mit.edu/projects/241335602/ - https://scratch.mit.edu/projects/236876388/
   // https://scratch.mit.edu/projects/235945383/
   // https://scratch.mit.edu/projects/239890847/
   "3Dmension",
 
-  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/236351644/
+  // contributed to https://scratch.mit.edu/projects/241335602/ - https://scratch.mit.edu/projects/236351644/
   // https://scratch.mit.edu/projects/236429146/
   // https://scratch.mit.edu/projects/230411202/
   "TheMustachePony2",
 
-  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/230691517/
+  // contributed to https://scratch.mit.edu/projects/241335602/ - https://scratch.mit.edu/projects/230691517/
   // https://scratch.mit.edu/projects/246619359/
   // https://scratch.mit.edu/projects/246818412/
   "circolair",
 
-  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/236302245/
+  // contributed to https://scratch.mit.edu/projects/241335602/ - https://scratch.mit.edu/projects/236302245/
   // https://scratch.mit.edu/projects/223938544/
   // https://scratch.mit.edu/projects/223353230/
   "ECLYPSA",
 
-  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/244086608/
+  // contributed to https://scratch.mit.edu/projects/241335602/ - https://scratch.mit.edu/projects/244086608/
   // https://scratch.mit.edu/projects/229033770/
   // https://scratch.mit.edu/projects/229509272/
   "-_happiness_-",
 
-  // contributed to https://scratch.mit.edu/projects/241335602/: https://scratch.mit.edu/projects/245191235/
+  // contributed to https://scratch.mit.edu/projects/241335602/ - https://scratch.mit.edu/projects/245191235/
   // https://scratch.mit.edu/projects/238407547/
   // https://scratch.mit.edu/projects/238233844/
   "Olivegreensky",
@@ -607,6 +612,266 @@ const BLOCKED_CREATORS = [
   // https://scratch.mit.edu/projects/229834583/
   // https://scratch.mit.edu/projects/235972666/
   "kittencat15",
+
+  // https://scratch.mit.edu/projects/247833571/
+  // https://scratch.mit.edu/projects/252269238/
+  "-JaelynDraws-",
+
+  // https://scratch.mit.edu/projects/250800272/
+  // https://scratch.mit.edu/projects/252440126/
+  "-StarrySkies-",
+
+  // https://scratch.mit.edu/projects/251629336/
+  // https://scratch.mit.edu/projects/252289625/
+  "-Minascal-",
+
+  // https://scratch.mit.edu/projects/249394322/
+  // https://scratch.mit.edu/projects/252464785/
+  "-Trash_Cat-",
+
+  // https://scratch.mit.edu/projects/240966009/
+  // https://scratch.mit.edu/projects/239397729/
+  "Animal_360",
+
+  // https://scratch.mit.edu/projects/250122751/
+  // https://scratch.mit.edu/projects/249817154/
+  "Akiko_Takayuki",
+
+  // https://scratch.mit.edu/projects/235604220/
+  // https://scratch.mit.edu/projects/230414818/
+  "-No-Face-",
+
+  // https://scratch.mit.edu/projects/251365513/
+  // https://scratch.mit.edu/projects/251972714/
+  "kittenkid",
+
+  // https://scratch.mit.edu/projects/189144969/
+  // https://scratch.mit.edu/projects/181492339/
+  "Dellora",
+
+  // https://scratch.mit.edu/projects/239670147/
+  // https://scratch.mit.edu/projects/226917760/
+  "tailsthefox3gt",
+
+  // https://scratch.mit.edu/projects/224157452/
+  // https://scratch.mit.edu/projects/207569898/
+  "redtrueblue",
+
+  // https://scratch.mit.edu/projects/253126482/
+  // https://scratch.mit.edu/projects/230353468/
+  "ItsMrFloof",
+
+  // https://scratch.mit.edu/projects/225158324/
+  // https://scratch.mit.edu/projects/224601036/
+  "Artemis_quail",
+
+  // https://scratch.mit.edu/projects/177468039/
+  // https://scratch.mit.edu/projects/174118007/
+  "firefang16",
+
+  // https://scratch.mit.edu/projects/228667347/
+  // https://scratch.mit.edu/projects/238024835/
+  "Derpspace5",
+
+  // https://scratch.mit.edu/projects/238967981/
+  // https://scratch.mit.edu/projects/229436617/
+  "-sobbinqq-",
+
+  // https://scratch.mit.edu/projects/224553151/
+  // https://scratch.mit.edu/projects/225676859/
+  "queen-crowley",
+
+  // https://scratch.mit.edu/projects/229701098/
+  // https://scratch.mit.edu/projects/224375383/
+  "MlpSunnySprinkles",
+
+  // https://scratch.mit.edu/projects/206981864/
+  // https://scratch.mit.edu/projects/200830323/
+  "SmokeBlaze",
+
+  // https://scratch.mit.edu/projects/180457410/
+  // https://scratch.mit.edu/projects/116321894/
+  "FastFelly",
+
+  // https://scratch.mit.edu/projects/251973891/
+  // https://scratch.mit.edu/projects/253878780/
+  "WinterFern",
+
+  // https://scratch.mit.edu/projects/237964472/
+  // https://scratch.mit.edu/projects/245179339/
+  "Nightstarwarriorcat",
+
+  // https://scratch.mit.edu/projects/226544848/
+  // https://scratch.mit.edu/projects/226751452/
+  "-BrokenArrows-",
+
+  // https://scratch.mit.edu/projects/246446786/
+  // https://scratch.mit.edu/projects/248445214/
+  "Faststar712225",
+
+  // https://scratch.mit.edu/projects/235608333/
+  // https://scratch.mit.edu/projects/235614488/
+  "-snoweii-",
+
+  // https://scratch.mit.edu/projects/238358407/
+  // https://scratch.mit.edu/projects/235481210/
+  "Stormhunters_the_OC",
+
+  // https://scratch.mit.edu/projects/201735615/
+  // https://scratch.mit.edu/projects/213304927/
+  "ThunderPaw123",
+
+  // https://scratch.mit.edu/projects/253112453/
+  // https://scratch.mit.edu/projects/252313552/
+  "RoboDog31",
+
+  // https://scratch.mit.edu/projects/252251706/
+  // https://scratch.mit.edu/projects/247304305/
+  "PrincessLunaTheFox",
+
+  // https://scratch.mit.edu/projects/247922150/
+  // https://scratch.mit.edu/projects/247919157/
+  "Eeveenorsylveon",
+
+  // https://scratch.mit.edu/projects/250893574/
+  // https://scratch.mit.edu/projects/249894082/
+  "UndertalCupheadK-DOG",
+
+  // https://scratch.mit.edu/projects/252714943/
+  // https://scratch.mit.edu/projects/252698142/
+  "Aquaraqueen",
+
+  // https://scratch.mit.edu/projects/250423853/
+  // https://scratch.mit.edu/projects/252249376/
+  "t0oth1e5s",
+
+  // https://scratch.mit.edu/projects/252213752/
+  // https://scratch.mit.edu/projects/252323951/
+  "kirah201",
+
+  // https://scratch.mit.edu/projects/252426269/
+  // https://scratch.mit.edu/projects/253108181/
+  "eboha9824",
+
+  // https://scratch.mit.edu/projects/237419168/
+  // https://scratch.mit.edu/projects/237703344/
+  "Bandit_Da_Demon-Wolf",
+
+  // https://scratch.mit.edu/projects/207639679/
+  // https://scratch.mit.edu/projects/207079864/
+  "LeoGoatLeopard",
+
+  // https://scratch.mit.edu/projects/237778903/
+  // https://scratch.mit.edu/projects/140079973/
+  "Rookka",
+
+  // https://scratch.mit.edu/projects/127303674/
+  // https://scratch.mit.edu/projects/116339264/
+  "55fingers",
+
+  // https://scratch.mit.edu/projects/254276927/
+  // https://scratch.mit.edu/projects/251690102/
+  "Wildyuri",
+
+  // https://scratch.mit.edu/projects/251898270/
+  // https://scratch.mit.edu/projects/248228793/
+  "Red_of_Life",
+
+  // https://scratch.mit.edu/projects/159976354/
+  // https://scratch.mit.edu/projects/164496520/
+  "qolden",
+
+  // https://scratch.mit.edu/projects/253567951/
+  // https://scratch.mit.edu/projects/254133298/
+  "Monstrous_Legos",
+
+  // https://scratch.mit.edu/projects/195925290/
+  // https://scratch.mit.edu/projects/197664224/
+  "hazelkittens",
+
+  // https://scratch.mit.edu/projects/246482201/
+  // https://scratch.mit.edu/projects/245222794/
+  "TheSwagCake",
+
+  // https://scratch.mit.edu/projects/252425563/
+  // https://scratch.mit.edu/projects/245108694/
+  "FluffyMiuku",
+
+  // https://scratch.mit.edu/projects/249226047/
+  // https://scratch.mit.edu/projects/242552805/
+  "-sharqbiirb-",
+
+  // https://scratch.mit.edu/projects/251797383/
+  // https://scratch.mit.edu/projects/251644553/
+  "jelcow5",
+
+  // https://scratch.mit.edu/projects/247908559/
+  // https://scratch.mit.edu/projects/244916317/
+  "White-Tea",
+
+  // https://scratch.mit.edu/projects/246790419/
+  // https://scratch.mit.edu/projects/247087893/
+  "Tickinq",
+
+  // https://scratch.mit.edu/projects/183431337/
+  // https://scratch.mit.edu/projects/145306324/
+  "PetalsSilversteam",
+
+  // https://scratch.mit.edu/projects/251828013/
+  // https://scratch.mit.edu/projects/251343211/
+  "totallynotcake",
+
+  // https://scratch.mit.edu/projects/247973835/
+  // https://scratch.mit.edu/projects/253512441/
+  "Taffluffy",
+
+  // https://scratch.mit.edu/projects/251969620/
+  // https://scratch.mit.edu/projects/239736179/
+  "bandaiid",
+
+  // https://scratch.mit.edu/projects/250861025/
+  // https://scratch.mit.edu/projects/253132276/
+  "Dogcatgaming",
+
+  // https://scratch.mit.edu/projects/164866669/
+  // https://scratch.mit.edu/projects/250867086/
+  "-Pupsi-",
+
+  // https://scratch.mit.edu/projects/249465650/
+  // https://scratch.mit.edu/projects/252402821/
+  "munge7-",
+
+  // https://scratch.mit.edu/projects/250792789/
+  // https://scratch.mit.edu/projects/235508674/
+  "-StarryyEyed-",
+
+  // https://scratch.mit.edu/projects/251988091/
+  // https://scratch.mit.edu/projects/250858099/
+  "Whitepiine",
+
+  // https://scratch.mit.edu/projects/247126870/
+  // https://scratch.mit.edu/projects/247369798/
+  "CorgiNerd",
+
+  // https://scratch.mit.edu/projects/252199728/
+  // https://scratch.mit.edu/projects/226473932/
+  "DitzyTDD",
+
+  // https://scratch.mit.edu/projects/254126458/
+  // https://scratch.mit.edu/projects/254255474/
+  "Crystal435",
+
+  // https://scratch.mit.edu/projects/250842707/
+  // https://scratch.mit.edu/projects/251296749/
+  "123scratchmo456",
+
+  // https://scratch.mit.edu/projects/254081259/
+  // https://scratch.mit.edu/projects/254223852/
+  "Meow_kittycat_Meow",
+
+  // https://scratch.mit.edu/projects/246421505/
+  // https://scratch.mit.edu/projects/253835341/
+  "petcool13",
 ];
 
 // Strings that can't be in titles or else the project is blocked
@@ -623,6 +888,20 @@ const BLOCKED_TITLE_PARTS = [
   "(meme)",
   "- meme",
   "-meme",
+
+  // https://scratch.mit.edu/projects/78985318/
+  // https://scratch.mit.edu/projects/83195632/
+  // https://scratch.mit.edu/projects/26140290/
+  // https://scratch.mit.edu/projects/15190786/
+  // https://scratch.mit.edu/projects/44354200/
+  // https://scratch.mit.edu/projects/148398500/
+  // https://scratch.mit.edu/projects/2338008/
+  // https://scratch.mit.edu/projects/29214560/
+  // https://scratch.mit.edu/projects/768502/
+  // https://scratch.mit.edu/projects/41985086/
+  // https://scratch.mit.edu/projects/57097926/
+  // https://scratch.mit.edu/search/projects?q=warrior%20cats
+  "warrior cat",
 
   // names of clans/cats from the warrior cats serious
   // very incomprehensive, doesn't seem to do very much
@@ -654,7 +933,7 @@ const BLOCKED_TITLE_REGEX = [
   // https://scratch.mit.edu/projects/169501759/
   // https://scratch.mit.edu/projects/117552646/
   // https://scratch.mit.edu/projects/116075128/
-  /\boriginal\bmeme\b/i,
+  /original[^a-zA-Z]meme/i,
 
   // https://scratch.mit.edu/projects/2452235/
   // https://scratch.mit.edu/projects/14903220/
@@ -679,21 +958,22 @@ const BLOCKED_TITLE_REGEX = [
   // https://scratch.mit.edu/projects/160789963/
   // https://scratch.mit.edu/search/projects?q=furry
   /\bfurry\b/i,
-
-  // https://scratch.mit.edu/projects/78985318/
-  // https://scratch.mit.edu/projects/83195632/
-  // https://scratch.mit.edu/projects/26140290/
-  // https://scratch.mit.edu/projects/15190786/
-  // https://scratch.mit.edu/projects/44354200/
-  // https://scratch.mit.edu/projects/148398500/
-  // https://scratch.mit.edu/projects/2338008/
-  // https://scratch.mit.edu/projects/29214560/
-  // https://scratch.mit.edu/projects/768502/
-  // https://scratch.mit.edu/projects/41985086/
-  // https://scratch.mit.edu/projects/57097926/
-  // https://scratch.mit.edu/search/projects?q=warrior%20cats
-  /\bwarrior\bcat\b/i
 ];
+
+// debug: warn about potentially bad entries in the filters
+if (DEBUG) {
+  BLOCKED_CREATORS.forEach((value, index) => {
+    // if the first occurence of this name in the list is not this occurence, then it appears more than once
+    const firstIndex = BLOCKED_CREATORS.indexOf(value)
+    if (firstIndex !== index) {
+      console.warn(`Found duplicate: '${value}' @ index ${index} but first occurence @ index ${firstIndex}`);
+    }
+    // AFAIK usernames can only contain a-z (case insensitive), _, -, and numbers.
+    if (!/^[a-zA-z_\-0-9]+$/.test(value)) {
+      console.warn(`Found possible invalid username: '${value}' @ index ${index}`);
+    }
+  });
+}
 
 ///
 /// Functions
@@ -816,8 +1096,8 @@ function isFiltered(title, creator) {
   }
 
   return creatorFilter(creator) ||
-         titleFilter(title) ||
-         regexTitleFilter(title);
+    titleFilter(title) ||
+    regexTitleFilter(title);
 }
 
 // Called when the MutationObserver observes a mutation
@@ -825,8 +1105,7 @@ function handleMutation(mutationList) {
   for (const mutation of mutationList) {
     // Loop over any added nodes
     // Any projects are added to the DOM and will be in addedNodes
-    for (let i = 0; i < mutation.addedNodes.length; i++) {
-      const el = mutation.addedNodes[i];
+    for (const el of mutation.addedNodes) {
       // If it is a project then run the filtering on it
       if (isProject(el)) {
         handleProject(el);
@@ -845,9 +1124,9 @@ function handleProject(project) {
   const blocked = isFiltered(title, creator);
 
   if (blocked) {
+    // debug: log blocked projects
     if (DEBUG) {
-      // Console outputting what is blocked when DEBUG is on
-      console.log(`blocked '${title}' by ${creator}: ${getProjectLink(project)}`);
+      console.log(`Blocked '${title}' by ${creator}: ${getProjectLink(project)}`);
     }
 
     blockProject(project);
