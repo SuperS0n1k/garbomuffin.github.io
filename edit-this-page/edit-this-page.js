@@ -8,14 +8,14 @@
   "use strict";
 
   // metadata constants
-  var VERSION = "0.7";
+  var VERSION = "1.0";
 
   // detect if the bookmark version is out of date
   var LATEST_LOADER_VERSION = 1;
 
   // window.__editThisPageLoader is defined by the bookmark
   var LOADER_VERSION = window.__editThisPageLoader;
-  if (LOADER_VERSION !== LATEST_LOADER_VERSION && !window.__editThisPageWarnShown) {
+  if (LOADER_VERSION !== LATEST_LOADER_VERSION && !window.__editThisPageWarnShown && LOADER_VERSION !== undefined) {
     window.open("https://garbomuffin.github.io/edit-this-page/update.html?version=" + LOADER_VERSION);
 
     // only the show update warning once per site
@@ -61,7 +61,7 @@
       document.addEventListener("keypress", stopPropagation, true);
       document.addEventListener("keyup", stopPropagation, true);
       document.addEventListener("keydown", stopPropagation, true);
-      // TODO: cancel mouse events for next minor release
+      // TODO: cancel mouse events
       // document.addEventListener("mousedown", stopPropagation, true);
       // document.addEventListener("mouseup", stopPropagation, true);
       // document.addEventListener("mousemove", stopPropagation, true);
@@ -79,7 +79,7 @@
           // frames might be able to do some weird stuff and deny access to the document
           // (google does this)
           // haven't tested it so this is just a temp workaround
-          // FIXME: do something cleaner before v1.0
+          // FIXME: do something cleaner at some point
           log("error recursing iframe");
         }
       }

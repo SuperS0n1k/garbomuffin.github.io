@@ -23,8 +23,6 @@
     // some sites block this using the Content Security Policy script-src directive (see: github)
     // so the bookmark uses onerror to detect loading failure and use a basic fallback
     "s.onerror=function(){",
-    "typeof window.__editThisPageState==='undefined'&&",
-    "alert('edit-this-page could not load remote script. Using basic fallback.');",
     "window.__editThisPageState=!window.__editThisPageState;",
     // set 'contenteditable' to 'true' for all elements
     "var e=document.getElementsByTagName('*');",
