@@ -14,24 +14,22 @@
       .download {
         text-align: center;
       }
-      .download h1 {
-        margin-bottom: 0;
-      }
     </style>
   </head>
 
   <body>
-    <h1>Ping (v0.9, supports any MC)</h1>
-    <hr>
+    <h1>/ping</h1>
 
-    <p>This is a simple and configurable plugin that simply adds <code>/ping [player]</code> to a Bukkit server.</p>
+    <p>
+      This is a small (just 8KB) and configurable plugin that just adds <code>/ping [player]</code> to a Bukkit server.<br>
+      It should work on any version of Minecraft (tested in 1.13, 1.13.2, 1.10.2, 1.12.2) and any fork of Bukkit. (tested in Paper)
+    </p>
     <img src="ping.png" width="100%">
 
     <hr>
 
     <div class="download">
       <h1><a href="Ping.jar">Click To Download</a></h1>
-      <small>(Any Minecraft version, <b>works in 1.13</b>)</small>
     </div>
 
     <hr>
@@ -39,23 +37,20 @@
     <h2>Features</h2>
     <ul>
       <li>Get your ping with <code>/ping</code></li>
-      <li>Get the ping of another player with <code>/ping &lt;player&gt;</code></li>
+      <li>Get the ping of another player with <code>/ping &lt;player name&gt;</code></li>
       <li>Permission support</li>
-      <li>Config support for just about everything</li>
-      <li>Will show a warning when getting the ping of a player joined very recently because it can be very inaccurate. <small>(configurable and disableable)</small></li>
-      <li><b>Works with just about any version of Bukkit/Spigot/Paper</b> <small>(tested in 1.13, 1.12.2, and 1.10.2 but should work in any version)</small></li>
+      <li>Everything is configurable</li>
     </ul>
 
     <hr>
 
     <h2>Config</h2>
-    <p>Download the plugin and edit the config.yml in the Ping folder to view the config. It is commented and should be easy to understand.</p>
-    <p>Any messages can be configured with color code support.</p>
+    <p>The config file (config.yml in the Ping folder) is heavily commented and should be easy to understand.</p>
 
     <hr>
 
     <h2>Permissions</h2>
-    <p>There is one permission - <code>ping.command</code>. It allows access to /ping. It is given to everyone by default.</p>
+    <p>There is one permission: <code>ping.command</code>. It allows access to /ping. It is given to everyone by default.</p>
 
     <hr>
     <h2>GitHub</h2>
@@ -63,12 +58,5 @@
       <a href="https://github.com/GarboMuffin/garbomuffin.github.io/tree/master/mc/ping/src">View the source code on GitHub</a>
       and <a href="https://github.com/GarboMuffin/garbomuffin.github.io/issues/new">report bugs on GitHub.</a>
     </p>
-
-    <hr>
-
-    <div class="download">
-      <h1><a href="Ping.jar">Click To Download</a></h1>
-      <small>(Any Minecraft version, <b>works in 1.13</b>)</small>
-    </div>
   </body>
 </html>
