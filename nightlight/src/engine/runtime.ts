@@ -391,7 +391,7 @@ export class GameRuntime extends TaskRunner {
     ctx.fillRect(0, 0, width, height);
   }
 
-  public createCanvas(options?: Canvas2DContextAttributes) {
+  public createCanvas(options?: CanvasRenderingContext2DSettings) {
     const canvas = document.createElement("canvas");
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;

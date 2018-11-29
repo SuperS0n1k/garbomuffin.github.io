@@ -43,7 +43,7 @@ export class Nightlight extends GameRuntime {
   constructor() {
     super(getElementById("canvas"));
 
-    (document.getElementById("volume") as HTMLInputElement).oninput = (e) => {
+    (getElementById<HTMLInputElement>("volume")).oninput = (e) => {
       const volume = Number((e.target as HTMLInputElement).value);
       this.volume = volume / 100;
     };
@@ -117,7 +117,7 @@ export class Nightlight extends GameRuntime {
       persistent: true,
     });
 
-    this.castleBackground = this.ctx.createPattern(this.getImage("brick"), "repeat");
+    this.castleBackground = this.ctx.createPattern(this.getImage("brick"), "repeat")!;
     if (levels) {
       this.levels = levels;
     } else {
@@ -308,6 +308,6 @@ export class Nightlight extends GameRuntime {
   }
 
   public onsetvolume(volume: number) {
-    document.getElementById("volume-level")!.textContent = Math.round(volume * 100) + "%";
+    getElementById("volume-level")!.textContent = Math.round(volume * 100) + "%";
   }
 }

@@ -11,6 +11,7 @@ export class Block extends ImageSprite {
   public solid: boolean = false;
   public spawningOptions!: IBlockOptions;
   public levelIndex: number;
+  public intersectingDeferred: boolean = false;
   public runtime!: Nightlight;
 
   constructor(opts: IBlockOptions) {

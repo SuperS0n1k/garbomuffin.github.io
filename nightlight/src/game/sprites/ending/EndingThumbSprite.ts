@@ -11,20 +11,16 @@ const FADE_LENGTH = 100;
 const TEXT_DELAY = 120;
 const TEXT: INightlightTextSpriteOptions[] = [
   {
-    text: "one last surprise awaits you",
-    position: scratchCoordinate(-112, 164),
+    text: "that's all the base game has to offer",
+    position: scratchCoordinate(-148, 164),
   },
   {
-    text: "what will it be?",
-    position: scratchCoordinate(-64, 140),
-  },
-  {
-    text: "there's just one way to find out",
-    position: scratchCoordinate(-128, 116),
+    text: "consider trying out the level editor?",
+    position: scratchCoordinate(-148, 140),
   },
   {
     text: "click to continue...",
-    position: scratchCoordinate(-80, 92),
+    position: scratchCoordinate(-80, 116),
   },
 ];
 

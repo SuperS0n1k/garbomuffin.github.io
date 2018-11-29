@@ -31,7 +31,6 @@ export class NightlightLevelEditor extends GameRuntime {
 
   public ui = {
     container: getElementById("level-editor-ui"),
-    getCodeButton: getElementById<HTMLButtonElement>("level-editor-get-code"),
     getJsonCodeButton: getElementById<HTMLButtonElement>("level-editor-get-json-code"),
     importCodeButton: getElementById<HTMLButtonElement>("level-editor-import-code"),
     openLevel: getElementById<HTMLButtonElement>("level-editor-open-level"),
@@ -110,12 +109,11 @@ export class NightlightLevelEditor extends GameRuntime {
     this.blockOffsetY = this.canvas.height % BLOCK_HEIGHT;
     this.background = "white";
     this.canvas.style.border = "1px solid black";
-    this.ui.getCodeButton.addEventListener("click", () => this.handleGetCodeButton());
     this.ui.getJsonCodeButton.addEventListener("click", () => this.handleGetJsonCodeButton());
     this.ui.importCodeButton.addEventListener("click", () => this.handleImportLevelCodeButton());
     this.ui.openLevel.addEventListener("click", () => this.openLevelInNewTab());
     this.ui.modeSelect.addEventListener("change", () => this.setMode(+this.ui.modeSelect.value));
-    document.getElementById("volume-container")!.style.display = "none";
+    getElementById("ingame-interface-container")!.style.display = "none";
     this.setMode(this.mode);
 
     this.ui.welcome.container.style.display = "block";
@@ -169,12 +167,6 @@ export class NightlightLevelEditor extends GameRuntime {
     }
   }
 
-  private getSimpleLevelCode() {
-    const levelData = clone(this.levelData);
-    const code = levelData.reverse().map((s) => s.join("")).join("");
-    return code;
-  }
-
   private getJsonLevelCode(): Level {
     const dark = this.ui.options.dark.checked;
     const stars = this.ui.options.stars.checked;
@@ -198,10 +190,6 @@ export class NightlightLevelEditor extends GameRuntime {
       spawn,
       text: text.length > 0 ? this.text : undefined,
     };
-  }
-
-  private handleGetCodeButton() {
-    this.ui.codeOutput.value = this.getSimpleLevelCode();
   }
 
   private handleGetJsonCodeButton() {

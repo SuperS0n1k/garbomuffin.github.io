@@ -3,6 +3,7 @@ import { GameRuntime } from "./engine/runtime";
 import { Nightlight } from "./game/game";
 import { getLevelForCode, getLevelForContinueCode } from "./levelcode";
 import { getElementById, getSearchParam, setSearchParam } from "./utils";
+import { CHEATS } from "./config";
 
 /*
  * The loader.
@@ -276,6 +277,7 @@ const menuScreen = getElementById("menu-screen");
 const playButton = getElementById<HTMLButtonElement>("play-button");
 const loadCodeButton = getElementById<HTMLButtonElement>("load-code-button");
 const loadCodeFromUrlButton = getElementById("load-code-url-button");
+const cheatsInterface = getElementById("cheats-interface");
 
 // wait for it to load then run our stuff
 game.waitForAssets((progress) => {
@@ -375,3 +377,5 @@ function run() {
   showCanvas();
   game.start();
 }
+
+cheatsInterface.style.display = CHEATS ? "block" : "none";

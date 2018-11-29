@@ -1,4 +1,4 @@
-import { BLOCK_HEIGHT } from "../../../config";
+import { BLOCK_HEIGHT, CHEATS } from "../../../config";
 import { IImageSpriteOptions, ImageSprite } from "../../../engine/sprites/imagesprite";
 import { Vector } from "../../../engine/vector";
 import { IPointSpawnType, IRandomSpawnType, IRangeSpawnType } from "../../../level";
@@ -50,8 +50,6 @@ const WALK_ANIMATION_FRAMES = 4;
 // Length of each frame
 const WALK_ANIMATION_LENGTH = 4;
 
-const DEBUG_TELEPORT_TO_MOUSE = location.hash.includes("mousetp");
-
 enum MovementDirection {
   Right = 1, Left = -1,
 }
@@ -73,7 +71,7 @@ export class PlayerSprite extends ImageSprite {
     this.addTask(() => this.run());
     this.addTask(() => this.updateGraphic());
 
-    if (DEBUG_TELEPORT_TO_MOUSE) {
+    if (CHEATS) {
       this.addTask(() => this.debugTeleport());
     }
   }

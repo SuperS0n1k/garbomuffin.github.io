@@ -9,7 +9,8 @@ import { IBlockOptions, SolidBlock } from "./block";
 // Spikes share pretty much all of their code
 // So an abstract class is made and extended
 abstract class SpikeBlock extends SolidBlock {
-  public static: boolean = true;
+  public static = true;
+  public intersectingDeferred = true;
 
   public handleIntersect(sprite: AbstractSprite, velocity: number, horizontal: boolean) {
     super.handleIntersect(sprite, velocity, horizontal);

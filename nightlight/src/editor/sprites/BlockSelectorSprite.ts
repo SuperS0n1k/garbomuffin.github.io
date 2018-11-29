@@ -7,8 +7,8 @@ import { LevelEditorMode } from "../mode";
 import { LevelEditorIndexes } from "./LevelEditorIndexes";
 
 export class BlockSelectorSprite extends ImageSprite {
-  private selection: string = "a";
-  private selectionIndex: number = 0;
+  private selection: string = "c";
+  private selectionIndex: number = 4; // 4 is block type "c"
   public runtime!: NightlightLevelEditor;
 
   constructor(options: IImageSpriteOptions) {
@@ -42,12 +42,10 @@ export class BlockSelectorSprite extends ImageSprite {
   private setBlock(x: number, y: number, char: string) {
     const row = this.runtime.levelData[y];
     if (!row) {
-      console.warn(`no row for y=${y} x=${x} (skipping)`);
       return;
     }
     const existingChar = row[x];
     if (!existingChar) {
-      console.warn(`no existing char for y=${y} x=${x} (skipping)`);
       return;
     }
     row[x] = char;

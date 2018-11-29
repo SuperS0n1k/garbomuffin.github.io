@@ -57,12 +57,6 @@ export function runPhysics(sprite: AbstractSprite & IVelocity, opts: IPhysicsOpt
 }
 
 function handleCollision(sprite: AbstractSprite & IVelocity, horizontal: boolean) {
-  const intersects = (block: Block) =>
-    block.solid &&
-    block.visible &&
-    sprite.intersects(block) &&
-    block.handleIntersect(sprite, horizontal ? sprite.xv : sprite.yv, horizontal) !== false;
-
   const center = sprite.centerPosition;
   const blocksFromLeft = Math.floor(center.x / BLOCK_WIDTH);
   const blocksFromBottom = Math.floor((sprite.runtime.canvas.height - center.y) / BLOCK_HEIGHT);
@@ -131,11 +125,32 @@ function handleCollision(sprite: AbstractSprite & IVelocity, horizontal: boolean
     ordereredBlocks[centerLevelIndex + LEVEL_WIDTH - 1],
   ];
 
+  const intersecting: Block[] = [];
+
+  // Create a list of blocks that intersect the sprite
   for (const block of blocks) {
     if (!block) {
       continue;
     }
-    if (intersects(block)) {
+    if (block.solid && block.visible && block.intersects(sprite)) {
+      intersecting.push(block);
+    }
+  }
+
+  // Sort the sprites so that those that are "intersectingDeferred" come last
+  intersecting.sort((a, b) => {
+    if (a.intersectingDeferred && !b.intersectingDeferred) {
+      return 1;
+    }
+    if (b.intersectingDeferred && !a.intersectingDeferred) {
+      return -1;
+    }
+    return 0;
+  });
+
+  // Loop through all the sorted blocks in order and attempt collision with them.
+  for (const block of intersecting) {
+    if (block.handleIntersect(sprite, horizontal ? sprite.xv : sprite.yv, horizontal) !== false) {
       return true;
     }
   }
