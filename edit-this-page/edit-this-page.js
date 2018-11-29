@@ -1,48 +1,27 @@
 // Edit This Page script.
-// This is loaded by the bookmarklet on most sites.
+// Loaded by activating the bookmarklet.
+// In the case that this fails to load (downtime, CSP, etc), an alternative method built into the bookmarklet is used instead.
 
-// It is designed to (hopefully) work in almost any browser.
-
-/* jshint esversion: 3 */
 (function () {
   "use strict";
 
-  // metadata constants
-  var VERSION = "1.0";
-
-  // detect if the bookmark version is out of date
+  var VERSION = "1.1";
   var LATEST_LOADER_VERSION = 1;
 
-  // window.__editThisPageLoader is defined by the bookmark
-  var LOADER_VERSION = window.__editThisPageLoader;
-  if (LOADER_VERSION !== LATEST_LOADER_VERSION && !window.__editThisPageWarnShown && LOADER_VERSION !== undefined) {
-    window.open("https://garbomuffin.github.io/edit-this-page/update.html?version=" + LOADER_VERSION);
-
-    // only the show update warning once per site
-    window.__editThisPageWarnShown = true;
+  // window.__editThisPageLoader is defined by the bookmarklet with a magic number
+  // we can compare that to the latest known version to show an update the first time the script loads on this page
+  var loaderVersion = window.__editThisPageLoader;
+  if (loaderVersion !== LATEST_LOADER_VERSION && !window.__editThisPageUpdateShown && loaderVersion !== undefined) {
+    window.open("https://garbomuffin.github.io/edit-this-page/update.html?version=" + loaderVersion);
+    window.__editThisPageUpdateShown = true;
   }
 
-  var editThisPageAlreadyLoaded = !!window.__editThisPageAlreadyLoaded;
-  window.__editThisPageAlreadyLoaded = true;
+  // some actions should only occur once (eg. the first time the bookmarklet is run)
+  var editThisPageAlreadyLoaded = typeof window.__editThisPageState !== "undefined";
 
   // support toggling between editable/not editable
   var editThisPageState = !window.__editThisPageState;
   window.__editThisPageState = editThisPageState;
-
-  // log into the console
-  function log() {
-    if (!console || !console.log) {
-      return;
-    }
-
-    var args = [];
-    for (var i = 0; i < arguments.length; i++) {
-      args.push(arguments[i]);
-    }
-
-    args.unshift("[edit-this-page]");
-    console.log.apply(console, args);
-  }
 
   function stopPropagation(e) {
     if (window.__editThisPageState) {
@@ -50,51 +29,36 @@
     }
   }
 
-  // the main function, sets an element's 'contenteditable' tag
+  // the main function, sets an element's "contenteditable" tag
   // recurses into iframes
-  function main(body, editable) {
-    var elements = body.getElementsByTagName("*");
-
-    // add the event listeners to stop stopPropogation
-    // but only on the first run
+  function setEditable(root, editable) {
+    // add events to disable key events while edit-this-page is activated
     if (!editThisPageAlreadyLoaded) {
       document.addEventListener("keypress", stopPropagation, true);
       document.addEventListener("keyup", stopPropagation, true);
       document.addEventListener("keydown", stopPropagation, true);
+
       // TODO: cancel mouse events
       // document.addEventListener("mousedown", stopPropagation, true);
       // document.addEventListener("mouseup", stopPropagation, true);
       // document.addEventListener("mousemove", stopPropagation, true);
     }
 
-    for (var i = 0; i < elements.length; i++) {
-      var element = elements[i];
+    if (editable) {
+      root.setAttribute("contenteditable", "true");
+    } else {
+      root.removeAttribute("contenteditable");
+    }
 
-      // recursively run on iframes
-      if (element.tagName === "IFRAME") {
-        try {
-          main(element.contentDocument, editable);
-        } catch (e) {
-          // sometimes things could break, idk
-          // frames might be able to do some weird stuff and deny access to the document
-          // (google does this)
-          // haven't tested it so this is just a temp workaround
-          // FIXME: do something cleaner at some point
-          log("error recursing iframe");
-        }
+    for (const frame of root.getElementsByTagName("iframe")) {
+      // skip frames we cannot access
+      if (!frame.contentDocument || !frame.contentDocument.body) {
+        continue;
       }
-
-      // the actual toggling on/off of editability
-      if (editable) {
-        element.setAttribute("contenteditable", "true");
-      } else {
-        element.removeAttribute("contenteditable");
-      }
+      setEditable(frame.contentDocument.body, editable);
     }
   }
 
-  log("loaded edit-this-page v" + VERSION);
-
-  // call the main function on the document
-  main(document, editThisPageState);
+  // begin recursing on the current document's body
+  setEditable(document.body, editThisPageState);
 }());

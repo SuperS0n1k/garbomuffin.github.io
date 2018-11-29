@@ -7,37 +7,21 @@
 (function () {
   "use strict";
 
-  var dev = location.href === "http://localhost:8080/edit-this-page/";
-  var host = dev ? "http://localhost:8080" : "//garbomuffin.github.io";
+  var version = 1;
+  var host = location.origin;
   var scriptSource = host + "/edit-this-page/edit-this-page.js";
 
-  // Golfed because bookmarks function terribly with long amounts of code
   var js = [
     // define bookmark version globally
-    "window.__editThisPageLoader=1;",
+    `window.__editThisPageLoader=${version};`,
 
     // create a script element and try to load our script
     "var s=document.createElement('script');",
-    "s.src='" + scriptSource + "';",
+    `s.src='${scriptSource}';`,
 
-    // some sites block this using the Content Security Policy script-src directive (see: github)
-    // so the bookmark uses onerror to detect loading failure and use a basic fallback
+    // in the case of an error, gracefully handle it by manually doing most of what the remote script itself does
     "s.onerror=function(){",
-    "window.__editThisPageState=!window.__editThisPageState;",
-    // set 'contenteditable' to 'true' for all elements
-    "var e=document.getElementsByTagName('*');",
-
-    /*
-    for (var i = 0; i < e.length; i++) {
-      if (__editThisPageState) {
-        e[i].setAttribute("contenteditable", "true");
-      } else {
-        e[i].removeAttribute("contenteditable");
-      }
-    }
-    */
-    "for(var i=0;i<e.length;i++)",
-    "window.__editThisPageState?e[i].setAttribute('contenteditable','true'):e[i].removeAttribute('contenteditable');",
+    "(window.__editThisPageState=!window.__editThisPageState)?document.body.setAttribute('contenteditable','true'):document.body.removeAttribute('contenteditable')",
     "};",
 
     // append our script to the body

@@ -19,6 +19,7 @@
         padding: 100px;
         text-align: center;
         width: 50%;
+        box-shadow: 5px 5px 5px #444;
       }
 
       a {
@@ -39,8 +40,8 @@
 
   <body>
     <div class="center">
-      <h1>The Edit This Page Bookmark Has Updated!</h1>
-      <h2>Please replace the existing bookmark with this new one!</h2>
+      <h1>The Edit This Page Bookmarklet Has Updated!</h1>
+      <h2>Please replace the existing bookmark with this new one.</h2>
 
       <h1><a onclick="return false;" id="install-button">Edit This Page</a></h1>
       <p>(Remember to <b>DRAG</b> it onto your bookmarks bar!)</p>
@@ -98,13 +99,7 @@
         }
 
         var changes = changeLog[version];
-        if (version === -1) {
-          changes = [
-            "You're special.",
-          ];
-        }
-
-        if (typeof changes !== "undefined") {
+        if (changes) {
           var listEl = document.getElementById("change-list");
 
           for (var i = 0; i < changes.length; i++) {

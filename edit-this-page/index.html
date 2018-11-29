@@ -5,51 +5,64 @@
     <link rel="stylesheet" href="/core.css">
 
     <style>
+      body {
+        background-color: #CCCCCC;
+      }
+
+      #container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        background-color: #EEEEEE;
+        border-radius: 50px;
+        padding: 50px 100px;
+        text-align: center;
+        width: 50%;
+        box-shadow: 5px 5px 5px #444;
+      }
+
       #dont-click-message {
         display: none;
       }
 
       #installation-congrats {
         position: fixed;
-
         text-align: center;
         top: 0;
         left: 0;
-
         width: 100%;
         height: 100%;
-
-        background-color: black;
+        background-color: #000000BB;
         color: white;
-        opacity: 0.9;
-
         display: none;
+      }
+      .nomargin {
+        margin: 0;
       }
     </style>
   </head>
 
   <body>
-    <h1>Edit This Page</h1>
-    <hr>
-    <p>A simple bookmark that lets you edit the text of (almost) any website!</p>
-
-    <h2>Installation</h2>
-    <p>
-      <b>
-        Drag the following link onto your bookmarks bar:
-        <a onclick="return showDontClickMessage();" id="install-button">Edit This Page</a>
-      </b>
-    </p>
-    <p id="dont-click-message"><b>Don't click on it, drag it onto your bookmarks bar!</b></p>
-
-    <h2>Usage</h2>
-    <p>Simply run the bookmarklet by clicking on it! Each time you run it, the editability of the page will is toggled.</p>
+    <div id="container">
+      <h1 class="nomargin">Edit This Page</h1>
+      <i>A bookmarklet that lets you edit the text of any website</i>
+  
+      <h2>Installation</h2>
+      <p><b>Drag the following link onto your bookmarks bar: <a onclick="return showDontClickMessage();" id="install-button">Edit This Page</a></b></p>
+      <p id="dont-click-message"><b>Don't click on it, drag it onto your bookmarks bar!</b></p>
+  
+      <h2>Usage</h2>
+      <p>Just click on the bookmark. Each time the script is activated the "editability" of the page is toggled.</p>
+      <p><i><small>Depending on the website and your internet connection, there may be a few seconds of delay before the page becomes editable.</small></i></p>
+  
+    </div>
 
     <div id="installation-congrats">
       <h1>Success!</h1>
       <p>Edit This Page is installed correctly and is working. It's really that easy.</p>
       <p>Try editing this text.</p>
-      <p>(you won't see this message on other sites, only this one)</p>
+      <p><small>(you won't see this message on other sites, just this one)</small></p>
       <button onclick="hideInstallMessage();">Hide This Message</button>
     </div>
 
@@ -57,14 +70,7 @@
     <script>
       // Remind the user to DRAG THE THING TO YOUR BOOKMARKS BAR and not click it
       function showDontClickMessage() {
-        var el = document.getElementById("dont-click-message");
-        if (el.style.display === "") {
-          el.style.display = "inline";
-        } else {
-          var fontSize = window.getComputedStyle(el).fontSize.match(/\d*/)[0];
-          var fontSizeNumber = Number(fontSize);
-          el.style.fontSize = (fontSizeNumber * 1.1) + "px";
-        }
+        document.getElementById("dont-click-message").style.display = "inline";
         return false;
       }
 
@@ -73,7 +79,7 @@
       }
 
       var installCheckInterval = setInterval(function () {
-        if (window.__editThisPageAlreadyLoaded) {
+        if (typeof window.__editThisPageState !== "undefined") {
           document.getElementById("installation-congrats").style.display = "block";
           clearInterval(installCheckInterval);
         }
