@@ -8,6 +8,10 @@
       font-family: sans-serif;
     }
 
+    table, tr {
+      vertical-align: top;
+    }
+
     #canvas {
       border: 1px solid black;
     }
@@ -39,10 +43,12 @@
   <input id="tileSetInput" type="file">
   <button id="saveAsImageButton">export image</button>
 
-  <div style="display: flex; flex-direction: row;">
-    <canvas id="canvas" width="256" height="256"></canvas>
-    <table id="tilesTable"></table>
-  </div>
+  <table>
+    <tr>
+      <td><canvas id="canvas" width="256" height="256"></canvas></td>
+      <td><table id="tilesTable"></table></td>
+    </tr>
+  </table>
 
   <div id="options">
     <h3>Options</h3>
