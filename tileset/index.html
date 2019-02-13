@@ -1,34 +1,56 @@
-<style>
-#canvas {
-  border: 1px solid black;
-}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tileset</title>
+  <style>
+    body {
+      margin: 1px;
+      font-family: sans-serif;
+    }
 
-#tilelist tr, #tilelist td {
-  margin: 0;
-  padding: 0;
-}
-#titlelist {
-  border-collapse: collapse;
-}
-#tilelist .active {
-  outline: 2px solid #000;
-}
-</style>
+    #canvas {
+      border: 1px solid black;
+    }
+    #canvas:hover {
+      background: url(transparent.png) repeat;
+    }
 
-<input id="tilesetinput" type="file">
-<button onclick="loadTileset()">load selected tileset (16x16 tiles)</button>
-<button onclick="saveAsImage()">save as image</button>
+    #tilesTable {
+      border-collapse: collapse;
+    }
+    #tilesTable canvas {
+      display: block;
+    }
+    #tilesTable td:hover {
+      outline: 2px solid #555;
+    }
+    #tilesTable td.active {
+      outline: 2px solid #000;
+    }
 
-<table>
-  <tr>
-    <td>
-      <canvas id="canvas" width="480" height="360" style="border:1px solid black"></canvas>
-    </td>
-    <td>
-      <table id="tilelist"></table>
-    </td>
-  </tr>
-</table>
+    label {
+      display: block;
+    }
+  </style>
+</head>
 
+<body>
 
-<script src="script.js"></script>
+  <input id="tileSetInput" type="file">
+  <button id="saveAsImageButton">export image</button>
+
+  <div style="display: flex; flex-direction: row;">
+    <canvas id="canvas" width="256" height="256"></canvas>
+    <table id="tilesTable"></table>
+  </div>
+
+  <div id="options">
+    <h3>Options</h3>
+    <label>Width (px) <input type="number" id="widthInput"></label>
+    <label>Height (px) <input type="number" id="heightInput"></label>
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>

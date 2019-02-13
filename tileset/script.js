@@ -1,196 +1,270 @@
-'use strict';
+(function() {
+  'use strict';
 
-function newCanvas(w, h) {
-  const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
-  return canvas;
-}
-
-class Tile {
-  constructor(im, id) {
-    this.img = im;
-    this.width = im.width;
-    this.height = im.height;
-    this.id = id;
+  function newCanvas(w, h) {
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    return canvas;
   }
-}
 
-class Tileset {
-  constructor(image, size) {
-    const baseCanvas = newCanvas(image.width, image.height);
-    const baseCtx = baseCanvas.getContext("2d");
-    baseCtx.drawImage(image, 0, 0);
+  function getElementById(id) {
+    const el = document.getElementById(id);
+    if (!el) {
+      throw new Error("No element with id " + id);
+    }
+    return el;
+  }
 
-    const tiles = [];
+  class Tile {
+    constructor(im, id) {
+      this.img = im;
+      this.width = im.width;
+      this.height = im.height;
+      this.id = id;
+    }
+  }
 
-    this.tileWidth = size;
-    this.tileHeight = size;
+  class Tileset {
+    constructor(baseImage) {
+      this.baseCanvas = newCanvas(baseImage.width, baseImage.height);
+      this.baseCtx = this.baseCanvas.getContext("2d");
+      this.baseCtx.drawImage(baseImage, 0, 0);
 
-    const height = Math.ceil(image.height / size);
-    const width = Math.ceil(image.width / size);
-    for (let y = 0; y < height; y++) {
-      const row = [];
-      for (let x = 0; x < width; x++) {
-        const canvas = newCanvas(size, size);
-        const ctx = canvas.getContext("2d");
-        ctx.translate(-x * size, -y * size);
-        ctx.drawImage(baseCanvas, 0, 0);
-        const tile = new Tile(canvas, y * width + x);
-        row.push(tile);
-      }
-      tiles.push(row);
+      this.tileWidth = 16;
+      this.tileHeight = 16;
+      this.tileHorizontalOffset = 0;
+      this.tileVerticalOffset = 0;
     }
 
-    this.tiles = tiles;
-  }
+    update() {
+      this.tileRows = [];
+      this.tileMap = {};
+      const height = Math.ceil(this.baseCanvas.height / this.tileHeight);
+      const width = Math.ceil(this.baseCanvas.width / this.tileWidth);
 
-  get(n) {
-    const tilesPer = this.tiles[0].length;
-    const per = Math.floor(n / tilesPer);
-    const off = n % tilesPer;
-    const group = this.tiles[per];
-    if (!group) {
-      return;
-    }
-    return group[off];
-  }
-}
+      const tileHorizontalOffset = this.tileWidth + this.tileHorizontalOffset;
+      const tileVerticalOffset = this.tileHeight + this.tileVerticalOffset;
 
-var tileset = null;
-var activeTile = 0;
-var map = [[0,1,2]];
-var mouseX = 0;
-var mouseY = 0;
-var mouseDown = [];
+      for (let y = 0; y < height; y++) {
+        const row = [];
 
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+        for (let x = 0; x < width; x++) {
+          const canvas = newCanvas(this.tileWidth, this.tileHeight);
+          const ctx = canvas.getContext("2d");
+          ctx.translate(-x * tileHorizontalOffset, -y * tileVerticalOffset);
+          ctx.drawImage(this.baseCanvas, 0, 0);
 
-function displayTileset() {
-  const tileList = document.getElementById("tilelist");
-  while (tileList.firstChild) {
-    tileList.removeChild(tileList.firstChild);
-  }
-
-  for (const gr of tileset.tiles) {
-    const tr = document.createElement("tr");
-
-    for (const ti of gr) {
-      const td = document.createElement("td");
-      td.appendChild(ti.img);
-      td.dataset.id = ti.id;
-      td.onclick = function() {
-        const previous = tileList.querySelector("[data-id=\"" + activeTile + "\"]");
-        if (previous) {
-          previous.classList.remove("active");
+          const id = y + "/" + x;
+          const tile = new Tile(canvas, id);
+          this.tileMap[id] = tile;
+          row.push(tile);
         }
-        activeTile = ti.id;
-        td.classList.add("active");
-      };
-      tr.appendChild(td);
-    }
 
-    tileList.appendChild(tr);
-  }
-}
-
-function loadTileset() {
-  const f = document.getElementById("tilesetinput").files[0];
-  const fr = new FileReader();
-  fr.onload = function() {
-    const result = fr.result;
-    const img = new Image();
-    img.onload = function() {
-      tileset = new Tileset(img, 16);
-      displayTileset();
-    };
-    img.src = result;
-  };
-  fr.readAsDataURL(f);
-}
-if (document.getElementById("tilesetinput").files.length > 0) {
-  loadTileset();
-}
-
-function getMouseMapPosition() {
-  const mx = Math.floor(mouseX / tileset.tileWidth);
-  const my = Math.floor(mouseY / tileset.tileHeight);
-  return {x: mx, y: my};
-}
-
-function render() {
-  requestAnimationFrame(render);
-
-  if (!tileset) {
-    return;
-  }
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  for (let y = 0; y < map.length; y++) {
-    const row = map[y];
-    for (let x = 0; x < row.length; x++) {
-      const tile = tileset.get(row[x]);
-      if (!tile) {
-        continue;
+        this.tileRows.push(row);
       }
-      ctx.drawImage(tile.img, x * tileset.tileWidth, y * tileset.tileHeight);
+    }
+
+    get(id) {
+      return this.tileMap[id];
     }
   }
 
-  const mousePosition = getMouseMapPosition();
-  ctx.strokeRect(mousePosition.x * tileset.tileWidth, mousePosition.y * tileset.tileHeight, tileset.tileWidth, tileset.tileHeight);
-}
+  class Map {
+    constructor() {
+      this.data = [];
+    }
 
-requestAnimationFrame(render);
+    get(row, col) {
+      return this.getRow(row)[col];
+    }
 
-function placeBlock() {
-  const position = getMouseMapPosition();
-  while (map.length <= position.y) {
-    map.push([]);
+    set(row, col, tile) {
+      this.getRow(row)[col] = tile;
+    }
+
+    delete(row, col) {
+      delete this.getRow(row)[col];
+    }
+
+    getRow(row) {
+      while (this.data.length <= row) {
+        this.data.push([]);
+      }
+      return this.data[row];
+    }
+
+    get rows() {
+      return this.data.length;
+    }
   }
-  map[position.y][position.x] = activeTile;
-}
 
-function deleteBlock() {
-  const position = getMouseMapPosition();
-  while (map.length <= position.y) {
-    map.push([]);
+  class Editor {
+    constructor() {
+      this.tileset = null;
+      this.activeTile = "0/0";
+      this.map = new Map();
+      this.mouseX = 0;
+      this.mouseY = 0;
+      this.mouseActive = false;
+      this.mouseButtons = [];
+
+      this.canvas = getElementById("canvas");
+      this.ctx = this.canvas.getContext("2d");
+      this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+      this.canvas.addEventListener("mousemove", (e) => this.mousemove(e));
+      this.canvas.addEventListener("mousedown", (e) => this.mousedown(e));
+      this.canvas.addEventListener("mouseup", (e) => this.mouseup(e));
+      this.canvas.addEventListener("mouseleave", (e) => this.mouseleave(e));
+    }
+
+    render() {
+      requestAnimationFrame(() => this.render());
+
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      if (!this.tileset) {
+        return;
+      }
+
+      const tileHeight = this.tileset.tileHeight;
+      const tileWidth = this.tileset.tileWidth;
+
+      for (let y = 0; y < this.map.rows; y++) {
+        const row = this.map.getRow(y);
+        for (let x = 0; x < row.length; x++) {
+          const tile = this.tileset.get(row[x]);
+          if (tile) {
+            this.ctx.drawImage(tile.img, x * tileWidth, y * tileHeight);
+          }
+        }
+      }
+
+      if (this.mouseActive) {
+        this.ctx.strokeStyle = "#555";
+        this.ctx.lineWidth = 2;
+        this.ctx.strokeRect(this.mapCol * tileWidth, this.mapRow * tileHeight, tileWidth, tileHeight);
+      }
+    }
+
+    mousemove(e) {
+      this.mouseActive = true;
+
+      const crect = this.canvas.getBoundingClientRect();
+      this.mouseX = e.clientX - crect.left;
+      this.mouseY = e.clientY - crect.top;
+
+      if (this.mouseButtons[0]) {
+        this.placeBlock();
+      }
+      if (this.mouseButtons[2]) {
+        this.deleteBlock();
+      }
+    }
+    mousedown(e) {
+      this.mouseButtons[e.button] = true;
+      if (e.button === 0) {
+        this.placeBlock();
+      } else if (e.button === 2) {
+        this.deleteBlock();
+      }
+    }
+    mouseup(e) {
+      this.mouseButtons[e.button] = false;
+    }
+    mouseleave(e) {
+      this.mouseActive = false;
+    }
+
+    placeBlock() {
+      this.map.set(this.mapRow, this.mapCol, this.activeTile);
+    }
+    deleteBlock() {
+      this.map.delete(this.mapRow, this.mapCol);
+    }
+
+    loadTileset(file) {
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        const result = fileReader.result;
+        const image = new Image();
+        image.onload = () => {
+          this.tileset = new Tileset(image, 16);
+          this.tileset.update();
+          this.displayTileset();
+        };
+        image.src = result;
+      };
+      fileReader.readAsDataURL(file);
+    }
+    displayTileset() {
+      while (tilesTable.firstChild) {
+        tilesTable.removeChild(tilesTable.firstChild);
+      }
+
+      for (const row of this.tileset.tileRows) {
+        const tr = document.createElement("tr");
+
+        for (const tile of row) {
+          const td = document.createElement("td");
+          td.dataset.id = tile.id;
+
+          const canvas = newCanvas(tile.width, tile.height);
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(tile.img, 0, 0);
+
+          td.appendChild(canvas);
+          tr.appendChild(td);
+        }
+
+        tilesTable.appendChild(tr);
+      }
+    }
+
+    openImage() {
+      const data = this.canvas.toDataURL();
+      window.open(data);
+    }
+
+    get mapCol() {
+      return Math.floor(this.mouseX / this.tileset.tileWidth);
+    }
+    get mapRow() {
+      return Math.floor(this.mouseY / this.tileset.tileHeight);
+    }
   }
-  map[position.y][position.x] = undefined;
-}
 
-canvas.addEventListener('mousemove', (e) => {
-  const crect = canvas.getBoundingClientRect();
-  mouseX = e.x - crect.left;
-  mouseY = e.y - crect.top;
+  const editor = new Editor();
 
-  const position = getMouseMapPosition();
+  const tileSetInput = getElementById("tileSetInput");
+  const saveAsImageButton = getElementById("saveAsImageButton");
+  const tilesTable = getElementById("tilesTable");
+  const widthInput = getElementById("widthInput");
+  const heightInput = getElementById("heightInput");
 
-  if (mouseDown[0]) {
-    placeBlock();
+  if (tileSetInput.files.length > 0) {
+    editor.loadTileset(tileSetInput.files[0]);
   }
-  if (mouseDown[2]) {
-    deleteBlock();
-  }
-});
+  tileSetInput.addEventListener("change", (e) => editor.loadTileset(tileSetInput.files[0]));
+  saveAsImageButton.addEventListener("click", (e) => editor.openImage());
 
-canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+  tilesTable.addEventListener("click", (e) => {
+    const target = e.target.closest("td");
+    if (target) {
+      const previousTarget = tilesTable.querySelector("td[data-id='" + editor.activeTile + "']");
+      if (previousTarget) {
+        previousTarget.classList.remove("active");
+      }
+      target.classList.add("active");
+      const id = target.dataset.id;
+      editor.activeTile = id;
+    }
+  });
 
-canvas.addEventListener('mousedown', (e) => {
-  mouseDown[e.button] = true;
-  if (e.button === 0) {
-    placeBlock();
-  } else if (e.button === 2) {
-    deleteBlock();
-  }
-});
-canvas.addEventListener('mouseup', (e) => {
-  mouseDown[e.button] = false;
-});
+  widthInput.value = editor.canvas.width;
+  heightInput.value = editor.canvas.height;
+  widthInput.addEventListener("input", () => editor.canvas.width = +widthInput.value);
+  heightInput.addEventListener("input", () => editor.canvas.height = +heightInput.value);
 
-function saveAsImage() {
-  const data = canvas.toDataURL();
-  window.open(data);
-}
+  requestAnimationFrame(() => editor.render());
+}());
