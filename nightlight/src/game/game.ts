@@ -45,10 +45,15 @@ export class Nightlight extends GameRuntime {
 
     (getElementById<HTMLInputElement>("volume")).oninput = (e) => {
       const volume = Number((e.target as HTMLInputElement).value);
-      this.volume = volume / 100;
+      this.updateVolume(volume);
     };
+    this.updateVolume(Number(getElementById<HTMLInputElement>("volume").value));
 
     (window as any).runtime = this;
+  }
+
+  updateVolume(volume: number) {
+    this.volume = volume / 100;
   }
 
   //
