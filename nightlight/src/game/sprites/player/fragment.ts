@@ -16,8 +16,7 @@ const GHOST_RATE = 0.03;
 const ROTATION_FRICTION = 0.5;
 
 // create a high limit to prevent constant death from crashing everything
-// but that also will be hard to find during normal play
-const MAX_FRAGMENTS = 50;
+const MAX_FRAGMENTS = 250;
 let existingFragments = 0;
 
 export interface IPlayerFragmentSpriteOptions extends IImageSpriteOptions {
