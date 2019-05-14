@@ -214,10 +214,11 @@
 
             <td id="editor-options-container">
               <div><b>Options:</b></div>
-              <div><label>Font size: <input type="number" id="options-font-size"></label></div>
-              <div><label>Font family: <input type="text" id="options-font-family"></label></div>
+              <div><label>Font size: <input type="number" id="options-font-size" min="0" required step="any"></label></div>
+              <div><label>Font family: <input type="text" id="options-font-family" required></label></div>
               <div><label>Bold text: <input type="checkbox" id="options-bold-text"></label></div>
               <div><label>End text: <input type="text" id="options-end-text"></label></div>
+              <div><label>Line height: <input type="number" id="options-line-height" required max="3" min="0" step="any"></label></div>
               <div><label>Unsaved changes warning: <input type="checkbox" id="options-unsaved-changes-warning"></label></div>
               <div><label>Show caret: <input type="checkbox" id="options-show-caret"></label></div>
 

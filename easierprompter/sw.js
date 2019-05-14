@@ -3,7 +3,7 @@
 // A very basic service worker to allow loading of the page offline
 // It doesn't try to do any fancy caching, etc. Just the bare minimum to get a working offline app.
 
-var CACHE_NAME = "easierprompter-v1.0";
+var CACHE_NAME = "easierprompter-v1.1";
 
 // When installed: Cache offlines copies of the files
 self.addEventListener("install", function(event) {

@@ -60,6 +60,18 @@ export class PrompterConfigManager extends ConfigManager {
       },
     });
 
+    this.options.lineHeight = new ConfigOption<number>({
+      default: 1.15,
+      el: getElement("options-line-height"),
+      type: "number",
+      setterOpts: {
+        onchange: true,
+        callback: (value: number) => {
+          prompterLines.style.lineHeight = '' + value;
+        },
+      },
+    });
+
     this.options.unsavedChangesWarning = new ConfigOption<boolean>({
       default: false,
       el: getElement("options-unsaved-changes-warning"),
