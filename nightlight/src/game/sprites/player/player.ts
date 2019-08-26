@@ -96,10 +96,10 @@ export class PlayerSprite extends ImageSprite {
 
   private getComputerInputs() {
     const keys = this.runtime.keyboard.keys;
-    const rightDown = keys[39].isPressed;
-    const leftDown = keys[37].isPressed;
-    const upDown = keys[38].isPressed;
-    const upJustPressed = keys[38].justPressed;
+    const rightDown = keys[39].isPressed || keys[68].isPressed;
+    const leftDown = keys[37].isPressed || keys[65].isPressed;
+    const upDown = keys[38].isPressed || keys[87].isPressed;
+    const upJustPressed = keys[38].justPressed || keys[87].justPressed;
 
     return {
       rightDown,
