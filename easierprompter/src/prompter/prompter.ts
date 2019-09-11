@@ -32,6 +32,12 @@ export class Prompter extends AbstractPrompter {
     getElement("options-speed-up").addEventListener("click", (e) => this.speedUp());
     getElement("options-speed-down").addEventListener("click", (e) => this.speedDown());
 
+    window.addEventListener("wheel", (e) => {
+      if (this.showing) {
+        this.scrollDistance += e.deltaY;
+      }
+    });
+
     window.addEventListener("resize", (e) => {
       if (this.showing) {
         this.maxScrollDistance = this.getTextLength();
