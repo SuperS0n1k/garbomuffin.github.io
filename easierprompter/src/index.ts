@@ -5,7 +5,6 @@ import { ConfigManager } from "./config/config";
 import { PrompterConfigManager } from "./config/prompterconfig";
 import { Prompter } from "./prompter/prompter";
 import { ReillyPrompter } from "./prompter/reilly";
-import { TameReillyPrompter } from "./prompter/tamereilly";
 import { getElement } from "./utils";
 
 function getConfig(): ConfigManager {
@@ -14,8 +13,6 @@ function getConfig(): ConfigManager {
 
 function getPrompter(cfg: ConfigManager): Prompter {
   if (location.search === "?reilly") {
-    return new TameReillyPrompter(cfg);
-  } else if (location.search === "?realreilly") {
     return new ReillyPrompter(cfg);
   } else {
     return new Prompter(cfg);
@@ -32,7 +29,7 @@ getElement("reset-button").onclick = () => config.promptReset();
 const prompter = getPrompter(config);
 
 // TODO: move this somewhere else, probably configmanager?
-window.addEventListener('onbeforeunload', (e: any) => {
+window.addEventListener('beforeunload', (e: any) => {
   if (config.options.unsavedChangesWarning.get() && prompter.config.hasChanged()) {
     // Browsers such as Chrome have stopped showing the text here and instead some predetermined message
     // That's fine and this will work for other browsers.
@@ -44,4 +41,4 @@ window.addEventListener('onbeforeunload', (e: any) => {
     e.returnValue = text;
     return text;
   }
-});
+}, true);

@@ -1,4 +1,33 @@
-import { TameReillyPrompter } from "./tamereilly";
+import { Prompter } from "./prompter";
+
+const QUOTES = [
+  /„/ig,
+  /‚/ig,
+  /“/ig,
+  /‟/ig,
+  /‘/ig,
+  /‛/ig,
+  /”/ig,
+  /’/ig,
+  /\"/ig,
+  /❛/ig,
+  /❜/ig,
+  /❟/ig,
+  /❝/ig,
+  /❞/ig,
+  /⹂/ig,
+  /〝/ig,
+  /〞/ig,
+  /〟/ig,
+  /＂/ig,
+];
+
+function unquote(input: string) {
+  for (const c of QUOTES) {
+    input = input.replace(c, "");
+  }
+  return input;
+}
 
 function comma(input: string) {
   const s = input.split(" ");
@@ -17,28 +46,10 @@ function comma(input: string) {
   return res;
 }
 
-function replaceName(input: string) {
-  const NAMES = ["Riley", "Reily", "Rilly", "Rielly"];
-  const s = input.split("Reilly");
-  const length = s.length;
-  let res = "";
-  for (let i = 0; i < length; i++) {
-    const text = s[i];
-    const progress = i / length;
-    res += text;
-    if (Math.random() < progress / 10) {
-      res += NAMES[Math.floor(Math.random() * (NAMES.length - 1))];
-    } else {
-      res += "Reilly";
-    }
-  }
-  return res;
-}
-
 function replacePeriods(input: string) {
   const REPLACEMENTS = ["!", "?", "."];
   const s = input.split(/!|\?|\./ig);
-  const length = s.length;
+  const length = s.length - 1;
   let res = "";
   for (let i = 0; i < length; i++) {
     const text = s[i];
@@ -53,11 +64,11 @@ function replacePeriods(input: string) {
   return res;
 }
 
-export class ReillyPrompter extends TameReillyPrompter {
+export class ReillyPrompter extends Prompter {
   protected getScript() {
     let input = super.getScript();
+    input = unquote(input);
     input = comma(input);
-    input = replaceName(input);
     input = replacePeriods(input);
     return input;
   }
