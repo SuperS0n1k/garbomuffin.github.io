@@ -24,7 +24,7 @@ getElement("reset-button").onclick = () => config.promptReset();
 const prompter = getPrompter(config);
 
 // TODO: move this somewhere else, probably configmanager?
-window.onbeforeunload = (e) => {
+window.addEventListener('onbeforeunload', (e: any) => {
   if (config.options.unsavedChangesWarning.get() && prompter.config.hasChanged()) {
     // Browsers such as Chrome have stopped showing the text here and instead some predetermined message
     // That's fine and this will work for other browsers.
@@ -36,4 +36,4 @@ window.onbeforeunload = (e) => {
     e.returnValue = text;
     return text;
   }
-};
+});
