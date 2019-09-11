@@ -4,6 +4,8 @@ import "./sw";
 import { ConfigManager } from "./config/config";
 import { PrompterConfigManager } from "./config/prompterconfig";
 import { Prompter } from "./prompter/prompter";
+import { ReillyPrompter } from "./prompter/reilly";
+import { TameReillyPrompter } from "./prompter/tamereilly";
 import { getElement } from "./utils";
 
 function getConfig(): ConfigManager {
@@ -11,7 +13,13 @@ function getConfig(): ConfigManager {
 }
 
 function getPrompter(cfg: ConfigManager): Prompter {
-  return new Prompter(cfg);
+  if (location.search === "?reilly") {
+    return new TameReillyPrompter(cfg);
+  } else if (location.search === "?realreilly") {
+    return new ReillyPrompter(cfg);
+  } else {
+    return new Prompter(cfg);
+  }
 }
 
 const config = getConfig();
