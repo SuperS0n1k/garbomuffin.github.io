@@ -1,9 +1,2 @@
 User-agent: *
-Disallow: /games
-Disallow: /mc
-Disallow: /nightlight
-Disallow: /school-projects
-Disallow: /scratch
-Disallow: /site-old
-Disallow: /userscripts
-Disallow: /ytembed
+Disallow: /
