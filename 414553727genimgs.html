@@ -1,0 +1,68 @@
+<input id="fs" type="file" autocomplete="off" multiple>
+<div id="out"></div>
+
+<script>
+fs.onchange = () => {
+  for (let i = 0; i < fs.files.length; i++) {
+    let f = fs.files[i];
+    let fn = f.name.split('.');
+    fn = fn[0];
+    let fr = new FileReader();
+    fr.onload = () => {
+      var result = fr.result;
+      var img = new Image();
+      img.onload = () => {
+        baseTexture = img;
+        for (var i = 3; i < 88; i++) {
+          var canvas = createNoteTexture(i);
+          out.appendChild(canvas);
+          var a = document.createElement('a');
+          a.download = fn + i + '.png';
+          a.href = canvas.toDataURL();
+          a.click();
+        }
+      };
+      img.src = result;
+    };
+    fr.readAsDataURL(f);
+  }
+};
+
+let baseTexture;
+
+const formatKey = (key) => {
+  const KEY_TEXT = [
+    "C-", "C#", "D-", "D#", "E-", "F-", "F#", "G-", "G#", "A-", "A#", "B-", 
+  ];
+
+  const keyText = KEY_TEXT[(key - 3) % 12];
+  const octave = Math.floor((key - 3) / 12) + 1;
+  return `${keyText}${octave}`;
+};
+
+const createNoteTexture = (key) => {
+  // Create a canvas that lets us do image operations
+  const canvas = document.createElement("canvas");
+  canvas.width = 32;
+  canvas.height = 32;
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(baseTexture, 0, 0, 32, 32);
+  // Fixes the note textures to be less terrible
+  // (darken and add border)
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 4;
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.stroke();
+  // Draw the key text centered
+  ctx.fillStyle = "white";
+  ctx.font = "12px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const text = formatKey(key);
+  ctx.fillText(text, 32 / 2, 32 / 2);
+  return canvas;
+};
+</script>
