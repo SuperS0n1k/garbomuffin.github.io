@@ -533,6 +533,7 @@ Please don't use this as a reference for how you should write JavaScript.
     </ol>
 
     <div>
+      <!-- add `multiple` to select multiple files. The output will be something you can import to Scratch through right click -> import -->
       <input type="file" accept=".nbs">
     </div>
     <div>
@@ -553,8 +554,8 @@ Please don't use this as a reference for how you should write JavaScript.
       var textarea = document.querySelector('textarea');
 
       var clean = (s) => s
-        // Scratch, brilliantly, silently interprets ',' as a CSV delimeter delete everything that comes after.
-        // Scratch will, of course, not ask or warn you about this, until you find that all your values got deleted behind your back.
+        // Scratch, brilliantly, silently interprets ',' as a CSV delimeter delete everything that comes after when importing a list.
+        // This, of course, happens silently without warning, until you find that all your values got deleted behind your back.
         // So we'll just completely remove all ',' so that doesn't happen.
         // This is truly peak design.
         .replace(/,/g, '')
