@@ -8,6 +8,7 @@ Please don't use this as a reference for how you should write JavaScript.
 -->
 <html>
   <head>
+    <meta name="robots" content="noindex">
     <style>
       body {
         font-family: sans-serif;
@@ -524,7 +525,7 @@ Please don't use this as a reference for how you should write JavaScript.
 
   <body>
 
-    <p>This page parses Note Block Studio song files so that the Scratch project can interpret them easily and efficiently.</p>
+    <p>This page parses Note Block Studio song files so that <a href="https://scratch.mit.edu/projects/414553727/">the Scratch project</a> can interpret them easily and efficiently.</p>
 
     <ol>
       <li>Select a .NBS file</li>
@@ -552,10 +553,17 @@ Please don't use this as a reference for how you should write JavaScript.
       var textarea = document.querySelector('textarea');
 
       var clean = (s) => s
+        // Scratch, brilliantly, silently interprets ',' as a CSV delimeter delete everything that comes after.
+        // Scratch will, of course, not ask or warn you about this, until you find that all your values got deleted behind your back.
+        // So we'll just completely remove all ',' so that doesn't happen.
+        // This is truly peak design.
+        .replace(/,/g, '')
+        // Special characters used by our export format
         .replace(/#/g, '')
-        .replace(/\n/g, '')
-        .replace(/\r/g, '')
         .replace(/`/g, '')
+        // Will break things, don't include.
+        .replace(/\n/g, '')
+        .replace(/\r/g, '');
 
       var handleFile = (file) => {
         return new Promise((resolve, reject) => {
@@ -566,8 +574,11 @@ Please don't use this as a reference for how you should write JavaScript.
 
             let result = '@';
 
+            let filename = file.name.split('.');
+            filename = filename[0];
+
             // header
-            result += clean(song.name);
+            result += clean(song.name || filename);
             result += '`';
             result += clean(song.author);
             result += '`';
