@@ -519,6 +519,10 @@ Song.fromArrayBuffer = function songFromArrayBuffer(arrayBuffer) {
 <script>
 var fs = document.querySelector('input[type=file]');
 
+var clean = (s) => s
+  .replace(/#/g, '')
+  .replace(/\|/g, '')
+
 fs.onchange = (e) => {
   try {
     const f = fs.files[0];
@@ -532,6 +536,12 @@ fs.onchange = (e) => {
       let result = '';
 
       // header
+      result += clean(song.name);
+      result += '|';
+      result += clean(song.author);
+      result += '|';
+      result += clean(song.originalAuthor);
+      result += '|';
       result += song.tempo;
       result += '|';
       result += '#';
