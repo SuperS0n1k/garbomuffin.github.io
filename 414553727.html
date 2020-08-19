@@ -553,31 +553,28 @@ Please don't use this as a reference for how you should write JavaScript.
 
       var clean = (s) => s
         .replace(/#/g, '')
-        .replace(/\|/g, '')
+        .replace(/\n/g, '')
+        .replace(/\r/g, '')
+        .replace(/`/g, '')
 
-      fs.onchange = (e) => {
-        try {
-          const f = fs.files[0];
-          if (!f) throw new Error('no file');
-
-          textarea.value = 'loading...';
-
+      var handleFile = (file) => {
+        return new Promise((resolve, reject) => {
           const fr = new FileReader();
           fr.onload = () => {
             const buffer = fr.result;
             const song = Song.fromArrayBuffer(buffer);
 
-            let result = '';
+            let result = '@';
 
             // header
             result += clean(song.name);
-            result += '|';
+            result += '`';
             result += clean(song.author);
-            result += '|';
+            result += '`';
             result += clean(song.originalAuthor);
-            result += '|';
+            result += '`';
             result += song.tempo;
-            result += '|';
+            result += '`';
             result += '#';
 
             const instruments = [
@@ -624,16 +621,35 @@ Please don't use this as a reference for how you should write JavaScript.
                   result += n.key.toString().padStart(2, '0').substr(0, 2);
                 }
               }
-              result += '|';
+              result += '`';
             }
 
-            textarea.value = result;
+            result += '@';
+
+            resolve(result);
+          };
+          fr.readAsArrayBuffer(file);
+        });
+      };
+
+      fs.onchange = async (e) => {
+        try {
+          textarea.value = 'loading...';
+
+          if (fs.files.length === 0) {
+            throw new Error('no file');
+          } else {
+            const result = [];
+            for (const f of fs.files) {
+              result.push(await handleFile(f));
+            }
+            textarea.value = result.join('\n');
             textarea.focus();
             textarea.select();
-          };
-          fr.readAsArrayBuffer(f);
+          }
         } catch (e) {
           console.error(e);
+          textarea.value = 'Error: ' + e;
           alert('Error: ' + e);
         }
       };
@@ -642,6 +658,12 @@ Please don't use this as a reference for how you should write JavaScript.
         fs.onchange();
       }
 
+    </script>
+
+    <script>
+      if (!window.handleFile) {
+        document.write('<p>Error loading scripts, try updating your browser.</p>')
+      }
     </script>
 
   </body>
